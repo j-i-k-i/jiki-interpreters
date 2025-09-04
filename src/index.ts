@@ -1,3 +1,3 @@
-export * from './sanity';
+export * from "./sanity";
 
-console.log('JikiScript interpreter started');
+console.log("JikiScript interpreter started");
