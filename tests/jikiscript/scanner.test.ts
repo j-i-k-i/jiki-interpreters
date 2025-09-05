@@ -452,7 +452,7 @@ describe("error", () => {
     });
 
     test("Exclude listed", () => {
-      expect(() => scan("set x to 1", { excludeList: ["SET"] })).toThrow(
+      expect(() => scan("set x to 1", { excludeList: ["SET"] } as any)).toThrow(
         "Jiki doesn't know how to use `set` in this exercise."
       );
     });
@@ -461,7 +461,7 @@ describe("error", () => {
       expect(() =>
         scan("set x to 1", {
           includeList: ["IDENTIFIER", "NUMBER"],
-        })
+        } as any)
       ).toThrow("Jiki doesn't know how to use `set` in this exercise.");
     });
   });
