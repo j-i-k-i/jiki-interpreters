@@ -1421,9 +1421,8 @@ export class Executor {
 
     // Set to IndexOutOfBoundsInGet or IndexOutOfBoundsInSet
     // by capitalzing the first letter of get or set
-    const errorType: "IndexOutOfBoundsInGet" | "IndexOutOfBoundsInChange" = `IndexOutOfBoundsIn${
-      getOrChange.charAt(0).toUpperCase() + getOrChange.slice(1)
-    }`;
+    const errorType: "IndexOutOfBoundsInGet" | "IndexOutOfBoundsInChange" = 
+      getOrChange === "get" ? "IndexOutOfBoundsInGet" : "IndexOutOfBoundsInChange";
 
     const dataType = obj instanceof Jiki.List ? "list" : "string";
     this.error(errorType, location, {
