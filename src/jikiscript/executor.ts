@@ -791,7 +791,9 @@ export class Executor {
           [temporaryVariableValue, secondTemporaryVariableValue] = temporaryVariableValue;
           secondTemporaryVariableName = statement.secondElementName.lexeme;
           temporaryVariableNames.push(secondTemporaryVariableName);
-          this.environment.define(secondTemporaryVariableName, secondTemporaryVariableValue);
+          if (secondTemporaryVariableValue) {
+            this.environment.define(secondTemporaryVariableName, secondTemporaryVariableValue);
+          }
         }
 
         // Handle the normal path
