@@ -9,7 +9,7 @@ import {
 } from "../evaluation-result";
 import { isNumber } from "../checks";
 import { cloneDeep } from "lodash";
-import { JikiObject, unwrapJikiObject, wrapJSToJikiObject } from "../jikiObjects";
+import { JikiObject, JikiString, unwrapJikiObject, wrapJSToJikiObject } from "../jikiObjects";
 import { Location } from "../location";
 import { CustomFunctionError } from "../interpreter";
 
@@ -99,7 +99,7 @@ export function executeFunctionCallExpression(
 
   return {
     type: "FunctionCallExpression",
-    jikiObject: value || null,
+    jikiObject: value as JikiObject,
     callee,
     args,
   };
