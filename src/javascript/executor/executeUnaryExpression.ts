@@ -11,8 +11,10 @@ export function executeUnaryExpression(executor: Executor, expression: UnaryExpr
 
   return {
     type: "UnaryExpression",
+    operand: operandResult,
     jikiObject: result,
-  };
+    jsObject: result,
+  } as any;
 }
 
 function handleUnaryOperation(
@@ -27,6 +29,8 @@ function handleUnaryOperation(
       return createJikiObject(-operand);
     case "PLUS":
       return createJikiObject(+operand);
+    case "NOT":
+      return createJikiObject(!operand);
     default:
       throw new RuntimeError(
         `Unsupported unary operator: ${expression.operator.type}`,

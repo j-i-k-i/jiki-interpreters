@@ -64,6 +64,9 @@ export function createJikiObject(value: any): JikiObject {
   }
 }
 
+// Alias for compatibility
+export type JSObject = JikiObject;
+
 // Helper function to unwrap JikiObjects to JavaScript values
 export function unwrapJikiObject(obj: JikiObject | any): any {
   if (obj instanceof JikiObject) {

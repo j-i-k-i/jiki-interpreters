@@ -8,6 +8,7 @@ import type { EvaluationResult } from "./evaluation-result";
 export type InterpretResult = {
   frames: Frame[];
   error: Error | null;
+  success: boolean;
 };
 
 export function interpret(sourceCode: string): InterpretResult {
@@ -56,16 +57,17 @@ export function interpret(sourceCode: string): InterpretResult {
         };
 
         frames.push(frame);
-        return { frames, error: error as Error };
+        return { frames, error: error as Error, success: false };
       }
     }
 
-    return { frames, error: null };
+    return { frames, error: null, success: true };
   } catch (error) {
     // Parsing or other compilation error
     return {
       frames: [],
       error: error as Error,
+      success: false,
     };
   }
 }

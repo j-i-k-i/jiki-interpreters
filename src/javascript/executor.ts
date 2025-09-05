@@ -37,7 +37,13 @@ export class Executor {
 
   public executeStatement(statement: Statement): EvaluationResult | null {
     if (statement instanceof ExpressionStatement) {
-      return this.evaluate(statement.expression);
+      const expressionResult = this.evaluate(statement.expression);
+      return {
+        type: "ExpressionStatement",
+        expression: expressionResult,
+        jikiObject: expressionResult.jikiObject,
+        jsObject: expressionResult.jikiObject,
+      } as any;
     }
 
     return null;

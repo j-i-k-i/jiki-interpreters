@@ -12,8 +12,11 @@ export function executeBinaryExpression(executor: Executor, expression: BinaryEx
 
   return {
     type: "BinaryExpression",
+    left: leftResult,
+    right: rightResult,
     jikiObject: result,
-  };
+    jsObject: result,
+  } as any;
 }
 
 function handleBinaryOperation(

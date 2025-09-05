@@ -4,5 +4,12 @@ import type { EvaluationResult } from "../evaluation-result";
 
 export function executeGroupingExpression(executor: Executor, expression: GroupingExpression): EvaluationResult {
   // Grouping expressions simply evaluate their inner expression
-  return executor.evaluate(expression.inner);
+  const innerResult = executor.evaluate(expression.inner);
+
+  return {
+    type: "GroupingExpression",
+    inner: innerResult,
+    jikiObject: innerResult.jikiObject,
+    jsObject: innerResult.jikiObject,
+  } as any;
 }
