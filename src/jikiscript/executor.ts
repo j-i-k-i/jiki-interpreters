@@ -176,11 +176,11 @@ export class Executor {
         call: call,
       };
 
-      this.globals.define(externalFunction.name, callable);
+      this.globals.define(externalFunction.name, callable as any);
     }
 
     for (let customFunction of customFunctions) {
-      this.globals.define(customFunction.name, customFunction);
+      this.globals.define(customFunction.name, customFunction as any);
     }
 
     this.externalFunctionDescriptions = this.externalFunctions.reduce((acc: Record<string, string>, fn) => {
