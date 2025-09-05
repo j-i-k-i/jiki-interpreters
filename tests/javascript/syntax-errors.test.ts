@@ -1,0 +1,179 @@
+import { parse } from "@javascript/parser";
+
+describe("syntax errors", () => {
+  describe("string errors", () => {
+    test("unterminated string - end of file", () => {
+      expect(() => parse('"hello')).toThrow("Did you forget to add end quote?");
+    });
+
+    test("unterminated string - end of line", () => {
+      expect(() => parse('"hello\nsomething_else"')).toThrow(); // This seems to parse the first string successfully, then fail on missing semicolon
+    });
+
+    test("single quote unterminated string", () => {
+      expect(() => parse("'hello")).toThrow("Did you forget to add end quote?");
+    });
+
+    test("mixed quote types", () => {
+      expect(() => parse("\"hello'")).toThrow("Did you forget to add end quote?");
+    });
+  });
+
+  describe("number errors", () => {
+    test("multiple decimal points", () => {
+      expect(() => parse("1.3.4;")).toThrow();
+    });
+
+    test("number ends with decimal point", () => {
+      expect(() => parse("123.;")).toThrow();
+    });
+
+    test("invalid number format", () => {
+      expect(() => parse("123abc;")).toThrow();
+    });
+  });
+
+  describe("expression errors", () => {
+    test("missing right parenthesis in grouping", () => {
+      expect(() => parse("(1 + 2;")).toThrow("MissingRightParenthesisAfterExpression");
+    });
+
+    test("missing left parenthesis", () => {
+      expect(() => parse("1 + 2);")).toThrow();
+    });
+
+    test("consecutive operators", () => {
+      // This actually parses as 1 + (+2) which is valid in JavaScript
+      const result = parse("1 + + 2;");
+      expect(result).toBeArrayOfSize(1);
+    });
+
+    test("missing operand", () => {
+      expect(() => parse("1 +;")).toThrow("MissingExpression");
+    });
+
+    test("unary plus is valid", () => {
+      // Unary + is valid in JavaScript
+      const result = parse("+ 2;");
+      expect(result).toBeArrayOfSize(1);
+    });
+
+    test("empty parentheses", () => {
+      expect(() => parse("();")).toThrow("MissingExpression");
+    });
+
+    test("nested parentheses missing close", () => {
+      expect(() => parse("((1 + 2);")).toThrow("MissingRightParenthesisAfterExpression");
+    });
+  });
+
+  describe("logical operator errors", () => {
+    test("consecutive logical and operators", () => {
+      expect(() => parse("true && && false;")).toThrow();
+    });
+
+    test("consecutive logical or operators", () => {
+      expect(() => parse("true || || false;")).toThrow();
+    });
+
+    test("missing right operand in logical expression", () => {
+      expect(() => parse("true &&;")).toThrow("MissingExpression");
+    });
+
+    test("missing left operand in logical expression", () => {
+      expect(() => parse("&& false;")).toThrow();
+    });
+
+    test("mixed logical operators without operand", () => {
+      expect(() => parse("true && || false;")).toThrow("MissingExpression");
+    });
+  });
+
+  describe("comment errors", () => {
+    test("unterminated multi-line comment", () => {
+      expect(() => parse("/* hello world")).toThrow("Unknown character");
+    });
+
+    test("nested multi-line comments", () => {
+      // JavaScript doesn't support nested comments, this should fail
+      expect(() => parse("/* outer /* inner */ outer */")).toThrow();
+    });
+  });
+
+  describe("semicolon errors", () => {
+    test("missing semicolon after expression", () => {
+      expect(() => parse("1 + 2")).toThrow("MissingSemicolon");
+    });
+
+    test("missing semicolon after string", () => {
+      expect(() => parse('"hello"')).toThrow("MissingSemicolon");
+    });
+
+    test("missing semicolon after boolean", () => {
+      expect(() => parse("true")).toThrow("MissingSemicolon");
+    });
+
+    test("multiple statements missing semicolon", () => {
+      expect(() => parse("1; 2")).toThrow("MissingSemicolon");
+    });
+  });
+
+  describe("complex expression errors", () => {
+    test("unbalanced parentheses in complex expression", () => {
+      expect(() => parse("(1 + (2 * 3);")).toThrow("MissingRightParenthesisAfterExpression");
+    });
+
+    test("missing operand in complex arithmetic", () => {
+      expect(() => parse("1 + 2 *;")).toThrow("MissingExpression");
+    });
+
+    test("invalid operator sequence", () => {
+      expect(() => parse("1 */ 2;")).toThrow();
+    });
+
+    test("string concatenation with missing operand", () => {
+      expect(() => parse('"hello" +;')).toThrow("MissingExpression");
+    });
+
+    test("logical operation with arithmetic missing operand", () => {
+      expect(() => parse("(1 + 2) &&;")).toThrow("MissingExpression");
+    });
+  });
+
+  describe("edge cases", () => {
+    test("empty input", () => {
+      const result = parse("");
+      expect(result).toBeArrayOfSize(0);
+    });
+
+    test("only whitespace", () => {
+      const result = parse("   \n\t  ");
+      expect(result).toBeArrayOfSize(0);
+    });
+
+    test("only comment", () => {
+      const result = parse("// just a comment");
+      expect(result).toBeArrayOfSize(0);
+    });
+
+    test("invalid character", () => {
+      expect(() => parse("@invalid;")).toThrow();
+    });
+
+    test("unexpected token", () => {
+      expect(() => parse("1 2 3;")).toThrow();
+    });
+
+    test("expression without semicolon followed by number", () => {
+      expect(() => parse("1 + 2 3")).toThrow();
+    });
+
+    test("string without semicolon followed by another expression", () => {
+      expect(() => parse('"hello" true')).toThrow();
+    });
+
+    test("boolean without semicolon followed by number", () => {
+      expect(() => parse("true 42")).toThrow();
+    });
+  });
+});
