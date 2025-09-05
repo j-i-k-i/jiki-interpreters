@@ -33,7 +33,7 @@ describe("single-character", () => {
   });
 });
 
-describe.skip("two-character operators", () => {
+describe("two-character operators", () => {
   test.each([
     [">", "GREATER"],
     [">=", "GREATER_EQUAL"],
