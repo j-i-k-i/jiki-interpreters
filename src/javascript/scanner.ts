@@ -501,7 +501,7 @@ export class Scanner {
     this.advance(); // consume x/X
     while (this.isHexDigit(this.peek())) this.advance();
 
-    const number = this.sourceCode.substring(this.start, this.current);
+    const number = this.sourceCode.substring(this.start + 2, this.current); // Skip '0x'
     this.addToken("NUMBER", parseInt(number, 16));
   }
 
@@ -509,7 +509,7 @@ export class Scanner {
     this.advance(); // consume b/B
     while (this.peek() == "0" || this.peek() == "1") this.advance();
 
-    const number = this.sourceCode.substring(this.start, this.current);
+    const number = this.sourceCode.substring(this.start + 2, this.current); // Skip '0b'
     this.addToken("NUMBER", parseInt(number, 2));
   }
 
@@ -517,7 +517,7 @@ export class Scanner {
     this.advance(); // consume o/O
     while (this.isOctalDigit(this.peek())) this.advance();
 
-    const number = this.sourceCode.substring(this.start, this.current);
+    const number = this.sourceCode.substring(this.start + 2, this.current); // Skip '0o'
     this.addToken("NUMBER", parseInt(number, 8));
   }
 

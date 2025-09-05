@@ -251,7 +251,7 @@ describe.skip("template literal", () => {
   });
 });
 
-describe.skip("identifier", () => {
+describe("identifier", () => {
   test("start with lower letter", () => {
     const tokens = scan("name");
     expect(tokens[0].type).toBe("IDENTIFIER");
@@ -281,7 +281,7 @@ describe.skip("identifier", () => {
   });
 });
 
-describe.skip("number", () => {
+describe("number", () => {
   test("integer", () => {
     const tokens = scan("143");
     expect(tokens[0].type).toBe("NUMBER");
