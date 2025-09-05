@@ -1408,7 +1408,7 @@ export class Executor {
   }
 
   private guardOutofBoundsIndex(
-    obj: Jiki.List | Jiki.String,
+    obj: Jiki.List | Jiki.JikiString,
     idx: Jiki.Number,
     location: Location,
     getOrChange: "get" | "change"
@@ -1434,7 +1434,7 @@ export class Executor {
     });
   }
 
-  private guardMissingDictionaryKey(dictionary: Jiki.Dictionary, key: Jiki.String, location: Location) {
+  private guardMissingDictionaryKey(dictionary: Jiki.Dictionary, key: Jiki.JikiString, location: Location) {
     if (dictionary.value.has(key.value)) {
       return;
     }

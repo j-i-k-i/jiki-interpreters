@@ -107,7 +107,7 @@ describe("interpret", () => {
     test.skip("custom type", () => {
       class MutableNumber extends Jiki.Instance {
         public methods: Map<string, Jiki.Method> = new Map();
-        constructor(public value: number) {
+        constructor(public number: number) {
           super(new Jiki.Class("Foo"));
           this.methods.set("increment", new Jiki.Method("increment", "", "public", 0, this.increment));
         }
@@ -118,10 +118,10 @@ describe("interpret", () => {
           return this;
         }
         public toString() {
-          return this.value.toString();
+          return this.number.toString();
         }
         private increment() {
-          this.value += 1;
+          this.number += 1;
           return new Jiki.Boolean(false); // return something concrete
         }
       }

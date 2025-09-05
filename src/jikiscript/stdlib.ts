@@ -79,7 +79,7 @@ export const StdlibFunctionsForLibrary: ExternalFunction[] = Object.entries(Stdl
   .filter(([key]) => funcsForLib.includes(key))
   .map(([_, v]) => v);
 
-function sortString(_: ExecutionContext, str: Jiki.JikiObject): Jiki.String {
+function sortString(_: ExecutionContext, str: Jiki.JikiObject): Jiki.JikiString {
   if (str instanceof Jiki.String) {
     return new Jiki.String(str.value.split("").sort().join(""));
   }
@@ -102,7 +102,7 @@ function sortString(_: ExecutionContext, str: Jiki.JikiObject): Jiki.String {
   });
 }
 
-function concatenate(_: ExecutionContext, ...strings: Jiki.String[]): Jiki.String {
+function concatenate(_: ExecutionContext, ...strings: Jiki.JikiString[]): Jiki.JikiString {
   strings.forEach((str, idx) => verifyType(str, Jiki.String, "string", idx + 1));
   return new Jiki.String(strings.map(str => str.value).join(""));
 }
@@ -121,13 +121,13 @@ function concat(_: ExecutionContext, list1: Jiki.List, list2: Jiki.List): Jiki.L
   return new Jiki.List(list1.value.concat(list2.value));
 }
 
-function numberToString(_: ExecutionContext, num: Jiki.Number): Jiki.String {
+function numberToString(_: ExecutionContext, num: Jiki.Number): Jiki.JikiString {
   verifyType(num, Jiki.Number, "number", 1);
 
   return new Jiki.String(num.value.toString());
 }
 
-function stringToNumber(executionCtx: ExecutionContext, str: Jiki.String): Jiki.Number {
+function stringToNumber(executionCtx: ExecutionContext, str: Jiki.JikiString): Jiki.Number {
   verifyType(str, Jiki.String, "string", 1);
 
   const num = Number(str.value);
@@ -141,19 +141,19 @@ function stringToNumber(executionCtx: ExecutionContext, str: Jiki.String): Jiki.
   return new Jiki.Number(num);
 }
 
-function toUpperCase(_: ExecutionContext, str: Jiki.String): Jiki.String {
+function toUpperCase(_: ExecutionContext, str: Jiki.JikiString): Jiki.JikiString {
   verifyType(str, Jiki.String, "string", 1);
 
   return new Jiki.String(str.value.toUpperCase());
 }
 
-function toLowerCase(_: ExecutionContext, str: Jiki.String): Jiki.String {
+function toLowerCase(_: ExecutionContext, str: Jiki.JikiString): Jiki.JikiString {
   verifyType(str, Jiki.String, "string", 1);
 
   return new Jiki.String(str.value.toLowerCase());
 }
 
-function hasKey(_: ExecutionContext, dict: Jiki.Dictionary, key: Jiki.String): Jiki.Boolean {
+function hasKey(_: ExecutionContext, dict: Jiki.Dictionary, key: Jiki.JikiString): Jiki.Boolean {
   verifyType(dict, Jiki.Dictionary, "dictionary", 1);
   verifyType(key, Jiki.String, "string", 2);
 
