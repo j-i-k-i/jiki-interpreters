@@ -1,7 +1,7 @@
 import { scan } from "@javascript/scanner";
 import { type TokenType } from "@javascript/token";
 
-describe.skip("single-character", () => {
+describe("single-character", () => {
   test.each([
     ["{", "LEFT_BRACE"],
     ["[", "LEFT_BRACKET"],
