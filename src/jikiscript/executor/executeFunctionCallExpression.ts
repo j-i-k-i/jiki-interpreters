@@ -50,7 +50,7 @@ export function executeFunctionCallExpression(
   } catch (e: any) {
     throwMissingFunctionError(executor, expression, e);
   }
-  const callee = ce as EvaluationResultFunctionLookupExpression;
+  const callee = ce as unknown as EvaluationResultFunctionLookupExpression;
 
   if (!isCallable(callee.function)) {
     executor.error("NonCallableTarget", expression.location, { callee });
@@ -99,7 +99,7 @@ export function executeFunctionCallExpression(
 
   return {
     type: "FunctionCallExpression",
-    jikiObject: value,
+    jikiObject: value || null,
     callee,
     args,
   };
