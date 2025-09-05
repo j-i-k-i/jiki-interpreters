@@ -354,7 +354,7 @@ describe.skip("function call", () => {
   });
 });
 
-describe.skip("comments", () => {
+describe("comments", () => {
   test("single line comment", () => {
     const tokens = scan("// This is a comment\nlet x = 5;");
     expect(tokens[0].type).toBe("LET");
