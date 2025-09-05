@@ -1,3 +1,4 @@
+import { test, expect, describe, beforeAll, afterAll } from "bun:test";
 import { interpret, evaluateFunction, EvaluationContext } from "@jikiscript/interpreter";
 import type { ExecutionContext } from "@jikiscript/executor";
 import { changeLanguage } from "@jikiscript/translator";

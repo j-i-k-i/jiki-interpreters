@@ -1,7 +1,12 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "noUncheckedIndexedAccess": false
+    "noUncheckedIndexedAccess": false,
+    "baseUrl": ".",
+    "paths": {
+      "@jikiscript/*": ["src/jikiscript/*"],
+      "@utils/*": ["src/utils/*"]
+    }
   },
   "include": ["tests/**/*", "src/**/*"],
   "exclude": ["node_modules", "dist"]
