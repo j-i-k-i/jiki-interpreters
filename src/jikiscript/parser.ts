@@ -668,7 +668,7 @@ export class Parser {
       const value = this.or();
 
       if (expr instanceof GetElementExpression) {
-        return new SetElementExpression(expr.obj, expr.field, value, Location.between(expr, value));
+        return new SetElementExpression(expr.obj, expr.field as any, value, Location.between(expr, value));
       }
 
       this.error("InvalidAssignmentTarget", expr.location, {
