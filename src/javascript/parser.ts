@@ -53,7 +53,31 @@ export class Parser {
   }
 
   private expression(): Expression {
-    return this.addition();
+    return this.logicalOr();
+  }
+
+  private logicalOr(): Expression {
+    let expr = this.logicalAnd();
+
+    while (this.match("LOGICAL_OR")) {
+      const operator = this.previous();
+      const right = this.logicalAnd();
+      expr = new BinaryExpression(expr, operator, right, Location.between(expr, right));
+    }
+
+    return expr;
+  }
+
+  private logicalAnd(): Expression {
+    let expr = this.addition();
+
+    while (this.match("LOGICAL_AND")) {
+      const operator = this.previous();
+      const right = this.addition();
+      expr = new BinaryExpression(expr, operator, right, Location.between(expr, right));
+    }
+
+    return expr;
   }
 
   private addition(): Expression {
