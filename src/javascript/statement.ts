@@ -1,0 +1,32 @@
+import type { Expression } from "./expression";
+import { Location } from "./location";
+
+export abstract class Statement {
+  constructor(public type: string) {}
+  abstract location: Location;
+  abstract children(): Expression[];
+}
+
+export class ExpressionStatement extends Statement {
+  constructor(
+    public expression: Expression,
+    public location: Location
+  ) {
+    super("ExpressionStatement");
+  }
+  public children() {
+    return [this.expression];
+  }
+}
+
+export class ConsoleLogStatement extends Statement {
+  constructor(
+    public expression: Expression,
+    public location: Location
+  ) {
+    super("ConsoleLogStatement");
+  }
+  public children() {
+    return [this.expression];
+  }
+}
