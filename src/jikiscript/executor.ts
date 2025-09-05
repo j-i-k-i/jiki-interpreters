@@ -437,7 +437,6 @@ export class Executor {
         type: "SetVariableStatement",
         name: statement.name.lexeme,
         value: value,
-        jikiObject: value.jikiObject,
       };
     });
   }
