@@ -4,7 +4,7 @@ import { getNameFunction, assertHTML } from "./helpers";
 
 test("literal", () => {
   const { frames } = interpret('set my_name to "Jeremy"');
-  const actual = describeFrame(frames[0], []);
+  const actual = describeFrame(frames[0]);
   assertHTML(
     actual,
     `<p>This created a new variable called <code>my_name</code> and set its value to <code>"Jeremy"</code>.</p>`,
@@ -18,7 +18,7 @@ test("literal", () => {
 test("function", () => {
   const context = { externalFunctions: [getNameFunction] };
   const { frames } = interpret("set my_name to get_name()", context);
-  const actual = describeFrame(frames[0], []);
+  const actual = describeFrame(frames[0]);
   assertHTML(
     actual,
     `<p>This created a new variable called<code>my_name</code>and set its value to <code>"Jeremy"</code>.</p>`,
@@ -33,7 +33,7 @@ test("function", () => {
 test("binary comparison", () => {
   const context = { externalFunctions: [getNameFunction] };
   const { frames } = interpret("set a_bool to 5 > 3", context);
-  const actual = describeFrame(frames[0], []);
+  const actual = describeFrame(frames[0]);
   assertHTML(
     actual,
     `<p>This created a new variable called<code>a_bool</code>and set its value to <code>true</code>.</p>`,

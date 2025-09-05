@@ -493,21 +493,21 @@ describe("repeat", () => {
   });
 });
 
-describe("while", () => {
-  test.skip("with single statement", () => {
-    const stmts = parse(`
-      while something is true do
-        set x to 1
-      end
-    `);
-    expect(stmts).toBeArrayOfSize(1);
-    expect(stmts[0]).toBeInstanceOf(WhileStatement);
-    const expStmt = stmts[0] as WhileStatement;
-    expect(expStmt.condition).toBeInstanceOf(BinaryExpression);
-    expect(expStmt.body).toBeArrayOfSize(1);
-    expect(expStmt.body[0]).toBeInstanceOf(SetVariableStatement);
-  });
-});
+// describe("while", () => {
+//   test.skip("with single statement", () => {
+//     const stmts = parse(`
+//       while something is true do
+//         set x to 1
+//       end
+//     `);
+//     expect(stmts).toBeArrayOfSize(1);
+//     expect(stmts[0]).toBeInstanceOf(WhileStatement);
+//     const expStmt = stmts[0] as WhileStatement;
+//     expect(expStmt.condition).toBeInstanceOf(BinaryExpression);
+//     expect(expStmt.body).toBeArrayOfSize(1);
+//     expect(expStmt.body[0]).toBeInstanceOf(SetVariableStatement);
+//   });
+// });
 
 describe("block", () => {
   test("non-nested", () => {

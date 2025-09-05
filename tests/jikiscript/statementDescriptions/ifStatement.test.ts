@@ -8,7 +8,7 @@ describe("literals", () => {
         if true do
         end
       `);
-    const actual = describeFrame(frames[0], []);
+    const actual = describeFrame(frames[0]);
     assertHTML(actual, `<p>The condition evaluated to<code>true</code>so the code block ran.</p>`, [
       `<li>The result was<code>true</code>so Jiki decided to run the if block.</li>`,
     ]);
@@ -18,7 +18,7 @@ describe("literals", () => {
         if (true) do
         end
       `);
-    const actual = describeFrame(frames[0], []);
+    const actual = describeFrame(frames[0]);
     assertHTML(actual, `<p>The condition evaluated to<code>true</code>so the code block ran.</p>`, [
       `<li>The result was<code>true</code>so Jiki decided to run the if block.</li>`,
     ]);
@@ -33,7 +33,7 @@ describe("function calls", () => {
         if ret_true() do
         end
       `);
-    const actual = describeFrame(frames[1], []);
+    const actual = describeFrame(frames[1]);
     assertHTML(actual, `<p>The condition evaluated to<code>true</code>so the code block ran.</p>`, [
       `<li>Jiki used the<code>ret_true()</code>function, which returned<code>true</code>.</li>`,
       `<li>The result was<code>true</code>so Jiki decided to run the if block.</li>`,
@@ -46,7 +46,7 @@ describe("single binary expressions", () => {
         if true == true do
         end
       `);
-    const actual = describeFrame(frames[0], []);
+    const actual = describeFrame(frames[0]);
     assertHTML(actual, `<p>The condition evaluated to<code>true</code>so the code block ran.</p>`, [
       `<li>Jiki evaluated<code>true == true</code>and determined it was<code>true</code>.</li>`,
       `<li>The result was<code>true</code>so Jiki decided to run the if block.</li>`,
@@ -60,7 +60,7 @@ describe("single binary expressions", () => {
         if ret_true() is true do
         end
       `);
-    const actual = describeFrame(frames[1], []);
+    const actual = describeFrame(frames[1]);
     assertHTML(actual, `<p>The condition evaluated to<code>true</code>so the code block ran.</p>`, [
       `<li>Jiki used the<code>ret_true()</code>function, which returned<code>true</code>.</li>`,
       `<li>Jiki evaluated<code>true is true</code>and determined it was<code>true</code>.</li>`,
