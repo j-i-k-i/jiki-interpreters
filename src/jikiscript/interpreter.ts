@@ -225,7 +225,7 @@ export class Interpreter {
 
         return res.jikiObject;
       };
-      return { ...customFunction, call } as CallableCustomFunction;
+      return { ...customFunction, call } as unknown as CallableCustomFunction;
     });
   }
 
