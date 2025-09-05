@@ -21,6 +21,7 @@
     "types": ["bun-types", "@types/bun"],
     "paths": {
       "@jikiscript/*": ["src/jikiscript/*"],
+      "@javascript/*": ["src/javascript/*"],
       "@utils/*": ["src/utils/*"]
     }
   },
