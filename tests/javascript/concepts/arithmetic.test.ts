@@ -2,7 +2,7 @@ import { parse } from "@javascript/parser";
 import { ExpressionStatement } from "@javascript/statement";
 import { LiteralExpression, BinaryExpression, UnaryExpression, GroupingExpression } from "@javascript/expression";
 
-describe.skip("arithmetic", () => {
+describe("arithmetic", () => {
   describe("parse", () => {
     describe("literals", () => {
       test("integer", () => {
