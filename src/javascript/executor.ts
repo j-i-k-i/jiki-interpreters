@@ -8,6 +8,12 @@ import { ExpressionStatement } from "./statement";
 import type { EvaluationResult } from "./evaluation-result";
 import { createJikiObject, type JikiObject } from "./jikiObjects";
 
+// Import individual executors
+import { executeLiteralExpression } from "./executor/executeLiteralExpression";
+import { executeBinaryExpression } from "./executor/executeBinaryExpression";
+import { executeUnaryExpression } from "./executor/executeUnaryExpression";
+import { executeGroupingExpression } from "./executor/executeGroupingExpression";
+
 export type RuntimeErrorType = "InvalidBinaryExpression" | "InvalidUnaryExpression" | "UnsupportedOperation";
 
 export class RuntimeError extends Error {
@@ -39,19 +45,19 @@ export class Executor {
 
   public evaluate(expression: Expression): EvaluationResult {
     if (expression instanceof LiteralExpression) {
-      return this.executeLiteralExpression(expression);
+      return executeLiteralExpression(this, expression);
     }
 
     if (expression instanceof BinaryExpression) {
-      return this.executeBinaryExpression(expression);
+      return executeBinaryExpression(this, expression);
     }
 
     if (expression instanceof UnaryExpression) {
-      return this.executeUnaryExpression(expression);
+      return executeUnaryExpression(this, expression);
     }
 
     if (expression instanceof GroupingExpression) {
-      return this.executeGroupingExpression(expression);
+      return executeGroupingExpression(this, expression);
     }
 
     throw new RuntimeError(
@@ -59,88 +65,6 @@ export class Executor {
       expression.location,
       "UnsupportedOperation"
     );
-  }
-
-  private executeLiteralExpression(expression: LiteralExpression): EvaluationResult {
-    const jikiObject = createJikiObject(expression.value);
-    return {
-      type: "LiteralExpression",
-      jikiObject,
-    };
-  }
-
-  private executeBinaryExpression(expression: BinaryExpression): EvaluationResult {
-    const leftResult = this.evaluate(expression.left);
-    const rightResult = this.evaluate(expression.right);
-
-    const result = this.handleBinaryOperation(expression, leftResult, rightResult);
-
-    return {
-      type: "BinaryExpression",
-      jikiObject: result,
-    };
-  }
-
-  private executeUnaryExpression(expression: UnaryExpression): EvaluationResult {
-    const operandResult = this.evaluate(expression.operand);
-
-    const result = this.handleUnaryOperation(expression, operandResult);
-
-    return {
-      type: "UnaryExpression",
-      jikiObject: result,
-    };
-  }
-
-  private executeGroupingExpression(expression: GroupingExpression): EvaluationResult {
-    return this.evaluate(expression.inner);
-  }
-
-  private handleBinaryOperation(
-    expression: BinaryExpression,
-    leftResult: EvaluationResult,
-    rightResult: EvaluationResult
-  ): JikiObject {
-    const left = leftResult.jikiObject.value;
-    const right = rightResult.jikiObject.value;
-
-    switch (expression.operator.type) {
-      case "PLUS":
-        return createJikiObject(left + right);
-      case "MINUS":
-        return createJikiObject(left - right);
-      case "STAR":
-        return createJikiObject(left * right);
-      case "SLASH":
-        return createJikiObject(left / right);
-      case "LOGICAL_AND":
-        return createJikiObject(left && right);
-      case "LOGICAL_OR":
-        return createJikiObject(left || right);
-      default:
-        throw new RuntimeError(
-          `Unsupported binary operator: ${expression.operator.type}`,
-          expression.location,
-          "InvalidBinaryExpression"
-        );
-    }
-  }
-
-  private handleUnaryOperation(expression: UnaryExpression, operandResult: EvaluationResult): JikiObject {
-    const operand = operandResult.jikiObject.value;
-
-    switch (expression.operator.type) {
-      case "MINUS":
-        return createJikiObject(-operand);
-      case "PLUS":
-        return createJikiObject(+operand);
-      default:
-        throw new RuntimeError(
-          `Unsupported unary operator: ${expression.operator.type}`,
-          expression.location,
-          "InvalidUnaryExpression"
-        );
-    }
   }
 
   public getVariables(): Record<string, JikiObject> {
