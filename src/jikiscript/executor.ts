@@ -183,12 +183,10 @@ export class Executor {
       this.globals.define(customFunction.name, customFunction);
     }
 
-    this.externalFunctionDescriptions = {
-      functionDescriptions: this.externalFunctions.reduce((acc: Record<string, string>, fn) => {
-        acc[fn.name] = fn.description;
-        return acc;
-      }, {}),
-    };
+    this.externalFunctionDescriptions = this.externalFunctions.reduce((acc: Record<string, string>, fn) => {
+      acc[fn.name] = fn.description;
+      return acc;
+    }, {});
 
     for (let jikiClass of classes) {
       this.globals.define(jikiClass.name, jikiClass);
@@ -912,7 +910,7 @@ export class Executor {
         this.guardInfiniteLoop(statement.keyword.location);
 
         if (counterVariableName) {
-          this.environment.define(counterVariableName, iteration);
+          this.environment.define(counterVariableName, new Jiki.Number(iteration));
         }
 
         this.executeFrame<EvaluationResultRepeatStatement>(statement, () => {

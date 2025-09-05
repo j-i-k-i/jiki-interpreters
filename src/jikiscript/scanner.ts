@@ -104,7 +104,20 @@ export class Scanner {
     "`": this.tokenizeTemplateLiteral,
   };
 
-  constructor(private languageFeatures: LanguageFeatures = {}) {}
+  constructor(
+    private languageFeatures: LanguageFeatures = {
+      includeList: undefined,
+      excludeList: undefined,
+      timePerFrame: 0.01,
+      repeatDelay: 0,
+      maxRepeatUntilGameOverIterations: 100,
+      maxTotalLoopIterations: 10000,
+      maxTotalExecutionTime: 10000,
+      allowGlobals: false,
+      customFunctionDefinitionMode: false,
+      addSuccessFrames: true,
+    }
+  ) {}
 
   scanTokens(sourceCode: string): Token[] {
     this.sourceCode = sourceCode;

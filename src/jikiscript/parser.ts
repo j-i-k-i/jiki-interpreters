@@ -234,7 +234,7 @@ export class Parser {
     }
     if (this.peek().type != "DO") {
       const { errorType, context } = errorForMissingDoAfterParameters(this.peek(), parameters);
-      this.error(errorType, this.peek().location, context);
+      this.error(errorType as SyntaxErrorType, this.peek().location, context);
     }
     return parameters;
   }
@@ -383,7 +383,8 @@ export class Parser {
     const initializer = this.expression();
     this.consumeEndOfLine();
 
-    return new ChangeThisPropertyStatement(name, initializer, Location.between(changeToken, initializer));
+    const thisExpr = new ThisExpression(changeToken.location);
+    return new ChangePropertyStatement(thisExpr, name, initializer, Location.between(changeToken, initializer));
   }
 
   private changeMemberStatement(): ChangeElementStatement | ChangePropertyStatement {
@@ -568,11 +569,11 @@ export class Parser {
 
     return new ForeachStatement(
       elementName,
-      secondElementName,
       iterable,
       counter,
       statements,
-      Location.between(forToken, this.previous())
+      Location.between(forToken, this.previous()),
+      secondElementName
     );
   }
 
@@ -792,8 +793,8 @@ export class Parser {
         this.error("MissingClassNameInInstantiation", newToken.location);
       }
     }
-    if (!(expr instanceof VariableLookupExpression)) {
-      this.error("InvalidFunctionName", expr.location, {});
+    if (!expr || !(expr instanceof VariableLookupExpression)) {
+      this.error("InvalidFunctionName", expr?.location || newToken.location, {});
     }
 
     const classNameExpression = new ClassLookupExpression(expr.name, expr.location);
@@ -1284,7 +1285,18 @@ export function parse(
   sourceCode: string,
   {
     functionNames = [],
-    languageFeatures = {},
+    languageFeatures = {
+      includeList: undefined,
+      excludeList: undefined,
+      timePerFrame: 0.01,
+      repeatDelay: 0,
+      maxRepeatUntilGameOverIterations: 100,
+      maxTotalLoopIterations: 10000,
+      maxTotalExecutionTime: 10000,
+      allowGlobals: false,
+      customFunctionDefinitionMode: false,
+      addSuccessFrames: true,
+    },
     shouldWrapTopLevelStatements = false,
   }: {
     functionNames?: string[];

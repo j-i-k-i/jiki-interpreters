@@ -14,7 +14,7 @@ export function describeLogicalExpression(
 ) {
   return result.shortCircuited
     ? describeShortCircuitedExpression(expression, result, context)
-    : describeFullExpression(expression, result, context);
+    : describeFullExpression(expression, result as EvaluationResultFullyEvaluatedLogicalExpression, context);
 }
 
 function describeShortCircuitedExpression(
@@ -43,13 +43,9 @@ function describeFullExpression(
   let inBetweenSteps: string[] = [];
   if (expression.left.type === "LiteralExpression") {
     inBetweenSteps.push(
-      `<li>Jiki saw the left side of the ${codeTag(
-        expression.operator.lexeme,
-        expression.operator.location
-      )} was ${codeTag(
-        result.left.jikiObject,
-        expression.left.location
-      )} and so decided to evaluate the right side.</li>`
+      `<li>Jiki saw the left side of the ${codeTag(expression.operator.lexeme, expression.operator.location)} was ${
+        result.left.jikiObject ? codeTag(result.left.jikiObject, expression.left.location) : "unknown"
+      } and so decided to evaluate the right side.</li>`
     );
   }
 

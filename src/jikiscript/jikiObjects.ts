@@ -153,11 +153,12 @@ export class Class {
   public addSetter(
     name: string,
     visibility: Visibility,
-    fn?: (_: ExecutionContext, object: Instance, value: JikiObject) => void
+    fn?: (_: ExecutionContext, object: Instance, value: JikiObject) => JikiObject
   ) {
     if (fn === undefined) {
       fn = function (_: ExecutionContext, object: Instance, value: JikiObject) {
         object.setField(name, value);
+        return value;
       };
     }
     this.setters[name] = new Setter(visibility, fn);
@@ -343,10 +344,16 @@ export function wrapJSToJikiObject(value: any): JikiObject | null | undefined {
     return new Boolean(value);
   }
   if (Array.isArray(value)) {
-    return new List(value.map(wrapJSToJikiObject));
+    return new List(value.map(wrapJSToJikiObject).filter(v => v !== null && v !== undefined) as JikiObject[]);
   }
   if (typeof value === "object") {
-    return new Dictionary(new Map(Object.entries(value).map(([key, value]) => [key, wrapJSToJikiObject(value)])));
+    return new Dictionary(
+      new Map(
+        Object.entries(value)
+          .map(([key, value]) => [key, wrapJSToJikiObject(value)])
+          .filter(([_, v]) => v !== null && v !== undefined) as [string, JikiObject][]
+      )
+    );
   }
   // Fallback for unhandled types
   return new JikiString(value.toString());

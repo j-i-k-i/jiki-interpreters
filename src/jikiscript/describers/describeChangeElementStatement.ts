@@ -23,7 +23,7 @@ function describeChangeElementStatementList(
   frameResult: EvaluationResultChangeElementStatement,
   context: DescriptionContext
 ): Description {
-  const idx = frameResult.field.jikiObject?.value;
+  const idx = Jiki.unwrapJikiObject(frameResult.field.jikiObject);
   const ordinaledIndex = addOrdinalSuffix(idx);
 
   const oldValue = formatJikiObject(frameResult.oldValue);
@@ -74,7 +74,7 @@ function describeChangeElementStatementDictionary(
 
   const key = frameResult.field.jikiObject;
   const value = formatJikiObject(frameResult.value.jikiObject);
-  const keyCodeTag = codeTag(key, frameContext.field.location);
+  const keyCodeTag = key ? codeTag(key, frameContext.field.location) : "unknown";
   const valueCodeTag = codeTag(value, frameContext.value.location);
 
   if (frameResult.oldValue == undefined) {

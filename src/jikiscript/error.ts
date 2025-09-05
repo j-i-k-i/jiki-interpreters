@@ -118,6 +118,7 @@ export type RuntimeErrorType =
   | "CouldNotEvaluateFunction"
   | "CouldNotFindFunction"
   | "CouldNotFindFunctionWithSuggestion"
+  | "CustomFunctionError"
   | "MissingParenthesesForFunctionCall"
   | "InvalidExpression"
   | "RepeatCountMustBeNumber"

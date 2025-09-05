@@ -1,6 +1,6 @@
 import { stringSimilarity } from "string-similarity-js";
 import type { Token } from "../token";
-import type { Location } from "../../../location";
+import type { Location } from "../location";
 
 export type TypoInfo = {
   actual: string;

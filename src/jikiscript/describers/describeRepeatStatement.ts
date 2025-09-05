@@ -2,6 +2,7 @@ import { isString } from "../checks";
 import { EvaluationResultForeachStatement, EvaluationResultRepeatStatement } from "../evaluation-result";
 import { Description, DescriptionContext, FrameWithResult } from "../frames";
 import { codeTag, formatJikiObject } from "../helpers";
+import * as Jiki from "../jikiObjects";
 import { ForeachStatement, RepeatStatement } from "../statement";
 import { describeExpression } from "./describeSteps";
 import { addOrdinalSuffix } from "./helpers";
@@ -11,7 +12,7 @@ export function describeRepeatStatement(frame: FrameWithResult, context: Descrip
   const frameResult = frame.result as EvaluationResultRepeatStatement;
 
   let res;
-  if (frameResult.count.jikiObject?.value == 0) {
+  if (Jiki.unwrapJikiObject(frameResult.count.jikiObject) == 0) {
     res = describeNoRepeats(frameContext, frameResult);
   } else {
     res = describeRepeat(frameContext, frameResult);
@@ -23,7 +24,7 @@ export function describeRepeatStatement(frame: FrameWithResult, context: Descrip
 }
 function describeNoRepeats(frameContext: RepeatStatement, frameResult: EvaluationResultRepeatStatement): Description {
   const result = `<p>The repeat block was asked to run ${codeTag(
-    frameResult.count.jikiObject?.value,
+    Jiki.unwrapJikiObject(frameResult.count.jikiObject),
     frameContext.count.location
   )} times so this line did nothing.</p>`;
   const steps = [

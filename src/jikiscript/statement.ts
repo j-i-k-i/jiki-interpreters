@@ -119,11 +119,11 @@ export class ContinueStatement extends Statement {
 export class ForeachStatement extends Statement {
   constructor(
     public elementName: Token,
-    public secondElementName?: Token,
     public iterable: Expression,
     public counter: Token | null,
     public body: Statement[],
-    public location: Location
+    public location: Location,
+    public secondElementName?: Token
   ) {
     super("ForeachStatement");
   }

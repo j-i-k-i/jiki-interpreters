@@ -21,10 +21,9 @@ export function describeChangePropertyStatement(frame: FrameWithResult, context:
   const steps = [
     ...objectSteps,
     ...valueSteps,
-    `<li>Jiki set the ${codeTag(frameContext.property.lexeme, frameContext.property.location)} property to ${codeTag(
-      resultingValue,
-      frameContext.value.location
-    )}.</li>`,
+    `<li>Jiki set the ${codeTag(frameContext.property.lexeme, frameContext.property.location)} property to ${
+      resultingValue ? codeTag(resultingValue, frameContext.value.location) : "unknown"
+    }.</li>`,
   ];
   const result = `<p>This set the <code>${frameContext.property.lexeme}</code> property to <code>${resultingValue}</code>.</p>`;
 
