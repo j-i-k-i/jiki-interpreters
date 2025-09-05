@@ -11,7 +11,7 @@ export function describeChangeElementStatement(frame: FrameWithResult, context: 
   const frameContext = frame.context as ChangeElementStatement;
   const frameResult = frame.result as EvaluationResultChangeElementStatement;
 
-  if (frame.result.object.jikiObject instanceof Jiki.List) {
+  if (frameResult.object.jikiObject instanceof Jiki.List) {
     return describeChangeElementStatementList(frameContext, frameResult, context);
   } else {
     return describeChangeElementStatementDictionary(frameContext, frameResult, context);
