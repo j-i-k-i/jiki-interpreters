@@ -1,8 +1,26 @@
 # Agent Configuration
 
-## Project Setup
+## Project Overview
 
-This is a Bun + TypeScript project for Jiki's interpreters. The primary focus is JikiScript, which executes student JavaScript code and captures execution data for Jiki's interactive editor (breakpoints, time scrubbing, variable inspection, etc.).
+This is a Bun + TypeScript project that houses multiple educational interpreters for **Jiki** (by the Exercism team). Jiki is an educational coding environment that provides interactive, frame-by-frame code execution visualization.
+
+### Interpreters
+
+- **JikiScript** (current focus) - Educational language with simplified JavaScript-like syntax
+- **JavaScript** (planned) - Standard JavaScript interpreter
+- **Python** (planned) - Python interpreter
+
+All interpreters generate the same frame format to power Jiki's unified UI, allowing students to learn different languages with consistent visual debugging tools.
+
+### Key Educational Features
+
+- **Frame-by-frame execution**: Students can scrub through code execution like a video timeline
+- **Variable inspection**: Track how variables change over time
+- **Line-by-line descriptions**: See exactly what each line of code does
+- **Progressive language features**: Enable/disable syntax to gradually introduce concepts
+- **Educational feedback**: Descriptive error messages and execution explanations
+
+For detailed technical information, see the `.context/` folder, particularly `.context/jikiscript/` for the current interpreter.
 
 ## Commands
 
