@@ -101,7 +101,8 @@ export class Scanner {
     "\r": this.tokenizeWhitespace,
     "\n": this.tokenizeNewline,
     '"': this.tokenizeString,
-    "`": this.tokenizeTemplateLiteral,
+    // Template literals temporarily disabled
+    // "`": this.tokenizeTemplateLiteral,
   };
 
   constructor(

@@ -940,7 +940,8 @@ export class Parser {
       return new VariableLookupExpression(this.previous(), this.previous().location);
     }
 
-    if (this.match("BACKTICK")) return this.templateLiteral();
+    // Template literals temporarily disabled
+    // if (this.match("BACKTICK")) return this.templateLiteral();
 
     if (this.match("LEFT_PAREN")) {
       const lparen = this.previous();
