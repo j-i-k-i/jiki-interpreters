@@ -114,7 +114,7 @@ describe("keyword", () => {
   });
 });
 
-describe.skip("string", () => {
+describe("string", () => {
   test("empty double quotes", () => {
     const tokens = scan('""');
     expect(tokens[0].type).toBe("STRING");
