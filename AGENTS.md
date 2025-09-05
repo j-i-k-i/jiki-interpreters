@@ -6,10 +6,16 @@
 
 The `.context/` folder contains comprehensive documentation about:
 
-- **JikiScript interpreter architecture** (Scanner→Parser→Executor→Frames pipeline)
-- **Key concepts** (JikiObjects, Frames, EvaluationResults, educational features)
-- **Educational philosophy and UI integration**
-- **Implementation details and relationships between components**
+- **JikiScript interpreter** (`.context/jikiscript/`)
+  - Architecture (Scanner→Parser→Executor→Frames pipeline)
+  - Key concepts (JikiObjects, Frames, EvaluationResults)
+  - Educational features and progressive syntax
+  - Implementation details and component relationships
+- **JavaScript interpreter** (`.context/javascript/`)
+  - Architecture overview and pipeline details
+  - Modular executor system with describers
+  - Frame generation for UI integration
+  - Current features and planned extensions
 
 **Always start by reading the relevant `.context/` files to understand the system before proceeding with any task.**
 
@@ -19,8 +25,16 @@ This is a Bun + TypeScript project that houses multiple educational interpreters
 
 ### Interpreters
 
-- **JikiScript** (current focus) - Educational language with simplified JavaScript-like syntax
-- **JavaScript** (planned) - Standard JavaScript interpreter
+- **JikiScript** (implemented) - Educational language with simplified JavaScript-like syntax
+  - Full documentation in `.context/jikiscript/`
+  - Complete Scanner→Parser→Executor→Frames pipeline
+  - Educational features and progressive syntax support
+- **JavaScript** (in development) - Standard JavaScript interpreter
+  - Documentation in `.context/javascript/`
+  - Scanner, Parser, and basic Executor implemented
+  - Supports arithmetic, logical, and comparison operations
+  - Describers system for educational explanations
+  - Frame generation compatible with Jiki UI
 - **Python** (planned) - Python interpreter
 
 All interpreters generate the same frame format to power Jiki's unified UI, allowing students to learn different languages with consistent visual debugging tools.
