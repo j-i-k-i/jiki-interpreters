@@ -2,7 +2,7 @@ import { parse } from "@javascript/parser";
 import { ExpressionStatement } from "@javascript/statement";
 import { LiteralExpression, BinaryExpression } from "@javascript/expression";
 
-describe.skip("strings", () => {
+describe("strings", () => {
   describe("parse", () => {
     test("double quoted string", () => {
       const stmts = parse('"hello";');
