@@ -66,7 +66,7 @@ describe("two-character operators", () => {
   });
 });
 
-describe.skip("keyword", () => {
+describe("keyword", () => {
   test.each([
     ["break", "BREAK"],
     ["case", "CASE"],
