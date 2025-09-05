@@ -1,5 +1,18 @@
 # Agent Configuration
 
+## ⚠️ IMPORTANT: Check .context/ Directory FIRST
+
+**BEFORE making ANY changes or answering questions about this codebase, you MUST check the `.context/` directory for detailed technical information.**
+
+The `.context/` folder contains comprehensive documentation about:
+
+- **JikiScript interpreter architecture** (Scanner→Parser→Executor→Frames pipeline)
+- **Key concepts** (JikiObjects, Frames, EvaluationResults, educational features)
+- **Educational philosophy and UI integration**
+- **Implementation details and relationships between components**
+
+**Always start by reading the relevant `.context/` files to understand the system before proceeding with any task.**
+
 ## Project Overview
 
 This is a Bun + TypeScript project that houses multiple educational interpreters for **Jiki** (by the Exercism team). Jiki is an educational coding environment that provides interactive, frame-by-frame code execution visualization.
