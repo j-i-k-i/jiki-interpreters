@@ -13,7 +13,7 @@ import { formatJikiObject } from "./helpers";
 export abstract class Statement implements SomethingWithLocation {
   constructor(public type: String) {}
   abstract location: Location;
-  abstract children();
+  abstract children(): any[];
 }
 
 export class FunctionCallStatement extends Statement {

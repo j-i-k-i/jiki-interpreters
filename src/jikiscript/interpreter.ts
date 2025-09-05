@@ -208,8 +208,8 @@ export class Interpreter {
     interpreter.compile();
 
     return customFunctions.map(customFunction => {
-      const call = (_: ExecutionContext, args) => {
-        const nakedArgs = args.map(arg => {
+      const call = (_: ExecutionContext, args: any[]) => {
+        const nakedArgs = args.map((arg: any) => {
           // TODO: Need to check for lists etc too
           if (arg instanceof Jiki.Instance) {
             this.error("UnexpectedObjectArgumentForCustomFunction", Location.unknown);

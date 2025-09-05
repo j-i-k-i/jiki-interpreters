@@ -187,10 +187,10 @@ describe("get", () => {
       const varStmtWithGet = stmts[1] as SetVariableStatement;
       expect(varStmtWithGet.value).toBeInstanceOf(GetElementExpression);
       const getExpr = varStmtWithGet.value as GetElementExpression;
-      expect(getExpr.field.literal).toBe("name");
+      expect((getExpr.field as LiteralExpression).value).toBe("name");
       expect(getExpr.obj).toBeInstanceOf(GetElementExpression);
       const nestedGetExpr = getExpr.obj as GetElementExpression;
-      expect(nestedGetExpr.field.literal).toBe("director");
+      expect((nestedGetExpr.field as LiteralExpression).value).toBe("director");
       expect(nestedGetExpr.obj).toBeInstanceOf(VariableLookupExpression);
       expect((nestedGetExpr.obj as VariableLookupExpression).name.lexeme).toBe("movie");
     });

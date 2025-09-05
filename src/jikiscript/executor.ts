@@ -132,6 +132,7 @@ class BreakFlowControlError extends Error {
 }
 
 export class Executor {
+  [key: string]: any; // Allow dynamic method access
   private frames: Frame[] = [];
   private location: Location | null = null;
   private time: number = 0;
@@ -183,7 +184,7 @@ export class Executor {
     }
 
     this.externalFunctionDescriptions = {
-      functionDescriptions: this.externalFunctions.reduce((acc, fn) => {
+      functionDescriptions: this.externalFunctions.reduce((acc: Record<string, string>, fn) => {
         acc[fn.name] = fn.description;
         return acc;
       }, {}),
@@ -277,7 +278,7 @@ export class Executor {
     };
   }
 
-  private generateMeta(statements): Meta {
+  private generateMeta(statements: Statement[]): Meta {
     return {
       functionCallLog: this.functionCallLog,
       statements: statements,
@@ -1471,7 +1472,7 @@ export class Executor {
       });
     }
   }
-  private guardNull(value, location: Location) {
+  private guardNull(value: any, location: Location) {
     if (value !== null && value !== undefined) {
       return;
     }
@@ -1566,7 +1567,7 @@ export class Executor {
     };
   }
 
-  public withThis(newThis: Jiki.Instance | null, fn) {
+  public withThis(newThis: Jiki.Instance | null, fn: () => any) {
     const oldThis = this.contextualThis;
     try {
       this.contextualThis = newThis;

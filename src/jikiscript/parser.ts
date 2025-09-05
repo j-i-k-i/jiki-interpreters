@@ -1152,7 +1152,7 @@ export class Parser {
     this.error(type, this.peek().location, context);
   }
 
-  private consumeDo(type): void {
+  private consumeDo(type: string): void {
     const next = this.peek();
 
     // The DO will work, the EOL will fail.

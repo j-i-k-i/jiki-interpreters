@@ -108,8 +108,8 @@ describe("interpret", () => {
       class MutableNumber extends Jiki.Instance {
         public methods: Map<string, Jiki.Method> = new Map();
         constructor(public value: number) {
-          super("Foo");
-          this.methods.set("increment", new Jiki.Method("increment", 0, this.increment));
+          super(new Jiki.Class("Foo"));
+          this.methods.set("increment", new Jiki.Method("increment", "", "public", 0, this.increment));
         }
         public getMethod(name: string): Jiki.Method | undefined {
           return this.methods.get(name);
@@ -122,7 +122,7 @@ describe("interpret", () => {
         }
         private increment() {
           this.value += 1;
-          return null;
+          return new Jiki.Boolean(false); // return something concrete
         }
       }
 
@@ -130,7 +130,7 @@ describe("interpret", () => {
         externalFunctions: [
           {
             name: "get_number",
-            func: (_, i: Jiki.Number) => new MutableNumber(i.value),
+            func: (_: any, i: Jiki.Number) => new MutableNumber(i.value),
             description: "",
           },
         ],

@@ -111,7 +111,7 @@ test("execute", () => {
     object.setField("name", name);
   });
   Person.addProperty("name");
-  Person.addGetter("name");
+  Person.addGetter("name", "public");
 
   const context: EvaluationContext = { classes: [Person] };
   const { frames, error } = interpret(

@@ -84,7 +84,7 @@ function sortString(_: ExecutionContext, str: Jiki.JikiObject): Jiki.String {
     return new Jiki.String(str.value.split("").sort().join(""));
   }
   if (str instanceof Jiki.List) {
-    if (!str.value.every(el => el instanceof Jiki.String)) {
+    if (!str.value.every((el: Jiki.JikiObject) => el instanceof Jiki.String)) {
       throw new FunctionCallTypeMismatchError({
         argIdx: 1,
         expectedType: "list of strings",

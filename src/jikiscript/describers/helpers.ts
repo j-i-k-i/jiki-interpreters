@@ -6,7 +6,7 @@ export function deepTrim(str: string): string {
     .trim();
 }
 
-export function addOrdinalSuffix(number) {
+export function addOrdinalSuffix(number: number) {
   let lastDigit = number % 10,
     lastTwoDigits = number % 100;
   if (lastDigit === 1 && lastTwoDigits !== 11) {
@@ -21,7 +21,7 @@ export function addOrdinalSuffix(number) {
   return number + "th";
 }
 
-export function appendFullStopIfAppropriate(html): string {
+export function appendFullStopIfAppropriate(html: string): string {
   // If we're after a </p> or </ul> then this will already have
   // been handled deeper in the code so just return the input
   // If the string already ends with a full stop, return the input
@@ -57,7 +57,7 @@ export function isEqualityOperator(operator: string): boolean {
   return ["EQUALITY", "INEQUALITY", "GREATER", "LESS", "GREATER_EQUAL", "LESS_EQUAL"].includes(operator);
 }
 
-function ordinal_suffix_of(i) {
+function ordinal_suffix_of(i: number) {
   let j = i % 10,
     k = i % 100;
   if (j === 1 && k !== 11) {

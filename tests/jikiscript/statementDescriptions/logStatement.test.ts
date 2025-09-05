@@ -7,7 +7,7 @@ import { getTrueFunction, getFalseFunction } from "./helpers";
 
 const argyFunction = {
   name: "argy_fn",
-  func: (_, _1, _2) => new Jiki.String("Jeremy"),
+  func: (_: any, _1: any, _2: any) => new Jiki.String("Jeremy"),
   description: "start ${arg1} and ${arg2} end",
 };
 

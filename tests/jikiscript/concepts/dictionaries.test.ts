@@ -123,7 +123,7 @@ describe("parse", () => {
 
       const elems = (getExpr.obj as DictionaryExpression).elements;
       // take a map of key -> object, and turn it into key -> object.value
-      const as_h = {};
+      const as_h: Record<string, any> = {};
       elems.forEach((value, key) => {
         as_h[key] = (value as LiteralExpression).value;
       });
@@ -144,7 +144,7 @@ describe("parse", () => {
 
       const elems = (getExpr.obj as DictionaryExpression).elements;
       // take a map of key -> object, and turn it into key -> object.value
-      const as_h = {};
+      const as_h: Record<string, any> = {};
       elems.forEach((value, key) => {
         as_h[key] = (value as LiteralExpression).value;
       });
@@ -210,7 +210,8 @@ describe("parse", () => {
       const getExpr = setExpr.obj as GetElementExpression;
       expect(getExpr.obj).toBeInstanceOf(VariableLookupExpression);
       expect((getExpr.obj as VariableLookupExpression).name.lexeme).toBe("movie");
-      expect(getExpr.field).toBe("director");
+      expect(getExpr.field).toBeInstanceOf(LiteralExpression);
+      expect((getExpr.field as LiteralExpression).value).toBe("director");
     });
   });
 });

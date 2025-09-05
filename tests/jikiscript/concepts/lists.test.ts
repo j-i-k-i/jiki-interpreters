@@ -1,6 +1,7 @@
 import { interpret } from "@jikiscript/interpreter";
 import { parse } from "@jikiscript/parser";
 import { changeLanguage } from "@jikiscript/translator";
+import * as Jiki from "@jikiscript/jikiObjects";
 import { ChangeElementStatement, LogStatement, SetVariableStatement } from "@jikiscript/statement";
 import {
   AccessorExpression,
@@ -163,7 +164,14 @@ describe("parse", () => {
       expect(getExpr.obj).toBeInstanceOf(ListExpression);
       expect(getExpr.field).toBeInstanceOf(LiteralExpression);
 
-      expect((getExpr.obj as ListExpression).elements.map(e => e.value)).toEqual(["f", "o", "o", "b", "a", "r"]);
+      expect((getExpr.obj as ListExpression).elements.map(e => (e as LiteralExpression).value)).toEqual([
+        "f",
+        "o",
+        "o",
+        "b",
+        "a",
+        "r",
+      ]);
       expect((getExpr.field as LiteralExpression).value).toBe(4);
     });
     test("expression", () => {
@@ -176,7 +184,14 @@ describe("parse", () => {
       expect(getExpr.obj).toBeInstanceOf(ListExpression);
       expect(getExpr.field).toBeInstanceOf(BinaryExpression);
 
-      expect((getExpr.obj as ListExpression).elements.map(e => e.value)).toEqual(["f", "o", "o", "b", "a", "r"]);
+      expect((getExpr.obj as ListExpression).elements.map(e => (e as LiteralExpression).value)).toEqual([
+        "f",
+        "o",
+        "o",
+        "b",
+        "a",
+        "r",
+      ]);
 
       const fieldExpr = getExpr.field as BinaryExpression;
       expect(fieldExpr.operator.lexeme).toBe("+");
@@ -405,13 +420,13 @@ describe("execute", () => {
       const { frames } = interpret(`log ["f", "o", "o", "b", "a", "r"][4] `);
       expect(frames).toBeArrayOfSize(1);
       expect(frames[0].status).toBe("SUCCESS");
-      expect(frames[0].result?.jikiObject?.value).toBe("b");
+      expect(Jiki.unwrapJikiObject(frames[0].result?.jikiObject)).toBe("b");
     });
     test("expression", () => {
       const { frames } = interpret(`log ["f", "o", "o", "b", "a", "r"][4 + 1] `);
       expect(frames).toBeArrayOfSize(1);
       expect(frames[0].status).toBe("SUCCESS");
-      expect(frames[0].result?.jikiObject?.value).toBe("a");
+      expect(Jiki.unwrapJikiObject(frames[0].result?.jikiObject)).toBe("a");
     });
   });
 });

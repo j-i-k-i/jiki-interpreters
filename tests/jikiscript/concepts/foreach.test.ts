@@ -15,7 +15,7 @@ afterAll(() => {
   changeLanguage("en");
 });
 
-const generateEchosContext = echos => {
+const generateEchosContext = (echos: any[]) => {
   return {
     externalFunctions: [
       {

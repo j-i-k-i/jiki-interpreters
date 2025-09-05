@@ -96,13 +96,21 @@ export type SyntaxErrorType =
   | "MissingSecondElementNameAfterForeach"
   | "UnexpectedTokenAfterAccessModifier"
   | "UnexpectedVisibilityModifierOutsideClass"
-  | "UnexpectedVisibilityModifierInsideMethod";
+  | "UnexpectedVisibilityModifierInsideMethod"
+  | "MissingDotAfterThis"
+  | "MissingPropertyName"
+  | "MissingClassName"
+  | "MissingMethodName"
+  | "MissingStatement"
+  | "MissingToAfterChangeKeyword"
+  | "MissingCommaBetweenParameters"
+  | "UnexpectedTokenAfterParameters"
+  | "CannotAssignToConstant";
 
 export type SemanticErrorType =
   | "TopLevelReturn"
   | "VariableUsedInOwnInitializer"
   | "DuplicateVariableName"
-  | "CannotAssignToConstant"
   | "InvalidPostfixOperand";
 
 export type RuntimeErrorType =

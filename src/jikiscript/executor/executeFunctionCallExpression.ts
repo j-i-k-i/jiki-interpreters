@@ -47,7 +47,7 @@ export function executeFunctionCallExpression(
   // The catch here always rethrows the error.
   try {
     ce = executor.evaluate(expression.callee);
-  } catch (e: Error) {
+  } catch (e: any) {
     throwMissingFunctionError(executor, expression, e);
   }
   const callee = ce as EvaluationResultFunctionLookupExpression;

@@ -23,7 +23,7 @@ export abstract class JikiObject {
     this.objectId = Math.random().toString(36).substring(7);
   }
 
-  public abstract toArg();
+  public abstract toArg(): any;
   public abstract toString(): string;
 }
 
@@ -169,6 +169,11 @@ export class Instance extends JikiObject {
   constructor(private jikiClass: Class) {
     super("instance");
   }
+
+  public get value(): never {
+    throw new Error("value should not be called on instance");
+  }
+
   public toArg(): Instance {
     return this;
   }
@@ -229,12 +234,12 @@ export class Number extends Literal {
   }
 }
 
-export class String extends Literal {
+export class JikiString extends Literal {
   constructor(value: string) {
     super("string", value);
   }
-  public toArg(): String {
-    return new String(this.value);
+  public toArg(): JikiString {
+    return new JikiString(this.value);
   }
 }
 
@@ -254,13 +259,13 @@ export class List extends Primitive {
     super("list", value);
   }
   public toArg(): List {
-    return new List(this.value.map(item => item.toArg()));
+    return new List(this.value.map((item: JikiObject) => item.toArg()));
   }
   public toString() {
     if (this.value.length === 0) {
       return "[]";
     }
-    return `[ ${this.value.map(item => item.toString()).join(", ")} ]`;
+    return `[ ${this.value.map((item: JikiObject) => item.toString()).join(", ")} ]`;
   }
 }
 
@@ -316,7 +321,7 @@ export function unwrapJikiObject(value: any): any {
   return value;
 }
 
-export function wrapJSToJikiObject(value: any) {
+export function wrapJSToJikiObject(value: any): JikiObject | null | undefined {
   if (value === null) {
     return null;
   }
@@ -328,7 +333,7 @@ export function wrapJSToJikiObject(value: any) {
     return value;
   }
   if (isString(value)) {
-    return new String(value);
+    return new JikiString(value);
   }
   if (typeof value === "number") {
     return new Number(value);
@@ -342,4 +347,9 @@ export function wrapJSToJikiObject(value: any) {
   if (typeof value === "object") {
     return new Dictionary(new Map(Object.entries(value).map(([key, value]) => [key, wrapJSToJikiObject(value)])));
   }
+  // Fallback for unhandled types
+  return new JikiString(value.toString());
 }
+
+// Export aliases for compatibility
+export const String = JikiString;

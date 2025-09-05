@@ -4,12 +4,12 @@ import { Location } from "@jikiscript/location";
 import { Span } from "@jikiscript/location";
 import * as Jiki from "@jikiscript/jikiObjects";
 
-export const assertHTML = (actual, result, steps) => {
-  const tidy = text =>
+export const assertHTML = (actual: string, result: string, steps: string[]) => {
+  const tidy = (text: string) =>
     text
       .split("\n")
-      .map(line => line.trim())
-      .filter(line => line.length > 0)
+      .map((line: string) => line.trim())
+      .filter((line: string) => line.length > 0)
       .flat() // Remove nils
       .join("\n")
       .replaceAll(/>\s+/g, ">")
@@ -70,10 +70,10 @@ export const mehWithArgsFunction = {
   description: "is a little meh",
 };
 
-export const contextToDescriptionContext = (context): DescriptionContext => {
+export const contextToDescriptionContext = (context: any): DescriptionContext => {
   // Convert array into object with name as key
   // and description as value
-  const funcs = context.externalFunctions.reduce((acc, fn) => {
+  const funcs = context.externalFunctions.reduce((acc: any, fn: any) => {
     acc[fn.name] = fn.description;
     return acc;
   }, {});

@@ -33,7 +33,7 @@ describe("parse", () => {
     expect(stmts[0]).toBeInstanceOf(ChangePropertyStatement);
     const changeStmt = stmts[0] as ChangePropertyStatement;
     expect(changeStmt.object).toBeInstanceOf(VariableLookupExpression);
-    expect(changeStmt.object.name.lexeme).toBe("foo");
+    expect((changeStmt.object as VariableLookupExpression).name.lexeme).toBe("foo");
     expect(changeStmt.property.lexeme).toBe("bar");
   });
 

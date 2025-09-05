@@ -1,6 +1,7 @@
 import { interpret } from "@jikiscript/interpreter";
 import { parse } from "@jikiscript/parser";
 import { changeLanguage } from "@jikiscript/translator";
+import * as Jiki from "@jikiscript/jikiObjects";
 import { ChangeElementStatement, LogStatement, SetVariableStatement } from "@jikiscript/statement";
 import {
   BinaryExpression,
@@ -79,7 +80,7 @@ describe("strings", () => {
       const { frames } = interpret(`log "foobar"`);
       expect(frames).toBeArrayOfSize(1);
       expect(frames[0].status).toBe("SUCCESS");
-      expect(frames[0].result?.jikiObject?.value).toBe("foobar");
+      expect(Jiki.unwrapJikiObject(frames[0].result?.jikiObject)).toBe("foobar");
     });
 
     test("iterate", () => {
@@ -90,8 +91,8 @@ describe("strings", () => {
       `);
       expect(frames).toBeArrayOfSize(4);
       expect(frames[2].status).toBe("SUCCESS");
-      expect(frames[1].result?.jikiObject?.value).toBe("a");
-      expect(frames[3].result?.jikiObject?.value).toBe("b");
+      expect(Jiki.unwrapJikiObject(frames[1].result?.jikiObject)).toBe("a");
+      expect(Jiki.unwrapJikiObject(frames[3].result?.jikiObject)).toBe("b");
     });
 
     describe("index access", () => {
@@ -99,13 +100,13 @@ describe("strings", () => {
         const { frames } = interpret(`log "foobar"[4] `);
         expect(frames).toBeArrayOfSize(1);
         expect(frames[0].status).toBe("SUCCESS");
-        expect(frames[0].result?.jikiObject?.value).toBe("b");
+        expect(Jiki.unwrapJikiObject(frames[0].result?.jikiObject)).toBe("b");
       });
       test("expression", () => {
         const { frames } = interpret(`log "foobar"[4 + 1] `);
         expect(frames).toBeArrayOfSize(1);
         expect(frames[0].status).toBe("SUCCESS");
-        expect(frames[0].result?.jikiObject?.value).toBe("a");
+        expect(Jiki.unwrapJikiObject(frames[0].result?.jikiObject)).toBe("a");
       });
     });
   });

@@ -774,7 +774,7 @@ describe("context", () => {
       `;
       const { frames } = evaluateFunction(code, { wrapTopLevelStatements: true }, "main");
       expect(frames).toBeArrayOfSize(4);
-      expect(frames[3].result?.jikiObject.value).toBe(3);
+      expect(unwrapJikiObject(frames[3].result?.jikiObject)).toBe(3);
     });
 
     test("don't wrap function declarations", () => {
@@ -789,7 +789,7 @@ describe("context", () => {
       );
       expect(value).toBe(1);
       expect(frames).toBeArrayOfSize(1);
-      expect(frames[0].result?.jikiObject?.value).toBe(1);
+      expect(unwrapJikiObject(frames[0].result?.jikiObject)).toBe(1);
     });
   });
 });
@@ -819,7 +819,7 @@ describe("custom functions", () => {
     );
     expect(value).toBe("Yes");
     expect(frames).toBeArrayOfSize(1);
-    expect(frames[0].result?.jikiObject.value).toBe("Yes");
+    expect(unwrapJikiObject(frames[0].result?.jikiObject)).toBe("Yes");
   });
 
   test("args123", () => {
@@ -846,7 +846,7 @@ describe("custom functions", () => {
     );
     expect(value).toBe("Food");
     expect(frames).toBeArrayOfSize(1);
-    expect(frames[0].result?.jikiObject.value).toBe("Food");
+    expect(unwrapJikiObject(frames[0].result?.jikiObject)).toBe("Food");
   });
 
   test("functions that rely on functions", () => {
@@ -884,6 +884,6 @@ describe("custom functions", () => {
     );
     expect(value).toBe(true);
     expect(frames).toBeArrayOfSize(1);
-    expect(frames[0].result?.jikiObject.value).toBe(true);
+    expect(unwrapJikiObject(frames[0].result?.jikiObject)).toBe(true);
   });
 });
