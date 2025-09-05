@@ -25,6 +25,7 @@ export abstract class JikiObject {
 
   public abstract toArg(): any;
   public abstract toString(): string;
+  public abstract get value(): any;
 }
 
 export class Method {
