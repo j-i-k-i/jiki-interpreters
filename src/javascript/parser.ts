@@ -9,7 +9,7 @@ import {
 } from "./expression";
 import { Location } from "./location";
 import { Scanner } from "./scanner";
-import { Statement, ExpressionStatement, VariableDeclaration } from "./statement";
+import { Statement, ExpressionStatement, VariableDeclaration, BlockStatement } from "./statement";
 import { type Token, type TokenType } from "./token";
 
 export class Parser {
@@ -38,8 +38,8 @@ export class Parser {
 
   private statement(): Statement | null {
     try {
-      // Skip comments (they don't produce statements)
-      while (this.check("LINE_COMMENT", "BLOCK_COMMENT")) {
+      // Skip comments and EOL tokens (they don't produce statements)
+      while (this.check("LINE_COMMENT", "BLOCK_COMMENT", "EOL")) {
         this.advance();
       }
 
@@ -51,6 +51,16 @@ export class Parser {
       // Handle variable declarations
       if (this.match("LET")) {
         return this.variableDeclaration();
+      }
+
+      // Handle block statements
+      if (this.match("LEFT_BRACE")) {
+        return this.blockStatement();
+      }
+
+      // If we've reached a right brace outside of a block context, it's an error
+      if (this.check("RIGHT_BRACE")) {
+        this.error("UnexpectedRightBrace", this.peek().location);
       }
 
       // Handle expression statements
@@ -70,6 +80,26 @@ export class Parser {
     const initializer = this.expression();
     this.consumeSemicolon();
     return new VariableDeclaration(name, initializer, Location.between(name, initializer));
+  }
+
+  private blockStatement(): Statement {
+    const leftBrace = this.previous();
+    const statements = this.block();
+    const rightBrace = this.consume("RIGHT_BRACE", "MissingRightBraceAfterBlock");
+    return new BlockStatement(statements, Location.between(leftBrace, rightBrace));
+  }
+
+  private block(): Statement[] {
+    const statements: Statement[] = [];
+
+    while (!this.check("RIGHT_BRACE") && !this.isAtEnd()) {
+      const statement = this.statement();
+      if (statement) {
+        statements.push(statement);
+      }
+    }
+
+    return statements;
   }
 
   private expression(): Expression {

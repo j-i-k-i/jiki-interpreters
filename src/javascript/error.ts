@@ -9,7 +9,9 @@ export type SyntaxErrorType =
   | "UnterminatedString"
   | "UnterminatedComment"
   | "MissingVariableName"
-  | "MissingInitializerInVariableDeclaration";
+  | "MissingInitializerInVariableDeclaration"
+  | "MissingRightBraceAfterBlock"
+  | "UnexpectedRightBrace";
 
 export class SyntaxError extends Error {
   constructor(

@@ -44,3 +44,15 @@ export class VariableDeclaration extends Statement {
     return [this.initializer];
   }
 }
+
+export class BlockStatement extends Statement {
+  constructor(
+    public statements: Statement[],
+    public location: Location
+  ) {
+    super("BlockStatement");
+  }
+  public children() {
+    return this.statements.flatMap(stmt => stmt.children());
+  }
+}

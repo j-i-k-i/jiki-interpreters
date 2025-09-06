@@ -23,57 +23,130 @@ export function interpret(sourceCode: string): InterpretResult {
     // Execute statements and create frames
     const frames: Frame[] = [];
 
-    for (const statement of statements) {
-      try {
-        const result = executor.executeStatement(statement);
+    function executeStatementsWithFrames(statements: Statement[], currentSourceCode: string = sourceCode): void {
+      for (const statement of statements) {
+        try {
+          // Handle block statements specially to manage scoping and generate frames for inner statements
+          if (statement.type === "BlockStatement") {
+            const blockStatement = statement as any; // BlockStatement type
 
-        // Create a success frame
-        const frame: Frame = {
-          line: statement.location.line,
-          code: sourceCode.substring(statement.location.absolute.begin - 1, statement.location.absolute.end - 1),
-          status: "SUCCESS",
-          result: result || undefined,
-          time: 0.01, // Simplified timing
-          timelineTime: frames.length + 1,
-          description: result
-            ? describeFrame({
+            // Create new environment for block scope
+            const previousEnv = executor.environment;
+            const { Environment } = require("./environment");
+            const blockEnv = new Environment(previousEnv);
+
+            try {
+              // Switch to block environment
+              executor.environment = blockEnv;
+
+              // Execute inner statements with block environment
+              executeStatementsWithFrames(blockStatement.statements, currentSourceCode);
+
+              // Create a frame for the block itself (but don't execute it again)
+              const frame: Frame = {
                 line: statement.location.line,
-                code: sourceCode.substring(statement.location.absolute.begin - 1, statement.location.absolute.end - 1),
+                code: currentSourceCode.substring(
+                  statement.location.absolute.begin - 1,
+                  statement.location.absolute.end - 1
+                ),
                 status: "SUCCESS",
-                result: result,
+                result: {
+                  type: "BlockStatement" as any,
+                  statements: blockStatement.statements,
+                } as any,
                 time: 0.01,
                 timelineTime: frames.length + 1,
-                description: "", // Will be filled by describeFrame
+                description: describeFrame({
+                  line: statement.location.line,
+                  code: currentSourceCode.substring(
+                    statement.location.absolute.begin - 1,
+                    statement.location.absolute.end - 1
+                  ),
+                  status: "SUCCESS",
+                  result: { type: "BlockStatement", statements: blockStatement.statements } as any,
+                  time: 0.01,
+                  timelineTime: frames.length + 1,
+                  description: "",
+                  context: statement,
+                  priorVariables: frames.length > 0 ? { ...frames[frames.length - 1].variables } : {},
+                  variables: previousEnv.getAllVariables(), // Use previous environment for final variables
+                }),
                 context: statement,
                 priorVariables: frames.length > 0 ? { ...frames[frames.length - 1].variables } : {},
-                variables: executor.getVariables(),
-              })
-            : `Executed statement: ${statement.type}`,
-          context: statement,
-          priorVariables: frames.length > 0 ? { ...frames[frames.length - 1].variables } : {},
-          variables: executor.getVariables(),
-        };
+                variables: previousEnv.getAllVariables(), // Block variables should not leak out
+              };
+              frames.push(frame);
+            } finally {
+              // Always restore previous environment
+              executor.environment = previousEnv;
+            }
+          } else {
+            const result = executor.executeStatement(statement);
+            const frame: Frame = createFrame(statement, result, currentSourceCode, frames, executor);
+            frames.push(frame);
+          }
+        } catch (error) {
+          // Create an error frame
+          const frame: Frame = {
+            line: statement.location.line,
+            code: currentSourceCode.substring(
+              statement.location.absolute.begin - 1,
+              statement.location.absolute.end - 1
+            ),
+            status: "ERROR",
+            error: error as RuntimeError,
+            time: 0.01,
+            timelineTime: frames.length + 1,
+            description: `Error: ${(error as Error).message}`,
+            context: statement,
+            priorVariables: frames.length > 0 ? { ...frames[frames.length - 1].variables } : {},
+            variables: executor.getVariables(),
+          };
 
-        frames.push(frame);
-      } catch (error) {
-        // Create an error frame
-        const frame: Frame = {
-          line: statement.location.line,
-          code: sourceCode.substring(statement.location.absolute.begin - 1, statement.location.absolute.end - 1),
-          status: "ERROR",
-          error: error as RuntimeError,
-          time: 0.01,
-          timelineTime: frames.length + 1,
-          description: `Error: ${(error as Error).message}`,
-          context: statement,
-          priorVariables: frames.length > 0 ? { ...frames[frames.length - 1].variables } : {},
-          variables: executor.getVariables(),
-        };
-
-        frames.push(frame);
-        return { frames, error: error as Error, success: false };
+          frames.push(frame);
+          throw error;
+        }
       }
     }
+
+    function createFrame(
+      statement: Statement,
+      result: any,
+      sourceCode: string,
+      frames: Frame[],
+      executor: Executor
+    ): Frame {
+      // Keep the original result as is - tests expect the full evaluation result
+      let frameResult = result;
+
+      return {
+        line: statement.location.line,
+        code: sourceCode.substring(statement.location.absolute.begin - 1, statement.location.absolute.end - 1),
+        status: "SUCCESS",
+        result: frameResult || undefined,
+        time: 0.01, // Simplified timing
+        timelineTime: frames.length + 1,
+        description: result
+          ? describeFrame({
+              line: statement.location.line,
+              code: sourceCode.substring(statement.location.absolute.begin - 1, statement.location.absolute.end - 1),
+              status: "SUCCESS",
+              result: result,
+              time: 0.01,
+              timelineTime: frames.length + 1,
+              description: "", // Will be filled by describeFrame
+              context: statement,
+              priorVariables: frames.length > 0 ? { ...frames[frames.length - 1].variables } : {},
+              variables: executor.getVariables(),
+            })
+          : `Executed statement: ${statement.type}`,
+        context: statement,
+        priorVariables: frames.length > 0 ? { ...frames[frames.length - 1].variables } : {},
+        variables: executor.getVariables(),
+      };
+    }
+
+    executeStatementsWithFrames(statements);
 
     return { frames, error: null, success: true };
   } catch (error) {

@@ -10,7 +10,7 @@ import {
 } from "./expression";
 import { Location } from "./location";
 import type { Statement } from "./statement";
-import { ExpressionStatement, VariableDeclaration } from "./statement";
+import { ExpressionStatement, VariableDeclaration, BlockStatement } from "./statement";
 import type { EvaluationResult } from "./evaluation-result";
 import { createJSObject, type JikiObject } from "./jsObjects";
 
@@ -20,6 +20,7 @@ import { executeBinaryExpression } from "./executor/executeBinaryExpression";
 import { executeUnaryExpression } from "./executor/executeUnaryExpression";
 import { executeGroupingExpression } from "./executor/executeGroupingExpression";
 import { executeIdentifierExpression } from "./executor/executeIdentifierExpression";
+import { executeBlockStatement } from "./executor/executeBlockStatement";
 
 export type RuntimeErrorType = "InvalidBinaryExpression" | "InvalidUnaryExpression" | "UnsupportedOperation";
 
@@ -65,6 +66,14 @@ export class Executor {
       } as any;
     }
 
+    if (statement instanceof BlockStatement) {
+      executeBlockStatement(this, statement);
+      return {
+        type: "BlockStatement",
+        statements: statement.statements,
+      } as any;
+    }
+
     return null;
   }
 
@@ -94,6 +103,19 @@ export class Executor {
       expression.location,
       "UnsupportedOperation"
     );
+  }
+
+  public executeBlock(statements: Statement[], environment: Environment): void {
+    const previous = this.environment;
+    try {
+      this.environment = environment;
+
+      for (const statement of statements) {
+        this.executeStatement(statement);
+      }
+    } finally {
+      this.environment = previous;
+    }
   }
 
   public getVariables(): Record<string, JikiObject> {
