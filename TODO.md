@@ -31,16 +31,19 @@ For everything in here, base your work in the JikiScript interpreter.
 - [ ] Add errors for missing variables, so if you do `5 + a` and there is no `a` that's a runtime error on that frame etc. For this you might need to add the ability to actually use variables if that's not defined yet.
 - [ ] Add errors for updating a variable before it's defined. That should be a runtime error on that frame. Don't worry about seeing if it's defined later. We're just wanting to say "We don't know about this `a` thing you're discussing"
 - [ ] Add negation.
+- [ ] Add nested negation (e.g. `-(-(-5 + x))`).
 - [ ] Add a new language feature interpreter for allowShadowing. See language features for JikiScript to see how this works. If the feature is enabled, then inner variables can be created by let inside blocks to shadow outer variables. If it is false, then any attempt to shadow with let should result in a shadowing disabled runtime error. Remember to add tests for both cases. Look how runtime errors work in JikiScript.
 - [ ] Add an if statement to the JavaScript interpreter. Add tests for parsing and executing. Ensure that any syntax errors are caught. Look at the JikiScript tests for examples.
 - [ ] Add a language feature to the JavaScript interpreter for truthiness. See language features for JikiScript to see how this works. If enabled then truthiness should behave as normal in JS. If not, then only booleans (or functions/variables returning booleans etc) are allowed to be compared. If you compare non-booleans, a runtime error of TruthinessDisabled (or similar) should be added to the frame etc. Look how runtime errors work in JikiScript.
-- [ ] Add an `if` statement. Look at the JikiScript implementation for inspriation. Don't do `else` yet. It should honor `allowShadowing` although that should be implicit anyway from the Binary Expression
+- [ ] Add an `if` statement. Look at the JikiScript implementation for inspriation. Don't do `else` yet. It should honor `allowShadowing` although that should be implicit anyway from the Binary Expression.
+- [ ] Add `else` statements. Ensure they work with `else if`. Remember to add tests and check the JikiScript implementation as your base level.
+- [ ] We're going to deviate from normal
 
 ## Python
 
 - [x] Add basic scanning, parsing and exec of numbers for Python, using the same patterns as the JS and JikiScript interpteters. Add equivelent tests.
 - [x] Add booleans
-- [ ] Add strings
+- [x] Add strings
 - [ ] Add basic grouping and other operations that are present to do with numbers/strings/bools in the JS implementation.
 - [ ] Add variables. Reference the JikiScript and JavaScript implementations to see how things should be set up. For now, don't worry about scoping, etc. We'll add that next. Just implement setting and updating of variables. Make sure to add corrosponding parser and implementer concept tests. Also add syntax error tests. Look at the JikiScript tests for inspiration.
 - [ ] Add errors for missing variables, so if you do `5 + a` and there is no `a` that's a runtime error on that frame etc.Don't worry about seeing if it's defined later. We're just wanting to say "We don't know about this `a` thing you're discussing
