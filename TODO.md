@@ -30,4 +30,7 @@ For everything in here, base your work in the JikiScript interpreter.
 
 ## Python
 
-- [ ] Add basic scanning, parsing and exec of numbers for Python, using the same patterns as the JS and JikiScript interpteters. Add equivelent tests
+- [x] Add basic scanning, parsing and exec of numbers for Python, using the same patterns as the JS and JikiScript interpteters. Add equivelent tests.
+- [ ] Add booleans
+- [ ] Add strings
+- [ ] Add basic grouping and other operations that are present to do with numbers/strings/bools in the JS implementation.

@@ -1,0 +1,229 @@
+# Python Interpreter Architecture
+
+## Pipeline Overview
+
+```
+Source Code → Scanner → Parser → Executor → Frames → UI
+                ↓         ↓         ↓
+             Tokens     AST    Evaluation
+                              + Descriptions
+```
+
+## Component Details
+
+### 1. Scanner (`src/python/scanner.ts`)
+
+Tokenizes Python source code into a stream of tokens.
+
+**Responsibilities:**
+
+- Lexical analysis of Python syntax
+- Token generation with location tracking
+- Comment handling (preserved for educational context)
+- String parsing with Python-specific features (single/double quotes, triple quotes)
+- Number parsing (integers, floats, scientific notation)
+- Keyword and identifier recognition
+
+**Token Types:**
+
+- Single-character tokens: `(`, `)`, `{`, `}`, `[`, `]`, `,`, `.`, `;`, etc.
+- Multi-character tokens: `==`, `!=`, `<=`, `>=`, `and`, `or`, `not`, etc.
+- Literals: strings, numbers, True, False, None
+- Keywords: if, else, elif, for, while, def, return, etc.
+- Identifiers: variable and function names
+
+### 2. Parser (`src/python/parser.ts`)
+
+Builds an Abstract Syntax Tree (AST) from tokens using recursive descent parsing.
+
+**Expression Types:**
+
+- `LiteralExpression`: Numbers, strings, booleans, None
+- `BinaryExpression`: Arithmetic and logical operations
+- `UnaryExpression`: Negation and logical not
+- `GroupingExpression`: Parenthesized expressions
+- `IdentifierExpression`: Variable references (planned)
+- `CallExpression`: Function calls (planned)
+
+**Statement Types:**
+
+- `ExpressionStatement`: Standalone expressions
+- `AssignmentStatement`: Variable assignments (planned)
+- `IfStatement`: Conditionals (planned)
+- `WhileStatement`: Loops (planned)
+- `FunctionDeclaration`: Functions (planned)
+
+**Operator Precedence (Python-specific):**
+
+1. Grouping `()`
+2. Unary `-`, `not`
+3. Power `**` (right-associative)
+4. Multiplicative `*`, `/`, `//`, `%`
+5. Additive `+`, `-`
+6. Relational `<`, `>`, `<=`, `>=`
+7. Equality `==`, `!=`
+8. Logical AND `and`
+9. Logical OR `or`
+
+### 3. Executor (`src/python/executor.ts`)
+
+Evaluates the AST and generates execution frames.
+
+**Modular Design:**
+Each expression and statement type has its own executor module:
+
+**Expression Executors:**
+
+- `executor/executeLiteralExpression.ts`
+- `executor/executeBinaryExpression.ts`
+- `executor/executeUnaryExpression.ts`
+- `executor/executeGroupingExpression.ts`
+- `executor/executeIdentifierExpression.ts` (planned)
+
+**Statement Executors:**
+
+- `executor/executeExpressionStatement.ts`
+- `executor/executeAssignmentStatement.ts` (planned)
+
+**Modular Executor Pattern:**
+
+The Python interpreter follows the same consistent modular pattern as JavaScript:
+
+1. **Main Executor**: The `Executor` class coordinates execution by delegating to specialized functions
+2. **Individual Executors**: Each AST node type has its own dedicated executor function
+3. **Consistent Interface**: All executor functions take `(executor: Executor, node: ASTNode)` and return `EvaluationResult`
+4. **Single Responsibility**: Each executor handles one specific Python construct
+5. **Easy Extension**: New Python features require only adding a new executor module
+
+**Execution Flow:**
+
+1. Main executor receives AST node via `executeStatement()` or `evaluate()`
+2. Delegates to appropriate specialized executor function
+3. Executor function evaluates child nodes recursively
+4. Performs the Python-specific operation logic
+5. Wraps result in PyObject
+6. Returns structured EvaluationResult
+7. Main interpreter generates frame with description
+8. Updates environment state as needed
+
+### 4. Describers (`src/python/describers/`)
+
+Generate human-readable descriptions of execution steps.
+
+**Describer Modules:**
+
+- `describeLiteralExpression.ts`: Explains number/string/boolean values
+- `describeBinaryExpression.ts`: Explains arithmetic and logical operations
+- `describeUnaryExpression.ts`: Describes negation and not operations
+- `describeGroupingExpression.ts`: Notes parenthesized evaluation
+- `describeExpressionStatement.ts`: Describes standalone expressions
+
+**Description Examples:**
+
+```python
+42
+# "Evaluating number literal: 42"
+
+3.14 + 2.86
+# Step 1: "Evaluating addition: 3.14 + 2.86 = 6.0"
+
+not True
+# "Applying logical not: not True evaluates to False"
+```
+
+### 5. Environment (`src/python/environment.ts`)
+
+Manages variable scoping and storage using Python's scoping rules.
+
+**Python-Specific Scoping:**
+
+- **LEGB Rule**: Local, Enclosing, Global, Built-in scope resolution
+- **Function Scoping**: Variables are scoped to functions, not blocks
+- **Global/Nonlocal Keywords**: Explicit scope modification (planned)
+
+### 6. PyObjects (`src/python/pyObjects.ts`)
+
+Wrapper objects around Python primitives for enhanced tracking.
+
+**Architecture:**
+
+- All Python objects extend the shared `JikiObject` base class from `src/shared/jikiObject.ts`
+- Provides consistent interface across all interpreters
+- Maintains Python-specific functionality while sharing common infrastructure
+
+**Types:**
+
+- `PyNumber`: Numeric values (int/float distinction) with Python semantics
+- `PyString`: String values with Python-specific features
+- `PyBoolean`: True/False values
+- `PyNone`: None value representation
+- `PyList`: List values (planned)
+- `PyDict`: Dictionary values (planned)
+
+**Python-Specific Features:**
+
+- Integer/float type distinction
+- String immutability
+- Truthiness rules (empty containers are falsy)
+- Type coercion behaviors
+
+### 7. Frame System
+
+**Shared Framework (`src/shared/frames.ts`):**
+The Python interpreter uses the unified frame system shared by all interpreters.
+
+**Python-Specific Extensions (`src/python/frameDescribers.ts`):**
+
+- `PythonFrame`: Extends base Frame with Python-specific result types
+- `describeFrame()`: Generates educational descriptions for Python execution steps
+- Integrates with shared frame system while maintaining Python-specific functionality
+
+## Error Handling
+
+### Parse Errors
+
+- Syntax errors with location information
+- Expected token messages with Python context
+- Indentation error handling (planned)
+- Recovery suggestions
+
+### Runtime Errors
+
+- Type errors with Python-specific context
+- Name errors for undefined variables (planned)
+- Division by zero handling
+- Educational error messages with Python terminology
+
+## Python-Specific Features
+
+### Number Handling
+
+- Integer vs float distinction
+- Arbitrary precision integers (educational representation)
+- Scientific notation support
+- Division behavior (`/` vs `//`)
+
+### String Handling
+
+- Single, double, and triple quote support
+- Escape sequences
+- String formatting (planned)
+- Unicode support
+
+## Extensibility
+
+The modular architecture allows easy addition of Python features:
+
+1. **New Expression Types**: Add parser rule, create executor module, add describer
+2. **New Operators**: Update scanner, add to parser precedence, implement in executor
+3. **New Statement Types**: Add parser rule, implement execution logic, create describer
+4. **Python Features**: Extend environment for scoping, add PyObject types as needed
+
+## Testing Strategy
+
+- **Scanner Tests**: Token generation accuracy with Python syntax
+- **Parser Tests**: AST construction correctness for Python grammar
+- **Executor Tests**: Evaluation results and frame generation
+- **Describer Tests**: Description accuracy and Python terminology
+- **Integration Tests**: End-to-end Python interpretation
+- **Error Tests**: Proper error handling with Python-specific messages

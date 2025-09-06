@@ -22,6 +22,7 @@
     "paths": {
       "@jikiscript/*": ["src/jikiscript/*"],
       "@javascript/*": ["src/javascript/*"],
+      "@python/*": ["src/python/*"],
       "@utils/*": ["src/utils/*"]
     }
   },

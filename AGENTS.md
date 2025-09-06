@@ -16,6 +16,11 @@ The `.context/` folder contains comprehensive documentation about:
   - Modular executor system with describers
   - Frame generation for UI integration
   - Current features and planned extensions
+- **Python interpreter** (`.context/python/`)
+  - Architecture documentation and implementation details
+  - Python-specific features and object system
+  - Educational Python syntax and frame generation
+  - Basic numeric literal support implemented
 
 **Always start by reading the relevant `.context/` files to understand the system before proceeding with any task.**
 
@@ -40,7 +45,12 @@ This is a Bun + TypeScript project that houses multiple educational interpreters
   - Supports arithmetic, logical, and comparison operations
   - Describers system for educational explanations
   - Frame generation compatible with Jiki UI
-- **Python** (planned) - Python interpreter
+- **Python** (basic implementation) - Python interpreter
+  - Documentation in `.context/python/`
+  - Scanner, Parser, and basic Executor implemented
+  - Supports numeric literals (integers, floats, scientific notation)
+  - PyObjects system extending shared JikiObject base class
+  - Frame generation compatible with Jiki UI
 
 All interpreters generate the same frame format to power Jiki's unified UI, allowing students to learn different languages with consistent visual debugging tools.
 
