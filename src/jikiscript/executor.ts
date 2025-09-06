@@ -114,6 +114,11 @@ import { executeVariableLookupExpression } from "./executor/executeVariableLooku
 import { executeUnaryExpression } from "./executor/executeUnaryExpression";
 import { executeLogicalExpression } from "./executor/executeLogicalExpression";
 import { executeGroupingExpression } from "./executor/executeGroupingExpression";
+import { executeFunctionCallStatement } from "./executor/executeFunctionCallStatement";
+import { executeMethodCallStatement } from "./executor/executeMethodCallStatement";
+import { executeFunctionLookupExpression } from "./executor/executeFunctionLookupExpression";
+import { executeClassLookupExpression } from "./executor/executeClassLookupExpression";
+import { executeChangePropertyStatement } from "./executor/executeChangePropertyStatement";
 
 export type ExecutionContext = {
   state: Record<string, any>;
@@ -401,26 +406,10 @@ export class Executor {
   }
 
   public visitFunctionCallStatement(statement: FunctionCallStatement): void {
-    this.executeFrame<EvaluationResultFunctionCallStatement>(statement, () => {
-      const result = this.visitFunctionCallExpression(statement.expression) as EvaluationResultFunctionCallExpression;
-
-      return {
-        type: "FunctionCallStatement",
-        jikiObject: result.jikiObject,
-        expression: result,
-      };
-    });
+    executeFunctionCallStatement(this, statement);
   }
   public visitMethodCallStatement(statement: MethodCallStatement): void {
-    this.executeFrame<EvaluationResultMethodCallStatement>(statement, () => {
-      const result = this.visitMethodCallExpression(statement.expression) as EvaluationResultMethodCallExpression;
-
-      return {
-        type: "MethodCallStatement",
-        jikiObject: result.jikiObject,
-        expression: result,
-      };
-    });
+    executeMethodCallStatement(this, statement);
   }
 
   public visitSetVariableStatement(statement: SetVariableStatement): void {
@@ -446,49 +435,7 @@ export class Executor {
     this.error("InvalidChangeElementTarget", statement.object.location);
   }
   public visitChangePropertyStatement(statement: ChangePropertyStatement): void {
-    const object = this.evaluate(statement.object);
-
-    this.executeFrame<EvaluationResultChangePropertyStatement>(statement, () => {
-      if (!(object.jikiObject instanceof Jiki.Instance)) {
-        this.error("AccessorUsedOnNonInstance", statement.object.location);
-      }
-      const setter = object.jikiObject.getSetter(statement.property.lexeme);
-      if (!setter) {
-        this.error("CouldNotFindSetter", statement.property.location, {
-          name: statement.property.lexeme,
-        });
-      }
-      if (setter.visibility === "private" && statement.object.type !== "ThisExpression") {
-        this.error("AttemptedToAccessPrivateSetter", statement.property.location, {
-          name: statement.property.lexeme,
-        });
-      }
-
-      const value = this.evaluate(statement.value);
-      this.guardNoneJikiObject(value.jikiObject, statement.location);
-
-      // Do the update
-      const oldValue = object.jikiObject.getField(statement.property.lexeme);
-      try {
-        setter.fn.apply(undefined, [
-          this.getExecutionContext(),
-          object.jikiObject,
-          value.jikiObject as Jiki.JikiObject,
-        ]);
-      } catch (e: unknown) {
-        if (e instanceof LogicError) {
-          this.error("LogicError", statement.location, { message: e.message });
-        }
-        throw e;
-      }
-
-      return {
-        type: "ChangePropertyStatement",
-        object,
-        oldValue,
-        value,
-      };
-    });
+    executeChangePropertyStatement(this, statement);
   }
 
   public visitChangeDictionaryElementStatement(
@@ -853,26 +800,11 @@ export class Executor {
   }
 
   public visitFunctionLookupExpression(expression: FunctionLookupExpression): EvaluationResultFunctionLookupExpression {
-    const value = this.lookupFunction(expression.name);
-    return {
-      type: "FunctionLookupExpression",
-      name: expression.name.lexeme,
-      function: value,
-      // This is needed so that the null guard doesn't
-      // blow up upstream
-      jikiObject: new Jiki.Boolean(true),
-    };
+    return executeFunctionLookupExpression(this, expression);
   }
 
   public visitClassLookupExpression(expression: ClassLookupExpression): EvaluationResultClassLookupExpression {
-    const klass = this.lookupClass(expression.name);
-
-    return {
-      type: "ClassLookupExpression",
-      name: expression.name.lexeme,
-      class: klass,
-      jikiObject: new Jiki.Boolean(true),
-    };
+    return executeClassLookupExpression(this, expression);
   }
 
   public visitUnaryExpression(expression: UnaryExpression): EvaluationResultUnaryExpression {
