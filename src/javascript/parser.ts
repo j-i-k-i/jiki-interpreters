@@ -156,7 +156,7 @@ export class Parser {
   }
 
   private unary(): Expression {
-    if (this.match("MINUS", "PLUS")) {
+    if (this.match("MINUS", "PLUS", "NOT")) {
       const operator = this.previous();
       const right = this.unary();
       return new UnaryExpression(operator, right, Location.between(operator, right));

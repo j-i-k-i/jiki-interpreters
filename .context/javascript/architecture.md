@@ -40,7 +40,7 @@ Builds an Abstract Syntax Tree (AST) from tokens using recursive descent parsing
 
 - `LiteralExpression`: Numbers, strings, booleans, null, undefined
 - `BinaryExpression`: Arithmetic and logical operations
-- `UnaryExpression`: Negation and logical NOT
+- `UnaryExpression`: Negation (`-x`), unary plus (`+x`), and logical NOT (`!x`)
 - `GroupingExpression`: Parenthesized expressions
 - `IdentifierExpression`: Variable references
 - `CallExpression`: Function calls (planned)
