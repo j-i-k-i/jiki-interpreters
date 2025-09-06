@@ -1,5 +1,5 @@
 import { EvaluationResultLogStatement } from "../evaluation-result";
-import { Description, DescriptionContext, FrameWithResult } from "../frames";
+import { Description, DescriptionContext, FrameWithResult } from "../../shared/frames";
 import { formatJikiObject } from "../helpers";
 import { LogStatement } from "../statement";
 import { describeExpression } from "./describeSteps";

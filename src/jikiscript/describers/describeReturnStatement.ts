@@ -1,5 +1,5 @@
 import { EvaluationResultReturnStatement } from "../evaluation-result";
-import { Description, DescriptionContext, FrameWithResult } from "../frames";
+import { Description, DescriptionContext, FrameWithResult } from "../../shared/frames";
 import { codeTag, formatJikiObject } from "../helpers";
 import { ReturnStatement } from "../statement";
 import { describeExpression } from "./describeSteps";

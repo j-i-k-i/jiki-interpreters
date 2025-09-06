@@ -1,6 +1,6 @@
 import { EvaluationResultMethodCallExpression } from "../evaluation-result";
 import { MethodCallExpression } from "../expression";
-import { DescriptionContext } from "../frames";
+import { DescriptionContext } from "../../shared/frames";
 import { codeTag, formatJikiObject } from "../helpers";
 import { describeExpression } from "./describeSteps";
 

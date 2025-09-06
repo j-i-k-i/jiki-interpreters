@@ -1,9 +1,9 @@
-import type { JSObject } from "./jsObjects";
+import type { JikiObject } from "./jsObjects";
 
 export type EvaluationResult = {
   type: string;
-  jikiObject: JSObject;
-  jsObject: JSObject; // Alias for compatibility
+  jikiObject: JikiObject;
+  jsObject: JikiObject; // Alias for compatibility
 };
 
 export type EvaluationResultExpression = EvaluationResult;
@@ -12,33 +12,33 @@ export type EvaluationResultBinaryExpression = {
   type: "BinaryExpression";
   left: EvaluationResultExpression;
   right: EvaluationResultExpression;
-  jikiObject: JSObject;
-  jsObject: JSObject;
+  jikiObject: JikiObject;
+  jsObject: JikiObject;
 };
 
 export type EvaluationResultUnaryExpression = {
   type: "UnaryExpression";
   operand: EvaluationResultExpression;
-  jikiObject: JSObject;
-  jsObject: JSObject;
+  jikiObject: JikiObject;
+  jsObject: JikiObject;
 };
 
 export type EvaluationResultLiteralExpression = {
   type: "LiteralExpression";
-  jikiObject: JSObject;
-  jsObject: JSObject;
+  jikiObject: JikiObject;
+  jsObject: JikiObject;
 };
 
 export type EvaluationResultGroupingExpression = {
   type: "GroupingExpression";
   inner: EvaluationResultExpression;
-  jikiObject: JSObject;
-  jsObject: JSObject;
+  jikiObject: JikiObject;
+  jsObject: JikiObject;
 };
 
 export type EvaluationResultExpressionStatement = {
   type: "ExpressionStatement";
   expression: EvaluationResultExpression;
-  jikiObject: JSObject;
-  jsObject: JSObject;
+  jikiObject: JikiObject;
+  jsObject: JikiObject;
 };

@@ -1,6 +1,6 @@
 import { EvaluationResultVariableLookupExpression } from "../evaluation-result";
 import { VariableLookupExpression } from "../expression";
-import { DescriptionContext } from "../frames";
+import { DescriptionContext } from "../../shared/frames";
 import { codeTag, formatJikiObject } from "../helpers";
 
 export function describeVariableLookupExpression(

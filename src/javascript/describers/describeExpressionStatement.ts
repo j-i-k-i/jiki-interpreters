@@ -1,5 +1,5 @@
 import { EvaluationResultExpressionStatement } from "../evaluation-result";
-import { Description, DescriptionContext, FrameWithResult } from "../frames";
+import { Description, DescriptionContext, FrameWithResult } from "../../shared/frames";
 import { formatJSObject } from "../helpers";
 import { ExpressionStatement } from "../statement";
 import { describeExpression } from "./describeSteps";

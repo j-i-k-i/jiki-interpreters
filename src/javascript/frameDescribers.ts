@@ -1,52 +1,24 @@
-import type { JSObject } from "./jsObjects";
-import type { EvaluationResult } from "./evaluation-result";
+import { Frame, DescriptionContext, Description } from "../shared/frames";
+import type { EvaluationResult, EvaluationResultExpressionStatement } from "./evaluation-result";
 import type { Statement } from "./statement";
 import type { Expression } from "./expression";
-import { deepTrim } from "./describers/helpers";
 import { describeExpressionStatement } from "./describers/describeExpressionStatement";
 
-export type FrameExecutionStatus = "SUCCESS" | "ERROR";
-
-export type Frame = {
-  line: number;
-  code: string;
-  status: FrameExecutionStatus;
-  error?: Error;
+// JavaScript-specific frame extending the shared base
+export interface JavaScriptFrame extends Frame {
   result?: EvaluationResult;
-  time: number;
-  timelineTime: number;
-  description: string;
   context?: Statement | Expression;
-  priorVariables: Record<string, JSObject>;
-  variables: Record<string, JSObject>;
-};
+}
 
-export type FrameWithResult = Frame & { result: EvaluationResult };
+export type FrameWithResult = JavaScriptFrame & { result: EvaluationResult };
 
-export type Description = {
-  result: String;
-  steps: String[];
-};
-
-export type DescriptionContext = {
-  functionDescriptions: Record<string, string>;
-};
-
-function isFrameWithResult(frame: Frame): frame is FrameWithResult {
+function isFrameWithResult(frame: JavaScriptFrame): frame is FrameWithResult {
   return !!frame.result;
 }
 
 const defaultMessage = `<p>There is no information available for this line. Show us your code in Discord and we'll improve this!</p>`;
 
-export function framesSucceeded(frames: Frame[]): boolean {
-  return frames.every(frame => frame.status === "SUCCESS");
-}
-
-export function framesErrored(frames: Frame[]): boolean {
-  return !framesSucceeded(frames);
-}
-
-export function describeFrame(frame: Frame, context?: DescriptionContext): string {
+export function describeFrame(frame: JavaScriptFrame, context?: DescriptionContext): string {
   if (!isFrameWithResult(frame)) {
     return defaultMessage;
   }
@@ -67,7 +39,7 @@ export function describeFrame(frame: Frame, context?: DescriptionContext): strin
     return defaultMessage;
   }
 
-  return deepTrim(`
+  return `
   <h3>What happened</h3>
   ${description.result}
   <hr/>
@@ -75,7 +47,7 @@ export function describeFrame(frame: Frame, context?: DescriptionContext): strin
   <ul>
     ${description.steps.join("\n")}
   </ul>
-  `);
+  `.trim();
 }
 
 function generateDescription(frame: FrameWithResult, context: DescriptionContext): Description | null {

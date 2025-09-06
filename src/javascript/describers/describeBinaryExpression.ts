@@ -1,6 +1,6 @@
 import { EvaluationResultBinaryExpression } from "../evaluation-result";
 import { BinaryExpression } from "../expression";
-import { DescriptionContext } from "../frames";
+import { DescriptionContext } from "../../shared/frames";
 import { codeTag, formatJSObject } from "../helpers";
 import { describeExpression } from "./describeSteps";
 

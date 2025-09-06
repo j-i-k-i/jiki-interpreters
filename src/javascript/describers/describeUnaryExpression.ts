@@ -1,6 +1,6 @@
 import { EvaluationResultUnaryExpression } from "../evaluation-result";
 import { UnaryExpression } from "../expression";
-import { DescriptionContext } from "../frames";
+import { DescriptionContext } from "../../shared/frames";
 import { codeTag, formatJSObject } from "../helpers";
 import { describeExpression } from "./describeSteps";
 import * as JS from "../jsObjects";

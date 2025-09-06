@@ -80,6 +80,8 @@ For detailed technical information, see the `.context/` folder, particularly `.c
 - Use Bun's built-in test runner: `bun test`
 - Test files should be in `tests/` directory
 - Use `.test.ts` suffix for test files
+- **NEVER comment out or disable tests to make things "work"** - always fix the underlying issue properly
+- If tests are failing, identify and resolve the root cause rather than masking the problem
 
 ## Version Control Guidelines
 

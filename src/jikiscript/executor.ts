@@ -84,8 +84,8 @@ import cloneDeep from "lodash.clonedeep";
 import type { CallableCustomFunction, InterpretResult } from "./interpreter";
 import type { LanguageFeatures, Meta } from "./interpreter";
 
-import type { Frame, FrameExecutionStatus } from "./frames";
-import { describeFrame } from "./frames";
+import type { Frame, FrameExecutionStatus } from "../shared/frames";
+import { describeFrame } from "./frameDescribers";
 import { executeFunctionCallExpression } from "./executor/executeFunctionCallExpression";
 import { executeIfStatement } from "./executor/executeIfStatement";
 import didYouMean from "didyoumean";
@@ -1421,7 +1421,7 @@ export class Executor {
 
     // Set to IndexOutOfBoundsInGet or IndexOutOfBoundsInSet
     // by capitalzing the first letter of get or set
-    const errorType: "IndexOutOfBoundsInGet" | "IndexOutOfBoundsInChange" = 
+    const errorType: "IndexOutOfBoundsInGet" | "IndexOutOfBoundsInChange" =
       getOrChange === "get" ? "IndexOutOfBoundsInGet" : "IndexOutOfBoundsInChange";
 
     const dataType = obj instanceof Jiki.List ? "list" : "string";

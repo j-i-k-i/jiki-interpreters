@@ -1,6 +1,6 @@
 import { EvaluationResult, EvaluationResultChangeElementStatement } from "../evaluation-result";
 import { VariableLookupExpression } from "../expression";
-import { Description, DescriptionContext, FrameWithResult } from "../frames";
+import { Description, DescriptionContext, FrameWithResult } from "../../shared/frames";
 import { codeTag, formatJikiObject } from "../helpers";
 import { ChangeElementStatement } from "../statement";
 import { describeExpression } from "./describeSteps";

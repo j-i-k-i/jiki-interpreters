@@ -4,7 +4,7 @@ import {
   EvaluationResultChangePropertyStatement,
 } from "../evaluation-result";
 import { VariableLookupExpression } from "../expression";
-import { Description, DescriptionContext, FrameWithResult } from "../frames";
+import { Description, DescriptionContext, FrameWithResult } from "../../shared/frames";
 import { codeTag, formatJikiObject } from "../helpers";
 import { ChangeElementStatement, ChangePropertyStatement } from "../statement";
 import { describeExpression } from "./describeSteps";

@@ -22,7 +22,7 @@ import {
   MethodCallExpression,
 } from "../expression";
 import { describeLogicalExpression } from "./describeLogicalExpression";
-import { DescriptionContext } from "../frames";
+import { DescriptionContext } from "../../shared/frames";
 import { describeBinaryExpression } from "./describeBinaryExpression";
 import { describeFunctionCallExpression } from "./describeFunctionCallExpression";
 import { describeGroupingExpression } from "./describeGroupingExpression";

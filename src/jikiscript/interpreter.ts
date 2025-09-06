@@ -7,7 +7,7 @@ import { Statement } from "./statement";
 import type { TokenType } from "./token";
 import { translate } from "./translator";
 import type { ExecutionContext, ExternalFunction } from "./executor";
-import type { Frame } from "./frames";
+import type { Frame } from "../shared/frames";
 import { Arity } from "./functions";
 import * as Jiki from "./jikiObjects";
 import { StdlibFunctions, StdlibFunctionsForLibrary } from "./stdlib";

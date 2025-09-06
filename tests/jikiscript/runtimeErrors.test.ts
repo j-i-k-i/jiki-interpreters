@@ -1,5 +1,5 @@
 import { RuntimeErrorType } from "@jikiscript/error";
-import { Frame } from "@jikiscript/frames";
+import { Frame } from "../../src/shared/frames";
 import { EvaluationContext, interpret } from "@jikiscript/interpreter";
 import { Location, Span } from "@jikiscript/location";
 import { changeLanguage } from "@jikiscript/translator";

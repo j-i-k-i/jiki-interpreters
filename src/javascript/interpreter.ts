@@ -1,8 +1,8 @@
 import { parse } from "./parser";
 import { Executor, RuntimeError } from "./executor";
-import type { Frame } from "./frames";
+import type { Frame } from "../shared/frames";
 import type { Statement } from "./statement";
-import type { JSObject } from "./jsObjects";
+import type { JikiObject } from "./jsObjects";
 import type { EvaluationResult } from "./evaluation-result";
 
 export type InterpretResult = {

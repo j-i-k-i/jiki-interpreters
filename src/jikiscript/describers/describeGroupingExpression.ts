@@ -1,6 +1,6 @@
 import { EvaluationResultGroupingExpression } from "../evaluation-result";
 import { GroupingExpression } from "../expression";
-import { DescriptionContext } from "../frames";
+import { DescriptionContext } from "../../shared/frames";
 import { describeExpression } from "./describeSteps";
 
 export function describeGroupingExpression(

@@ -5,7 +5,7 @@ import {
   EvaluationResultUnaryExpression,
 } from "../evaluation-result";
 import { Expression, GroupingExpression, BinaryExpression, UnaryExpression } from "../expression";
-import { DescriptionContext } from "../frames";
+import { DescriptionContext } from "../../shared/frames";
 import { describeBinaryExpression } from "./describeBinaryExpression";
 import { describeGroupingExpression } from "./describeGroupingExpression";
 import { describeUnaryExpression } from "./describeUnaryExpression";

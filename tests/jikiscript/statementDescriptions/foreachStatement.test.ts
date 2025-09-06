@@ -1,5 +1,5 @@
 import { interpret } from "@jikiscript/interpreter";
-import { describeFrame } from "@jikiscript/frames";
+import { describeFrame } from "@jikiscript/frameDescribers";
 import { assertHTML } from "./helpers";
 
 describe("empty", () => {

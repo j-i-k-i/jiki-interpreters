@@ -1,15 +1,8 @@
-// Simplified JavaScript objects system based on JikiScript
-export abstract class JSObject {
-  public readonly objectId: string;
-  constructor(public readonly type: string) {
-    this.objectId = Math.random().toString(36).substring(7);
-  }
+// JavaScript objects system extending shared base
+import { JikiObject } from "../shared/jikiObject";
+export { JikiObject } from "../shared/jikiObject";
 
-  public abstract get value(): any;
-  public abstract toString(): string;
-}
-
-export class JSNumber extends JSObject {
+export class JSNumber extends JikiObject {
   constructor(public readonly _value: number) {
     super("number");
   }
@@ -23,7 +16,7 @@ export class JSNumber extends JSObject {
   }
 }
 
-export class JSString extends JSObject {
+export class JSString extends JikiObject {
   constructor(public readonly _value: string) {
     super("string");
   }
@@ -37,7 +30,7 @@ export class JSString extends JSObject {
   }
 }
 
-export class JSBoolean extends JSObject {
+export class JSBoolean extends JikiObject {
   constructor(public readonly _value: boolean) {
     super("boolean");
   }
@@ -52,7 +45,7 @@ export class JSBoolean extends JSObject {
 }
 
 // Helper function to create JSObjects from JavaScript values
-export function createJSObject(value: any): JSObject {
+export function createJSObject(value: any): JikiObject {
   if (typeof value === "number") {
     return new JSNumber(value);
   } else if (typeof value === "string") {
@@ -65,8 +58,8 @@ export function createJSObject(value: any): JSObject {
 }
 
 // Helper function to unwrap JSObjects to JavaScript values
-export function unwrapJSObject(obj: JSObject | any): any {
-  if (obj instanceof JSObject) {
+export function unwrapJSObject(obj: JikiObject | any): any {
+  if (obj instanceof JikiObject) {
     return obj.value;
   }
   return obj;

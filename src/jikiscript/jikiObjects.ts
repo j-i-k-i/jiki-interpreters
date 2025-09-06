@@ -4,6 +4,7 @@ import { EvaluationResult } from "./evaluation-result";
 import { ExecutionContext } from "./executor";
 import { Arity, UserDefinedMethod } from "./functions";
 import { UnsetPropertyError } from "./executor/executeInstantiationExpression";
+import { JikiObject as BaseJikiObject } from "../shared/jikiObject";
 
 type ObjectType = "number" | "string" | "boolean" | "list" | "dictionary" | "instance";
 
@@ -17,15 +18,13 @@ export type RawMethod = (
   ...args: JikiObject[]
 ) => JikiObject | void;
 
-export abstract class JikiObject {
-  public readonly objectId: string;
-  constructor(public readonly type: ObjectType) {
-    this.objectId = Math.random().toString(36).substring(7);
+export abstract class JikiObject extends BaseJikiObject {
+  constructor(type: ObjectType) {
+    super(type);
   }
 
+  // JikiScript-specific method
   public abstract toArg(): any;
-  public abstract toString(): string;
-  public abstract get value(): any;
 }
 
 export class Method {

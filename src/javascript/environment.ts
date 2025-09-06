@@ -1,18 +1,18 @@
-import type { JSObject } from "./jsObjects";
+import type { JikiObject } from "./jsObjects";
 
 export class Environment {
-  private readonly values: Map<string, JSObject> = new Map();
+  private readonly values: Map<string, JikiObject> = new Map();
   public readonly id: string;
 
   constructor(private readonly enclosing: Environment | null = null) {
     this.id = Math.random().toString(36).substring(7);
   }
 
-  public define(name: string, value: JSObject): void {
+  public define(name: string, value: JikiObject): void {
     this.values.set(name, value);
   }
 
-  public get(name: string): JSObject | undefined {
+  public get(name: string): JikiObject | undefined {
     if (this.values.has(name)) {
       return this.values.get(name);
     }
@@ -24,7 +24,7 @@ export class Environment {
     return undefined;
   }
 
-  public update(name: string, value: JSObject): void {
+  public update(name: string, value: JikiObject): void {
     if (this.values.has(name)) {
       this.values.set(name, value);
       return;
@@ -39,8 +39,8 @@ export class Environment {
     throw new Error(`Variable '${name}' is not defined`);
   }
 
-  public getAllVariables(): Record<string, JSObject> {
-    const result: Record<string, JSObject> = {};
+  public getAllVariables(): Record<string, JikiObject> {
+    const result: Record<string, JikiObject> = {};
 
     // Get variables from enclosing scopes first (so local variables can override)
     if (this.enclosing !== null) {

@@ -1,7 +1,7 @@
 import type { Executor } from "../executor";
 import type { BinaryExpression } from "../expression";
 import type { EvaluationResult } from "../evaluation-result";
-import { createJSObject, type JSObject } from "../jsObjects";
+import { createJSObject, type JikiObject } from "../jsObjects";
 import { RuntimeError } from "../executor";
 
 export function executeBinaryExpression(executor: Executor, expression: BinaryExpression): EvaluationResult {
@@ -24,7 +24,7 @@ function handleBinaryOperation(
   expression: BinaryExpression,
   leftResult: EvaluationResult,
   rightResult: EvaluationResult
-): JSObject {
+): JikiObject {
   const left = leftResult.jsObject.value;
   const right = rightResult.jsObject.value;
 

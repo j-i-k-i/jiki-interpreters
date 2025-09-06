@@ -6,7 +6,7 @@ import { Location } from "./location";
 import type { Statement } from "./statement";
 import { ExpressionStatement } from "./statement";
 import type { EvaluationResult } from "./evaluation-result";
-import { createJSObject, type JSObject } from "./jsObjects";
+import { createJSObject, type JikiObject } from "./jsObjects";
 
 // Import individual executors
 import { executeLiteralExpression } from "./executor/executeLiteralExpression";
@@ -73,7 +73,7 @@ export class Executor {
     );
   }
 
-  public getVariables(): Record<string, JSObject> {
+  public getVariables(): Record<string, JikiObject> {
     return this.environment.getAllVariables();
   }
 

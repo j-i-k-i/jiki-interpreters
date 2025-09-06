@@ -1,5 +1,6 @@
 import { interpret } from "@jikiscript/interpreter";
-import { describeFrame, DescriptionContext } from "@jikiscript/frames";
+import { describeFrame } from "@jikiscript/frameDescribers";
+import { DescriptionContext } from "../../../src/shared/frames";
 import {
   getNameFunction,
   assertHTML,

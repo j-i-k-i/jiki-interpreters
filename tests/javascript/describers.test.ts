@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 import { interpret } from "../../src/javascript";
-import { describeFrame } from "../../src/javascript/frames";
+import { describeFrame } from "../../src/javascript/frameDescribers";
 
 describe("describers", () => {
   describe("frames and descriptions", () => {

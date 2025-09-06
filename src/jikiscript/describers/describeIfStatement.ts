@@ -1,6 +1,6 @@
 import { EvaluationResultIfStatement } from "../evaluation-result";
 
-import { Description, DescriptionContext, FrameWithResult } from "../frames";
+import { Description, DescriptionContext, FrameWithResult } from "../../shared/frames";
 import { IfStatement } from "../statement";
 import { describeExpression } from "./describeSteps";
 
