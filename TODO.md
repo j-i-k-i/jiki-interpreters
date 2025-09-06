@@ -1,3 +1,19 @@
+# Agent Overview
+
+Your job is to work through this file. Find the next jobs that is not crossed off and work on it.
+
+You should follow these steps:
+
+1. Read the TODO, come up with an execution plan, and confirm it.
+2. Once confirmed by the human, work on the task.
+3. Ensure the tests all pass and the typescript types are correct.
+4. When a task is complete, mark it off here, commit to git, and then exit.
+
+Important:
+
+- Do not comment out any tests or run git with no-verify. Always solve problems.
+- If you are unsure, or feel like you're going down a rabbit hole, stop and ask for advice and help.
+
 ## JavaScript
 
 For everything in here, base your work in the JikiScript interpreter.
