@@ -66,7 +66,6 @@ For detailed technical information, see the `.context/` folder, particularly `.c
 
 ## Commands
 
-- **Build**: `bun run build` - Builds the project to dist/
 - **Dev**: `bun run dev` - Runs in watch mode
 - **Test**: `bun test` - Runs all tests
 - **Test Watch**: `bun test --watch` - Runs tests in watch mode
@@ -74,6 +73,16 @@ For detailed technical information, see the `.context/` folder, particularly `.c
 - **Format**: `bun run format` - Format code with Prettier
 - **Format Check**: `bun run format:check` - Check if code is formatted
 - **Clean**: `bun run clean` - Removes dist/ folder
+
+## CI/CD
+
+The project uses GitHub Actions with three parallel workflows:
+
+- **Tests** (`.github/workflows/tests.yml`) - Runs `bun test`
+- **Type Check** (`.github/workflows/typecheck.yml`) - Runs `bun run typecheck`
+- **Format Check** (`.github/workflows/format.yml`) - Runs `bun run format:check`
+
+All workflows run on pushes to `main` and pull requests targeting `main`. The parallel setup ensures fast feedback for developers.
 
 ## Directory Structure
 

@@ -2,9 +2,15 @@
 
 A collection of interpreters for Jiki's educational coding environment.
 
-## JikiScript
+## Interpreters
 
-The JikiScript interpreter executes student JavaScript code while building up execution data that powers Jiki's interactive editor features:
+This project contains multiple educational interpreters:
+
+- **JikiScript** - Educational language with simplified JavaScript-like syntax (fully implemented)
+- **JavaScript** - Standard JavaScript interpreter (in development)
+- **Python** - Python interpreter (basic implementation)
+
+All interpreters generate frame data that powers Jiki's interactive editor features:
 
 - **Breakpoints**: Step-by-step code execution
 - **Time Scrubber**: Navigate through execution history
@@ -13,7 +19,15 @@ The JikiScript interpreter executes student JavaScript code while building up ex
 
 ## Features
 
-- Execute student JavaScript code in a controlled environment
+- Execute student code in controlled environments
 - Capture execution traces with variable states
 - Generate timeline data for interactive debugging
 - Support for educational code analysis and feedback
+
+## Development
+
+- **Test**: `bun test`
+- **Type Check**: `bun run typecheck`
+- **Format**: `bun run format`
+
+The project uses parallel GitHub Actions workflows for CI: tests, type checking, and formatting.

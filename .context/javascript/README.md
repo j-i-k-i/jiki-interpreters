@@ -91,12 +91,18 @@ JavaScript-specific extensions are handled through `frameDescribers.ts` which pr
 - Grouping expressions (parentheses)
 - Literals (numbers, strings, booleans, null, undefined)
 - Comments (single-line and multi-line)
+- Variable declarations with `let` keyword
+- Variable access via identifier expressions
+- Block statements with lexical scoping
+- Environment-based variable scoping with scope isolation
+- Runtime errors for undefined variable references
 
 ### Planned Features
 
-- Variable declarations (let, const, var)
-- Assignment operations
+- Additional variable declaration types (const, var)
+- Variable assignment operations
 - Control flow (if, else, switch)
+- Variable shadowing with language feature flags
 - Loops (for, while, do-while)
 - Functions and arrow functions
 - Objects and arrays

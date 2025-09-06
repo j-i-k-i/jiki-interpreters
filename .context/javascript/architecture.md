@@ -42,14 +42,14 @@ Builds an Abstract Syntax Tree (AST) from tokens using recursive descent parsing
 - `BinaryExpression`: Arithmetic and logical operations
 - `UnaryExpression`: Negation and logical NOT
 - `GroupingExpression`: Parenthesized expressions
-- `IdentifierExpression`: Variable references (planned)
+- `IdentifierExpression`: Variable references
 - `CallExpression`: Function calls (planned)
 
 **Statement Types:**
 
 - `ExpressionStatement`: Standalone expressions
 - `VariableDeclaration`: Variable declarations with `let` keyword
-- `BlockStatement`: Code blocks with scope isolation `{ ... }`
+- `BlockStatement`: Code blocks with lexical scope isolation `{ ... }`
 - `IfStatement`: Conditionals (planned)
 - `WhileStatement`: Loops (planned)
 - `FunctionDeclaration`: Functions (planned)
@@ -125,6 +125,7 @@ Generate human-readable descriptions of execution steps.
 - `describeUnaryExpression.ts`: Describes negation and NOT operations
 - `describeGroupingExpression.ts`: Notes parenthesized evaluation
 - `describeExpressionStatement.ts`: Describes standalone expressions
+- `describeVariableDeclaration.ts`: Explains variable declarations and initialization
 - `describeBlockStatement.ts`: Explains block scope behavior and variable isolation
 - `describeSteps.ts`: Provides step-by-step execution descriptions
 
@@ -139,15 +140,20 @@ Generate human-readable descriptions of execution steps.
 // Step 1: "Comparing values: 5 > 3 evaluates to true"
 // Step 2: "Applying logical NOT: !true evaluates to false"
 
+let count = 42;
+// "Declared variable 'count' and initialized it with value 42"
+
+count;
+// "Accessed variable 'count' with value 42"
+
 {
   let x = 10;
   x + 5;
 }
 // Block Frame: "This block executed 2 statements in their own scope."
-// Steps:
-// - "JavaScript entered a new block scope"
-// - "All 2 statements inside the block were executed in order"
-// - "JavaScript exited the block scope, removing any variables declared within it"
+// Variable Frame: "Declared variable 'x' and initialized it with value 10"
+// Access Frame: "Accessed variable 'x' with value 10"
+// Addition Frame: "Evaluating addition: 10 + 5 = 15"
 ```
 
 ### 5. Environment (`src/javascript/environment.ts`)
@@ -269,8 +275,8 @@ interface Frame {
 
 - Type errors with context
 - Division by zero handling
-- Variable reference errors (planned)
-- Educational error messages
+- Variable reference errors for undefined variables
+- Educational error messages with location context
 
 ## Extensibility
 
@@ -289,3 +295,6 @@ The modular architecture allows easy addition of new features:
 - **Describer Tests**: Description accuracy and clarity
 - **Integration Tests**: End-to-end interpretation
 - **Error Tests**: Proper error handling and messages
+- **Concept Tests**: Feature-specific testing for variables, blocks, arithmetic, etc.
+- **Syntax Error Tests**: Comprehensive error coverage for invalid syntax
+- **Scope Tests**: Variable scoping behavior in blocks and nested environments
