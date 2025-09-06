@@ -140,6 +140,60 @@ describe("syntax errors", () => {
     });
   });
 
+  describe("variable declaration errors", () => {
+    test("missing variable name after let", () => {
+      expect(() => parse("let = 42;")).toThrow("MissingVariableName");
+    });
+
+    test("missing equals sign in variable declaration", () => {
+      expect(() => parse("let x 42;")).toThrow("MissingInitializerInVariableDeclaration");
+    });
+
+    test("missing initializer in variable declaration", () => {
+      expect(() => parse("let x =;")).toThrow("MissingExpression");
+    });
+
+    test("missing semicolon after variable declaration", () => {
+      expect(() => parse("let x = 42")).toThrow("MissingSemicolon");
+    });
+
+    test("let keyword without declaration", () => {
+      expect(() => parse("let;")).toThrow("MissingVariableName");
+    });
+
+    test("invalid variable name (number)", () => {
+      expect(() => parse("let 123 = 42;")).toThrow("MissingVariableName");
+    });
+
+    test("invalid variable name (string)", () => {
+      expect(() => parse('let "myvar" = 42;')).toThrow("MissingVariableName");
+    });
+
+    test("keyword as variable name", () => {
+      expect(() => parse("let let = 42;")).toThrow("MissingVariableName");
+    });
+
+    test("multiple variable declarations without comma", () => {
+      expect(() => parse("let x = 1 y = 2;")).toThrow();
+    });
+  });
+
+  describe("identifier errors", () => {
+    test("accessing undefined variable", () => {
+      // This should parse fine, error will occur at runtime
+      const result = parse("x;");
+      expect(result).toBeArrayOfSize(1);
+    });
+
+    test("invalid identifier starting with number", () => {
+      expect(() => parse("1abc;")).toThrow();
+    });
+
+    test("identifier with spaces", () => {
+      expect(() => parse("my var;")).toThrow();
+    });
+  });
+
   describe("edge cases", () => {
     test("empty input", () => {
       const result = parse("");

@@ -7,7 +7,9 @@ export type SyntaxErrorType =
   | "MissingRightParenthesisAfterExpression"
   | "MissingSemicolon"
   | "UnterminatedString"
-  | "UnterminatedComment";
+  | "UnterminatedComment"
+  | "MissingVariableName"
+  | "MissingInitializerInVariableDeclaration";
 
 export class SyntaxError extends Error {
   constructor(

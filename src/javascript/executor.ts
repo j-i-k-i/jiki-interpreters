@@ -1,10 +1,16 @@
 import { Environment } from "./environment";
 import { SyntaxError } from "./error";
 import type { Expression } from "./expression";
-import { LiteralExpression, BinaryExpression, UnaryExpression, GroupingExpression } from "./expression";
+import {
+  LiteralExpression,
+  BinaryExpression,
+  UnaryExpression,
+  GroupingExpression,
+  IdentifierExpression,
+} from "./expression";
 import { Location } from "./location";
 import type { Statement } from "./statement";
-import { ExpressionStatement } from "./statement";
+import { ExpressionStatement, VariableDeclaration } from "./statement";
 import type { EvaluationResult } from "./evaluation-result";
 import { createJSObject, type JikiObject } from "./jsObjects";
 
@@ -13,6 +19,7 @@ import { executeLiteralExpression } from "./executor/executeLiteralExpression";
 import { executeBinaryExpression } from "./executor/executeBinaryExpression";
 import { executeUnaryExpression } from "./executor/executeUnaryExpression";
 import { executeGroupingExpression } from "./executor/executeGroupingExpression";
+import { executeIdentifierExpression } from "./executor/executeIdentifierExpression";
 
 export type RuntimeErrorType = "InvalidBinaryExpression" | "InvalidUnaryExpression" | "UnsupportedOperation";
 
@@ -29,7 +36,7 @@ export class RuntimeError extends Error {
 }
 
 export class Executor {
-  private environment: Environment;
+  public environment: Environment;
 
   constructor() {
     this.environment = new Environment();
@@ -43,6 +50,18 @@ export class Executor {
         expression: expressionResult,
         jikiObject: expressionResult.jsObject,
         jsObject: expressionResult.jsObject,
+      } as any;
+    }
+
+    if (statement instanceof VariableDeclaration) {
+      const value = this.evaluate(statement.initializer);
+      this.environment.define(statement.name.lexeme, value.jikiObject);
+      return {
+        type: "VariableDeclaration",
+        name: statement.name.lexeme,
+        value: value,
+        jikiObject: value.jikiObject,
+        jsObject: value.jsObject,
       } as any;
     }
 
@@ -64,6 +83,10 @@ export class Executor {
 
     if (expression instanceof GroupingExpression) {
       return executeGroupingExpression(this, expression);
+    }
+
+    if (expression instanceof IdentifierExpression) {
+      return executeIdentifierExpression(this, expression);
     }
 
     throw new RuntimeError(

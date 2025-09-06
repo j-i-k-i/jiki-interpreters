@@ -4,6 +4,7 @@ import type { Frame } from "../shared/frames";
 import type { Statement } from "./statement";
 import type { JikiObject } from "./jsObjects";
 import type { EvaluationResult } from "./evaluation-result";
+import { describeFrame } from "./frameDescribers";
 
 export type InterpretResult = {
   frames: Frame[];
@@ -34,7 +35,20 @@ export function interpret(sourceCode: string): InterpretResult {
           result: result || undefined,
           time: 0.01, // Simplified timing
           timelineTime: frames.length + 1,
-          description: generateDescription(statement, result),
+          description: result
+            ? describeFrame({
+                line: statement.location.line,
+                code: sourceCode.substring(statement.location.absolute.begin - 1, statement.location.absolute.end - 1),
+                status: "SUCCESS",
+                result: result,
+                time: 0.01,
+                timelineTime: frames.length + 1,
+                description: "", // Will be filled by describeFrame
+                context: statement,
+                priorVariables: frames.length > 0 ? { ...frames[frames.length - 1].variables } : {},
+                variables: executor.getVariables(),
+              })
+            : `Executed statement: ${statement.type}`,
           context: statement,
           priorVariables: frames.length > 0 ? { ...frames[frames.length - 1].variables } : {},
           variables: executor.getVariables(),
@@ -69,14 +83,5 @@ export function interpret(sourceCode: string): InterpretResult {
       error: error as Error,
       success: false,
     };
-  }
-}
-
-function generateDescription(statement: Statement, result: EvaluationResult | null): string {
-  // Very simple description for now
-  if (result) {
-    return `Evaluated expression: ${result.jsObject.toString()}`;
-  } else {
-    return `Executed statement: ${statement.type}`;
   }
 }

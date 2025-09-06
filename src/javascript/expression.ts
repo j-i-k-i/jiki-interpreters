@@ -57,3 +57,15 @@ export class GroupingExpression extends Expression {
     return [this.inner];
   }
 }
+
+export class IdentifierExpression extends Expression {
+  constructor(
+    public name: Token,
+    public location: Location
+  ) {
+    super("IdentifierExpression");
+  }
+  public children() {
+    return [];
+  }
+}

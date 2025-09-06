@@ -19,6 +19,11 @@ The `.context/` folder contains comprehensive documentation about:
 
 **Always start by reading the relevant `.context/` files to understand the system before proceeding with any task.**
 
+## Instructions
+
+If you are asked to work on a TODO, look at TODO.md. Read the instructions at the top. Ensure to CONFIRM WITH A HUMAN between the execution plan and the coding. Ensure to commit at the end.
+If you are asked to do a job, confirm your understand and an execution plan before acting.
+
 ## Project Overview
 
 This is a Bun + TypeScript project that houses multiple educational interpreters for **Jiki** (by the Exercism team). Jiki is an educational coding environment that provides interactive, frame-by-frame code execution visualization.

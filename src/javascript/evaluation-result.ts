@@ -42,3 +42,18 @@ export type EvaluationResultExpressionStatement = {
   jikiObject: JikiObject;
   jsObject: JikiObject;
 };
+
+export type EvaluationResultIdentifierExpression = {
+  type: "IdentifierExpression";
+  name: string;
+  jikiObject: JikiObject;
+  jsObject: JikiObject;
+};
+
+export type EvaluationResultVariableDeclaration = {
+  type: "VariableDeclaration";
+  name: string;
+  value: EvaluationResultExpression;
+  jikiObject: JikiObject;
+  jsObject: JikiObject;
+};

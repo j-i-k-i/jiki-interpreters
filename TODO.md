@@ -4,7 +4,7 @@ Your job is to work through this file. Find the next jobs that is not crossed of
 
 You should follow these steps:
 
-1. Read the TODO, come up with an execution plan, and confirm it.
+1. Read the TODO, come up with an execution plan, and CONFIRM IT WITH THE HUMAN.
 2. Once confirmed by the human, work on the task.
 3. Ensure the tests all pass and the typescript types are correct.
 4. When a task is complete, mark it off here, commit to git, and then exit.

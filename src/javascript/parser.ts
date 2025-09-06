@@ -1,8 +1,15 @@
 import { SyntaxError, type SyntaxErrorType } from "./error";
-import { Expression, LiteralExpression, BinaryExpression, UnaryExpression, GroupingExpression } from "./expression";
+import {
+  Expression,
+  LiteralExpression,
+  BinaryExpression,
+  UnaryExpression,
+  GroupingExpression,
+  IdentifierExpression,
+} from "./expression";
 import { Location } from "./location";
 import { Scanner } from "./scanner";
-import { Statement, ExpressionStatement } from "./statement";
+import { Statement, ExpressionStatement, VariableDeclaration } from "./statement";
 import { type Token, type TokenType } from "./token";
 
 export class Parser {
@@ -41,6 +48,11 @@ export class Parser {
         return null;
       }
 
+      // Handle variable declarations
+      if (this.match("LET")) {
+        return this.variableDeclaration();
+      }
+
       // Handle expression statements
       const expr = this.expression();
       this.consumeSemicolon();
@@ -50,6 +62,14 @@ export class Parser {
       this.synchronize();
       throw error;
     }
+  }
+
+  private variableDeclaration(): Statement {
+    const name = this.consume("IDENTIFIER", "MissingVariableName");
+    this.consume("EQUAL", "MissingInitializerInVariableDeclaration");
+    const initializer = this.expression();
+    this.consumeSemicolon();
+    return new VariableDeclaration(name, initializer, Location.between(name, initializer));
   }
 
   private expression(): Expression {
@@ -129,6 +149,10 @@ export class Parser {
 
     if (this.match("STRING")) {
       return new LiteralExpression(this.previous().literal as string, this.previous().location);
+    }
+
+    if (this.match("IDENTIFIER")) {
+      return new IdentifierExpression(this.previous(), this.previous().location);
     }
 
     if (this.match("LEFT_PAREN")) {

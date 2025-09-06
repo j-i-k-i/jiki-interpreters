@@ -1,4 +1,5 @@
 import type { Expression } from "./expression";
+import type { Token } from "./token";
 import { Location } from "./location";
 
 export abstract class Statement {
@@ -28,5 +29,18 @@ export class ConsoleLogStatement extends Statement {
   }
   public children() {
     return [this.expression];
+  }
+}
+
+export class VariableDeclaration extends Statement {
+  constructor(
+    public name: Token,
+    public initializer: Expression,
+    public location: Location
+  ) {
+    super("VariableDeclaration");
+  }
+  public children() {
+    return [this.initializer];
   }
 }
