@@ -81,6 +81,16 @@ For detailed technical information, see the `.context/` folder, particularly `.c
 - Test files should be in `tests/` directory
 - Use `.test.ts` suffix for test files
 
+## Version Control Guidelines
+
+**IMPORTANT: Always commit your changes when you complete an instruction or task.**
+
+- Create descriptive commit messages that explain what was changed and why
+- Commit after finishing each discrete task or instruction
+- This ensures work is saved and provides clear history of changes
+- Use conventional commit format when appropriate
+- Include context about the implementation in commit messages
+
 ## Notes
 
 - This project uses Bun as the runtime and package manager
