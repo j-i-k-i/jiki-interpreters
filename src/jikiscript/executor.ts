@@ -97,6 +97,23 @@ import { executeMethodCallExpression } from "./executor/executeMethodCallExpress
 import { executeInstantiationExpression } from "./executor/executeInstantiationExpression";
 import { executeGetterExpression } from "./executor/executeGetterExpression";
 import { executeClassStatement } from "./executor/executeClassStatement";
+import { executeSetVariableStatement } from "./executor/executeSetVariableStatement";
+import { executeSetPropertyStatement } from "./executor/executeSetPropertyStatement";
+import { executeChangeVariableStatement } from "./executor/executeChangeVariableStatement";
+import { executeContinueStatement, ContinueFlowControlError } from "./executor/executeContinueStatement";
+import { executeBreakStatement, BreakFlowControlError } from "./executor/executeBreakStatement";
+import { executeLogStatement } from "./executor/executeLogStatement";
+import { executeBlockStatement } from "./executor/executeBlockStatement";
+import { executeFunctionStatement } from "./executor/executeFunctionStatement";
+import { executeReturnStatement } from "./executor/executeReturnStatement";
+import { executeListExpression } from "./executor/executeListExpression";
+import { executeDictionaryExpression } from "./executor/executeDictionaryExpression";
+import { executeThisExpression } from "./executor/executeThisExpression";
+import { executeLiteralExpression } from "./executor/executeLiteralExpression";
+import { executeVariableLookupExpression } from "./executor/executeVariableLookupExpression";
+import { executeUnaryExpression } from "./executor/executeUnaryExpression";
+import { executeLogicalExpression } from "./executor/executeLogicalExpression";
+import { executeGroupingExpression } from "./executor/executeGroupingExpression";
 
 export type ExecutionContext = {
   state: Record<string, any>;
@@ -117,20 +134,6 @@ export type ExternalFunction = {
   arity?: Arity;
 };
 
-class ContinueFlowControlError extends Error {
-  constructor(
-    public location: Location,
-    public lexeme: String
-  ) {
-    super();
-  }
-}
-class BreakFlowControlError extends Error {
-  constructor(public location: Location) {
-    super();
-  }
-}
-
 export class Executor {
   [key: string]: any; // Allow dynamic method access
   private frames: Frame[] = [];
@@ -140,11 +143,11 @@ export class Executor {
   private totalLoopIterations = 0;
   private maxTotalLoopIterations = 0;
   private maxRepeatUntilGameOverIterations = 0;
-  private customFunctionDefinitionMode: boolean;
+  public customFunctionDefinitionMode: boolean;
   private addSuccessFrames: boolean;
 
   private readonly globals = new Environment();
-  private environment = this.globals;
+  public environment = this.globals;
 
   private externalFunctionDescriptions: Record<string, string> = {};
 
@@ -152,7 +155,7 @@ export class Executor {
   // the changes in the frame descriptions
   protected functionCallLog: Record<string, Record<any, number>> = {};
   protected functionCallStack: String[] = [];
-  private contextualThis: Jiki.Instance | null = null;
+  public contextualThis: Jiki.Instance | null = null;
 
   constructor(
     private readonly sourceCode: string,
@@ -204,6 +207,23 @@ export class Executor {
 
   public updateState(name: string, value: any) {
     this.externalState[name] = value;
+  }
+
+  // Environment wrapper methods
+  public defineVariable(name: string, value: any): void {
+    this.environment.define(name, value);
+  }
+
+  public updateVariable(name: Token, value: any): void {
+    this.environment.updateVariable(name, value);
+  }
+
+  public getVariable(name: Token): any {
+    return this.environment.get(name);
+  }
+
+  public variableInScope(name: Token): boolean {
+    return this.environment.inScope(name);
   }
 
   public logicError(message: string) {
@@ -404,122 +424,15 @@ export class Executor {
   }
 
   public visitSetVariableStatement(statement: SetVariableStatement): void {
-    this.executeFrame<EvaluationResultSetVariableStatement>(statement, () => {
-      this.guardDefinedName(statement.name);
-
-      if (statement.name.lexeme.includes("#")) {
-        this.error("VariableCannotBeNamespaced", statement.name.location, {
-          name: statement.name.lexeme,
-        });
-      }
-
-      let value: EvaluationResultExpression;
-      try {
-        value = this.evaluate(statement.value);
-      } catch (e) {
-        if (e instanceof RuntimeError && e.type == "ExpressionIsNull") {
-          this.error("CannotStoreNullFromFunction", statement.value.location);
-        } else {
-          throw e;
-        }
-      }
-      this.guardNoneJikiObject(value.jikiObject, statement.location);
-
-      if (isCallable(value.jikiObject)) {
-        this.error("MissingParenthesesForFunctionCall", statement.value.location, {
-          name: (statement.value as VariableLookupExpression).name.lexeme,
-        });
-      }
-
-      this.environment.define(statement.name.lexeme, value.jikiObject as Jiki.JikiObject);
-
-      return {
-        type: "SetVariableStatement",
-        name: statement.name.lexeme,
-        value: value,
-      };
-    });
+    executeSetVariableStatement(this, statement);
   }
 
   public visitSetPropertyStatement(statement: SetPropertyStatement): void {
-    this.executeFrame<EvaluationResultSetPropertyStatement>(statement, () => {
-      if (!this.contextualThis) {
-        this.error("AccessorUsedOnNonInstance", statement.property.location);
-      }
-
-      if (this.contextualThis.getMethod(statement.property.lexeme)) {
-        this.error("UnexpectedChangeOfMethod", statement.property.location, {
-          name: statement.property.lexeme,
-        });
-      }
-
-      if (!this.contextualThis.hasProperty(statement.property.lexeme)) {
-        this.error("PropertySetterUsedOnNonProperty", statement.property.location, {
-          name: statement.property.lexeme,
-        });
-      }
-      if (this.contextualThis.getField(statement.property.lexeme) != undefined) {
-        this.error("PropertyAlreadySet", statement.property.location, {
-          name: statement.property.lexeme,
-        });
-      }
-
-      let value: EvaluationResultExpression;
-      try {
-        value = this.evaluate(statement.value);
-      } catch (e) {
-        if (e instanceof RuntimeError && e.type == "ExpressionIsNull") {
-          this.error("CannotStoreNullFromFunction", statement.value.location);
-        } else {
-          throw e;
-        }
-      }
-
-      // Update the underlying value
-      this.guardNoneJikiObject(value.jikiObject, statement.location);
-      this.contextualThis.setField(statement.property.lexeme, value.jikiObject as Jiki.JikiObject);
-
-      return {
-        type: "SetPropertyStatement",
-        property: statement.property.lexeme,
-        value: value,
-      };
-    });
+    executeSetPropertyStatement(this, statement);
   }
 
   public visitChangeVariableStatement(statement: ChangeVariableStatement): void {
-    this.executeFrame<EvaluationResultChangeVariableStatement>(statement, () => {
-      // Ensure the variable exists
-      const variable = this.lookupVariable(statement.name);
-
-      if (isCallable(this.environment.get(statement.name))) {
-        this.error("UnexpectedChangeOfFunction", statement.name.location, {
-          name: statement.name.lexeme,
-        });
-      }
-
-      let value: EvaluationResultExpression;
-      try {
-        value = this.evaluate(statement.value);
-      } catch (e) {
-        if (e instanceof RuntimeError && e.type == "ExpressionIsNull") {
-          this.error("CannotStoreNullFromFunction", statement.value.location);
-        } else {
-          throw e;
-        }
-      }
-
-      // Update the underlying value
-      const oldValue = Jiki.unwrapJikiObject(variable.value);
-      this.environment.updateVariable(statement.name, value.jikiObject);
-
-      return {
-        type: "ChangeVariableStatement",
-        name: statement.name.lexeme,
-        value: value,
-        oldValue,
-      };
-    });
+    executeChangeVariableStatement(this, statement);
   }
 
   public visitChangeElementStatement(statement: ChangeElementStatement): void {
@@ -602,23 +515,11 @@ export class Executor {
   }
 
   public visitContinueStatement(statement: ContinueStatement): void {
-    this.executeFrame<EvaluationResultContinueStatement>(statement, () => {
-      return {
-        type: "ContinueStatement",
-      };
-    });
-
-    throw new ContinueFlowControlError(statement.location, statement.keyword.lexeme);
+    executeContinueStatement(this, statement);
   }
 
   public visitBreakStatement(statement: BreakStatement): void {
-    this.executeFrame<EvaluationResultBreakStatement>(statement, () => {
-      return {
-        type: "BreakStatement",
-      };
-    });
-
-    throw new BreakFlowControlError(statement.location);
+    executeBreakStatement(this, statement);
   }
 
   public visitChangeListElementStatement(
@@ -651,20 +552,11 @@ export class Executor {
   }
 
   public visitLogStatement(statement: LogStatement): void {
-    this.executeFrame<EvaluationResultLogStatement>(statement, () => {
-      const value = this.evaluate(statement.expression);
-      return {
-        type: "LogStatement",
-        expression: value,
-        jikiObject: value.jikiObject,
-      };
-    });
+    executeLogStatement(this, statement);
   }
 
   public visitBlockStatement(statement: BlockStatement): void {
-    // Change this to allow scoping
-    // this.executeBlock(statement.statements, new Environment(this.environment))
-    this.executeBlock(statement.statements, this.environment);
+    executeBlockStatement(this, statement);
   }
 
   public visitClassStatement(statement: ClassStatement): void {
@@ -672,55 +564,19 @@ export class Executor {
   }
 
   public visitFunctionStatement(statement: FunctionStatement): void {
-    const func = new UserDefinedFunction(statement);
-
-    if (!this.customFunctionDefinitionMode && statement.name.lexeme.includes("#")) {
-      this.error("FunctionCannotBeNamespaced", statement.name.location, {
-        name: statement.name.lexeme,
-      });
-    }
-
-    this.guardDefinedName(statement.name);
-    this.environment.define(statement.name.lexeme, func);
+    executeFunctionStatement(this, statement);
   }
 
   public visitReturnStatement(statement: ReturnStatement): void {
-    const evaluationResult = this.executeFrame<EvaluationResultReturnStatement>(statement, () => {
-      if (statement.expression === null) {
-        return {
-          type: "ReturnStatement",
-          jikiObject: undefined,
-        };
-      }
-
-      const value = this.evaluate(statement.expression);
-      return {
-        type: "ReturnStatement",
-        expression: value,
-        jikiObject: value.jikiObject,
-      };
-    });
-    throw new ReturnValue(evaluationResult?.jikiObject, statement.location);
+    executeReturnStatement(this, statement);
   }
 
   visitListExpression(expression: ListExpression): EvaluationResult {
-    return {
-      type: "ListExpression",
-      jikiObject: new Jiki.List(expression.elements.map(element => this.evaluate(element).jikiObject)),
-    };
+    return executeListExpression(this, expression);
   }
 
   visitDictionaryExpression(expression: DictionaryExpression): EvaluationResultDictionaryExpression {
-    let records: Map<string, any> = new Map();
-
-    for (const [key, value] of expression.elements.entries()) {
-      const evalRes = this.evaluate(value);
-      records.set(key, evalRes.jikiObject);
-    }
-    return {
-      type: "DictionaryExpression",
-      jikiObject: new Jiki.Dictionary(records),
-    };
+    return executeDictionaryExpression(this, expression);
   }
 
   private retrieveCounterVariableNameForLoop(
@@ -985,50 +841,15 @@ export class Executor {
   }
 
   public visitThisExpression(expression: ThisExpression): EvaluationResultThisExpression {
-    if (!this.contextualThis) {
-      this.error("ThisUsedOutsideOfMethod", expression.location);
-    }
-
-    return {
-      type: "ThisExpression",
-      jikiObject: this.contextualThis,
-    };
+    return executeThisExpression(this, expression);
   }
 
   public visitLiteralExpression(expression: LiteralExpression): EvaluationResultLiteralExpression {
-    let jikiObject;
-    if (isBoolean(expression.value)) {
-      jikiObject = new Jiki.Boolean(expression.value);
-    } else if (isNumber(expression.value)) {
-      jikiObject = new Jiki.Number(expression.value);
-    } else if (isString(expression.value)) {
-      jikiObject = new Jiki.String(expression.value);
-    } else {
-      // If this happens, we've gone really wrong somewhere!
-      this.error("InvalidLiteralType", expression.location, {
-        value: expression.value,
-      });
-    }
-    return {
-      type: "LiteralExpression",
-      jikiObject: jikiObject,
-    };
+    return executeLiteralExpression(this, expression);
   }
 
   public visitVariableLookupExpression(expression: VariableLookupExpression): EvaluationResultVariableLookupExpression {
-    const value = this.lookupVariable(expression.name);
-    this.guardUncalledFunction(value, expression);
-    if (value instanceof Jiki.Class) {
-      this.error("ClassCannotBeUsedAsVariable", expression.name.location, {
-        name: expression.name.lexeme,
-      });
-    }
-
-    return {
-      type: "VariableLookupExpression",
-      name: expression.name.lexeme,
-      jikiObject: value,
-    };
+    return executeVariableLookupExpression(this, expression);
   }
 
   public visitFunctionLookupExpression(expression: FunctionLookupExpression): EvaluationResultFunctionLookupExpression {
@@ -1055,29 +876,7 @@ export class Executor {
   }
 
   public visitUnaryExpression(expression: UnaryExpression): EvaluationResultUnaryExpression {
-    const operand = this.evaluate(expression.operand);
-
-    switch (expression.operator.type) {
-      case "NOT":
-        this.verifyBoolean(operand.jikiObject, expression.operand);
-        return {
-          type: "UnaryExpression",
-          jikiObject: new Jiki.Boolean(!(operand.jikiObject as Jiki.Boolean).value),
-          operand: operand,
-        };
-      case "MINUS":
-        this.verifyNumber(operand.jikiObject, expression.operand);
-        return {
-          type: "UnaryExpression",
-          jikiObject: new Jiki.Number(-(operand.jikiObject as Jiki.Number).value),
-          operand: operand,
-        };
-    }
-
-    // Unreachable.
-    this.error("InvalidUnaryOperator", expression.operator.location, {
-      expression,
-    });
+    return executeUnaryExpression(this, expression);
   }
 
   public visitBinaryExpression(expression: BinaryExpression): EvaluationResultBinaryExpression {
@@ -1085,56 +884,11 @@ export class Executor {
   }
 
   public visitLogicalExpression(expression: LogicalExpression): EvaluationResultLogicalExpression {
-    if (expression.operator.type === "OR") {
-      const leftOr = this.evaluate(expression.left);
-      this.verifyBoolean(leftOr.jikiObject, expression.left);
-
-      let rightOr: EvaluationResult | undefined = undefined;
-
-      if (!leftOr.jikiObject.value) {
-        rightOr = this.evaluate(expression.right);
-        this.verifyBoolean(rightOr.jikiObject, expression.right);
-      }
-
-      const jikiObject = new Jiki.Boolean(leftOr.jikiObject.value || rightOr?.jikiObject.value);
-      return {
-        jikiObject,
-        type: "LogicalExpression",
-        left: leftOr,
-        right: rightOr,
-        shortCircuited: rightOr === undefined,
-      };
-    }
-
-    const leftAnd = this.evaluate(expression.left);
-    this.verifyBoolean(leftAnd.jikiObject, expression.left);
-
-    let rightAnd: EvaluationResult | undefined = undefined;
-
-    if (leftAnd.jikiObject.value) {
-      rightAnd = this.evaluate(expression.right);
-      this.verifyBoolean(rightAnd.jikiObject, expression.right);
-    }
-
-    const jikiObject = new Jiki.Boolean(leftAnd.jikiObject.value && rightAnd?.jikiObject.value);
-
-    return {
-      jikiObject: jikiObject,
-      type: "LogicalExpression",
-      left: leftAnd,
-      right: rightAnd,
-      shortCircuited: rightAnd === undefined,
-    };
+    return executeLogicalExpression(this, expression);
   }
 
   public visitGroupingExpression(expression: GroupingExpression): EvaluationResultGroupingExpression {
-    const inner = this.evaluate(expression.inner);
-
-    return {
-      type: "GroupingExpression",
-      jikiObject: inner.jikiObject,
-      inner,
-    };
+    return executeGroupingExpression(this, expression);
   }
 
   public visitGetElementExpression(expression: GetElementExpression): EvaluationResultGetElementExpression {
@@ -1267,7 +1021,7 @@ export class Executor {
     };
   }
 
-  private guardUncalledFunction(value: any, expr: Expression): void {
+  public guardUncalledFunction(value: any, expr: Expression): void {
     if (isCallable(value)) {
       this.error("UnexpectedUncalledFunction", expr.location, {
         name: (expr as VariableLookupExpression).name.lexeme,
@@ -1346,7 +1100,7 @@ export class Executor {
     return evaluationResult;
   }
 
-  private lookupVariable(name: Token): any {
+  public lookupVariable(name: Token): any {
     let variable = this.environment.get(name);
     if (variable !== undefined) {
       return variable;
@@ -1442,7 +1196,7 @@ export class Executor {
     });
   }
 
-  private guardDefinedName(name: Token) {
+  public guardDefinedName(name: Token) {
     if (this.environment.inScope(name)) {
       if (isCallable(this.environment.get(name))) {
         this.error("FunctionAlreadyDeclared", name.location, {
@@ -1477,7 +1231,7 @@ export class Executor {
     this.error("ExpressionIsNull", location);
   }
 
-  private guardNoneJikiObject(value: any, location: Location) {
+  public guardNoneJikiObject(value: any, location: Location) {
     if (value instanceof Jiki.JikiObject) {
       return;
     }

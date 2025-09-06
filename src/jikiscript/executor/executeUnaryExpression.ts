@@ -1,0 +1,33 @@
+import type { Executor } from "../executor";
+import type { UnaryExpression } from "../expression";
+import type { EvaluationResultUnaryExpression } from "../evaluation-result";
+import * as Jiki from "../jikiObjects";
+
+export function executeUnaryExpression(
+  executor: Executor,
+  expression: UnaryExpression
+): EvaluationResultUnaryExpression {
+  const operand = executor.evaluate(expression.operand);
+
+  switch (expression.operator.type) {
+    case "NOT":
+      executor.verifyBoolean(operand.jikiObject, expression.operand);
+      return {
+        type: "UnaryExpression",
+        jikiObject: new Jiki.Boolean(!(operand.jikiObject as Jiki.Boolean).value),
+        operand: operand,
+      };
+    case "MINUS":
+      executor.verifyNumber(operand.jikiObject, expression.operand);
+      return {
+        type: "UnaryExpression",
+        jikiObject: new Jiki.Number(-(operand.jikiObject as Jiki.Number).value),
+        operand: operand,
+      };
+  }
+
+  // Unreachable.
+  executor.error("InvalidUnaryOperator", expression.operator.location, {
+    expression,
+  });
+}

@@ -1,0 +1,11 @@
+import type { Executor } from "../executor";
+import type { ListExpression } from "../expression";
+import type { EvaluationResult } from "../evaluation-result";
+import * as Jiki from "../jikiObjects";
+
+export function executeListExpression(executor: Executor, expression: ListExpression): EvaluationResult {
+  return {
+    type: "ListExpression",
+    jikiObject: new Jiki.List(expression.elements.map(element => executor.evaluate(element).jikiObject)),
+  };
+}
