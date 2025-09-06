@@ -21,6 +21,8 @@ import { executeUnaryExpression } from "./executor/executeUnaryExpression";
 import { executeGroupingExpression } from "./executor/executeGroupingExpression";
 import { executeIdentifierExpression } from "./executor/executeIdentifierExpression";
 import { executeBlockStatement } from "./executor/executeBlockStatement";
+import { executeExpressionStatement } from "./executor/executeExpressionStatement";
+import { executeVariableDeclaration } from "./executor/executeVariableDeclaration";
 
 export type RuntimeErrorType = "InvalidBinaryExpression" | "InvalidUnaryExpression" | "UnsupportedOperation";
 
@@ -45,25 +47,11 @@ export class Executor {
 
   public executeStatement(statement: Statement): EvaluationResult | null {
     if (statement instanceof ExpressionStatement) {
-      const expressionResult = this.evaluate(statement.expression);
-      return {
-        type: "ExpressionStatement",
-        expression: expressionResult,
-        jikiObject: expressionResult.jsObject,
-        jsObject: expressionResult.jsObject,
-      } as any;
+      return executeExpressionStatement(this, statement);
     }
 
     if (statement instanceof VariableDeclaration) {
-      const value = this.evaluate(statement.initializer);
-      this.environment.define(statement.name.lexeme, value.jikiObject);
-      return {
-        type: "VariableDeclaration",
-        name: statement.name.lexeme,
-        value: value,
-        jikiObject: value.jikiObject,
-        jsObject: value.jsObject,
-      } as any;
+      return executeVariableDeclaration(this, statement);
     }
 
     if (statement instanceof BlockStatement) {

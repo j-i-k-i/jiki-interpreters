@@ -42,11 +42,46 @@ Results of evaluating expressions/statements with educational metadata:
 
 ### Environment (`environment.ts`)
 
-Manages variable scoping and storage:
+Manages variable scoping and storage using a nested environment chain pattern.
 
-- **Scoping Rules**: Block scoping, function scoping, global scope
-- **Variable Lifecycle**: Creation, updates, access tracking
-- **Educational Features**: Clear error messages for undefined variables
+**Architecture:**
+
+```
+Global Environment
+    ↓ (enclosing)
+Function Environment
+    ↓ (enclosing)
+Block Environment
+```
+
+**Core Operations:**
+
+- **Variable Declaration**: `define(name, value)` creates variables in current scope
+- **Variable Access**: `get(name)` searches up the environment chain until found
+- **Variable Updates**: `update(name, value)` modifies existing variables in their original scope
+- **Scope Management**: Each new scope (function, block) creates child environment
+
+**Scoping Rules:**
+
+- **Block Scoping**: Variables declared in `{ }` blocks are isolated to that scope
+- **Function Scoping**: Function parameters and local variables create new scope
+- **Global Scope**: Top-level variables accessible everywhere (unless shadowed)
+- **Lexical Scoping**: Inner scopes can access outer scope variables
+- **Variable Shadowing**: Inner variables can mask outer variables with same name
+
+**Educational Features:**
+
+- **Clear Error Messages**: "Variable 'x' is not defined" with helpful context
+- **Scope Visualization**: Variable state tracking shows which variables are accessible
+- **Automatic Cleanup**: Block and function scopes automatically clean up when exited
+- **Access Tracking**: Monitor which variables are read vs written for debugging
+
+**Implementation Details:**
+
+- **Environment Chain**: Each environment has reference to its enclosing (parent) environment
+- **Variable Storage**: Uses Map for efficient variable lookup and storage
+- **Scope Isolation**: Variables in child scopes don't leak to parent scopes
+- **Memory Management**: Automatic cleanup when scopes are exited
 
 ### ExecutionContext
 

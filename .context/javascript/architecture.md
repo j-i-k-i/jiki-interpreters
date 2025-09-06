@@ -48,7 +48,8 @@ Builds an Abstract Syntax Tree (AST) from tokens using recursive descent parsing
 **Statement Types:**
 
 - `ExpressionStatement`: Standalone expressions
-- `VariableDeclaration`: let, const, var (planned)
+- `VariableDeclaration`: Variable declarations with `let` keyword
+- `BlockStatement`: Code blocks with scope isolation `{ ... }`
 - `IfStatement`: Conditionals (planned)
 - `WhileStatement`: Loops (planned)
 - `FunctionDeclaration`: Functions (planned)
@@ -69,21 +70,50 @@ Builds an Abstract Syntax Tree (AST) from tokens using recursive descent parsing
 Evaluates the AST and generates execution frames.
 
 **Modular Design:**
-Each expression type has its own executor module:
+Each expression and statement type has its own executor module:
+
+**Expression Executors:**
 
 - `executor/executeLiteralExpression.ts`
 - `executor/executeBinaryExpression.ts`
 - `executor/executeUnaryExpression.ts`
 - `executor/executeGroupingExpression.ts`
+- `executor/executeIdentifierExpression.ts`
+
+**Statement Executors:**
+
+- `executor/executeExpressionStatement.ts`
+- `executor/executeVariableDeclaration.ts`
+- `executor/executeBlockStatement.ts`
+
+**Modular Executor Pattern:**
+
+The JavaScript interpreter follows a consistent modular pattern for all expressions and statements:
+
+1. **Main Executor**: The `Executor` class acts as a coordinator, delegating to specialized executor functions
+2. **Individual Executors**: Each AST node type has its own dedicated executor function (e.g., `executeBlockStatement.ts`)
+3. **Consistent Interface**: All executor functions take `(executor: Executor, node: ASTNode)` and return `EvaluationResult`
+4. **Single Responsibility**: Each executor handles one specific language construct
+5. **Easy Extension**: New language features require only adding a new executor module
 
 **Execution Flow:**
 
-1. Visit each AST node
-2. Evaluate child nodes recursively
-3. Perform the operation
-4. Wrap result in JikiObject
-5. Generate frame with description
-6. Update environment state
+1. Main executor receives AST node via `executeStatement()` or `evaluate()`
+2. Delegates to appropriate specialized executor function
+3. Executor function evaluates child nodes recursively
+4. Performs the operation-specific logic
+5. Wraps result in JikiObject
+6. Returns structured EvaluationResult
+7. Main interpreter generates frame with description
+8. Updates environment state as needed
+
+**Benefits of This Pattern:**
+
+- **Maintainability**: Each language construct is isolated in its own module
+- **Testability**: Individual executors can be tested in isolation
+- **Extensibility**: New features don't require modifying the main executor
+- **Clarity**: Code organization mirrors the language structure
+- **Consistency**: Uniform interfaces across all executor modules
 
 ### 4. Describers (`src/javascript/describers/`)
 
@@ -95,6 +125,7 @@ Generate human-readable descriptions of execution steps.
 - `describeUnaryExpression.ts`: Describes negation and NOT operations
 - `describeGroupingExpression.ts`: Notes parenthesized evaluation
 - `describeExpressionStatement.ts`: Describes standalone expressions
+- `describeBlockStatement.ts`: Explains block scope behavior and variable isolation
 - `describeSteps.ts`: Provides step-by-step execution descriptions
 
 **Description Examples:**
@@ -107,18 +138,68 @@ Generate human-readable descriptions of execution steps.
 !(5 > 3);
 // Step 1: "Comparing values: 5 > 3 evaluates to true"
 // Step 2: "Applying logical NOT: !true evaluates to false"
+
+{
+  let x = 10;
+  x + 5;
+}
+// Block Frame: "This block executed 2 statements in their own scope."
+// Steps:
+// - "JavaScript entered a new block scope"
+// - "All 2 statements inside the block were executed in order"
+// - "JavaScript exited the block scope, removing any variables declared within it"
 ```
 
 ### 5. Environment (`src/javascript/environment.ts`)
 
-Manages variable scoping and storage.
+Manages variable scoping and storage using a nested environment chain.
 
-**Features:**
+**Architecture:**
 
-- Lexical scoping with nested environments
-- Variable declaration and assignment
-- Scope chain traversal
-- Variable shadowing support
+```
+Global Environment
+    ↓ (enclosing)
+Block Environment
+    ↓ (enclosing)
+Nested Block Environment
+```
+
+**Core Features:**
+
+- **Lexical Scoping**: Variables are scoped to the block where they are declared
+- **Environment Chain**: Each new scope creates a child environment with the current as parent
+- **Variable Declaration**: `define(name, value)` creates variables in the current scope
+- **Variable Access**: `get(name)` searches up the environment chain until found
+- **Variable Updates**: `update(name, value)` modifies existing variables in their original scope
+- **Scope Isolation**: Variables in child scopes don't leak to parent scopes
+
+**Block Statement Scoping:**
+
+When executing a block statement `{ ... }`:
+
+1. Create new `Environment(currentEnvironment)` as child scope
+2. Switch executor to use the new environment
+3. Execute all statements inside the block with new environment
+4. Restore previous environment when block completes
+5. Variables declared in block are automatically cleaned up
+
+**Examples:**
+
+```javascript
+let outerVar = 10; // Global scope
+{
+  let blockVar = 20; // Block scope - only accessible inside block
+  outerVar; // ✓ Accessible: searches up to global scope
+}
+blockVar; // ✗ Error: blockVar not accessible outside block
+```
+
+**Environment Methods:**
+
+- `define(name, value)`: Creates variable in current scope
+- `get(name)`: Retrieves variable value, searching up chain
+- `update(name, value)`: Updates existing variable in its original scope
+- `getAllVariables()`: Returns flattened view of all accessible variables
 
 ### 6. JSObjects (`src/javascript/jsObjects.ts`)
 

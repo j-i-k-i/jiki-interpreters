@@ -35,11 +35,29 @@ Source Code → Scanner → Parser → Executor → Frames/UI
 - **Role**: Interprets AST and generates execution frames
 - **Input**: AST from Parser
 - **Output**: Execution frames with variable states and descriptions
-- **Key Components**:
-  - **Environment**: Variable scoping and storage
-  - **ExecutionContext**: Runtime state and configuration
-  - **Frame Generation**: Captures each execution step
-  - **Specialized Executors**: Handle different expression/statement types
+
+**Modular Executor Pattern:**
+
+JikiScript uses a fully modular executor architecture where each language construct has its own dedicated executor:
+
+1. **Main Executor**: The `Executor` class coordinates execution by delegating to specialized functions
+2. **Individual Executors**: Each AST node type has its own executor module (e.g., `executor/executeIfStatement.ts`)
+3. **Visitor Pattern**: Main executor uses `visit*` methods that delegate to `execute*` functions
+4. **Consistent Interface**: All executors follow uniform patterns and return structured results
+5. **Complete Coverage**: Every expression and statement type has its own executor module
+
+**Available Executors:**
+
+- **Expression Executors**: `executeBinaryExpression`, `executeLiteralExpression`, `executeVariableLookupExpression`, etc.
+- **Statement Executors**: `executeIfStatement`, `executeBlockStatement`, `executeFunctionStatement`, etc.
+- **Specialized Executors**: `executeMethodCallExpression`, `executeInstantiationExpression`, etc.
+
+**Key Components**:
+
+- **Environment**: Variable scoping and storage
+- **ExecutionContext**: Runtime state and configuration
+- **Frame Generation**: Captures each execution step
+- **Specialized Executors**: Handle different expression/statement types
 
 ### 4. Support Systems
 
