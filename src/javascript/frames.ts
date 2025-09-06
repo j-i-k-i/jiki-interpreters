@@ -1,4 +1,4 @@
-import type { JSObject } from "./jikiObjects";
+import type { JSObject } from "./jsObjects";
 import type { EvaluationResult } from "./evaluation-result";
 import type { Statement } from "./statement";
 import type { Expression } from "./expression";

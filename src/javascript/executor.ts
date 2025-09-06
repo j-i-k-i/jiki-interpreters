@@ -6,7 +6,7 @@ import { Location } from "./location";
 import type { Statement } from "./statement";
 import { ExpressionStatement } from "./statement";
 import type { EvaluationResult } from "./evaluation-result";
-import { createJikiObject, type JikiObject } from "./jikiObjects";
+import { createJSObject, type JSObject } from "./jsObjects";
 
 // Import individual executors
 import { executeLiteralExpression } from "./executor/executeLiteralExpression";
@@ -41,8 +41,8 @@ export class Executor {
       return {
         type: "ExpressionStatement",
         expression: expressionResult,
-        jikiObject: expressionResult.jikiObject,
-        jsObject: expressionResult.jikiObject,
+        jikiObject: expressionResult.jsObject,
+        jsObject: expressionResult.jsObject,
       } as any;
     }
 
@@ -73,7 +73,7 @@ export class Executor {
     );
   }
 
-  public getVariables(): Record<string, JikiObject> {
+  public getVariables(): Record<string, JSObject> {
     return this.environment.getAllVariables();
   }
 

@@ -1,23 +1,23 @@
 import { BinaryExpression, Expression, GroupingExpression } from "./expression";
 import { Location } from "./location";
 import { Statement } from "./statement";
-import { JikiObject } from "./jikiObjects";
+import { JSObject } from "./jsObjects";
 
 export function formatJSObject(value?: any): string {
   if (value === undefined) {
     return "";
   }
 
-  if (value instanceof JikiObject) {
+  if (value instanceof JSObject) {
     return value.toString();
   }
 
   return JSON.stringify(value);
 }
 
-export function codeTag(code: string | JikiObject, location: Location): string {
+export function codeTag(code: string | JSObject, location: Location): string {
   let parsedCode: string;
-  if (code instanceof JikiObject) {
+  if (code instanceof JSObject) {
     parsedCode = code.toString();
   } else {
     parsedCode = code;

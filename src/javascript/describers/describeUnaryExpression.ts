@@ -3,7 +3,7 @@ import { UnaryExpression } from "../expression";
 import { DescriptionContext } from "../frames";
 import { codeTag, formatJSObject } from "../helpers";
 import { describeExpression } from "./describeSteps";
-import * as JS from "../jikiObjects";
+import * as JS from "../jsObjects";
 
 export function describeUnaryExpression(
   expression: UnaryExpression,

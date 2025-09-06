@@ -1,7 +1,7 @@
 import type { Executor } from "../executor";
 import type { BinaryExpression } from "../expression";
 import type { EvaluationResult } from "../evaluation-result";
-import { createJikiObject, type JikiObject } from "../jikiObjects";
+import { createJSObject, type JSObject } from "../jsObjects";
 import { RuntimeError } from "../executor";
 
 export function executeBinaryExpression(executor: Executor, expression: BinaryExpression): EvaluationResult {
@@ -24,23 +24,23 @@ function handleBinaryOperation(
   expression: BinaryExpression,
   leftResult: EvaluationResult,
   rightResult: EvaluationResult
-): JikiObject {
-  const left = leftResult.jikiObject.value;
-  const right = rightResult.jikiObject.value;
+): JSObject {
+  const left = leftResult.jsObject.value;
+  const right = rightResult.jsObject.value;
 
   switch (expression.operator.type) {
     case "PLUS":
-      return createJikiObject(left + right);
+      return createJSObject(left + right);
     case "MINUS":
-      return createJikiObject(left - right);
+      return createJSObject(left - right);
     case "STAR":
-      return createJikiObject(left * right);
+      return createJSObject(left * right);
     case "SLASH":
-      return createJikiObject(left / right);
+      return createJSObject(left / right);
     case "LOGICAL_AND":
-      return createJikiObject(left && right);
+      return createJSObject(left && right);
     case "LOGICAL_OR":
-      return createJikiObject(left || right);
+      return createJSObject(left || right);
     default:
       throw new RuntimeError(
         `Unsupported binary operator: ${expression.operator.type}`,

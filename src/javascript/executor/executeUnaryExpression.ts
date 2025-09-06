@@ -1,7 +1,7 @@
 import type { Executor } from "../executor";
 import type { UnaryExpression } from "../expression";
 import type { EvaluationResult } from "../evaluation-result";
-import { createJikiObject, type JikiObject } from "../jikiObjects";
+import { createJSObject, type JSObject } from "../jsObjects";
 import { RuntimeError } from "../executor";
 
 export function executeUnaryExpression(executor: Executor, expression: UnaryExpression): EvaluationResult {
@@ -21,16 +21,16 @@ function handleUnaryOperation(
   executor: Executor,
   expression: UnaryExpression,
   operandResult: EvaluationResult
-): JikiObject {
-  const operand = operandResult.jikiObject.value;
+): JSObject {
+  const operand = operandResult.jsObject.value;
 
   switch (expression.operator.type) {
     case "MINUS":
-      return createJikiObject(-operand);
+      return createJSObject(-operand);
     case "PLUS":
-      return createJikiObject(+operand);
+      return createJSObject(+operand);
     case "NOT":
-      return createJikiObject(!operand);
+      return createJSObject(!operand);
     default:
       throw new RuntimeError(
         `Unsupported unary operator: ${expression.operator.type}`,

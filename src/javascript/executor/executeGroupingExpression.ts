@@ -9,7 +9,7 @@ export function executeGroupingExpression(executor: Executor, expression: Groupi
   return {
     type: "GroupingExpression",
     inner: innerResult,
-    jikiObject: innerResult.jikiObject,
-    jsObject: innerResult.jikiObject,
+    jikiObject: innerResult.jsObject,
+    jsObject: innerResult.jsObject,
   } as any;
 }

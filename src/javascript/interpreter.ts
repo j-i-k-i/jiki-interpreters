@@ -2,7 +2,7 @@ import { parse } from "./parser";
 import { Executor, RuntimeError } from "./executor";
 import type { Frame } from "./frames";
 import type { Statement } from "./statement";
-import type { JikiObject } from "./jikiObjects";
+import type { JSObject } from "./jsObjects";
 import type { EvaluationResult } from "./evaluation-result";
 
 export type InterpretResult = {
@@ -75,7 +75,7 @@ export function interpret(sourceCode: string): InterpretResult {
 function generateDescription(statement: Statement, result: EvaluationResult | null): string {
   // Very simple description for now
   if (result) {
-    return `Evaluated expression: ${result.jikiObject.toString()}`;
+    return `Evaluated expression: ${result.jsObject.toString()}`;
   } else {
     return `Executed statement: ${statement.type}`;
   }

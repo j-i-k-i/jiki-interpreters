@@ -1,5 +1,5 @@
 // Simplified JavaScript objects system based on JikiScript
-export abstract class JikiObject {
+export abstract class JSObject {
   public readonly objectId: string;
   constructor(public readonly type: string) {
     this.objectId = Math.random().toString(36).substring(7);
@@ -9,7 +9,7 @@ export abstract class JikiObject {
   public abstract toString(): string;
 }
 
-export class JSNumber extends JikiObject {
+export class JSNumber extends JSObject {
   constructor(public readonly _value: number) {
     super("number");
   }
@@ -23,7 +23,7 @@ export class JSNumber extends JikiObject {
   }
 }
 
-export class JSString extends JikiObject {
+export class JSString extends JSObject {
   constructor(public readonly _value: string) {
     super("string");
   }
@@ -37,7 +37,7 @@ export class JSString extends JikiObject {
   }
 }
 
-export class JSBoolean extends JikiObject {
+export class JSBoolean extends JSObject {
   constructor(public readonly _value: boolean) {
     super("boolean");
   }
@@ -51,8 +51,8 @@ export class JSBoolean extends JikiObject {
   }
 }
 
-// Helper function to create JikiObjects from JavaScript values
-export function createJikiObject(value: any): JikiObject {
+// Helper function to create JSObjects from JavaScript values
+export function createJSObject(value: any): JSObject {
   if (typeof value === "number") {
     return new JSNumber(value);
   } else if (typeof value === "string") {
@@ -60,16 +60,13 @@ export function createJikiObject(value: any): JikiObject {
   } else if (typeof value === "boolean") {
     return new JSBoolean(value);
   } else {
-    throw new Error(`Cannot create JikiObject for value: ${value}`);
+    throw new Error(`Cannot create JSObject for value: ${value}`);
   }
 }
 
-// Alias for compatibility
-export type JSObject = JikiObject;
-
-// Helper function to unwrap JikiObjects to JavaScript values
-export function unwrapJikiObject(obj: JikiObject | any): any {
-  if (obj instanceof JikiObject) {
+// Helper function to unwrap JSObjects to JavaScript values
+export function unwrapJSObject(obj: JSObject | any): any {
+  if (obj instanceof JSObject) {
     return obj.value;
   }
   return obj;
