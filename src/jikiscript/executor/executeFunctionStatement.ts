@@ -6,7 +6,7 @@ export function executeFunctionStatement(executor: Executor, statement: Function
   const func = new UserDefinedFunction(statement);
 
   if (!executor.customFunctionDefinitionMode && statement.name.lexeme.includes("#")) {
-    executor.error("FunctionCannotBeNamespaced", statement.name.location, {
+    executor.error("FunctionCannotBeNamespacedReference", statement.name.location, {
       name: statement.name.lexeme,
     });
   }

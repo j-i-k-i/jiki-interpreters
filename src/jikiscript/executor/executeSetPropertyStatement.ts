@@ -6,22 +6,22 @@ import type { EvaluationResultSetPropertyStatement } from "../evaluation-result"
 export function executeSetPropertyStatement(executor: Executor, statement: SetPropertyStatement): void {
   executor.executeFrame<EvaluationResultSetPropertyStatement>(statement, () => {
     if (!executor.contextualThis) {
-      executor.error("AccessorUsedOnNonInstance", statement.property.location);
+      executor.error("AccessorUsedOnNonInstanceObject", statement.property.location);
     }
 
     if (executor.contextualThis.getMethod(statement.property.lexeme)) {
-      executor.error("UnexpectedChangeOfMethod", statement.property.location, {
+      executor.error("UnexpectedChangeOfMethodReference", statement.property.location, {
         name: statement.property.lexeme,
       });
     }
 
     if (!executor.contextualThis.hasProperty(statement.property.lexeme)) {
-      executor.error("PropertySetterUsedOnNonProperty", statement.property.location, {
+      executor.error("PropertySetterUsedOnNonPropertyTarget", statement.property.location, {
         name: statement.property.lexeme,
       });
     }
     if (executor.contextualThis.getField(statement.property.lexeme) != undefined) {
-      executor.error("PropertyAlreadySet", statement.property.location, {
+      executor.error("PropertyAlreadySetInConstructor", statement.property.location, {
         name: statement.property.lexeme,
       });
     }
@@ -30,8 +30,8 @@ export function executeSetPropertyStatement(executor: Executor, statement: SetPr
     try {
       value = executor.evaluate(statement.value);
     } catch (e) {
-      if (e instanceof RuntimeError && e.type == "ExpressionIsNull") {
-        executor.error("CannotStoreNullFromFunction", statement.value.location);
+      if (e instanceof RuntimeError && e.type == "ExpressionEvaluatedToNullValue") {
+        executor.error("StateErrorCannotStoreNullValueFromFunction", statement.value.location);
       } else {
         throw e;
       }

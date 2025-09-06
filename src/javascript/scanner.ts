@@ -3,16 +3,12 @@
  * This scanner produces tokens for JavaScript syntax.
  */
 
-import {
-  DisabledLanguageFeatureError,
-  type DisabledLanguageFeatureErrorType,
-  SyntaxError,
-  SyntaxErrorType,
-} from "../jikiscript/error";
+import { SyntaxError, type SyntaxErrorType } from "./error";
+import { DisabledLanguageFeatureError, type DisabledLanguageFeatureErrorType } from "../shared/interfaces";
 import type { Token, TokenType } from "./token";
-import { Location } from "../jikiscript/location";
-import type { LanguageFeatures } from "../jikiscript/interpreter";
-import { translate } from "../jikiscript/translator";
+import { Location } from "../shared/location";
+import type { LanguageFeatures } from "./interfaces";
+import { translate } from "./translator";
 
 export class Scanner {
   private tokens: Token[] = [];
@@ -101,14 +97,6 @@ export class Scanner {
     private languageFeatures: LanguageFeatures = {
       includeList: undefined,
       excludeList: undefined,
-      timePerFrame: 0.01,
-      repeatDelay: 0,
-      maxRepeatUntilGameOverIterations: 100,
-      maxTotalLoopIterations: 10000,
-      maxTotalExecutionTime: 10000,
-      allowGlobals: false,
-      customFunctionDefinitionMode: false,
-      addSuccessFrames: true,
     }
   ) {}
 
@@ -630,14 +618,14 @@ export class Scanner {
     if (!this.languageFeatures) return;
 
     if (this.languageFeatures.excludeList && this.languageFeatures.excludeList.includes(tokenType))
-      this.disabledLanguageFeatureError("ExcludeListViolation", {
+      this.disabledLanguageFeatureError("DisabledFeatureExcludeListViolation", {
         excludeList: this.languageFeatures.excludeList,
         tokenType,
         lexeme,
       });
 
     if (this.languageFeatures.includeList && !this.languageFeatures.includeList.includes(tokenType))
-      this.disabledLanguageFeatureError("IncludeListViolation", {
+      this.disabledLanguageFeatureError("DisabledFeatureIncludeListViolation", {
         includeList: this.languageFeatures.includeList,
         tokenType,
         lexeme,

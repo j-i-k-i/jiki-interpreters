@@ -150,7 +150,7 @@ export class Scanner {
       } else if (this.isAlpha(c)) {
         this.tokenizeIdentifier();
       } else {
-        this.error("UnknownCharacter", {
+        this.error("UnknownCharacterInSource", {
           character: c,
         });
       }
@@ -268,11 +268,11 @@ export class Scanner {
     // If we reach the end of the line, we have an unterminated string
     if (this.peek() != '"')
       if (this.previouslyAddedToken() == "IDENTIFIER")
-        this.error("MissingDoubleQuoteToStartString", {
+        this.error("MissingDoubleQuoteToStartStringLiteral", {
           string: this.tokens[this.tokens.length - 1].lexeme,
         });
       else
-        this.error("MissingDoubleQuoteToTerminateString", {
+        this.error("MissingDoubleQuoteToTerminateStringLiteral", {
           string: this.sourceCode.substring(this.start + 1, this.current),
         });
 
@@ -330,20 +330,20 @@ export class Scanner {
 
     // Guard against numbers starting with 0
     if (number.startsWith("0") && number.length > 1 && !number.startsWith("0.")) {
-      this.error("NumberStartsWithZero", {
+      this.error("MalformedNumberStartingWithZero", {
         suggestion: parseFloat(number),
       });
     }
 
     // Guard against numbers with invalid characters (e.g. "123abc")
     if (this.peek().match("[a-zA-Z]")) {
-      this.error("NumberContainsAlpha", {
+      this.error("MalformedNumberContainingAlphabetCharacters", {
         suggestion: parseFloat(number),
       });
     }
     // Guard against trailing decimal points (e.g. "1.")
     if (number.endsWith(".")) {
-      this.error("NumberEndsWithDecimalPoint", {
+      this.error("MalformedNumberEndingWithDecimalPoint", {
         suggestion: parseInt(number),
       });
     }
@@ -352,7 +352,7 @@ export class Scanner {
     if (number.split(".").length > 2) {
       const parts = number.split(".");
       const suggestion = parts[0] + "." + parts.slice(1).join("");
-      this.error("NumberWithMultipleDecimalPoints", {
+      this.error("MalformedNumberWithMultipleDecimalPoints", {
         suggestion: suggestion,
       });
     }
@@ -372,7 +372,7 @@ export class Scanner {
     if (keyword) return keyword;
 
     if (Scanner.keywords[this.lexeme().toLowerCase()]) {
-      this.error("MiscapitalizedKeyword", {
+      this.error("MiscapitalizedKeywordInStatement", {
         actual: this.lexeme(),
         expected: this.lexeme().toLowerCase(),
       });
@@ -483,14 +483,14 @@ export class Scanner {
     if (!this.languageFeatures) return;
 
     if (this.languageFeatures.excludeList && this.languageFeatures.excludeList.includes(tokenType))
-      this.disabledLanguageFeatureError("ExcludeListViolation", {
+      this.disabledLanguageFeatureError("DisabledFeatureExcludeListViolation", {
         excludeList: this.languageFeatures.excludeList,
         tokenType,
         lexeme,
       });
 
     if (this.languageFeatures.includeList && !this.languageFeatures.includeList.includes(tokenType))
-      this.disabledLanguageFeatureError("IncludeListViolation", {
+      this.disabledLanguageFeatureError("DisabledFeatureIncludeListViolation", {
         includeList: this.languageFeatures.includeList,
         tokenType,
         lexeme,

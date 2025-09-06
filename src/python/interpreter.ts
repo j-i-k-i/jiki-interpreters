@@ -4,7 +4,6 @@ import type { Frame } from "../shared/frames";
 import type { Statement } from "./statement";
 import type { JikiObject } from "./pyObjects";
 import type { EvaluationResult } from "./evaluation-result";
-import type { LanguageFeatures } from "../jikiscript/interpreter";
 
 export type InterpretResult = {
   frames: Frame[];
@@ -12,14 +11,10 @@ export type InterpretResult = {
   success: boolean;
 };
 
-export function interpret(
-  sourceCode: string,
-  languageFeatures: Partial<LanguageFeatures> = {},
-  fileName: string = "python-script"
-): InterpretResult {
+export function interpret(sourceCode: string, fileName: string = "python-script"): InterpretResult {
   try {
     // Parse the source code
-    const parser = new Parser(languageFeatures, fileName);
+    const parser = new Parser(fileName);
     const statements = parser.parse(sourceCode);
 
     // Create executor

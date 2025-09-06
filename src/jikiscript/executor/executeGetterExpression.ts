@@ -15,26 +15,26 @@ export function executeGetterExpression(
 ): EvaluationResultGetterExpression {
   const object = executor.evaluate(expression.object);
   if (!(object.jikiObject instanceof Jiki.Instance)) {
-    executor.error("AccessorUsedOnNonInstance", expression.location);
+    executor.error("AccessorUsedOnNonInstanceObject", expression.location);
   }
   if (!(object.jikiObject instanceof Jiki.Instance)) {
-    executor.error("AccessorUsedOnNonInstance", expression.location);
+    executor.error("AccessorUsedOnNonInstanceObject", expression.location);
   }
   const getterName = expression.property.lexeme;
   const getter = object.jikiObject.getGetter(getterName);
 
   if (!getter) {
     if (object.jikiObject.getMethod(getterName)) {
-      executor.error("MethodUsedAsGetter", expression.property.location, {
+      executor.error("MethodUsedAsGetterInsteadOfCall", expression.property.location, {
         name: getterName,
       });
     }
-    executor.error("CouldNotFindGetter", expression.property.location, {
+    executor.error("GetterMethodNotFoundOnObject", expression.property.location, {
       name: getterName,
     });
   }
   if (getter.visibility === "private" && expression.object.type !== "ThisExpression") {
-    executor.error("AttemptedToAccessPrivateGetter", expression.property.location, {
+    executor.error("UnexpectedPrivateGetterAccessAttempt", expression.property.location, {
       name: getterName,
     });
   }
@@ -44,7 +44,7 @@ export function executeGetterExpression(
     value = getter.fn.apply(undefined, [executor.getExecutionContext(), object.jikiObject as Jiki.Instance]);
   } catch (e: unknown) {
     if (e instanceof LogicError) {
-      executor.error("LogicError", expression.location, { message: e.message });
+      executor.error("LogicErrorInExecution", expression.location, { message: e.message });
     }
     throw e;
   }
@@ -67,7 +67,7 @@ export function executeGetterExpression(
   const callee = ce as EvaluationResultMethodLookupExpression
 
   if (!isCallable(callee.method)) {
-    executor.error('NonCallableTarget', expression.location, { callee })
+    executor.error('NonCallableTargetInvocationAttempt', expression.location, { callee })
   }
 
   const args: EvaluationResult[] = []
@@ -81,7 +81,7 @@ export function executeGetterExpression(
   if (args.length < minArity || args.length > maxArity) {
     if (minArity !== maxArity) {
       executor.error(
-        'InvalidNumberOfArgumentsWithOptionalArguments',
+        'InvalidNumberOfArgumentsWithOptionalParameters',
         expression.callee.location,
         {
           name: expression.callee.name.lexeme,
@@ -93,14 +93,14 @@ export function executeGetterExpression(
     }
 
     if (args.length < minArity) {
-      executor.error('TooFewArguments', expression.callee.location, {
+      executor.error('RangeErrorTooFewArgumentsForFunctionCall', expression.callee.location, {
         name: expression.callee.name.lexeme,
         arity: maxArity,
         numberOfArgs: args.length,
         args,
       })
     } else {
-      executor.error('TooManyArguments', expression.callee.location, {
+      executor.error('RangeErrorTooManyArgumentsForFunctionCall', expression.callee.location, {
         name: expression.callee.name.lexeme,
         arity: maxArity,
         numberOfArgs: args.length,
@@ -129,7 +129,7 @@ export function executeGetterExpression(
     if (e instanceof MethodCallTypeMismatchError) {
       executor.error('MethodCallTypeMismatch', expression.location, e.context)
     } else if (e instanceof LogicError) {
-      executor.error('LogicError', expression.location, { message: e.message })
+      executor.error('LogicErrorInExecution', expression.location, { message: e.message })
     } else {
       throw e
     }

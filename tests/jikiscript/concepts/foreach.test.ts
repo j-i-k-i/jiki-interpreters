@@ -2,7 +2,6 @@ import { interpret } from "@jikiscript/interpreter";
 import { parse } from "@jikiscript/parser";
 import { changeLanguage } from "@jikiscript/translator";
 import { ContinueStatement, ForeachStatement, SetVariableStatement } from "@jikiscript/statement";
-import { Location } from "@jikiscript/location";
 import { FunctionCallExpression, ListExpression, LiteralExpression } from "@jikiscript/expression";
 import { RuntimeError } from "@jikiscript/error";
 import { Primitive, unwrapJikiObject } from "@jikiscript/jikiObjects";

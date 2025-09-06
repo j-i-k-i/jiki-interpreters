@@ -8,7 +8,7 @@ export function errorForMissingDoAfterParameters(
 ): { errorType: ErrorType; context: {} } {
   if (token.type == "EOL") {
     return {
-      errorType: "MissingDoToStartBlock",
+      errorType: "MissingDoToStartFunctionBody",
       context: {
         type: "function",
       },
@@ -18,12 +18,12 @@ export function errorForMissingDoAfterParameters(
   if (token.type == "IDENTIFIER") {
     if (parameters.length == 0) {
       return {
-        errorType: "MissingWithBeforeParameters",
+        errorType: "MissingWithBeforeParametersInFunction",
         context: {},
       };
     } else {
       return {
-        errorType: "MissingCommaBetweenParameters",
+        errorType: "MissingCommaBetweenFunctionParameters",
         context: {
           parameter: parameters[parameters.length - 1].name.lexeme,
         },
@@ -32,7 +32,7 @@ export function errorForMissingDoAfterParameters(
   }
 
   return {
-    errorType: "UnexpectedTokenAfterParameters",
+    errorType: "UnexpectedTokenAfterParametersInFunction",
     context: {},
   };
 }

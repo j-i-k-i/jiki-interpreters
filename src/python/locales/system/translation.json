@@ -1,0 +1,24 @@
+{
+  "error": {
+    "syntax": {
+      "GenericSyntaxError": "GenericSyntaxError",
+      "IndentationError": "IndentationError",
+      "MissingExpression": "MissingExpression",
+      "MissingInitializerInVariableDeclaration": "MissingInitializerInVariableDeclaration",
+      "MissingRightParenthesisAfterExpression": "MissingRightParenthesisAfterExpression",
+      "MissingVariableName": "MissingVariableName",
+      "ParseError": "ParseError",
+      "UnexpectedCharacter": "UnexpectedCharacter",
+      "UnexpectedIndentation": "UnexpectedIndentation",
+      "UnknownCharacter": "UnknownCharacter: lexeme: {{lexeme}}",
+      "UnterminatedComment": "UnterminatedComment",
+      "UnterminatedString": "UnterminatedString"
+    },
+    "runtime": {
+      "InvalidBinaryExpression": "InvalidBinaryExpression",
+      "InvalidUnaryExpression": "InvalidUnaryExpression",
+      "UndefinedVariable": "Undefined variable '{{name}}'",
+      "UnsupportedOperation": "UnsupportedOperation"
+    }
+  }
+}

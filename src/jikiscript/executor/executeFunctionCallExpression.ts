@@ -17,20 +17,20 @@ function throwMissingFunctionError(executor: Executor, expression: FunctionCallE
   if (!isRuntimeError(e)) {
     throw e;
   }
-  if (e.type != "CouldNotFindFunction") {
+  if (e.type != "FunctionNotFoundInScope") {
     throw e;
   }
 
   if (e.context?.didYouMean?.function?.length > 0) {
     const alternative = e.context.didYouMean.function;
-    executor.error("CouldNotFindFunctionWithSuggestion", e.location, {
+    executor.error("FunctionNotFoundWithSimilarNameSuggestion", e.location, {
       ...e.context,
       suggestion: alternative,
       name: expression.callee.name.lexeme,
     });
   }
 
-  executor.error("CouldNotFindFunction", e.location, {
+  executor.error("FunctionNotFoundInScope", e.location, {
     ...e.context,
     ...{
       name: expression.callee.name.lexeme,
@@ -53,7 +53,7 @@ export function executeFunctionCallExpression(
   const callee = ce as unknown as EvaluationResultFunctionLookupExpression;
 
   if (!isCallable(callee.function)) {
-    executor.error("NonCallableTarget", expression.location, { callee });
+    executor.error("NonCallableTargetInvocationAttempt", expression.location, { callee });
   }
 
   const args: EvaluationResult[] = [];
@@ -82,14 +82,14 @@ export function executeFunctionCallExpression(
     );
   } catch (e) {
     if (e instanceof CustomFunctionError) {
-      executor.error("CustomFunctionError", expression.location, {
+      executor.error("CustomFunctionErrorInExecution", expression.location, {
         message: e.message,
       });
     }
     if (e instanceof FunctionCallTypeMismatchError) {
-      executor.error("FunctionCallTypeMismatch", expression.location, e.context);
+      executor.error("FunctionCallTypeMismatchError", expression.location, e.context);
     } else if (e instanceof LogicError) {
-      executor.error("LogicError", expression.location, { message: e.message });
+      executor.error("LogicErrorInExecution", expression.location, { message: e.message });
     } else {
       throw e;
     }
@@ -116,7 +116,7 @@ export function guardArityOnCallExpression(
 
   if (args.length < minArity || args.length > maxArity) {
     if (minArity !== maxArity) {
-      executor.error("InvalidNumberOfArgumentsWithOptionalArguments", location, {
+      executor.error("InvalidNumberOfArgumentsWithOptionalParameters", location, {
         name,
         minArity,
         maxArity,
@@ -125,14 +125,14 @@ export function guardArityOnCallExpression(
     }
 
     if (args.length < minArity) {
-      executor.error("TooFewArguments", location, {
+      executor.error("RangeErrorTooFewArgumentsForFunctionCall", location, {
         name,
         arity: maxArity,
         numberOfArgs: args.length,
         args,
       });
     } else {
-      executor.error("TooManyArguments", location, {
+      executor.error("RangeErrorTooManyArgumentsForFunctionCall", location, {
         name,
         arity: maxArity,
         numberOfArgs: args.length,

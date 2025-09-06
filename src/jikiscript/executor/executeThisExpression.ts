@@ -4,7 +4,7 @@ import type { EvaluationResultThisExpression } from "../evaluation-result";
 
 export function executeThisExpression(executor: Executor, expression: ThisExpression): EvaluationResultThisExpression {
   if (!executor.contextualThis) {
-    executor.error("ThisUsedOutsideOfMethod", expression.location);
+    executor.error("ThisKeywordUsedOutsideOfMethodContext", expression.location);
   }
 
   return {

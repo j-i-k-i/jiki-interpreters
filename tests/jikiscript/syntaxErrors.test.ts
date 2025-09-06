@@ -9,42 +9,42 @@ afterAll(() => {
   changeLanguage("en");
 });
 
-describe("InvalidFunctionName", () => {
+describe("InvalidFunctionNameExpression", () => {
   test("number as a function name", () => {
-    expect(() => parse("1()")).toThrow("InvalidFunctionName");
+    expect(() => parse("1()")).toThrow("InvalidFunctionNameExpression");
   });
   test("boolean as a function name", () => {
-    expect(() => parse("true()")).toThrow("InvalidFunctionName");
+    expect(() => parse("true()")).toThrow("InvalidFunctionNameExpression");
   });
 });
 
 //
 // Numbers
 //
-test("NumberWithMultipleDecimalPoints", () => {
+test("MalformedNumberWithMultipleDecimalPoints", () => {
   expect(() => parse("1.3.4")).toThrow("NumberWithMultipleDecimalPoints: suggestion: 1.34");
 });
 
-test("NumberEndsWithDecimalPoint", () => {
+test("MalformedNumberEndingWithDecimalPoint", () => {
   expect(() => parse("123.")).toThrow("NumberEndsWithDecimalPoint: suggestion: 123");
 });
 
-test("NumberContainsAlpha", () => {
+test("MalformedNumberContainingAlphabetCharacters", () => {
   expect(() => parse("set x to 123abc")).toThrow("NumberContainsAlpha: suggestion: 123");
 });
 
-test("NumberStartsWithZero", () => {
+test("MalformedNumberStartingWithZero", () => {
   expect(() => parse("set x to 00123")).toThrow("NumberStartsWithZero: suggestion: 123");
 });
 
 //
 // Strings
 //
-test("MissingDoubleQuoteToStartString", () => {
+test("MissingDoubleQuoteToStartStringLiteral", () => {
   expect(() => parse('abc"')).toThrow("MissingDoubleQuoteToStartString: string: abc");
 });
 
-describe("MissingDoubleQuoteToTerminateString", () => {
+describe("MissingDoubleQuoteToTerminateStringLiteral", () => {
   test("unterminated - end of file", () => {
     expect(() => parse('"abc')).toThrow("MissingDoubleQuoteToTerminateString: string: abc");
   });
@@ -61,42 +61,42 @@ describe("MissingDoubleQuoteToTerminateString", () => {
 //
 // Assignment
 //
-test("UnexpectedEqualsForAssignment", () => {
-  expect(() => parse('set value = "value"')).toThrow("UnexpectedEqualsForAssignment");
+test("UnexpectedEqualsForAssignmentUseSetInstead", () => {
+  expect(() => parse('set value = "value"')).toThrow("UnexpectedEqualsForAssignmentUseSetInstead");
 });
 
-test("InvalidNumericVariableName", () => {
+test("InvalidNumericVariableNameStartingWithDigit", () => {
   expect(() => parse('set 123 to "value"')).toThrow("InvalidNumericVariableName: name: 123");
 });
 
 test("MissingToAfterVariableNameToInitializeValue", () => {
   expect(() => parse('set name "Jeremy"')).toThrow("MissingToAfterVariableNameToInitializeValue: name");
 });
-test("UnexpectedSpaceInIdentifier", () => {
+test("UnexpectedSpaceInIdentifierName", () => {
   expect(() => parse('set na me to "Jeremy"')).toThrow("UnexpectedSpaceInIdentifier: first_half: na, second_half: me");
 });
 
 // Function definitions
-test("MissingFunctionName", () => {
+test("MissingFunctionNameInDeclaration", () => {
   expect(() =>
     parse(`
       function with x, y do
         set result to x + y
       end
     `)
-  ).toThrow("MissingFunctionName");
+  ).toThrow("MissingFunctionNameInDeclaration");
 });
 
-test("MissingWithBeforeParameters", () => {
+test("MissingWithBeforeParametersInFunction", () => {
   expect(() =>
     parse(`
     function foobar a do
     end
   `)
-  ).toThrow("MissingWithBeforeParameters");
+  ).toThrow("MissingWithBeforeParametersInFunction");
 });
 
-test("MissingDoToStartBlock", () => {
+test("MissingDoToStartFunctionBody", () => {
   expect(() =>
     parse(`
     function foobar with a
@@ -105,7 +105,7 @@ test("MissingDoToStartBlock", () => {
   ).toThrow("MissingDoToStartBlock: type: function");
 });
 
-test("MissingEndAfterBlock", () => {
+test("MissingEndAfterBlockStatement", () => {
   expect(() =>
     parse(`
     function foobar with a do
@@ -113,29 +113,29 @@ test("MissingEndAfterBlock", () => {
   ).toThrow("MissingEndAfterBlock: type: function");
 });
 
-test("MissingParameterName", () => {
+test("MissingParameterNameInFunctionDeclaration", () => {
   expect(() =>
     parse(`
       function move with do
         set result to 10
       end
     `)
-  ).toThrow("MissingParameterName");
+  ).toThrow("MissingParameterNameInFunctionDeclaration");
 });
 
-test("MissingWithBeforeParameters", () => {
+test("MissingWithBeforeParametersInFunction", () => {
   expect(() =>
     parse(`
       function move unexpected (x, y) do
         set result to x + y
       end
     `)
-  ).toThrow("MissingWithBeforeParameters");
+  ).toThrow("MissingWithBeforeParametersInFunction");
 });
 
 describe("MissingEndOfLine", () => {
   test("Two expressions", () => {
-    expect(() => parse("log 1 1")).toThrow("MissingEndOfLine");
+    expect(() => parse("log 1 1")).toThrow("MissingEndOfLine: previous: 1");
   });
 
   test("Two ends", () => {
@@ -149,7 +149,7 @@ describe("MissingEndOfLine", () => {
   });
 });
 
-test("NumberContainsAlpha", () => {
+test("MalformedNumberContainingAlphabetCharacters", () => {
   expect(() =>
     parse(`
       function move with 1x, y do
@@ -159,7 +159,7 @@ test("NumberContainsAlpha", () => {
   ).toThrow("NumberContainsAlpha: suggestion: 1");
 });
 
-test("MissingCommaBetweenParameters", () => {
+test("MissingCommaBetweenFunctionParameters", () => {
   expect(() =>
     parse(`
       function move with x y do
@@ -169,7 +169,7 @@ test("MissingCommaBetweenParameters", () => {
   ).toThrow("MissingCommaBetweenParameters: parameter: x");
 });
 
-test("DuplicateParameterName", () => {
+test("DuplicateParameterNameInFunctionDeclaration", () => {
   expect(() =>
     parse(`
       function move with x, x do
@@ -179,17 +179,17 @@ test("DuplicateParameterName", () => {
   ).toThrow("DuplicateParameterName: parameter: x");
 });
 
-test("MissingParameterName", () => {
+test("MissingParameterNameInFunctionDeclaration", () => {
   expect(() =>
     parse(`
       function move with do
         set result to 10
       end
     `)
-  ).toThrow("MissingParameterName");
+  ).toThrow("MissingParameterNameInFunctionDeclaration");
 });
 
-test("MissingCommaBetweenParameters", () => {
+test("MissingCommaBetweenFunctionParameters", () => {
   expect(() =>
     parse(`
       function move with x, unexpected y do
@@ -213,19 +213,19 @@ describe("MissingRightParenthesisAfterFunctionCall", () => {
   });
 });
 
-test("UnexpectedEqualsForAssignment", () => {
-  expect(() => parse('set x = "value"')).toThrow("UnexpectedEqualsForAssignment");
+test("UnexpectedEqualsForAssignmentUseSetInstead", () => {
+  expect(() => parse('set x = "value"')).toThrow("UnexpectedEqualsForAssignmentUseSetInstead");
 });
-describe("UnexpectedEqualsForEquality", () => {
+describe("UnexpectedEqualsForEqualityUseIsInstead", () => {
   test("in condition", () => {
-    expect(() => parse('if a = "value"')).toThrow("UnexpectedEqualsForEquality");
+    expect(() => parse('if a = "value"')).toThrow("UnexpectedEqualsForEqualityUseIsInstead");
   });
   test("in assignment", () => {
-    expect(() => parse('set a to x = "value"')).toThrow("UnexpectedEqualsForEquality");
+    expect(() => parse('set a to x = "value"')).toThrow("UnexpectedEqualsForEqualityUseIsInstead");
   });
 });
 
-describe("MissingDoToStartBlock", () => {
+describe("MissingDoToStartFunctionBody", () => {
   test("repeat", () => {
     expect(() =>
       parse(`
@@ -263,7 +263,7 @@ describe("MissingDoToStartBlock", () => {
   });
 });
 
-describe("MissingEndAfterBlock", () => {
+describe("MissingEndAfterBlockStatement", () => {
   test("repeat", () => {
     expect(() =>
       parse(`
@@ -309,7 +309,7 @@ describe("MissingEndAfterBlock", () => {
   });
 });
 
-describe("UnexpectedElseWithoutIf", () => {
+describe("UnexpectedElseWithoutMatchingIf", () => {
   test("else", () => {
     expect(() =>
       parse(`
@@ -317,7 +317,7 @@ describe("UnexpectedElseWithoutIf", () => {
           set x to 10
         end
       `)
-    ).toThrow("UnexpectedElseWithoutIf");
+    ).toThrow("UnexpectedElseWithoutMatchingIf");
   });
 
   test("else if", () => {
@@ -327,7 +327,7 @@ describe("UnexpectedElseWithoutIf", () => {
           set x to 20
         end
       `)
-    ).toThrow("UnexpectedElseWithoutIf");
+    ).toThrow("UnexpectedElseWithoutMatchingIf");
   });
 
   // TODO: Could we do better here?
@@ -342,11 +342,11 @@ describe("UnexpectedElseWithoutIf", () => {
           set x to 40
         end
       `)
-    ).toThrow("UnexpectedElseWithoutIf");
+    ).toThrow("UnexpectedElseWithoutMatchingIf");
   });
 });
 
-describe("MissingConditionAfterIf", () => {
+describe("MissingIfConditionAfterIfKeyword", () => {
   test("if", () => {
     expect(() =>
       parse(`
@@ -354,7 +354,7 @@ describe("MissingConditionAfterIf", () => {
           set x to 10
         end
       `)
-    ).toThrow("MissingConditionAfterIf");
+    ).toThrow("MissingIfConditionAfterIfKeyword");
   });
   test("else if", () => {
     expect(() =>
@@ -365,7 +365,7 @@ describe("MissingConditionAfterIf", () => {
           set x to 30
         end
       `)
-    ).toThrow("MissingConditionAfterIf");
+    ).toThrow("MissingIfConditionAfterIfKeyword");
   });
 });
 
@@ -381,7 +381,7 @@ describe("UnexpectedVariableExpressionAfterIfWithPotentialTypo", () => {
   });
 });
 
-test("InvalidNestedFunction", () => {
+test("InvalidNestedFunctionDeclaration", () => {
   expect(() =>
     parse(`
       function outer do
@@ -390,19 +390,19 @@ test("InvalidNestedFunction", () => {
         end
       end
     `)
-  ).toThrow("InvalidNestedFunction");
+  ).toThrow("InvalidNestedFunctionDeclaration");
 });
 
 describe("chained things", () => {
   test("triple equals", () => {
-    expect(() => parse("1 == 2 == 3")).toThrow("UnexpectedChainedEquality");
+    expect(() => parse("1 == 2 == 3")).toThrow("UnexpectedChainedEqualityExpression");
   });
   test.skip("triple not equals", () => {
-    expect(() => parse("1 != 2 != 3")).toThrow("UnexpectedChainedEquality");
+    expect(() => parse("1 != 2 != 3")).toThrow("UnexpectedChainedEqualityExpression");
   });
 });
 
-describe("MiscapitalizedKeyword", () => {
+describe("MiscapitalizedKeywordInStatement", () => {
   test("initial letter is wrong", () => {
     expect(() => parse("If x to 10")).toThrow("MiscapitalizedKeyword: actual: If, expected: if");
   });
@@ -414,12 +414,12 @@ describe("MiscapitalizedKeyword", () => {
   });
 });
 
-describe("PointlessStatement", () => {
+describe("PointlessStatementWithNoEffect", () => {
   test("with a literal", () => {
-    expect(() => parse("10")).toThrow("PointlessStatement");
+    expect(() => parse("10")).toThrow("PointlessStatementWithNoEffect");
   });
   test("with a literal in a group", () => {
-    expect(() => parse("(10)")).toThrow("PointlessStatement");
+    expect(() => parse("(10)")).toThrow("PointlessStatementWithNoEffect");
   });
 });
 
@@ -427,14 +427,14 @@ test("PotentialMissingParenthesesForFunctionCall", () => {
   expect(() => parse("foo")).toThrow("PotentialMissingParenthesesForFunctionCall");
 });
 
-test("MissingEachAfterFor", () => {
+test("MissingEachAfterForKeyword", () => {
   expect(() =>
     parse(`
       for elem in [] do
         set x to elem
       end
     `)
-  ).toThrow("MissingEachAfterFor");
+  ).toThrow("MissingEachAfterForKeyword");
 });
 
 describe("UnexpectedClosingBracket", () => {
@@ -444,21 +444,21 @@ describe("UnexpectedClosingBracket", () => {
         parse(`
           if true) do
         `)
-      ).toThrow("UnexpectedClosingBracket");
+      ).toThrow("UnexpectedClosingBracket: lexeme: )");
     });
     test("}", () => {
       expect(() =>
         parse(`
           if true} do
         `)
-      ).toThrow("UnexpectedClosingBracket");
+      ).toThrow("UnexpectedClosingBracket: lexeme: }");
     });
     test("]", () => {
       expect(() =>
         parse(`
           if true] do
         `)
-      ).toThrow("UnexpectedClosingBracket");
+      ).toThrow("UnexpectedClosingBracket: lexeme: ]");
     });
   });
   describe("places", () => {
@@ -467,40 +467,40 @@ describe("UnexpectedClosingBracket", () => {
         parse(`
           if true) do
         `)
-      ).toThrow("UnexpectedClosingBracket");
+      ).toThrow("UnexpectedClosingBracket: lexeme: )");
     });
     test("for each", () => {
       expect(() =>
         parse(`
           for each x in []) do
         `)
-      ).toThrow("UnexpectedClosingBracket");
+      ).toThrow("UnexpectedClosingBracket: lexeme: )");
     });
     test("repeat", () => {
       expect(() =>
         parse(`
           repeat 5 times) do
         `)
-      ).toThrow("UnexpectedClosingBracket");
+      ).toThrow("UnexpectedClosingBracket: lexeme: )");
     });
     test("repeat_until_game_over", () => {
       expect(() =>
         parse(`
           repeat_until_game_over) do
         `)
-      ).toThrow("UnexpectedClosingBracket");
+      ).toThrow("UnexpectedClosingBracket: lexeme: )");
     });
     test("repeat_forever", () => {
       expect(() =>
         parse(`
           repeat_forever) do
         `)
-      ).toThrow("UnexpectedClosingBracket");
+      ).toThrow("UnexpectedClosingBracket: lexeme: )");
     });
   });
 });
 
-describe("UnexpectedToken", () => {
+describe("UnexpectedTokenInStatement", () => {
   test("if with random word", () => {
     expect(() =>
       parse(`
@@ -560,13 +560,13 @@ describe("MissingRightBracketAfterListElements", () => {
   });
 });
 
-describe("MissingCommaInList", () => {
+describe("MissingCommaBetweenListElements", () => {
   test("one line", () => {
     expect(() =>
       parse(`
         set foo to [1 2
       `)
-    ).toThrow("MissingCommaInList");
+    ).toThrow("MissingCommaBetweenListElements");
   });
   test("multiple lines", () => {
     expect(() =>
@@ -574,7 +574,7 @@ describe("MissingCommaInList", () => {
         set foo to [1 
                     2
       `)
-    ).toThrow("MissingCommaInList");
+    ).toThrow("MissingCommaBetweenListElements");
   });
 });
 
@@ -630,13 +630,13 @@ describe("MissingRightBraceAfterDictionaryElements", () => {
   });
 });
 
-describe("MissingCommaInDictionary", () => {
+describe("MissingCommaBetweenDictionaryElements", () => {
   test("one line", () => {
     expect(() =>
       parse(`
         set foo to {"1": "2" "3"
       `)
-    ).toThrow("MissingCommaInDictionary");
+    ).toThrow("MissingCommaBetweenDictionaryElements");
   });
   test("multiple lines", () => {
     expect(() =>
@@ -644,42 +644,42 @@ describe("MissingCommaInDictionary", () => {
         set foo to {"1": "2"
                     "3"
       `)
-    ).toThrow("MissingCommaInDictionary");
+    ).toThrow("MissingCommaBetweenDictionaryElements");
   });
 });
 
-describe("UnexpectedTrailingComma", () => {
+describe("UnexpectedTrailingCommaInList", () => {
   test("dictionary with elems", () => {
     expect(() =>
       parse(`
         set foo to {"1": "2",}
       `)
-    ).toThrow("UnexpectedTrailingComma");
+    ).toThrow("UnexpectedTrailingCommaInList");
   });
   test("naked dictionary", () => {
     expect(() =>
       parse(`
         set foo to {,}
       `)
-    ).toThrow("UnexpectedTrailingComma");
+    ).toThrow("UnexpectedTrailingCommaInList");
   });
   test("list with elems", () => {
     expect(() =>
       parse(`
         set foo to ["1", "2",]
       `)
-    ).toThrow("UnexpectedTrailingComma");
+    ).toThrow("UnexpectedTrailingCommaInList");
   });
   test("naked list", () => {
     expect(() =>
       parse(`
         set foo to [,]
       `)
-    ).toThrow("UnexpectedTrailingComma");
+    ).toThrow("UnexpectedTrailingCommaInList");
   });
 });
 
-describe("UnexpectedKeyword", () => {
+describe("UnexpectedKeywordInExpression", () => {
   test("function definition", () => {
     expect(() => parse(`function can_fit_in with queue, next, time do`)).toThrow("UnexpectedKeyword: lexeme: next");
   });
@@ -692,15 +692,15 @@ describe("UnexpectedKeyword", () => {
   });
 });
 
-describe("MissingByAfterIndexed", () => {
+describe("MissingByAfterIndexedKeyword", () => {
   test("repeat", () => {
-    expect(() => parse(`repeat 10 times indexed do`)).toThrow("MissingByAfterIndexed");
+    expect(() => parse(`repeat 10 times indexed do`)).toThrow("MissingByAfterIndexedKeyword");
   });
 });
 
-describe("MissingIndexNameAfterIndexedBy", () => {
+describe("MissingIndexNameAfterIndexedByKeywords", () => {
   test("repeat", () => {
-    expect(() => parse(`repeat 10 times indexed by do`)).toThrow("MissingIndexNameAfterIndexedBy");
+    expect(() => parse(`repeat 10 times indexed by do`)).toThrow("MissingIndexNameAfterIndexedByKeywords");
   });
 });
 
@@ -713,12 +713,12 @@ describe("UnexpectedIfInBinaryExpression", () => {
   });
 });
 
-describe("MissingMethodNameAfterDot", () => {
+describe("MissingMethodNameAfterDotOperator", () => {
   test("nothing", () => {
-    expect(() => parse(`log x.`)).toThrow("MissingMethodNameAfterDot");
+    expect(() => parse(`log x.`)).toThrow("MissingMethodNameAfterDotOperator");
   });
   test("bracket", () => {
-    expect(() => parse(`log x.(`)).toThrow("MissingMethodNameAfterDot");
+    expect(() => parse(`log x.(`)).toThrow("MissingMethodNameAfterDotOperator");
   });
 });
 describe("MissingLeftParenthesisAfterMethodCall", () => {
@@ -733,20 +733,20 @@ describe("MissingLeftParenthesisAfterMethodCall", () => {
   });
 });
 
-describe("MissingClassNameInInstantiation", () => {
+describe("MissingClassNameInDeclaration", () => {
   test("naked", () => {
-    expect(() => parse(`log new `)).toThrow("MissingClassNameInInstantiation");
+    expect(() => parse(`log new `)).toThrow("MissingClassNameInDeclaration");
   });
   test("with args", () => {
-    expect(() => parse(`log new (`)).toThrow("MissingClassNameInInstantiation");
+    expect(() => parse(`log new (`)).toThrow("MissingClassNameInDeclaration");
   });
 });
 
-test("MissingLeftParenthesisInInstantiation", () => {
+test("MissingLeftParenthesisInInstantiationExpression", () => {
   expect(() => parse(`log new Foo`)).toThrow("MissingLeftParenthesisInInstantiation: class: Foo");
 });
 
-describe("MissingRightParenthesisInInstantiation", () => {
+describe("MissingRightParenthesisInInstantiationExpression", () => {
   test("naked", () => {
     expect(() => parse(`log new Foo(`)).toThrow("MissingRightParenthesisInInstantiation: class: Foo");
   });
@@ -757,19 +757,19 @@ describe("MissingRightParenthesisInInstantiation", () => {
     expect(() => parse(`log new Foo(1,2,`)).toThrow("MissingRightParenthesisInInstantiation: class: Foo");
   });
 });
-test("InvalidClassNameInInstantiation", () => {
-  expect(() => parse(`log new foo()`)).toThrow("InvalidClassNameInInstantiation");
+test("InvalidClassNameInInstantiationExpression", () => {
+  expect(() => parse(`log new foo()`)).toThrow("InvalidClassNameInInstantiation: class: foo");
 });
 
-describe("InvalidVariableName", () => {
+describe("InvalidVariableNameExpression", () => {
   test("setting", () => {
-    expect(() => parse(`set Foo to true`)).toThrow("InvalidVariableName");
+    expect(() => parse(`set Foo to true`)).toThrow("InvalidVariableNameExpression");
   });
   test("change", () => {
-    expect(() => parse(`change Foo to true`)).toThrow("InvalidVariableName");
+    expect(() => parse(`change Foo to true`)).toThrow("InvalidVariableNameExpression");
   });
   // test('use', () => {
-  //   expect(() => parse(`log foo(Foo)`)).toThrow('InvalidVariableName')
+  //   expect(() => parse(`log foo(Foo)`)).toThrow('InvalidVariableNameExpression')
   // })
 });
 
@@ -780,8 +780,8 @@ test.skip("right bracket", () => {
   expect(() => parse(`log foo.bar )`)).toThrow("MissingLeftParenthesisAfterMethodCall");
 });
 
-test("MissingSecondElementNameAfterForeach", () => {
-  expect(() => parse(`for each key, in {} do`)).toThrow("MissingSecondElementNameAfterForeach");
+test("MissingSecondElementNameAfterForeachKeyword", () => {
+  expect(() => parse(`for each key, in {} do`)).toThrow("MissingSecondElementNameAfterForeachKeyword");
 });
 
 test("UnexpectedVisibilityModifierOutsideClass", () => {

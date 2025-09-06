@@ -1,17 +1,19 @@
-import { Location } from "./location";
+import { Location } from "../shared/location";
 
 export type SyntaxErrorType =
   | "GenericSyntaxError"
-  | "UnknownCharacter"
+  | "MissingBacktickToTerminateTemplateLiteral"
+  | "MissingDoubleQuoteToTerminateString"
   | "MissingExpression"
-  | "MissingRightParenthesisAfterExpression"
-  | "MissingSemicolon"
-  | "UnterminatedString"
-  | "UnterminatedComment"
-  | "MissingVariableName"
   | "MissingInitializerInVariableDeclaration"
   | "MissingRightBraceAfterBlock"
-  | "UnexpectedRightBrace";
+  | "MissingRightParenthesisAfterExpression"
+  | "MissingSemicolon"
+  | "MissingVariableName"
+  | "UnexpectedRightBrace"
+  | "UnknownCharacter"
+  | "UnterminatedComment"
+  | "UnterminatedString";
 
 export class SyntaxError extends Error {
   constructor(

@@ -246,7 +246,10 @@ export class Executor {
         // This saves us having to pass the context down to where
         // the error is thrown.
         this.frames.pop();
-        this.addErrorFrame(error.location, this.buildError("UnexpectedReturnOutsideOfFunction", error.location));
+        this.addErrorFrame(
+          error.location,
+          this.buildError("UnexpectedReturnStatementOutsideOfFunction", error.location)
+        );
         return false;
       }
       if (error instanceof ContinueFlowControlError) {
@@ -256,7 +259,7 @@ export class Executor {
         this.frames.pop();
         this.addErrorFrame(
           error.location,
-          this.buildError("UnexpectedContinueOutsideOfLoop", error.location, {
+          this.buildError("UnexpectedContinueStatementOutsideOfLoop", error.location, {
             lexeme: error.lexeme,
           })
         );
@@ -267,7 +270,7 @@ export class Executor {
         // This saves us having to pass the context down to where
         // the error is thrown.
         this.frames.pop();
-        this.addErrorFrame(error.location, this.buildError("UnexpectedBreakOutsideOfLoop", error.location));
+        this.addErrorFrame(error.location, this.buildError("UnexpectedBreakStatementOutsideOfLoop", error.location));
         return false;
       }
       throw error;
@@ -312,7 +315,7 @@ export class Executor {
   public evaluateSingleExpression(statement: Statement) {
     try {
       if (!(statement instanceof FunctionCallStatement || statement instanceof MethodCallStatement)) {
-        this.error("InvalidExpression", Location.unknown, {
+        this.error("InvalidExpressionEvaluation", Location.unknown, {
           statement: statement,
         });
       }
@@ -342,10 +345,10 @@ export class Executor {
       if (isRuntimeError(error)) {
         if (
           error.location?.line === 1 &&
-          (error.type === "CouldNotFindFunction" || error.type === "CouldNotFindFunctionWithSuggestion")
+          (error.type === "FunctionNotFoundInScope" || error.type === "FunctionNotFoundWithSimilarNameSuggestion")
         ) {
           const newError = this.buildError(
-            "ExpectedFunctionNotFound",
+            "StateErrorExpectedFunctionNotFoundInScope",
             new Location(1, new Span(1, 0), new Span(1, 1)),
             { name: error.context.name }
           );
@@ -353,10 +356,11 @@ export class Executor {
           this.addErrorFrame(newError.location, newError);
         } else if (
           error.location?.line === 1 &&
-          (error.type === "TooFewArguments" || error.type === "TooManyArguments")
+          (error.type === "RangeErrorTooFewArgumentsForFunctionCall" ||
+            error.type === "RangeErrorTooManyArgumentsForFunctionCall")
         ) {
           const newError = this.buildError(
-            "ExpectedFunctionHasWrongArguments",
+            "StateErrorExpectedFunctionHasWrongArgumentCount",
             new Location(1, new Span(1, 0), new Span(1, 1)),
             { name: error.context.name }
           );
@@ -432,7 +436,7 @@ export class Executor {
     if (obj.jikiObject instanceof Jiki.Dictionary) {
       return this.visitChangeDictionaryElementStatement(statement, obj as EvaluationResultDictionaryExpression);
     }
-    this.error("InvalidChangeElementTarget", statement.object.location);
+    this.error("InvalidChangeTargetNotModifiable", statement.object.location);
   }
   public visitChangePropertyStatement(statement: ChangePropertyStatement): void {
     executeChangePropertyStatement(this, statement);
@@ -541,22 +545,22 @@ export class Executor {
     const iterable = this.evaluate(statement.iterable);
     if (iterable.jikiObject instanceof Jiki.List) {
       if (statement.secondElementName) {
-        this.error("UnexpectedForeachSecondElementName", statement.secondElementName.location, {
+        this.error("UnexpectedForeachSecondElementNameInLoop", statement.secondElementName.location, {
           type: "list",
         });
       }
     } else if (iterable.jikiObject instanceof Jiki.String) {
       if (statement.secondElementName) {
-        this.error("UnexpectedForeachSecondElementName", statement.secondElementName.location, {
+        this.error("UnexpectedForeachSecondElementNameInLoop", statement.secondElementName.location, {
           type: "string",
         });
       }
     } else if (iterable.jikiObject instanceof Jiki.Dictionary) {
       if (!statement.secondElementName) {
-        this.error("MissingForeachSecondElementName", statement.iterable.location);
+        this.error("MissingForeachSecondElementNameInDeclaration", statement.iterable.location);
       }
     } else {
-      this.error("ForeachNotIterable", statement.iterable.location, {
+      this.error("ForeachLoopTargetNotIterable", statement.iterable.location, {
         value: formatJikiObject(iterable.jikiObject),
       });
     }
@@ -679,19 +683,19 @@ export class Executor {
     const counterVariableName = this.retrieveCounterVariableNameForLoop(statement);
 
     if (!(count instanceof Jiki.Number)) {
-      this.error("RepeatCountMustBeNumber", statement.count.location, {
+      this.error("RangeErrorRepeatCountMustBeNumericValue", statement.count.location, {
         count,
       });
     }
 
     if (count.value < 0) {
-      this.error("RepeatCountMustBeZeroOrGreater", statement.count.location, {
+      this.error("RangeErrorRepeatCountMustBeNonNegative", statement.count.location, {
         count,
       });
     }
 
     if (count.value > this.maxTotalLoopIterations) {
-      this.error("RepeatCountTooHigh", statement.count.location, {
+      this.error("RangeErrorRepeatCountTooHighForExecution", statement.count.location, {
         count,
         max: this.maxTotalLoopIterations,
       });
@@ -741,7 +745,7 @@ export class Executor {
       while (!this.externalState.gameOver) {
         iteration++;
         if (iteration >= this.maxRepeatUntilGameOverIterations) {
-          this.error("MaxIterationsReached", statement.keyword.location, {
+          this.error("StateErrorMaxIterationsReachedInLoop", statement.keyword.location, {
             max: this.maxRepeatUntilGameOverIterations,
           });
         }
@@ -762,7 +766,7 @@ export class Executor {
       while (true) {
         iteration++;
         if (iteration >= this.maxTotalLoopIterations) {
-          this.error("InfiniteLoop", statement.keyword.location);
+          this.error("StateErrorInfiniteLoopDetectedInExecution", statement.keyword.location);
         }
 
         this.guardInfiniteLoop(statement.location);
@@ -835,7 +839,7 @@ export class Executor {
       return this.visitGetElementExpressionForDictionary(expression, obj as EvaluationResultDictionaryExpression);
     }
 
-    this.error("InvalidIndexGetterTarget", expression.location, {
+    this.error("InvalidIndexGetterTargetNotIndexable", expression.location, {
       expression,
       type: typeof obj.jikiObject,
     });
@@ -915,7 +919,7 @@ export class Executor {
       return this.visitSetElementExpressionForDictionary(expression, obj as EvaluationResultDictionaryExpression);
     }
 
-    this.error("InvalidChangeElementTarget", expression.location, {
+    this.error("InvalidChangeTargetNotModifiable", expression.location, {
       expression,
       obj,
     });
@@ -955,7 +959,7 @@ export class Executor {
 
   public guardUncalledFunction(value: any, expr: Expression): void {
     if (isCallable(value)) {
-      this.error("UnexpectedUncalledFunction", expr.location, {
+      this.error("UnexpectedUncalledFunctionInExpression", expr.location, {
         name: (expr as VariableLookupExpression).name.lexeme,
       });
     }
@@ -969,11 +973,11 @@ export class Executor {
     this.guardUncalledFunction(value, expr);
 
     if (value instanceof Jiki.List) {
-      this.error("ListsCannotBeCompared", expr.location, {
+      this.error("TypeErrorCannotCompareListObjects", expr.location, {
         value: formatJikiObject(value),
       });
     }
-    this.error("IncomparableTypes", expr.location, {
+    this.error("TypeErrorCannotCompareIncomparableTypes", expr.location, {
       value: formatJikiObject(value),
     });
   }
@@ -983,7 +987,7 @@ export class Executor {
 
     this.guardUncalledFunction(value, expr);
 
-    this.error("OperandMustBeNumber", expr.location, {
+    this.error("TypeErrorOperandMustBeNumericValue", expr.location, {
       value: formatJikiObject(value),
     });
   }
@@ -991,14 +995,14 @@ export class Executor {
     if (value instanceof Jiki.String) return;
     this.guardUncalledFunction(value, expr);
 
-    this.error("OperandMustBeString", expr.location, {
+    this.error("TypeErrorOperandMustBeStringValue", expr.location, {
       value: formatJikiObject(value),
     });
   }
   public verifyBoolean(value: Jiki.JikiObject, expr: Expression): void {
     if (value instanceof Jiki.Boolean) return;
 
-    this.error("OperandMustBeBoolean", expr.location, {
+    this.error("TypeErrorOperandMustBeBooleanValue", expr.location, {
       value: formatJikiObject(value),
     });
   }
@@ -1011,14 +1015,14 @@ export class Executor {
           new Span(statement.location.relative.begin, statement.location.relative.begin + 1),
           new Span(statement.location.absolute.begin, statement.location.absolute.begin + 1)
         );
-        this.error("MaxTotalExecutionTimeReached", location);
+        this.error("StateErrorMaxTotalExecutionTimeExceeded", location);
       }
 
       const method = `visit${statement.type}`;
       this[method](statement);
     } catch (e) {
       if (e instanceof LogicError) {
-        this.error("LogicError", statement.location, { message: e.message });
+        this.error("LogicErrorInExecution", statement.location, { message: e.message });
       }
       throw e;
     }
@@ -1043,13 +1047,13 @@ export class Executor {
       // If we have then we're using a function as a variable
       // (ie we've missed the paranetheses)
       if (isCallable(this.globals.get(name))) {
-        this.error("MissingParenthesesForFunctionCall", name.location, {
+        this.error("MissingParenthesesForFunctionCallInvocation", name.location, {
           name: name.lexeme,
         });
       }
 
       // Otherwise we're accessing a global variable when we shouldn't
-      this.error("VariableNotAccessibleInFunction", name.location, {
+      this.error("VariableNotAccessibleInFunctionScope", name.location, {
         name: name.lexeme,
       });
     }
@@ -1070,7 +1074,7 @@ export class Executor {
       fn = this.globals.get(name);
     }
     if (fn === undefined) {
-      this.error("CouldNotFindFunction", name.location, {
+      this.error("FunctionNotFoundInScope", name.location, {
         name: name.lexeme,
 
         didYouMean: {
@@ -1084,7 +1088,7 @@ export class Executor {
   public lookupClass(name: Token): any {
     const klass = this.globals.get(name);
     if (klass === undefined) {
-      this.error("ClassNotFound", name.location, {
+      this.error("ClassNotFoundInScope", name.location, {
         name: name.lexeme,
         // TOOD: Add did you mean
       });
@@ -1099,7 +1103,7 @@ export class Executor {
     getOrChange: "get" | "change"
   ) {
     if (idx.value == 0) {
-      this.error("IndexIsZero", location);
+      this.error("RangeErrorArrayIndexIsZeroBased", location);
     }
     if (idx.value <= obj.value.length) {
       return;
@@ -1107,8 +1111,8 @@ export class Executor {
 
     // Set to IndexOutOfBoundsInGet or IndexOutOfBoundsInSet
     // by capitalzing the first letter of get or set
-    const errorType: "IndexOutOfBoundsInGet" | "IndexOutOfBoundsInChange" =
-      getOrChange === "get" ? "IndexOutOfBoundsInGet" : "IndexOutOfBoundsInChange";
+    const errorType: "IndexOutOfRangeForArrayAccess" | "IndexOutOfRangeForArrayModification" =
+      getOrChange === "get" ? "IndexOutOfRangeForArrayAccess" : "IndexOutOfRangeForArrayModification";
 
     const dataType = obj instanceof Jiki.List ? "list" : "string";
     this.error(errorType, location, {
@@ -1123,7 +1127,7 @@ export class Executor {
       return;
     }
 
-    this.error("MissingKeyInDictionary", location, {
+    this.error("MissingDictionaryKeyInAccess", location, {
       key: formatJikiObject(key),
     });
   }
@@ -1131,11 +1135,11 @@ export class Executor {
   public guardDefinedName(name: Token) {
     if (this.environment.inScope(name)) {
       if (isCallable(this.environment.get(name))) {
-        this.error("FunctionAlreadyDeclared", name.location, {
+        this.error("DuplicateFunctionDeclarationInScope", name.location, {
           name: name.lexeme,
         });
       }
-      this.error("VariableAlreadyDeclared", name.location, {
+      this.error("VariableAlreadyDeclaredInScope", name.location, {
         name: name.lexeme,
       });
     }
@@ -1143,7 +1147,7 @@ export class Executor {
 
   public guardDefinedClass(name: Token) {
     if (this.globals.inScope(name)) {
-      this.error("ClassAlreadyDefined", name.location, { name: name.lexeme });
+      this.error("ClassAlreadyDefinedInScope", name.location, { name: name.lexeme });
     }
   }
 
@@ -1151,7 +1155,7 @@ export class Executor {
     this.totalLoopIterations++;
 
     if (this.totalLoopIterations > this.maxTotalLoopIterations) {
-      this.error("MaxIterationsReached", loc, {
+      this.error("StateErrorMaxIterationsReachedInLoop", loc, {
         max: this.maxTotalLoopIterations,
       });
     }
@@ -1160,14 +1164,14 @@ export class Executor {
     if (value !== null && value !== undefined) {
       return;
     }
-    this.error("ExpressionIsNull", location);
+    this.error("ExpressionEvaluatedToNullValue", location);
   }
 
   public guardNoneJikiObject(value: any, location: Location) {
     if (value instanceof Jiki.JikiObject) {
       return;
     }
-    this.error("NoneJikiObjectDetected", location);
+    this.error("NonJikiObjectDetectedInExecution", location);
   }
 
   public addSuccessFrame(location: Location | null, result: EvaluationResult, context?: Statement | Expression): void {
@@ -1225,7 +1229,7 @@ export class Executor {
     this.functionCallStack.push(name);
 
     if (this.functionCallStack.filter(n => n == name).length > 5) {
-      this.error("InfiniteRecursion", expression.location);
+      this.error("StateErrorInfiniteRecursionDetectedInFunction", expression.location);
     }
   }
 
@@ -1272,7 +1276,7 @@ export class Executor {
     context = Jiki.unwrapJikiObject(context);
 
     let message;
-    if (type == "LogicError") {
+    if (type == "LogicErrorInExecution") {
       message = context.message;
     } else {
       message = translate(`error.runtime.${type}`, context);

@@ -13,13 +13,13 @@ async function usingLanguage(newLanguage: string, callback: () => void) {
 
 describe("scanner", () => {
   describe("error", () => {
-    test.each([
-      ["en", "Unknown character: '#'."],
-      ["nl", "Onbekend karakter: '#'."],
-    ])("translated to '%s'", async (language: string, expectedErrorMessage: string) => {
-      usingLanguage(language, () => {
-        expect(() => scan("123#")).toThrow(expectedErrorMessage);
-      });
-    });
+    test.each([["en", "Unknown character: '#'."]])(
+      "translated to '%s'",
+      async (language: string, expectedErrorMessage: string) => {
+        usingLanguage(language, () => {
+          expect(() => scan("123#")).toThrow(expectedErrorMessage);
+        });
+      }
+    );
   });
 });

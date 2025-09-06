@@ -26,7 +26,7 @@ export function executeInstantiationExpression(
     const [minArity, maxArity] = isNumber(jikiClass.arity) ? [jikiClass.arity, jikiClass.arity] : jikiClass.arity;
 
     if (expression.args.length < minArity || expression.args.length > maxArity) {
-      executor.error("WrongNumberOfArgumentsInConstructor", expression.location, {
+      executor.error("RangeErrorWrongNumberOfArgumentsInConstructorCall", expression.location, {
         arity: minArity,
         numberOfArgs: expression.args.length,
       });
@@ -53,7 +53,7 @@ export function executeInstantiationExpression(
     };
   } catch (e) {
     if (e instanceof UnsetPropertyError) {
-      executor.error("ConstructorDidNotSetProperty", expression.location, {
+      executor.error("ConstructorDidNotSetRequiredProperty", expression.location, {
         property: e.property,
       });
     }

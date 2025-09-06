@@ -10,7 +10,7 @@ export function executeSetVariableStatement(executor: Executor, statement: SetVa
     executor.guardDefinedName(statement.name);
 
     if (statement.name.lexeme.includes("#")) {
-      executor.error("VariableCannotBeNamespaced", statement.name.location, {
+      executor.error("VariableCannotBeNamespacedReference", statement.name.location, {
         name: statement.name.lexeme,
       });
     }
@@ -19,8 +19,8 @@ export function executeSetVariableStatement(executor: Executor, statement: SetVa
     try {
       value = executor.evaluate(statement.value);
     } catch (e) {
-      if (e instanceof RuntimeError && e.type == "ExpressionIsNull") {
-        executor.error("CannotStoreNullFromFunction", statement.value.location);
+      if (e instanceof RuntimeError && e.type == "ExpressionEvaluatedToNullValue") {
+        executor.error("StateErrorCannotStoreNullValueFromFunction", statement.value.location);
       } else {
         throw e;
       }
@@ -28,7 +28,7 @@ export function executeSetVariableStatement(executor: Executor, statement: SetVa
     executor.guardNoneJikiObject(value.jikiObject, statement.location);
 
     if (isCallable(value.jikiObject)) {
-      executor.error("MissingParenthesesForFunctionCall", statement.value.location, {
+      executor.error("MissingParenthesesForFunctionCallInvocation", statement.value.location, {
         name: (statement.value as VariableLookupExpression).name.lexeme,
       });
     }

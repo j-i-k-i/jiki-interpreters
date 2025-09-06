@@ -1,0 +1,4 @@
+export interface LanguageFeatures {
+  excludeList?: string[];
+  includeList?: string[];
+}

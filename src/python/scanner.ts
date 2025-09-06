@@ -8,11 +8,10 @@ import {
   type DisabledLanguageFeatureErrorType,
   SyntaxError,
   type SyntaxErrorType,
-} from "../jikiscript/error";
+} from "./error";
 import type { Token, TokenType } from "./token";
-import { Location } from "./location";
-import type { LanguageFeatures } from "../jikiscript/interpreter";
-import { translate } from "../jikiscript/translator";
+import { Location } from "../shared/location";
+import { translate } from "./translator";
 
 export class Scanner {
   private tokens: Token[] = [];
@@ -89,10 +88,7 @@ export class Scanner {
     "#": this.tokenizeComment,
   };
 
-  constructor(
-    private readonly languageFeatures: LanguageFeatures,
-    private readonly fileName: string
-  ) {}
+  constructor(private readonly fileName: string) {}
 
   public scanTokens(source: string): Token[] {
     this.sourceCode = source;
@@ -128,9 +124,9 @@ export class Scanner {
       this.tokenizeIdentifier();
     } else {
       throw new SyntaxError(
+        "GenericSyntaxError",
         translate("Unexpected character."),
-        Location.fromLineOffset(this.start, this.current, this.line, this.lineOffset),
-        "GenericSyntaxError"
+        Location.fromLineOffset(this.start, this.current, this.line, this.lineOffset)
       );
     }
   }
@@ -282,9 +278,9 @@ export class Scanner {
 
     if (this.isAtEnd()) {
       throw new SyntaxError(
+        "GenericSyntaxError",
         translate("Unterminated string."),
-        Location.fromLineOffset(this.start, this.current, this.line, this.lineOffset),
-        "GenericSyntaxError"
+        Location.fromLineOffset(this.start, this.current, this.line, this.lineOffset)
       );
     }
 
@@ -307,9 +303,9 @@ export class Scanner {
 
     if (this.isAtEnd()) {
       throw new SyntaxError(
+        "GenericSyntaxError",
         translate("Unterminated string."),
-        Location.fromLineOffset(this.start, this.current, this.line, this.lineOffset),
-        "GenericSyntaxError"
+        Location.fromLineOffset(this.start, this.current, this.line, this.lineOffset)
       );
     }
 

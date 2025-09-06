@@ -1,5 +1,10 @@
 import { parse } from "@javascript/parser";
 import { SyntaxError } from "@javascript/error";
+import { changeLanguage } from "@javascript/translator";
+
+beforeAll(async () => {
+  changeLanguage("system");
+});
 
 describe("block syntax errors", () => {
   test("missing right brace throws error", () => {

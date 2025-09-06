@@ -201,7 +201,7 @@ describe("statements", () => {
       `);
       expect(frames).toBeArrayOfSize(2);
       expect(frames[1].error!.category).toBe("RuntimeError");
-      expect(frames[1].error!.type).toBe("VariableAlreadyDeclared");
+      expect(frames[1].error!.type).toBe("VariableAlreadyDeclaredInScope");
     });
 
     test("declare and use", () => {
@@ -537,7 +537,7 @@ describe("errors", () => {
     expect(frames).toBeEmpty();
     expect(error).not.toBeNull();
     expect(error!.category).toBe("SyntaxError");
-    expect(error!.type).toBe("UnknownCharacter");
+    expect(error!.type).toBe("UnknownCharacterInSource");
     expect(error!.context?.character).toBe("#");
   });
 
@@ -546,7 +546,7 @@ describe("errors", () => {
     expect(frames).toBeEmpty();
     expect(error).not.toBeNull();
     expect(error!.category).toBe("SyntaxError");
-    expect(error!.type).toBe("MissingDoubleQuoteToTerminateString");
+    expect(error!.type).toBe("MissingDoubleQuoteToTerminateStringLiteral");
     expect(error!.context).toBeNull;
   });
 
@@ -556,7 +556,7 @@ describe("errors", () => {
         const { frames, error } = interpret("1()");
         expect(error).not.toBeNull();
 
-        expect(error!.type).toBe("InvalidFunctionName");
+        expect(error!.type).toBe("InvalidFunctionNameExpression");
       });
 
       test("forgetting brackets", () => {
@@ -588,7 +588,7 @@ describe("errors", () => {
             expect(frames[0].code).toBe("echo(1)");
             expect(frames[0].error).not.toBeNull();
             expect(frames[0].error!.category).toBe("RuntimeError");
-            expect(frames[0].error!.type).toBe("TooManyArguments");
+            expect(frames[0].error!.type).toBe("RangeErrorTooManyArgumentsForFunctionCall");
             expect(frames[0].error!.message).toBe("TooManyArguments: arity: 0, numberOfArgs: 1");
             expect(error).toBeNull();
           });
@@ -610,7 +610,7 @@ describe("errors", () => {
             expect(frames[0].code).toBe("echo()");
             expect(frames[0].error).not.toBeNull();
             expect(frames[0].error!.category).toBe("RuntimeError");
-            expect(frames[0].error!.type).toBe("TooFewArguments");
+            expect(frames[0].error!.type).toBe("RangeErrorTooFewArgumentsForFunctionCall");
             expect(frames[0].error!.message).toBe("TooFewArguments: arity: 1, numberOfArgs: 0");
             expect(error).toBeNull();
           });
@@ -626,7 +626,7 @@ describe("errors", () => {
           expect(frames[0].code).toBe("foo()");
           expect(frames[0].error).not.toBeNull();
           expect(frames[0].error!.category).toBe("RuntimeError");
-          expect(frames[0].error!.type).toBe("CouldNotFindFunction");
+          expect(frames[0].error!.type).toBe("FunctionNotFoundInScope");
           expect(frames[0].error!.message).toBe("CouldNotFindFunction: name: foo");
           expect(error).toBeNull();
         });
@@ -646,7 +646,7 @@ describe("errors", () => {
           expect(frames[0].error).not.toBeNull();
           expect(frames[0].error!.message).toBe("CouldNotFindFunctionWithSuggestion: name: foobor, suggestion: foobar");
           expect(frames[0].error!.category).toBe("RuntimeError");
-          expect(frames[0].error!.type).toBe("CouldNotFindFunctionWithSuggestion");
+          expect(frames[0].error!.type).toBe("FunctionNotFoundWithSimilarNameSuggestion");
           expect(error).toBeNull();
         });
       });
@@ -662,7 +662,7 @@ describe("errors", () => {
         expect(frames[0].code).toBe("set x to y");
         expect(frames[0].error).not.toBeNull();
         expect(frames[0].error!.category).toBe("RuntimeError");
-        expect(frames[0].error!.type).toBe("UnexpectedUncalledFunction");
+        expect(frames[0].error!.type).toBe("UnexpectedUncalledFunctionInExpression");
         expect(frames[0].error!.message).toBe("UnexpectedUncalledFunction: name: y");
 
         expect(error).toBeNull();
@@ -683,7 +683,7 @@ describe("errors", () => {
         expect(frames[1].code).toBe("foo()");
         expect(frames[1].error).not.toBeNull();
         expect(frames[1].error!.category).toBe("RuntimeError");
-        expect(frames[1].error!.type).toBe("CouldNotFindFunction");
+        expect(frames[1].error!.type).toBe("FunctionNotFoundInScope");
         expect(frames[1].error!.message).toBe("CouldNotFindFunction: name: foo");
         expect(error).toBeNull();
       });
@@ -699,7 +699,7 @@ describe("errors", () => {
         expect(frames[0].code).toBe("foo()");
         expect(frames[0].error).not.toBeNull();
         expect(frames[0].error!.category).toBe("RuntimeError");
-        expect(frames[0].error!.type).toBe("CouldNotFindFunction");
+        expect(frames[0].error!.type).toBe("FunctionNotFoundInScope");
         expect(frames[0].error!.message).toBe("CouldNotFindFunction: name: foo");
         expect(error).toBeNull();
       });

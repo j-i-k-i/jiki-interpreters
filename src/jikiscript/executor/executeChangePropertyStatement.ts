@@ -9,16 +9,16 @@ export function executeChangePropertyStatement(executor: Executor, statement: Ch
 
   executor.executeFrame<EvaluationResultChangePropertyStatement>(statement, () => {
     if (!(object.jikiObject instanceof Jiki.Instance)) {
-      executor.error("AccessorUsedOnNonInstance", statement.object.location);
+      executor.error("AccessorUsedOnNonInstanceObject", statement.object.location);
     }
     const setter = object.jikiObject.getSetter(statement.property.lexeme);
     if (!setter) {
-      executor.error("CouldNotFindSetter", statement.property.location, {
+      executor.error("SetterMethodNotFoundOnObject", statement.property.location, {
         name: statement.property.lexeme,
       });
     }
     if (setter.visibility === "private" && statement.object.type !== "ThisExpression") {
-      executor.error("AttemptedToAccessPrivateSetter", statement.property.location, {
+      executor.error("UnexpectedPrivateSetterAccessAttempt", statement.property.location, {
         name: statement.property.lexeme,
       });
     }
@@ -36,7 +36,7 @@ export function executeChangePropertyStatement(executor: Executor, statement: Ch
       ]);
     } catch (e: unknown) {
       if (e instanceof LogicError) {
-        executor.error("LogicError", statement.location, { message: e.message });
+        executor.error("LogicErrorInExecution", statement.location, { message: e.message });
       }
       throw e;
     }

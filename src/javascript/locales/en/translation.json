@@ -1,0 +1,19 @@
+{
+  "error": {
+    "syntax": {
+      "GenericSyntaxError": "A syntax error occurred in your code.",
+      "MissingBacktickToTerminateTemplateLiteral": "Missing closing backtick '`' to terminate template literal.",
+      "MissingDoubleQuoteToTerminateString": "Did you forget to add end quote?",
+      "MissingExpression": "Missing expression in code.",
+      "MissingInitializerInVariableDeclaration": "Missing initializer in variable declaration. You must provide a value when declaring a variable with 'let'.",
+      "MissingRightBraceAfterBlock": "Missing closing brace '}' after block statement.",
+      "MissingRightParenthesisAfterExpression": "Missing closing parenthesis ')' after expression.",
+      "MissingSemicolon": "Missing semicolon ';' at end of statement.",
+      "MissingVariableName": "Missing variable name in declaration. You must provide a name after 'let'.",
+      "UnexpectedRightBrace": "Unexpected closing brace '}' found.",
+      "UnknownCharacter": "Unknown character encountered in code.",
+      "UnterminatedComment": "Unterminated comment. Multi-line comments must be closed with '*/'.",
+      "UnterminatedString": "Did you forget to add end quote?"
+    }
+  }
+}

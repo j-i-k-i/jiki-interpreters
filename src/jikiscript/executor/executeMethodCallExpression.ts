@@ -15,18 +15,18 @@ export function executeMethodCallExpression(
   const methodName = expression.methodName.lexeme;
 
   if (!(object.jikiObject instanceof Jiki.Instance)) {
-    return executor.error("AccessorUsedOnNonInstance", expression.location);
+    return executor.error("AccessorUsedOnNonInstanceObject", expression.location);
   }
 
   const method = object.jikiObject.getMethod(methodName);
   if (method === undefined) {
-    executor.error("CouldNotFindMethod", expression.location, {
+    executor.error("MethodNotFoundOnObjectInstance", expression.location, {
       name: methodName,
     });
   }
 
   if (method.visibility === "private" && expression.object.type != "ThisExpression") {
-    executor.error("AttemptedToAccessPrivateMethod", expression.location, {
+    executor.error("UnexpectedPrivateMethodAccessAttempt", expression.location, {
       name: methodName,
     });
   }
@@ -60,7 +60,7 @@ export function executeMethodCallExpression(
     });
   } catch (e: unknown) {
     if (e instanceof LogicError) {
-      executor.error("LogicError", expression.location, { message: e.message });
+      executor.error("LogicErrorInExecution", expression.location, { message: e.message });
     }
     throw e;
   } finally {

@@ -1,5 +1,5 @@
 import { Environment } from "./environment";
-import { SyntaxError } from "../jikiscript/error";
+import { SyntaxError } from "./error";
 import type { Expression } from "./expression";
 import {
   LiteralExpression,
@@ -8,7 +8,7 @@ import {
   GroupingExpression,
   IdentifierExpression,
 } from "./expression";
-import { Location } from "./location";
+import { Location } from "../shared/location";
 import type { Statement } from "./statement";
 import { ExpressionStatement, AssignmentStatement, PrintStatement } from "./statement";
 import type { EvaluationResult } from "./evaluation-result";
@@ -26,8 +26,8 @@ import { executeAssignmentStatement } from "./executor/executeAssignmentStatemen
 export type RuntimeErrorType =
   | "InvalidBinaryExpression"
   | "InvalidUnaryExpression"
-  | "UnsupportedOperation"
-  | "UndefinedVariable";
+  | "UndefinedVariable"
+  | "UnsupportedOperation";
 
 export class RuntimeError extends Error {
   constructor(

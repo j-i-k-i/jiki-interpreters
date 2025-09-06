@@ -1,4 +1,4 @@
-import { SyntaxError, type SyntaxErrorType } from "../jikiscript/error";
+import { SyntaxError, type SyntaxErrorType } from "./error";
 import {
   Expression,
   LiteralExpression,
@@ -7,22 +7,18 @@ import {
   GroupingExpression,
   IdentifierExpression,
 } from "./expression";
-import { Location } from "./location";
+import { Location } from "../shared/location";
 import { Scanner } from "./scanner";
 import { Statement, ExpressionStatement, AssignmentStatement, PrintStatement } from "./statement";
 import { type Token, type TokenType } from "./token";
-import type { LanguageFeatures } from "../jikiscript/interpreter";
 
 export class Parser {
   private readonly scanner: Scanner;
   private current: number = 0;
   private tokens: Token[] = [];
 
-  constructor(
-    private readonly languageFeatures: Partial<LanguageFeatures>,
-    private readonly fileName: string
-  ) {
-    this.scanner = new Scanner(languageFeatures as LanguageFeatures, fileName);
+  constructor(private readonly fileName: string) {
+    this.scanner = new Scanner(fileName);
   }
 
   public parse(sourceCode: string): Statement[] {
@@ -260,7 +256,7 @@ export class Parser {
   }
 
   private error(token: Token, message: string): SyntaxError {
-    return new SyntaxError(message, token.location, "ParseError" as SyntaxErrorType);
+    return new SyntaxError("ParseError" as SyntaxErrorType, message, token.location);
   }
 
   private synchronize(): void {

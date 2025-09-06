@@ -1,5 +1,5 @@
-import { Location } from "../jikiscript/location";
-import { SomethingWithLocation } from "../jikiscript/interpreter";
+import { Location } from "../shared/location";
+import { SomethingWithLocation } from "../shared/interfaces";
 
 const StatementKeywordTokens = [
   "AND",

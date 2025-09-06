@@ -17,7 +17,7 @@ export function executeLiteralExpression(
     jikiObject = new Jiki.String(expression.value);
   } else {
     // If this happens, we've gone really wrong somewhere!
-    executor.error("InvalidLiteralType", expression.location, {
+    executor.error("InvalidLiteralTypeInExpression", expression.location, {
       value: expression.value,
     });
   }

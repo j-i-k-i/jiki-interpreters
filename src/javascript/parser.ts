@@ -7,10 +7,11 @@ import {
   GroupingExpression,
   IdentifierExpression,
 } from "./expression";
-import { Location } from "./location";
+import { Location } from "../shared/location";
 import { Scanner } from "./scanner";
 import { Statement, ExpressionStatement, VariableDeclaration, BlockStatement } from "./statement";
 import { type Token, type TokenType } from "./token";
+import { translate } from "./translator";
 
 export class Parser {
   private readonly scanner: Scanner;
@@ -245,7 +246,7 @@ export class Parser {
   }
 
   private error(type: SyntaxErrorType, location: Location, context?: any): never {
-    throw new SyntaxError(`Syntax error: ${type}`, location, type, context);
+    throw new SyntaxError(translate(`error.syntax.${type}`, context), location, type, context);
   }
 
   private isAtEnd(): boolean {

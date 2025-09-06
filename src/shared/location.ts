@@ -1,7 +1,3 @@
-import { Expression } from "./expression";
-import { Statement } from "./statement";
-import { type Token } from "./token";
-
 export class Span {
   constructor(
     public begin: number,
@@ -28,7 +24,7 @@ export class Location {
     return new Location(line, new Span(begin - lineOffset, end - lineOffset), new Span(begin, end));
   }
 
-  public static between(begin: Token | Expression | Statement, end: Token | Expression | Statement): Location {
+  public static between(begin: { location: Location }, end: { location: Location }): Location {
     // TODO: fix spanning multiple lines
     return new Location(
       begin.location.line,

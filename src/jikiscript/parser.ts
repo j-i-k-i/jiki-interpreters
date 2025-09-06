@@ -121,8 +121,8 @@ export class Parser {
   }
 
   private classStatement(): Statement {
-    const name = this.consume("IDENTIFIER", "MissingClassName");
-    this.consume("DO", "MissingDoToStartBlock", { type: "class", name });
+    const name = this.consume("IDENTIFIER", "MissingClassNameInDeclaration");
+    this.consume("DO", "MissingDoToStartFunctionBody", { type: "class", name });
     this.consumeEndOfLine();
 
     const body: Statement[] = [];
@@ -132,7 +132,7 @@ export class Parser {
       body.push(stmt);
     }
 
-    this.consume("END", "MissingEndAfterBlock", { type: "class" });
+    this.consume("END", "MissingEndAfterBlockStatement", { type: "class" });
     this.consumeEndOfLine();
 
     return new ClassStatement(name, body, Location.between(name, this.previous()));
@@ -148,7 +148,7 @@ export class Parser {
       });
     }
 
-    this.error("MissingStatement", this.peek().location);
+    this.error("MissingStatementInBlock", this.peek().location);
   }
 
   private propertyStatement(): Statement {
@@ -159,7 +159,7 @@ export class Parser {
       accessModifier: accessModifer.lexeme,
     });
 
-    const name = this.consume("IDENTIFIER", "MissingPropertyName");
+    const name = this.consume("IDENTIFIER", "MissingPropertyNameAfterDot");
     this.consumeEndOfLine();
 
     return new PropertyStatement(accessModifer, name, Location.between(accessModifer, this.previous()));
@@ -168,7 +168,7 @@ export class Parser {
   private constructorStatement(): Statement {
     const constructorToken = this.previous();
     const params = this.functionParameters(constructorToken);
-    this.consume("DO", "MissingDoToStartBlock", { type: "function", name: constructorToken });
+    this.consume("DO", "MissingDoToStartFunctionBody", { type: "function", name: constructorToken });
     this.consumeEndOfLine();
 
     const body = this.block("constructor");
@@ -183,9 +183,9 @@ export class Parser {
       accessModifier: accessModifer.lexeme,
     });
 
-    const name = this.consume("IDENTIFIER", "MissingMethodName");
+    const name = this.consume("IDENTIFIER", "MissingMethodNameInDeclaration");
     const parameters = this.functionParameters(name);
-    this.consume("DO", "MissingDoToStartBlock", { type: "method", name });
+    this.consume("DO", "MissingDoToStartFunctionBody", { type: "method", name });
     this.consumeEndOfLine();
 
     const body = this.block("method");
@@ -193,9 +193,9 @@ export class Parser {
   }
 
   private functionStatement(): Statement {
-    const name = this.consume("IDENTIFIER", "MissingFunctionName");
+    const name = this.consume("IDENTIFIER", "MissingFunctionNameInDeclaration");
     const parameters = this.functionParameters(name);
-    this.consume("DO", "MissingDoToStartBlock", { type: "function", name });
+    this.consume("DO", "MissingDoToStartFunctionBody", { type: "function", name });
     this.consumeEndOfLine();
 
     const body = this.block("function");
@@ -208,7 +208,7 @@ export class Parser {
     if (this.match("WITH")) {
       do {
         if (parameters.length > 255) {
-          this.error("ExceededMaximumNumberOfParameters", this.peek().location, {
+          this.error("ExceededMaximumNumberOfParametersInFunction", this.peek().location, {
             maximum: 255,
             actual: parameters.length,
             name,
@@ -219,12 +219,12 @@ export class Parser {
         // someone using a reserved keyword by accident
         if (!this.check("DO")) this.guardUnexpectedKeyword();
 
-        const parameterName = this.consume("IDENTIFIER", "MissingParameterName", {
+        const parameterName = this.consume("IDENTIFIER", "MissingParameterNameInFunctionDeclaration", {
           name: name,
         });
 
         if (parameters.find(p => p.name.lexeme == parameterName.lexeme)) {
-          this.error("DuplicateParameterName", this.previous().location, {
+          this.error("DuplicateParameterNameInFunctionDeclaration", this.previous().location, {
             parameter: parameterName.lexeme,
           });
         }
@@ -257,7 +257,7 @@ export class Parser {
 
     // Error cases
     if (this.match("ELSE")) {
-      this.error("UnexpectedElseWithoutIf", this.previous().location);
+      this.error("UnexpectedElseWithoutMatchingIf", this.previous().location);
     }
 
     if (this.match("PUBLIC", "PRIVATE")) {
@@ -272,11 +272,11 @@ export class Parser {
   private identifier(): Token {
     let name;
     try {
-      name = this.consume("IDENTIFIER", "MissingVariableName");
+      name = this.consume("IDENTIFIER", "MissingVariableNameInDeclaration");
     } catch (e) {
       const nameLexeme = this.peek().lexeme;
       if (nameLexeme.match(/[0-9]/)) {
-        this.error("InvalidNumericVariableName", this.peek().location, {
+        this.error("InvalidNumericVariableNameStartingWithDigit", this.peek().location, {
           name: nameLexeme,
         });
       } else {
@@ -287,7 +287,7 @@ export class Parser {
 
     if (this.peek().type == "IDENTIFIER" && this.peek(2).type == "TO") {
       const errorLocation = Location.between(this.previous(), this.peek());
-      this.error("UnexpectedSpaceInIdentifier", errorLocation, {
+      this.error("UnexpectedSpaceInIdentifierName", errorLocation, {
         first_half: name.lexeme,
         second_half: this.peek().lexeme,
       });
@@ -348,7 +348,7 @@ export class Parser {
   private setPropertyStatement(): Statement {
     const setToken = this.previous();
     this.advance(); // Consume the "this" token
-    this.consume("DOT", "MissingDotAfterThis");
+    this.consume("DOT", "MissingDotAfterThisKeyword");
     const name = this.identifier();
     this.guardValidVariableName(name);
 
@@ -368,7 +368,7 @@ export class Parser {
   private changeThisPropertyStatement(): Statement {
     const changeToken = this.previous();
     this.advance(); // Consume the "this" token
-    this.consume("DOT", "MissingDotAfterThis");
+    this.consume("DOT", "MissingDotAfterThisKeyword");
 
     const name = this.identifier();
     this.guardValidVariableName(name);
@@ -401,7 +401,7 @@ export class Parser {
     } else if (getExpression instanceof AccessorExpression) {
       return this.changePropertyStatement(changeToken, getExpression);
     } else {
-      this.error("GenericSyntaxError", getExpression.location);
+      this.error("SyntaxErrorGeneric", getExpression.location);
     }
   }
 
@@ -444,8 +444,8 @@ export class Parser {
     try {
       condition = this.expression();
     } catch (e) {
-      if (e instanceof SyntaxError && e.type == "MissingExpression") {
-        this.error("MissingConditionAfterIf", ifToken.location);
+      if (e instanceof SyntaxError && e.type == "MissingExpressionInStatement") {
+        this.error("MissingIfConditionAfterIfKeyword", ifToken.location);
       } else {
         throw e;
       }
@@ -467,7 +467,7 @@ export class Parser {
         elseBranch = this.blockStatement("else");
       }
     } else {
-      this.consume("END", "MissingEndAfterBlock", { type: "if" });
+      this.consume("END", "MissingEndAfterBlockStatement", { type: "if" });
       this.consumeEndOfLine();
     }
 
@@ -496,7 +496,7 @@ export class Parser {
   private repeatStatement(): Statement {
     const keyword = this.previous();
     const condition = this.expression();
-    this.consume("TIMES", "MissingTimesInRepeat");
+    this.consume("TIMES", "MissingTimesInRepeatStatement");
     const counter = this.counter();
     this.consumeDo("repeat");
     this.consumeEndOfLine();
@@ -532,7 +532,7 @@ export class Parser {
     const begin = this.previous()
     const condition = this.expression()
 
-    this.consume('DO', 'MissingDoToStartBlock', { type: 'while' })
+    this.consume('DO', 'MissingDoToStartFunctionBody', { type: 'while' })
     this.consumeEndOfLine()
 
     const statements = this.block('while')
@@ -546,14 +546,14 @@ export class Parser {
 
   private forStatement(): Statement {
     const forToken = this.previous();
-    const eachToken = this.consume("EACH", "MissingEachAfterFor");
+    const eachToken = this.consume("EACH", "MissingEachAfterForKeyword");
     return this.foreachStatement(forToken, eachToken);
   }
   private foreachStatement(forToken: Token, eachToken: Token): Statement {
-    const elementName = this.consume("IDENTIFIER", "MissingElementNameAfterForeach");
+    const elementName = this.consume("IDENTIFIER", "MissingElementNameAfterForeachKeyword");
     let secondElementName: Token | undefined;
     if (this.match("COMMA")) {
-      secondElementName = this.consume("IDENTIFIER", "MissingSecondElementNameAfterForeach");
+      secondElementName = this.consume("IDENTIFIER", "MissingSecondElementNameAfterForeachKeyword");
     }
 
     this.consume("IN", "MissingOfAfterElementNameInForeach", {
@@ -579,8 +579,8 @@ export class Parser {
 
   private counter(): Token | null {
     if (this.match("INDEXED")) {
-      this.consume("BY", "MissingByAfterIndexed");
-      return this.consume("IDENTIFIER", "MissingIndexNameAfterIndexedBy");
+      this.consume("BY", "MissingByAfterIndexedKeyword");
+      return this.consume("IDENTIFIER", "MissingIndexNameAfterIndexedByKeywords");
     }
     return null;
   }
@@ -612,7 +612,7 @@ export class Parser {
     }
 
     if (consumeEnd && (!allowElse || this.peek().type != "ELSE")) {
-      this.consume("END", "MissingEndAfterBlock", { type });
+      this.consume("END", "MissingEndAfterBlockStatement", { type });
       this.consumeEndOfLine();
     }
     return statements;
@@ -638,7 +638,7 @@ export class Parser {
         this.error("PotentialMissingParenthesesForFunctionCall", expression.location);
       }
 
-      this.error("PointlessStatement", expression.location);
+      this.error("PointlessStatementWithNoEffect", expression.location);
     }
   }
 
@@ -671,7 +671,7 @@ export class Parser {
         return new SetElementExpression(expr.obj, expr.field as any, value, Location.between(expr, value));
       }
 
-      this.error("InvalidAssignmentTarget", expr.location, {
+      this.error("InvalidAssignmentTargetExpression", expr.location, {
         assignmentTarget: expr,
       });
     }
@@ -789,24 +789,24 @@ export class Parser {
     try {
       expr = this.primary();
     } catch (e) {
-      if (e instanceof SyntaxError && e.type == "MissingExpression") {
-        this.error("MissingClassNameInInstantiation", newToken.location);
+      if (e instanceof SyntaxError && e.type == "MissingExpressionInStatement") {
+        this.error("MissingClassNameInDeclaration", newToken.location);
       }
     }
     if (!expr || !(expr instanceof VariableLookupExpression)) {
-      this.error("InvalidFunctionName", expr?.location || newToken.location, {});
+      this.error("InvalidFunctionNameExpression", expr?.location || newToken.location, {});
     }
 
     const classNameExpression = new ClassLookupExpression(expr.name, expr.location);
 
     this.guardValidClassName(classNameExpression.name);
 
-    const leftParen = this.consume("LEFT_PAREN", "MissingLeftParenthesisInInstantiation", {
+    const leftParen = this.consume("LEFT_PAREN", "MissingLeftParenthesisInInstantiationExpression", {
       class: classNameExpression.name.lexeme,
     });
 
     if (this.match("EOL")) {
-      this.error("MissingRightParenthesisInInstantiation", classNameExpression.location, {
+      this.error("MissingRightParenthesisInInstantiationExpression", classNameExpression.location, {
         class: classNameExpression.name.lexeme,
       });
     }
@@ -815,14 +815,14 @@ export class Parser {
     if (!this.check("RIGHT_PAREN")) {
       do {
         if (this.check("RIGHT_PAREN", "EOL")) {
-          this.error("MissingRightParenthesisInInstantiation", classNameExpression.location, {
+          this.error("MissingRightParenthesisInInstantiationExpression", classNameExpression.location, {
             class: classNameExpression.name.lexeme,
           });
         }
         args.push(this.expression());
       } while (this.match("COMMA"));
     }
-    const rightParen = this.consume("RIGHT_PAREN", "MissingRightParenthesisInInstantiation", {
+    const rightParen = this.consume("RIGHT_PAREN", "MissingRightParenthesisInInstantiationExpression", {
       class: classNameExpression.name.lexeme,
     });
     return new InstantiationExpression(classNameExpression, args, Location.between(newToken, rightParen));
@@ -854,7 +854,7 @@ export class Parser {
   }
 
   private methodCall(expression: Expression): MethodCallExpression | AccessorExpression {
-    const methodName = this.consume("IDENTIFIER", "MissingMethodNameAfterDot");
+    const methodName = this.consume("IDENTIFIER", "MissingMethodNameAfterDotOperator");
     this.guardValidVariableName(methodName);
 
     if (!this.check("LEFT_PAREN")) {
@@ -887,7 +887,7 @@ export class Parser {
 
   private functionCall(expression: Expression): Expression {
     if (!(expression instanceof VariableLookupExpression)) {
-      this.error("InvalidFunctionName", expression.location, {});
+      this.error("InvalidFunctionNameExpression", expression.location, {});
     }
 
     // Mutate the callee to be a FunctionLookupExpression,
@@ -973,9 +973,9 @@ export class Parser {
     }
 
     if (this.peek().type == "FUNCTION") {
-      this.error("InvalidNestedFunction", this.peek().location);
+      this.error("InvalidNestedFunctionDeclaration", this.peek().location);
     }
-    this.error("MissingExpression", this.peek().location);
+    this.error("MissingExpressionInStatement", this.peek().location);
   }
 
   private templateLiteral(): Expression {
@@ -989,7 +989,7 @@ export class Parser {
         const rightBrace = this.consume("RIGHT_BRACE", "MissingRightBraceToTerminatePlaceholder", { expr });
         parts.push(new TemplatePlaceholderExpression(expr, Location.between(dollarLeftBrace, rightBrace)));
       } else {
-        const textToken = this.consume("TEMPLATE_LITERAL_TEXT", "InvalidTemplateLiteral");
+        const textToken = this.consume("TEMPLATE_LITERAL_TEXT", "InvalidTemplateLiteralExpression");
         parts.push(new TemplateTextExpression(textToken, textToken.location));
       }
     }
@@ -1017,7 +1017,7 @@ export class Parser {
         try {
           elements.push(this.or());
         } catch (e) {
-          if (!(e instanceof SyntaxError && e.type == "MissingExpression")) {
+          if (!(e instanceof SyntaxError && e.type == "MissingExpressionInStatement")) {
             throw e;
           }
           this.error("MissingRightBracketAfterListElements", (prevComma || this.previous()).location);
@@ -1025,7 +1025,7 @@ export class Parser {
 
         // If we've got a comma, then we consume an end of line if it's there and go again
         if (this.check("COMMA")) {
-          prevComma = this.consume("COMMA", "MissingCommaInList");
+          prevComma = this.consume("COMMA", "MissingCommaBetweenListElements");
           moreItems = true;
 
           if (this.check("EOL")) {
@@ -1048,7 +1048,7 @@ export class Parser {
             this.error("MissingRightBracketAfterListElements", leftBracket.location);
           }
 
-          this.error("MissingCommaInList", this.peek().location);
+          this.error("MissingCommaBetweenListElements", this.peek().location);
         }
       }
     }
@@ -1072,7 +1072,7 @@ export class Parser {
 
       while (moreItems) {
         if (this.check("RIGHT_BRACE")) {
-          this.error("UnexpectedTrailingComma", leftBrace.location);
+          this.error("UnexpectedTrailingCommaInList", leftBrace.location);
         }
         if (this.nextTokenIsKeyword()) {
           this.error("MissingRightBraceAfterDictionaryElements", leftBrace.location);
@@ -1081,15 +1081,15 @@ export class Parser {
         moreItems = false;
         let key;
         try {
-          key = this.consume("STRING", "MissingStringAsKey");
+          key = this.consume("STRING", "MissingStringAsKeyInDictionary");
         } catch (e) {
-          if (!(e instanceof SyntaxError && e.type == "MissingExpression")) {
+          if (!(e instanceof SyntaxError && e.type == "MissingExpressionInStatement")) {
             throw e;
           }
           this.error("MissingRightBraceAfterDictionaryElements", (prevComma || this.previous()).location);
         }
 
-        this.consume("COLON", "MissingColonAfterKey");
+        this.consume("COLON", "MissingColonAfterDictionaryKey");
         elements.set(key.literal, this.or());
 
         // If we have a comma, continue onwards
@@ -1114,7 +1114,7 @@ export class Parser {
           if (this.nextTokenIsKeyword()) {
             this.error("MissingRightBraceAfterDictionaryElements", leftBrace.location);
           }
-          this.error("MissingCommaInDictionary", this.peek().location);
+          this.error("MissingCommaBetweenDictionaryElements", this.peek().location);
         }
       }
     }
@@ -1160,7 +1160,7 @@ export class Parser {
     // The DO will work, the EOL will fail.
     // Both of these can be handled normally.
     if (next.type == "EOL" || next.type == "DO") {
-      this.consume("DO", "MissingDoToStartBlock", { type });
+      this.consume("DO", "MissingDoToStartIfBody", { type });
       return;
     }
 
@@ -1169,7 +1169,7 @@ export class Parser {
         lexeme: next.lexeme,
       });
     } else {
-      this.error("UnexpectedToken", this.peek().location, {
+      this.error("UnexpectedTokenInStatement", this.peek().location, {
         lexeme: next.lexeme,
       });
     }
@@ -1209,7 +1209,7 @@ export class Parser {
 
   private guardValidClassName(name: Token) {
     if (!name.lexeme.match(/^[A-Z]/)) {
-      this.error("InvalidClassNameInInstantiation", name.location, {
+      this.error("InvalidClassNameInInstantiationExpression", name.location, {
         name: name.lexeme,
       });
     }
@@ -1217,7 +1217,7 @@ export class Parser {
 
   private guardValidVariableName(name: Token) {
     if (!name.lexeme.match(/^[a-z]/)) {
-      this.error("InvalidVariableName", name.location, { name: name.lexeme });
+      this.error("InvalidVariableNameExpression", name.location, { name: name.lexeme });
     }
   }
 
@@ -1225,33 +1225,33 @@ export class Parser {
     const token = this.nextTokenIsKeyword();
     if (!token) return;
 
-    this.error("UnexpectedKeyword", token.location, { lexeme: token.lexeme });
+    this.error("UnexpectedKeywordInExpression", token.location, { lexeme: token.lexeme });
   }
 
   private guardTrailingComma(token: "COMMA" | "RIGHT_BRACKET" | "RIGHT_BRACE", location: Location) {
     if (!this.check(token)) {
       return;
     }
-    this.error("UnexpectedTrailingComma", location);
+    this.error("UnexpectedTrailingCommaInList", location);
   }
 
   private guardEqualsSignForAssignment(name: Token) {
     if (this.peek().type == "EQUAL") {
-      this.error("UnexpectedEqualsForAssignment", this.peek().location, {
+      this.error("UnexpectedEqualsForAssignmentUseSetInstead", this.peek().location, {
         name: name.lexeme,
       });
     }
   }
   private guardEqualsSignForEquality(token: Token) {
     if (token.type == "EQUAL") {
-      this.error("UnexpectedEqualsForEquality", token.location);
+      this.error("UnexpectedEqualsForEqualityUseIsInstead", token.location);
     }
   }
 
   private guardDoubleEquality() {
     const nextToken = this.peek();
     if (nextToken.type == "EQUALITY" || nextToken.type == "INEQUALITY") {
-      this.error("UnexpectedChainedEquality", nextToken.location);
+      this.error("UnexpectedChainedEqualityExpression", nextToken.location);
     }
   }
 

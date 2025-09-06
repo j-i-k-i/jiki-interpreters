@@ -28,7 +28,7 @@ describe("evaluateFunction", () => {
     expect(frames[0].code).toBe("foo()");
     expect(frames[0].error).not.toBeNull();
     expect(frames[0].error!.category).toBe("RuntimeError");
-    expect(frames[0].error!.type).toBe("CouldNotFindFunction");
+    expect(frames[0].error!.type).toBe("FunctionNotFoundInScope");
     expect(frames[0].error!.message).toBe("CouldNotFindFunction: name: foo");
     expect(error).toBeNull();
   });
@@ -50,7 +50,7 @@ describe("evaluateFunction", () => {
     expect(frames[2].code).toBe("foo()");
     expect(frames[2].error).not.toBeNull();
     expect(frames[2].error!.category).toBe("RuntimeError");
-    expect(frames[2].error!.type).toBe("CouldNotFindFunction");
+    expect(frames[2].error!.type).toBe("FunctionNotFoundInScope");
     expect(frames[2].error!.message).toBe("CouldNotFindFunction: name: foo");
     expect(error).toBeNull();
   });
@@ -68,7 +68,7 @@ describe("evaluateFunction", () => {
     expect(frames[0].status).toBe("ERROR");
     expect(frames[0].error).not.toBeNull();
     expect(frames[0].error!.category).toBe("RuntimeError");
-    expect(frames[0].error!.type).toBe("ExpectedFunctionNotFound");
+    expect(frames[0].error!.type).toBe("StateErrorExpectedFunctionNotFoundInScope");
     expect(frames[0].error!.message).toBe("ExpectedFunctionNotFound: name: move");
     expect(error).toBeNull();
   });
@@ -86,7 +86,7 @@ describe("evaluateFunction", () => {
     expect(frames[0].status).toBe("ERROR");
     expect(frames[0].error).not.toBeNull();
     expect(frames[0].error!.category).toBe("RuntimeError");
-    expect(frames[0].error!.type).toBe("ExpectedFunctionHasWrongArguments");
+    expect(frames[0].error!.type).toBe("StateErrorExpectedFunctionHasWrongArgumentCount");
     expect(frames[0].error!.message).toBe("ExpectedFunctionHasWrongArguments: name: move");
     expect(error).toBeNull();
   });
@@ -100,7 +100,7 @@ describe("evaluateFunction", () => {
 
     expect(value).toBeUndefined();
     expect(frames).toBeArrayOfSize(1);
-    expect(frames[0].error!.type).toBe("UnexpectedContinueOutsideOfLoop");
+    expect(frames[0].error!.type).toBe("UnexpectedContinueStatementOutsideOfLoop");
     expect(error).toBeNull();
   });
   test("break is caught", () => {
@@ -113,7 +113,7 @@ describe("evaluateFunction", () => {
 
     expect(value).toBeUndefined();
     expect(frames).toBeArrayOfSize(1);
-    expect(frames[0].error!.type).toBe("UnexpectedBreakOutsideOfLoop");
+    expect(frames[0].error!.type).toBe("UnexpectedBreakStatementOutsideOfLoop");
     expect(error).toBeNull();
   });
   test("return is caught", () => {
@@ -125,7 +125,7 @@ describe("evaluateFunction", () => {
     const { value, frames, error } = evaluateFunction(code, {}, "move");
 
     expect(frames).toBeArrayOfSize(1);
-    expect(frames[0].error!.type).toBe("UnexpectedReturnOutsideOfFunction");
+    expect(frames[0].error!.type).toBe("UnexpectedReturnStatementOutsideOfFunction");
     expect(error).toBeNull();
   });
 

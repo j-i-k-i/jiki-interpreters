@@ -1,0 +1,19 @@
+{
+  "error": {
+    "syntax": {
+      "GenericSyntaxError": "GenericSyntaxError",
+      "MissingBacktickToTerminateTemplateLiteral": "MissingBacktickToTerminateTemplateLiteral",
+      "MissingDoubleQuoteToTerminateString": "Did you forget to add end quote?",
+      "MissingExpression": "MissingExpression",
+      "MissingInitializerInVariableDeclaration": "MissingInitializerInVariableDeclaration",
+      "MissingRightBraceAfterBlock": "MissingRightBraceAfterBlock",
+      "MissingRightParenthesisAfterExpression": "MissingRightParenthesisAfterExpression",
+      "MissingSemicolon": "MissingSemicolon",
+      "MissingVariableName": "MissingVariableName",
+      "UnexpectedRightBrace": "UnexpectedRightBrace",
+      "UnknownCharacter": "Unknown character",
+      "UnterminatedComment": "UnterminatedComment",
+      "UnterminatedString": "Did you forget to add end quote?"
+    }
+  }
+}

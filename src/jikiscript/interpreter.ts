@@ -212,7 +212,7 @@ export class Interpreter {
         const nakedArgs = args.map((arg: any) => {
           // TODO: Need to check for lists etc too
           if (arg instanceof Jiki.Instance) {
-            this.error("UnexpectedObjectArgumentForCustomFunction", Location.unknown);
+            this.error("UnexpectedObjectArgumentForCustomFunctionCall", Location.unknown);
           }
           return Jiki.unwrapJikiObject(arg);
         });
@@ -261,7 +261,7 @@ export class Interpreter {
     ).parse(callingCode);
 
     if (callingStatements.length !== 1)
-      this.error("CouldNotEvaluateFunction", Location.unknown, {
+      this.error("RuntimeErrorCouldNotEvaluateFunctionCall", Location.unknown, {
         callingStatements,
       });
 
@@ -294,7 +294,7 @@ export class Interpreter {
     ).parse(expression);
 
     if (callingStatements.length !== 1)
-      this.error("CouldNotEvaluateFunction", Location.unknown, {
+      this.error("RuntimeErrorCouldNotEvaluateFunctionCall", Location.unknown, {
         callingStatements,
       });
 

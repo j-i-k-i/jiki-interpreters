@@ -11,7 +11,7 @@ export function executeChangeVariableStatement(executor: Executor, statement: Ch
     const variable = executor.lookupVariable(statement.name);
 
     if (isCallable(executor.getVariable(statement.name))) {
-      executor.error("UnexpectedChangeOfFunction", statement.name.location, {
+      executor.error("UnexpectedChangeOfFunctionReference", statement.name.location, {
         name: statement.name.lexeme,
       });
     }
@@ -20,8 +20,8 @@ export function executeChangeVariableStatement(executor: Executor, statement: Ch
     try {
       value = executor.evaluate(statement.value);
     } catch (e) {
-      if (e instanceof RuntimeError && e.type == "ExpressionIsNull") {
-        executor.error("CannotStoreNullFromFunction", statement.value.location);
+      if (e instanceof RuntimeError && e.type == "ExpressionEvaluatedToNullValue") {
+        executor.error("StateErrorCannotStoreNullValueFromFunction", statement.value.location);
       } else {
         throw e;
       }

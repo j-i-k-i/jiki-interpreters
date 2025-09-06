@@ -27,7 +27,7 @@ export function executeUnaryExpression(
   }
 
   // Unreachable.
-  executor.error("InvalidUnaryOperator", expression.operator.location, {
+  executor.error("InvalidUnaryOperatorForOperand", expression.operator.location, {
     expression,
   });
 }

@@ -55,11 +55,11 @@ function handleExpression(
     case "PERCENT":
       return handle_percent(executor, expression, leftResult, rightResult);
     case "EQUAL":
-      executor.error("UnexpectedEqualsForEquality", expression.location, {
+      executor.error("UnexpectedEqualsOperatorForEqualityComparison", expression.location, {
         expression,
       });
     default:
-      executor.error("InvalidBinaryExpression", expression.location, {
+      executor.error("InvalidBinaryExpressionOperation", expression.location, {
         expression,
       });
   }
@@ -193,7 +193,7 @@ function guardLists(
   rightResult: EvaluationResultExpression
 ) {
   if (leftResult.jikiObject instanceof JikiTypes.List && rightResult.jikiObject instanceof JikiTypes.List) {
-    executor.error("ListsCannotBeCompared", expression.location);
+    executor.error("TypeErrorCannotCompareListObjects", expression.location);
   }
 }
 
@@ -204,6 +204,6 @@ function guardObjects(
   rightResult: EvaluationResultExpression
 ) {
   if (leftResult.jikiObject instanceof JikiTypes.Instance || rightResult.jikiObject instanceof JikiTypes.Instance) {
-    executor.error("ObjectsCannotBeCompared", expression.location);
+    executor.error("TypeErrorCannotCompareObjectInstances", expression.location);
   }
 }

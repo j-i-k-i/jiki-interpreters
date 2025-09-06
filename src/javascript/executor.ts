@@ -8,7 +8,7 @@ import {
   GroupingExpression,
   IdentifierExpression,
 } from "./expression";
-import { Location } from "./location";
+import { Location } from "../shared/location";
 import type { Statement } from "./statement";
 import { ExpressionStatement, VariableDeclaration, BlockStatement } from "./statement";
 import type { EvaluationResult } from "./evaluation-result";

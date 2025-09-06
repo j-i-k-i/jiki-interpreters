@@ -10,7 +10,7 @@ export function executeVariableLookupExpression(
   const value = executor.lookupVariable(expression.name);
   executor.guardUncalledFunction(value, expression);
   if (value instanceof Jiki.Class) {
-    executor.error("ClassCannotBeUsedAsVariable", expression.name.location, {
+    executor.error("ClassCannotBeUsedAsVariableReference", expression.name.location, {
       name: expression.name.lexeme,
     });
   }
