@@ -20,8 +20,14 @@ import { executeExpressionStatement } from "./executor/executeExpressionStatemen
 import { executeBinaryExpression } from "./executor/executeBinaryExpression";
 import { executeUnaryExpression } from "./executor/executeUnaryExpression";
 import { executeGroupingExpression } from "./executor/executeGroupingExpression";
+import { executeIdentifierExpression } from "./executor/executeIdentifierExpression";
+import { executeAssignmentStatement } from "./executor/executeAssignmentStatement";
 
-export type RuntimeErrorType = "InvalidBinaryExpression" | "InvalidUnaryExpression" | "UnsupportedOperation";
+export type RuntimeErrorType =
+  | "InvalidBinaryExpression"
+  | "InvalidUnaryExpression"
+  | "UnsupportedOperation"
+  | "UndefinedVariable";
 
 export class RuntimeError extends Error {
   constructor(
@@ -47,11 +53,11 @@ export class Executor {
       return executeExpressionStatement(this, statement);
     }
 
+    if (statement instanceof AssignmentStatement) {
+      return executeAssignmentStatement(this, statement);
+    }
+
     // TODO: Add other statement types as needed
-    // if (statement instanceof AssignmentStatement) {
-    //   return executeAssignmentStatement(this, statement);
-    // }
-    //
     // if (statement instanceof PrintStatement) {
     //   return executePrintStatement(this, statement);
     // }
@@ -76,10 +82,9 @@ export class Executor {
       return executeGroupingExpression(this, expression);
     }
 
-    // TODO: Add other expression types as needed
-    // if (expression instanceof IdentifierExpression) {
-    //   return executeIdentifierExpression(this, expression);
-    // }
+    if (expression instanceof IdentifierExpression) {
+      return executeIdentifierExpression(this, expression);
+    }
 
     throw new RuntimeError(`Unknown expression type: ${expression.type}`, expression.location, "UnsupportedOperation");
   }

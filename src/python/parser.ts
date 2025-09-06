@@ -52,11 +52,29 @@ export class Parser {
         return null;
       }
 
+      // Check for assignment statement (IDENTIFIER = expression)
+      if (this.check("IDENTIFIER") && this.checkNext("EQUAL")) {
+        return this.assignmentStatement();
+      }
+
       return this.expressionStatement();
     } catch (error) {
       this.synchronize();
       throw error;
     }
+  }
+
+  private assignmentStatement(): Statement {
+    const name = this.consume("IDENTIFIER", "Expect variable name.");
+    this.consume("EQUAL", "Expect '=' after variable name.");
+    const value = this.expression();
+
+    // Python doesn't require semicolons, but consume newline if present
+    if (this.check("NEWLINE")) {
+      this.advance();
+    }
+
+    return new AssignmentStatement(name, value, Location.between(name, value));
   }
 
   private expressionStatement(): Statement {
@@ -211,6 +229,11 @@ export class Parser {
   private check(...types: TokenType[]): boolean {
     if (this.isAtEnd()) return false;
     return types.includes(this.peek().type);
+  }
+
+  private checkNext(type: TokenType): boolean {
+    if (this.current + 1 >= this.tokens.length) return false;
+    return this.tokens[this.current + 1].type === type;
   }
 
   private advance(): Token {

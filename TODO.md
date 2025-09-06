@@ -4,10 +4,14 @@ Your job is to work through this file. Find the next jobs that is not crossed of
 
 ⚠️⚠️ If asked to work on a TODO, you should follow these steps: ⚠️⚠️
 
-1. Read the TODO, come up with an execution plan (which should include these 4 steps), and CONFIRM IT WITH THE HUMAN.
-2. Once confirmed by the human, work on the task.
-3. Ensure the tests all pass and the typescript types are correct.
-4. When a task is complete, mark it off here, commit to git, and then exit.
+1. Read this file.
+2. Come up with an execution plan. Always start by reading the `.context` files where things are clearly explained. The execution plan should include the steps in this list.
+3. CONFIRM THE PLAN WITH THE HUMAN.
+4. Once confirmed by the human, work on the task.
+5. Ensure the tests all pass and the typescript types are correct.
+6. Update the `.context` files to reflect what you've done.
+7. Update this file to mark the TODO as complete
+8. Commit to git
 
 Important:
 
@@ -37,7 +41,7 @@ For everything in here, base your work in the JikiScript interpreter.
 - [ ] Add a language feature to the JavaScript interpreter for truthiness. See language features for JikiScript to see how this works. If enabled then truthiness should behave as normal in JS. If not, then only booleans (or functions/variables returning booleans etc) are allowed to be compared. If you compare non-booleans, a runtime error of TruthinessDisabled (or similar) should be added to the frame etc. Look how runtime errors work in JikiScript.
 - [ ] Add an `if` statement. Look at the JikiScript implementation for inspriation. Don't do `else` yet. It should honor `allowShadowing` although that should be implicit anyway from the Binary Expression.
 - [ ] Add `else` statements. Ensure they work with `else if`. Remember to add tests and check the JikiScript implementation as your base level.
-- [ ] Add a feature flag for typeCoercion
+- [ ] Add a feature flag for allowTypeCoercion. When it's true, the normal semantics for JS with `5 + true` should give the same results as JS (we can execute this just by running the normal JS on the jikiObject values). However, if it's off, we should raise a TypeCoercionNotAllowed (or something similar) RunTime error on the frame. It should be off by default. Add a dedicated test file that tests this feature flag, and test it in as many different scnearios are appropraite. Both in terms of the normal behaviour (e.g. `5 + true` is differnet to `true + 5`) and in the disallowed case (in which case both of those should result in errors).
 
 ## Python
 
@@ -45,6 +49,6 @@ For everything in here, base your work in the JikiScript interpreter.
 - [x] Add booleans
 - [x] Add strings
 - [x] Add basic grouping and other operations that are present to do with numbers/strings/bools in the JS implementation.
-- [ ] Add variables. Reference the JikiScript and JavaScript implementations to see how things should be set up. For now, don't worry about scoping, etc. We'll add that next. Just implement setting and updating of variables. Make sure to add corrosponding parser and implementer concept tests. Also add syntax error tests. Look at the JikiScript tests for inspiration.
+- [x] Add variables. Reference the JikiScript and JavaScript implementations to see how things should be set up. For now, don't worry about scoping, etc. We'll add that next. Just implement setting and updating of variables. Make sure to add corrosponding parser and implementer concept tests. Also add syntax error tests. Look at the JikiScript tests for inspiration.
 - [ ] Add errors for missing variables, so if you do `5 + a` and there is no `a` that's a runtime error on that frame etc.Don't worry about seeing if it's defined later. We're just wanting to say "We don't know about this `a` thing you're discussing
 - [ ] Add negation.
