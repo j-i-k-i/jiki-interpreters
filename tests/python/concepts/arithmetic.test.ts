@@ -16,13 +16,12 @@ describe("arithmetic concepts", () => {
       expect(frames[0].description).toContain("0");
     });
 
-    // TODO: Implement UnaryExpression support for negative numbers
-    // test("negative integer via literal", () => {
-    //   const { frames, error } = interpret("-5");
-    //   expect(error).toBeNull();
-    //   expect(frames).toBeArrayOfSize(1);
-    //   expect(frames[0].description).toContain("-5");
-    // });
+    test("negative integer via literal", () => {
+      const { frames, error } = interpret("-5");
+      expect(error).toBeNull();
+      expect(frames).toBeArrayOfSize(1);
+      expect(frames[0].description).toContain("-5");
+    });
   });
 
   describe("floating point literals", () => {

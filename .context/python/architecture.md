@@ -225,12 +225,13 @@ The modular architecture allows easy addition of Python features:
 - **Scanner Tests**: Token generation accuracy with Python syntax
 - **Parser Tests**: AST construction correctness for Python grammar
 - **Executor Tests**: Evaluation results and frame generation
-- **Concept Tests**: 109 comprehensive tests covering all implemented features ✅ **IMPLEMENTED**
+- **Concept Tests**: 128 comprehensive tests covering all implemented features ✅ **IMPLEMENTED**
   - **Numbers**: 5 tests for integer, float, and scientific notation parsing
   - **Booleans**: 18 tests for True/False literals and logical operations
   - **Strings**: 16 tests for single/double quotes and concatenation
   - **Operations**: 30 tests for arithmetic, comparison, logical, and precedence
   - **Variables**: 22 tests for assignment, access, reassignment, and complex expressions
+  - **Negation**: 17 tests for basic negation, nested negation, and precedence rules
 - **Syntax Error Tests**: 14 tests for undefined variables and invalid assignments ✅ **IMPLEMENTED**
 - **Integration Tests**: End-to-end Python interpretation ✅ **IMPLEMENTED**
 - **Error Tests**: Proper error handling with Python-specific messages ✅ **IMPLEMENTED**

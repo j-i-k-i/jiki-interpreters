@@ -16,17 +16,16 @@ The Python interpreter for Jiki provides educational visualization of Python cod
 - **Logical Operations**: Python logical operators (and, or, not)
 - **Grouping Expressions**: Parentheses for precedence control
 - **Variable System**: Assignment (x = value) and access with proper scoping
+- **Unary Negation**: Negation operator (-) for numbers and expressions with proper precedence
 - **Runtime Error Handling**: Undefined variable detection with educational messages
 - **Complete Scanner**: Tokenizes all implemented Python syntax
 - **Recursive Parser**: Builds correct AST with Python operator precedence
-- **Modular Executor**: 109 tests passing with comprehensive coverage
+- **Modular Executor**: 128 tests passing with comprehensive coverage
 - **PyObjects**: Python-specific objects (PyNumber, PyString, PyBoolean)
 - **Frame Generation**: Educational step-by-step execution visualization
 
 ### Planned Features
 
-- Error handling for missing variables (partially implemented)
-- Unary negation operators
 - Control flow (if statements, loops)
 - Functions and scope
 - Data structures (lists, dictionaries, tuples)

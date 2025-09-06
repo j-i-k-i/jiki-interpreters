@@ -29,14 +29,13 @@ describe("arithmetic interpreter", () => {
         expect(frames[0].result?.jikiObject.value).toBe(0);
       });
 
-      // TODO: Implement UnaryExpression support for negative numbers
-      // test("negative integer", () => {
-      //   const { frames, error } = interpret("-5");
-      //   expect(error).toBeNull();
-      //   expect(frames).toBeArrayOfSize(1);
-      //   expect(frames[0].status).toBe("SUCCESS");
-      //   expect(frames[0].result?.jikiObject.value).toBe(-5);
-      // });
+      test("negative integer", () => {
+        const { frames, error } = interpret("-5");
+        expect(error).toBeNull();
+        expect(frames).toBeArrayOfSize(1);
+        expect(frames[0].status).toBe("SUCCESS");
+        expect(frames[0].result?.jikiObject.value).toBe(-5);
+      });
 
       test("scientific notation", () => {
         const { frames, error } = interpret("1.5e2");
