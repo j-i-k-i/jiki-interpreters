@@ -1,1 +1,1 @@
-See .context/jikiscript/README.md
+README.md
