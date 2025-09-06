@@ -67,11 +67,7 @@ export class Executor {
     }
 
     if (statement instanceof BlockStatement) {
-      executeBlockStatement(this, statement);
-      return {
-        type: "BlockStatement",
-        statements: statement.statements,
-      } as any;
+      return executeBlockStatement(this, statement);
     }
 
     return null;
