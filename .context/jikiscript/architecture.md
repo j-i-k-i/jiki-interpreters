@@ -53,9 +53,24 @@ Source Code → Scanner → Parser → Executor → Frames/UI
 - Represent actions and control flow (assignments, loops, conditionals, etc.)
 - Each statement type has corresponding executor and describer
 
-#### Describers (`describers/`)
+#### JikiObjects (`jikiObjects.ts`)
+
+- **Architecture**: All JikiScript objects extend the shared `JikiObject` base class from `src/shared/jikiObject.ts`
+- **Cross-Interpreter Compatibility**: Uses same base class as JavaScript and future interpreters
+- **JikiScript-Specific Features**: Maintains `toArg()` method and educational features
+- **Object Types**: JikiNumber, JikiString, JikiBoolean, JikiList, JikiDictionary, etc.
+
+#### Frame System
+
+- **Shared Framework**: Uses unified frame system from `src/shared/frames.ts`
+- **JikiScript Extensions**: `frameDescribers.ts` provides JikiScript-specific educational descriptions
+- **Cross-Interpreter Consistency**: Same frame format used by all interpreters for UI integration
+
+#### Describers (`describers/` + `frameDescribers.ts`)
 
 - Generate human-readable explanations of execution steps
+- `frameDescribers.ts`: Main entry point with `describeFrame()` function
+- Individual describer modules for each statement/expression type
 - Provides educational context for what each line of code does
 - Localized descriptions for different languages/audiences
 

@@ -13,12 +13,21 @@ This interpreter executes standard JavaScript code while producing educational f
 
 ## Architecture
 
-The JavaScript interpreter follows the same pipeline as JikiScript:
+The JavaScript interpreter follows the same pipeline as JikiScript and uses **shared components** for cross-interpreter consistency:
 
 1. **Scanner**: Tokenizes JavaScript source code
 2. **Parser**: Builds an Abstract Syntax Tree (AST)
-3. **Executor**: Evaluates the AST and generates frames
+3. **Executor**: Evaluates the AST and generates frames using shared frame system
 4. **Describers**: Generate human-readable descriptions of execution steps
+
+### Shared Components
+
+The JavaScript interpreter leverages shared infrastructure from `src/shared/`:
+
+- **`frames.ts`**: Unified frame system used by all interpreters for consistent UI integration
+- **`jikiObject.ts`**: Abstract base class for all object representations
+
+This ensures JavaScript execution frames are compatible with the same visualization tools used by JikiScript and future interpreters.
 
 ## Key Components
 
@@ -39,8 +48,8 @@ The JavaScript interpreter follows the same pipeline as JikiScript:
 
 - Modular execution system with individual executors per expression type
 - Environment-based variable scoping
-- JikiObject wrapping for primitive tracking
-- Frame generation at each execution step
+- JSObject wrapping (extends shared JikiObject) for primitive tracking
+- Frame generation using shared frame system at each execution step
 
 ### Describers
 
@@ -50,23 +59,26 @@ The JavaScript interpreter follows the same pipeline as JikiScript:
 
 ## Frame Generation
 
-The interpreter generates frames compatible with Jiki's UI:
+The interpreter generates frames using the shared frame system from `src/shared/frames.ts`, ensuring compatibility with Jiki's UI and consistency across all interpreters:
 
 ```typescript
 interface Frame {
   line: number;
   code: string;
   status: "SUCCESS" | "ERROR";
-  result?: EvaluationResult;
-  error?: RuntimeError;
+  result?: any;
+  error?: any;
   time: number;
   timelineTime: number;
   description: string;
-  context: any;
-  priorVariables: Record<string, JikiObject>;
-  variables: Record<string, JikiObject>;
+  context?: any;
+  priorVariables: Record<string, any>;
+  variables: Record<string, any>;
+  data?: Record<string, any>;
 }
 ```
+
+JavaScript-specific extensions are handled through `frameDescribers.ts` which provides the `describeFrame()` function and interpreter-specific frame descriptions.
 
 ## Supported Features
 

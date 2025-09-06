@@ -120,28 +120,36 @@ Manages variable scoping and storage.
 - Scope chain traversal
 - Variable shadowing support
 
-### 6. JikiObjects (`src/javascript/jikiObjects.ts`)
+### 6. JSObjects (`src/javascript/jsObjects.ts`)
 
 Wrapper objects around JavaScript primitives for enhanced tracking.
 
+**Architecture:**
+
+- All JavaScript objects extend the shared `JikiObject` base class from `src/shared/jikiObject.ts`
+- Provides consistent interface across all interpreters
+- Maintains JavaScript-specific functionality while sharing common infrastructure
+
 **Types:**
 
-- `JikiNumber`: Numeric values with type information
-- `JikiString`: String values with length tracking
-- `JikiBoolean`: Boolean values with explicit type
-- `JikiNull`: Null value representation
-- `JikiUndefined`: Undefined value representation
+- `JSNumber`: Numeric values with type information
+- `JSString`: String values with length tracking
+- `JSBoolean`: Boolean values with explicit type
+- `JSNull`: Null value representation
+- `JSUndefined`: Undefined value representation
 
 **Benefits:**
 
-- Consistent type information
+- Consistent type information across interpreters
 - Value change tracking
 - Educational metadata
 - Debugging context
+- Cross-interpreter compatibility
 
-### 7. Frames (`src/javascript/frames.ts`)
+### 7. Frame System
 
-Execution snapshots for UI visualization.
+**Shared Framework (`src/shared/frames.ts`):**
+The JavaScript interpreter uses the unified frame system shared by all interpreters.
 
 **Frame Structure:**
 
@@ -150,16 +158,23 @@ interface Frame {
   line: number; // Source line number
   code: string; // Executed code snippet
   status: "SUCCESS" | "ERROR"; // Execution status
-  result?: EvaluationResult; // Computation result
-  error?: RuntimeError; // Error details if failed
+  result?: any; // Computation result
+  error?: any; // Error details if failed
   time: number; // Execution time (simulated)
   timelineTime: number; // Frame sequence number
   description: string; // Human-readable explanation
-  context: any; // AST node for debugging
-  priorVariables: Variables; // Variable state before
-  variables: Variables; // Variable state after
+  context?: any; // AST node for debugging
+  priorVariables: Record<string, any>; // Variable state before
+  variables: Record<string, any>; // Variable state after
+  data?: Record<string, any>; // Additional data
 }
 ```
+
+**JavaScript-Specific Extensions (`src/javascript/frameDescribers.ts`):**
+
+- `JavaScriptFrame`: Extends base Frame with JavaScript-specific result types
+- `describeFrame()`: Generates educational descriptions for JavaScript execution steps
+- Integrates with shared frame system while maintaining JavaScript-specific functionality
 
 ## Error Handling
 
