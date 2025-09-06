@@ -17,6 +17,9 @@ import { createPyObject, type JikiObject } from "./pyObjects";
 // Import individual executors
 import { executeLiteralExpression } from "./executor/executeLiteralExpression";
 import { executeExpressionStatement } from "./executor/executeExpressionStatement";
+import { executeBinaryExpression } from "./executor/executeBinaryExpression";
+import { executeUnaryExpression } from "./executor/executeUnaryExpression";
+import { executeGroupingExpression } from "./executor/executeGroupingExpression";
 
 export type RuntimeErrorType = "InvalidBinaryExpression" | "InvalidUnaryExpression" | "UnsupportedOperation";
 
@@ -61,19 +64,19 @@ export class Executor {
       return executeLiteralExpression(this, expression);
     }
 
+    if (expression instanceof BinaryExpression) {
+      return executeBinaryExpression(this, expression);
+    }
+
+    if (expression instanceof UnaryExpression) {
+      return executeUnaryExpression(this, expression);
+    }
+
+    if (expression instanceof GroupingExpression) {
+      return executeGroupingExpression(this, expression);
+    }
+
     // TODO: Add other expression types as needed
-    // if (expression instanceof BinaryExpression) {
-    //   return executeBinaryExpression(this, expression);
-    // }
-    //
-    // if (expression instanceof UnaryExpression) {
-    //   return executeUnaryExpression(this, expression);
-    // }
-    //
-    // if (expression instanceof GroupingExpression) {
-    //   return executeGroupingExpression(this, expression);
-    // }
-    //
     // if (expression instanceof IdentifierExpression) {
     //   return executeIdentifierExpression(this, expression);
     // }
