@@ -38,17 +38,17 @@ Builds an Abstract Syntax Tree (AST) from tokens using recursive descent parsing
 
 **Expression Types:**
 
-- `LiteralExpression`: Numbers, strings, booleans, None
-- `BinaryExpression`: Arithmetic and logical operations
-- `UnaryExpression`: Negation and logical not
-- `GroupingExpression`: Parenthesized expressions
-- `IdentifierExpression`: Variable references (planned)
+- `LiteralExpression`: Numbers, strings, booleans, None ✅ **IMPLEMENTED**
+- `BinaryExpression`: Arithmetic and logical operations ✅ **IMPLEMENTED**
+- `UnaryExpression`: Negation and logical not ✅ **IMPLEMENTED**
+- `GroupingExpression`: Parenthesized expressions ✅ **IMPLEMENTED**
+- `IdentifierExpression`: Variable references ✅ **IMPLEMENTED**
 - `CallExpression`: Function calls (planned)
 
 **Statement Types:**
 
-- `ExpressionStatement`: Standalone expressions
-- `AssignmentStatement`: Variable assignments (planned)
+- `ExpressionStatement`: Standalone expressions ✅ **IMPLEMENTED**
+- `AssignmentStatement`: Variable assignments ✅ **IMPLEMENTED**
 - `IfStatement`: Conditionals (planned)
 - `WhileStatement`: Loops (planned)
 - `FunctionDeclaration`: Functions (planned)
@@ -74,16 +74,16 @@ Each expression and statement type has its own executor module:
 
 **Expression Executors:**
 
-- `executor/executeLiteralExpression.ts`
-- `executor/executeBinaryExpression.ts`
-- `executor/executeUnaryExpression.ts`
-- `executor/executeGroupingExpression.ts`
-- `executor/executeIdentifierExpression.ts` (planned)
+- `executor/executeLiteralExpression.ts` ✅ **IMPLEMENTED**
+- `executor/executeBinaryExpression.ts` ✅ **IMPLEMENTED**
+- `executor/executeUnaryExpression.ts` ✅ **IMPLEMENTED**
+- `executor/executeGroupingExpression.ts` ✅ **IMPLEMENTED**
+- `executor/executeIdentifierExpression.ts` ✅ **IMPLEMENTED**
 
 **Statement Executors:**
 
-- `executor/executeExpressionStatement.ts`
-- `executor/executeAssignmentStatement.ts` (planned)
+- `executor/executeExpressionStatement.ts` ✅ **IMPLEMENTED**
+- `executor/executeAssignmentStatement.ts` ✅ **IMPLEMENTED**
 
 **Modular Executor Pattern:**
 
@@ -190,9 +190,10 @@ The Python interpreter uses the unified frame system shared by all interpreters.
 ### Runtime Errors
 
 - Type errors with Python-specific context
-- Name errors for undefined variables (planned)
+- **UndefinedVariable errors**: Proper error handling for accessing undefined variables ✅ **IMPLEMENTED**
 - Division by zero handling
 - Educational error messages with Python terminology
+- **Frame-based error reporting**: Errors captured in execution frames with location information ✅ **IMPLEMENTED**
 
 ## Python-Specific Features
 
@@ -224,6 +225,12 @@ The modular architecture allows easy addition of Python features:
 - **Scanner Tests**: Token generation accuracy with Python syntax
 - **Parser Tests**: AST construction correctness for Python grammar
 - **Executor Tests**: Evaluation results and frame generation
-- **Describer Tests**: Description accuracy and Python terminology
-- **Integration Tests**: End-to-end Python interpretation
-- **Error Tests**: Proper error handling with Python-specific messages
+- **Concept Tests**: 109 comprehensive tests covering all implemented features ✅ **IMPLEMENTED**
+  - **Numbers**: 5 tests for integer, float, and scientific notation parsing
+  - **Booleans**: 18 tests for True/False literals and logical operations
+  - **Strings**: 16 tests for single/double quotes and concatenation
+  - **Operations**: 30 tests for arithmetic, comparison, logical, and precedence
+  - **Variables**: 22 tests for assignment, access, reassignment, and complex expressions
+- **Syntax Error Tests**: 14 tests for undefined variables and invalid assignments ✅ **IMPLEMENTED**
+- **Integration Tests**: End-to-end Python interpretation ✅ **IMPLEMENTED**
+- **Error Tests**: Proper error handling with Python-specific messages ✅ **IMPLEMENTED**

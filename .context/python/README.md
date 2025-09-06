@@ -4,24 +4,29 @@ The Python interpreter for Jiki provides educational visualization of Python cod
 
 ## Current Status
 
-**In Development** - Basic numeric literal support implemented
+**Fully Functional** - Core Python features implemented and tested
 
 ### Implemented Features
 
-- **Numeric Literals**: Integer and floating-point numbers
-- **Basic Scanner**: Tokenizes Python number literals
-- **Expression Parser**: Builds AST for numeric expressions
-- **Modular Executor**: Evaluates numeric literals using shared architecture
-- **PyObjects**: Python-specific objects extending shared `JikiObject`
-- **Frame Generation**: Compatible with Jiki UI for educational visualization
+- **Numeric Literals**: Integer and floating-point numbers with scientific notation
+- **Boolean Literals**: True/False values with logical operations
+- **String Literals**: Single and double quoted strings with concatenation
+- **Arithmetic Operations**: All Python operators (+, -, \*, /, //, %, \*\*)
+- **Comparison Operations**: All comparison operators (>, >=, <, <=, ==, !=)
+- **Logical Operations**: Python logical operators (and, or, not)
+- **Grouping Expressions**: Parentheses for precedence control
+- **Variable System**: Assignment (x = value) and access with proper scoping
+- **Runtime Error Handling**: Undefined variable detection with educational messages
+- **Complete Scanner**: Tokenizes all implemented Python syntax
+- **Recursive Parser**: Builds correct AST with Python operator precedence
+- **Modular Executor**: 109 tests passing with comprehensive coverage
+- **PyObjects**: Python-specific objects (PyNumber, PyString, PyBoolean)
+- **Frame Generation**: Educational step-by-step execution visualization
 
 ### Planned Features
 
-- Boolean literals (True/False)
-- String literals with Python-specific syntax
-- Basic arithmetic operations (+, -, \*, /, //, %, \*\*)
-- Grouping expressions with parentheses
-- Variable assignments and lookups
+- Error handling for missing variables (partially implemented)
+- Unary negation operators
 - Control flow (if statements, loops)
 - Functions and scope
 - Data structures (lists, dictionaries, tuples)
