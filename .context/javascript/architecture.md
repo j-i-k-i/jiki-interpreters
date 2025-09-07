@@ -110,6 +110,8 @@ Builds an Abstract Syntax Tree (AST) from tokens using recursive descent parsing
 - `VariableDeclaration`: Variable declarations with `let` keyword
 - `BlockStatement`: Code blocks with lexical scope isolation `{ ... }`
 - `IfStatement`: Conditionals with optional else clauses `if (condition) statement else statement`
+  - Supports `else if` chains through nested if statements
+  - Example: `if (cond1) {...} else if (cond2) {...} else {...}`
 - `WhileStatement`: Loops (planned)
 - `FunctionDeclaration`: Functions (planned)
 

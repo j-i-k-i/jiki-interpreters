@@ -137,4 +137,145 @@ describe("if statement concept", () => {
       expect(frames[0].description).toContain("else");
     });
   });
+
+  describe("else if statements", () => {
+    test("executes else if branch when first condition is false and else if is true", () => {
+      const { frames, error } = interpret(`
+        let result = 0;
+        if (false) {
+          result = 1;
+        } else if (true) {
+          result = 2;
+        } else {
+          result = 3;
+        }
+      `);
+      expect(error).toBeNull();
+      expect(frames[frames.length - 1].variables.result.value).toBe(2);
+    });
+
+    test("executes else branch when if and else if conditions are false", () => {
+      const { frames, error } = interpret(`
+        let result = 0;
+        if (false) {
+          result = 1;
+        } else if (false) {
+          result = 2;
+        } else {
+          result = 3;
+        }
+      `);
+      expect(error).toBeNull();
+      expect(frames[frames.length - 1].variables.result.value).toBe(3);
+    });
+
+    test("supports multiple else if branches", () => {
+      const { frames, error } = interpret(`
+        let result = 0;
+        if (false) {
+          result = 1;
+        } else if (false) {
+          result = 2;
+        } else if (true) {
+          result = 3;
+        } else if (true) {
+          result = 4;
+        } else {
+          result = 5;
+        }
+      `);
+      expect(error).toBeNull();
+      expect(frames[frames.length - 1].variables.result.value).toBe(3);
+    });
+
+    test("else if without final else works correctly", () => {
+      const { frames, error } = interpret(`
+        let result = 0;
+        if (false) {
+          result = 1;
+        } else if (true) {
+          result = 2;
+        }
+      `);
+      expect(error).toBeNull();
+      expect(frames[frames.length - 1].variables.result.value).toBe(2);
+    });
+
+    test("skips all branches when no condition is true and no else", () => {
+      const { frames, error } = interpret(`
+        let result = 0;
+        if (false) {
+          result = 1;
+        } else if (false) {
+          result = 2;
+        }
+      `);
+      expect(error).toBeNull();
+      expect(frames[frames.length - 1].variables.result.value).toBe(0);
+    });
+
+    test("else if with complex conditions", () => {
+      const { frames, error } = interpret(`
+        let a = true;
+        let b = true;
+        let result = 0;
+        if (!a) {
+          result = 1;
+        } else if (a && b) {
+          result = 2;
+        } else {
+          result = 3;
+        }
+      `);
+      expect(error).toBeNull();
+      expect(frames[frames.length - 1].variables.result.value).toBe(2);
+    });
+
+    test("variables declared in else if blocks are scoped correctly", () => {
+      const { frames, error } = interpret(`
+        if (false) {
+          let blockVar1 = 1;
+        } else if (true) {
+          let blockVar2 = 2;
+        } else {
+          let blockVar3 = 3;
+        }
+      `);
+      expect(error).toBeNull();
+
+      const finalFrame = frames[frames.length - 1];
+      expect(finalFrame.variables.blockVar1).toBeUndefined();
+      expect(finalFrame.variables.blockVar2).toBeUndefined();
+      expect(finalFrame.variables.blockVar3).toBeUndefined();
+    });
+
+    test("else if with single statements (no blocks)", () => {
+      const { frames, error } = interpret(`
+        let result = 0;
+        if (false) result = 1;
+        else if (true) result = 2;
+        else result = 3;
+      `);
+      expect(error).toBeNull();
+      expect(frames[frames.length - 1].variables.result.value).toBe(2);
+    });
+
+    test("else if chain evaluates conditions in order", () => {
+      const { frames, error } = interpret(`
+        let value1 = false;
+        let value2 = false;
+        let value3 = true;
+        let result = 0;
+        if (value1) {
+          result = 1;
+        } else if (value2) {
+          result = 2;
+        } else if (value3) {
+          result = 3;
+        }
+      `);
+      expect(error).toBeNull();
+      expect(frames[frames.length - 1].variables.result.value).toBe(3);
+    });
+  });
 });
