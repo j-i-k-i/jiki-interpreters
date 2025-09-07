@@ -448,13 +448,11 @@ test("location", () => {
 describe("error", () => {
   describe("token", () => {
     test("invalid", () => {
-      expect(() => scan("123#")).toThrow("Unknown character: '#'.");
+      expect(() => scan("123#")).toThrow("UnknownCharacter: character: #");
     });
 
     test("Exclude listed", () => {
-      expect(() => scan("set x to 1", { excludeList: ["SET"] } as any)).toThrow(
-        "Jiki doesn't know how to use `set` in this exercise."
-      );
+      expect(() => scan("set x to 1", { excludeList: ["SET"] } as any)).toThrow("ExcludeListViolation: tokenType: SET");
     });
 
     test("Include listed", () => {
@@ -462,7 +460,7 @@ describe("error", () => {
         scan("set x to 1", {
           includeList: ["IDENTIFIER", "NUMBER"],
         } as any)
-      ).toThrow("Jiki doesn't know how to use `set` in this exercise.");
+      ).toThrow("IncludeListViolation: tokenType: SET");
     });
   });
 });

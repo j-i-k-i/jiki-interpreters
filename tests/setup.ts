@@ -1,6 +1,10 @@
 import { beforeAll } from "bun:test";
-import { changeLanguage } from "@jikiscript/translator";
+import { changeLanguage as changeJikiScriptLanguage } from "@jikiscript/translator";
+import { changeLanguage as changeJavaScriptLanguage } from "@javascript/translator";
+import { changeLanguage as changePythonLanguage } from "@python/translator";
 
 beforeAll(async () => {
-  await changeLanguage("system");
+  await changeJikiScriptLanguage("system");
+  await changeJavaScriptLanguage("system");
+  await changePythonLanguage("system");
 });
