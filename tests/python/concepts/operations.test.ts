@@ -1,5 +1,5 @@
 import { interpret } from "@python/interpreter";
-import { PyNumber, PyBoolean } from "@python/pyObjects";
+import { PyNumber, PyBoolean } from "@python/jikiObjects";
 
 describe("operation concepts", () => {
   describe("arithmetic operations", () => {

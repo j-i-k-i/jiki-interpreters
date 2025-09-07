@@ -1,7 +1,7 @@
 import { Executor, RuntimeError } from "../executor";
 import { IfStatement } from "../statement";
 import { EvaluationResult } from "../evaluation-result";
-import { PyBoolean } from "../pyObjects";
+import { PyBoolean } from "../jikiObjects";
 import { translate } from "../translator";
 
 export function executeIfStatement(executor: Executor, statement: IfStatement): EvaluationResult {
@@ -22,7 +22,6 @@ export function executeIfStatement(executor: Executor, statement: IfStatement): 
       type: "IfStatement",
       condition: result,
       jikiObject: result.jikiObject,
-      pyObject: result.jikiObject,
     };
   });
 

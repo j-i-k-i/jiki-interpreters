@@ -1,7 +1,7 @@
 import { Executor } from "../executor";
 import { BlockStatement } from "../statement";
 import { EvaluationResult } from "../evaluation-result";
-import { PyNone } from "../pyObjects";
+import { PyNone } from "../jikiObjects";
 
 export function executeBlockStatement(executor: Executor, statement: BlockStatement): EvaluationResult {
   // Execute each statement in the block
@@ -21,7 +21,6 @@ export function executeBlockStatement(executor: Executor, statement: BlockStatem
     return {
       type: "BlockStatement",
       jikiObject: new PyNone(),
-      pyObject: new PyNone(),
     };
   }
 
@@ -29,6 +28,5 @@ export function executeBlockStatement(executor: Executor, statement: BlockStatem
   return {
     type: "BlockStatement",
     jikiObject: lastResult.jikiObject,
-    pyObject: lastResult.jikiObject,
   };
 }

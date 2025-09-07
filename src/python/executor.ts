@@ -12,7 +12,7 @@ import { Location } from "../shared/location";
 import type { Statement } from "./statement";
 import { ExpressionStatement, AssignmentStatement, PrintStatement, IfStatement, BlockStatement } from "./statement";
 import type { EvaluationResult } from "./evaluation-result";
-import { createPyObject, type JikiObject } from "./pyObjects";
+import { createPyObject, type JikiObject } from "./jikiObjects";
 import type { Frame, FrameExecutionStatus } from "../shared/frames";
 import cloneDeep from "lodash.clonedeep";
 

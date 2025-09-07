@@ -1,13 +1,12 @@
 import type { Executor } from "../executor";
 import type { LiteralExpression } from "../expression";
 import type { EvaluationResult } from "../evaluation-result";
-import { createPyObject } from "../pyObjects";
+import { createPyObject } from "../jikiObjects";
 
 export function executeLiteralExpression(executor: Executor, expression: LiteralExpression): EvaluationResult {
-  const pyObject = createPyObject(expression.value);
+  const jikiObject = createPyObject(expression.value);
   return {
     type: "LiteralExpression",
-    jikiObject: pyObject,
-    pyObject: pyObject,
+    jikiObject: jikiObject,
   };
 }

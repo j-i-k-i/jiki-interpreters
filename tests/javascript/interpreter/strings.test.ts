@@ -1,5 +1,5 @@
 import { interpret } from "@javascript/interpreter";
-import { JSString } from "@javascript/jsObjects";
+import { JSString } from "@javascript/jikiObjects";
 
 describe("strings interpreter", () => {
   describe("execute", () => {

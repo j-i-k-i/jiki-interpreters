@@ -7,7 +7,7 @@ import { describeExpression } from "./describeSteps";
 export function describeExpressionStatement(frame: FrameWithResult, context: DescriptionContext): Description {
   const expressionStatement = frame.context as ExpressionStatement;
   const frameResult = frame.result as EvaluationResultExpressionStatement;
-  const value = formatJSObject(frameResult.jsObject);
+  const value = formatJSObject(frameResult.jikiObject);
 
   const result = `<p>This expression evaluated to <code>${value}</code>.</p>`;
   let steps = describeExpression(expressionStatement.expression, frameResult.expression, context);

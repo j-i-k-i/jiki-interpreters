@@ -1,5 +1,5 @@
 import { interpret } from "@javascript/interpreter";
-import { JSBoolean } from "@javascript/jsObjects";
+import { JSBoolean } from "@javascript/jikiObjects";
 
 describe("booleans interpreter", () => {
   describe("execute", () => {

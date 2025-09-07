@@ -1,5 +1,5 @@
 import { interpret } from "@python/interpreter";
-import { PyBoolean } from "@python/pyObjects";
+import { PyBoolean } from "@python/jikiObjects";
 
 describe("boolean concepts", () => {
   describe("boolean literals", () => {

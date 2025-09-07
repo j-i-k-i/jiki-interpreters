@@ -1,4 +1,4 @@
-import type { JikiObject } from "./pyObjects";
+import type { JikiObject } from "./jikiObjects";
 
 export class Environment {
   private readonly values: Map<string, JikiObject> = new Map();

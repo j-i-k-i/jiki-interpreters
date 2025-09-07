@@ -1,5 +1,5 @@
 import { interpret } from "@python/interpreter";
-import { PyString } from "@python/pyObjects";
+import { PyString } from "@python/jikiObjects";
 
 describe("string concepts", () => {
   describe("string literals", () => {

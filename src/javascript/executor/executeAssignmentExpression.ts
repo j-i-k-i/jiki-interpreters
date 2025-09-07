@@ -22,6 +22,5 @@ export function executeAssignmentExpression(
     name: expression.name.lexeme,
     value: valueResult,
     jikiObject: valueResult.jikiObject,
-    jsObject: valueResult.jikiObject,
   };
 }

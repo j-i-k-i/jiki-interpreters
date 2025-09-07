@@ -3,7 +3,7 @@ import { UnaryExpression } from "../expression";
 import { DescriptionContext } from "../../shared/frames";
 import { codeTag, formatJSObject } from "../helpers";
 import { describeExpression } from "./describeSteps";
-import * as JS from "../jsObjects";
+import * as JS from "../jikiObjects";
 
 export function describeUnaryExpression(
   expression: UnaryExpression,
@@ -24,14 +24,14 @@ function describeNotExpression(
   result: EvaluationResultUnaryExpression,
   context: DescriptionContext
 ) {
-  const resBool = result.operand.jsObject as JS.JSBoolean;
+  const resBool = result.operand.jikiObject as JS.JSBoolean;
   let steps = describeExpression(expression.operand, result.operand, context);
   steps = [
     ...steps,
     `<li>JavaScript evaluated that ${codeTag(
       `!${resBool}`,
       expression.operand.location
-    )} is ${codeTag(result.jsObject, expression.location)}.</li>`,
+    )} is ${codeTag(result.jikiObject, expression.location)}.</li>`,
   ];
   return steps;
 }
@@ -45,14 +45,14 @@ function describeMinusExpression(
   if (expression.operand.type == "LiteralExpression") {
     return [];
   }
-  const resNum = result.operand.jsObject as JS.JSNumber;
+  const resNum = result.operand.jikiObject as JS.JSNumber;
   let steps = describeExpression(expression.operand, result.operand, context);
   steps = [
     ...steps,
     `<li>JavaScript evaluated that ${codeTag(
       `-${resNum}`,
       expression.operand.location
-    )} is ${codeTag(result.jsObject, expression.location)}.</li>`,
+    )} is ${codeTag(result.jikiObject, expression.location)}.</li>`,
   ];
   return steps;
 }

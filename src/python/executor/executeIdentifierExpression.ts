@@ -19,6 +19,5 @@ export function executeIdentifierExpression(executor: Executor, expression: Iden
     type: "IdentifierExpression",
     name: expression.name.lexeme,
     jikiObject: value,
-    pyObject: value,
   } as any;
 }

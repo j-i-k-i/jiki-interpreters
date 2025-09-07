@@ -19,6 +19,5 @@ export function executeVariableDeclaration(executor: Executor, statement: Variab
     name: statement.name.lexeme,
     value: value,
     jikiObject: value.jikiObject,
-    jsObject: value.jsObject,
   } as any;
 }

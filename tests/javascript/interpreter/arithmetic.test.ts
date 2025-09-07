@@ -1,5 +1,5 @@
 import { interpret } from "@javascript/interpreter";
-import { JSNumber } from "@javascript/jsObjects";
+import { JSNumber } from "@javascript/jikiObjects";
 
 describe("arithmetic interpreter", () => {
   describe("execute", () => {

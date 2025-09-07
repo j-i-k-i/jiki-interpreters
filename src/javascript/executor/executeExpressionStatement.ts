@@ -8,6 +8,5 @@ export function executeExpressionStatement(executor: Executor, statement: Expres
     type: "ExpressionStatement",
     expression: expressionResult,
     jikiObject: expressionResult.jikiObject,
-    jsObject: expressionResult.jsObject,
   } as any;
 }

@@ -1,5 +1,5 @@
 import { interpret } from "@python/interpreter";
-import { PyNumber } from "@python/pyObjects";
+import { PyNumber } from "@python/jikiObjects";
 
 describe("arithmetic interpreter", () => {
   describe("execute", () => {

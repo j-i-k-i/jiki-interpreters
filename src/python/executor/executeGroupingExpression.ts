@@ -8,7 +8,6 @@ export function executeGroupingExpression(executor: Executor, expression: Groupi
   return {
     type: "GroupingExpression",
     expression: result,
-    jikiObject: result.pyObject,
-    pyObject: result.pyObject,
+    jikiObject: result.jikiObject,
   } as any;
 }

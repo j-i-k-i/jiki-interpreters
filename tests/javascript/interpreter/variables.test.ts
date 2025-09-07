@@ -1,5 +1,5 @@
 import { interpret } from "@javascript/interpreter";
-import { JSNumber, JSString, JSBoolean } from "@javascript/jsObjects";
+import { JSNumber, JSString, JSBoolean } from "@javascript/jikiObjects";
 import { changeLanguage } from "@javascript/translator";
 
 beforeAll(async () => {

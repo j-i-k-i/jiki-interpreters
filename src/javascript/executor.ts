@@ -14,7 +14,7 @@ import { Location } from "../shared/location";
 import type { Statement } from "./statement";
 import { ExpressionStatement, VariableDeclaration, BlockStatement, IfStatement } from "./statement";
 import type { EvaluationResult } from "./evaluation-result";
-import { createJSObject, type JikiObject } from "./jsObjects";
+import { createJSObject, type JikiObject } from "./jikiObjects";
 import { translate } from "./translator";
 import type { Frame, FrameExecutionStatus } from "../shared/frames";
 import { describeFrame } from "./frameDescribers";

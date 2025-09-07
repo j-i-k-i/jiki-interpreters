@@ -7,6 +7,5 @@ export function executeExpressionStatement(executor: Executor, statement: Expres
   return {
     type: "ExpressionStatement",
     jikiObject: expressionResult.jikiObject,
-    pyObject: expressionResult.pyObject,
   };
 }

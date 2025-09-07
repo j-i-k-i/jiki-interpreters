@@ -1,5 +1,5 @@
 import { interpret } from "@python/interpreter";
-import { PyNumber, PyString, PyBoolean } from "@python/pyObjects";
+import { PyNumber, PyString, PyBoolean } from "@python/jikiObjects";
 
 describe("variables concept", () => {
   describe("variable assignment", () => {

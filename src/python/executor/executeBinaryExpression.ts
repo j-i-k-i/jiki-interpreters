@@ -1,7 +1,7 @@
 import type { Executor } from "../executor";
 import type { BinaryExpression } from "../expression";
 import type { EvaluationResult } from "../evaluation-result";
-import { createPyObject, type JikiObject, PyBoolean } from "../pyObjects";
+import { createPyObject, type JikiObject, PyBoolean } from "../jikiObjects";
 import { RuntimeError } from "../executor";
 
 export function executeBinaryExpression(executor: Executor, expression: BinaryExpression): EvaluationResult {
@@ -15,7 +15,6 @@ export function executeBinaryExpression(executor: Executor, expression: BinaryEx
     left: leftResult,
     right: rightResult,
     jikiObject: result,
-    pyObject: result,
   } as any;
 }
 
@@ -25,8 +24,8 @@ function handleBinaryOperation(
   leftResult: EvaluationResult,
   rightResult: EvaluationResult
 ): JikiObject {
-  const left = leftResult.pyObject.value;
-  const right = rightResult.pyObject.value;
+  const left = leftResult.jikiObject.value;
+  const right = rightResult.jikiObject.value;
 
   switch (expression.operator.type) {
     // Arithmetic operations

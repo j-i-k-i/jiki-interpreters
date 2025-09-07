@@ -1,7 +1,7 @@
 import type { Executor } from "../executor";
 import type { BinaryExpression } from "../expression";
 import type { EvaluationResult } from "../evaluation-result";
-import { createJSObject, type JikiObject } from "../jsObjects";
+import { createJSObject, type JikiObject } from "../jikiObjects";
 import { RuntimeError } from "../executor";
 
 export function executeBinaryExpression(executor: Executor, expression: BinaryExpression): EvaluationResult {
@@ -15,7 +15,6 @@ export function executeBinaryExpression(executor: Executor, expression: BinaryEx
     left: leftResult,
     right: rightResult,
     jikiObject: result,
-    jsObject: result,
   } as any;
 }
 
@@ -25,8 +24,8 @@ function handleBinaryOperation(
   leftResult: EvaluationResult,
   rightResult: EvaluationResult
 ): JikiObject {
-  const left = leftResult.jsObject.value;
-  const right = rightResult.jsObject.value;
+  const left = leftResult.jikiObject.value;
+  const right = rightResult.jikiObject.value;
 
   switch (expression.operator.type) {
     case "PLUS":

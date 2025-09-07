@@ -1,7 +1,7 @@
 import type { Executor } from "../executor";
 import type { UnaryExpression } from "../expression";
 import type { EvaluationResult } from "../evaluation-result";
-import { createJSObject, type JikiObject } from "../jsObjects";
+import { createJSObject, type JikiObject } from "../jikiObjects";
 import { RuntimeError } from "../executor";
 
 export function executeUnaryExpression(executor: Executor, expression: UnaryExpression): EvaluationResult {
@@ -13,7 +13,6 @@ export function executeUnaryExpression(executor: Executor, expression: UnaryExpr
     type: "UnaryExpression",
     operand: operandResult,
     jikiObject: result,
-    jsObject: result,
   } as any;
 }
 
@@ -22,7 +21,7 @@ function handleUnaryOperation(
   expression: UnaryExpression,
   operandResult: EvaluationResult
 ): JikiObject {
-  const operand = operandResult.jsObject.value;
+  const operand = operandResult.jikiObject.value;
 
   switch (expression.operator.type) {
     case "MINUS":
