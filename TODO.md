@@ -14,6 +14,7 @@ Your job is to work through this file. Find the next jobs that is not crossed of
 8. Update the `.context` files to reflect what you've done.
 9. Update this file to mark the TODO as complete
 10. Commit to git
+11. Push to remote repository
 
 Important:
 
