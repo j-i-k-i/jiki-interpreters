@@ -1,6 +1,7 @@
 import { Environment } from "./environment";
 import { SyntaxError } from "./error";
 import type { Expression } from "./expression";
+import type { LanguageFeatures } from "./interfaces";
 import {
   LiteralExpression,
   BinaryExpression,
@@ -34,7 +35,8 @@ export type RuntimeErrorType =
   | "InvalidBinaryExpression"
   | "InvalidUnaryExpression"
   | "UnsupportedOperation"
-  | "VariableNotDeclared";
+  | "VariableNotDeclared"
+  | "ShadowingDisabled";
 
 export class RuntimeError extends Error {
   public category: string = "RuntimeError";
@@ -63,9 +65,17 @@ export class Executor {
   private time: number = 0;
   private timePerFrame: number = 0.01;
   public environment: Environment;
+  public languageFeatures: LanguageFeatures;
 
-  constructor(private readonly sourceCode: string) {
+  constructor(
+    private readonly sourceCode: string,
+    languageFeatures?: LanguageFeatures
+  ) {
     this.environment = new Environment();
+    this.languageFeatures = {
+      allowShadowing: false, // Default to false (shadowing disabled)
+      ...languageFeatures,
+    };
   }
 
   public execute(statements: Statement[]): ExecutorResult {

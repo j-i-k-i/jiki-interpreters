@@ -20,7 +20,8 @@
       "InvalidBinaryExpression": "Invalid operation between values.",
       "InvalidUnaryExpression": "Invalid unary operation.",
       "UnsupportedOperation": "This operation is not supported.",
-      "VariableNotDeclared": "The variable '{{name}}' has not been declared."
+      "VariableNotDeclared": "The variable '{{name}}' has not been declared.",
+      "ShadowingDisabled": "Variable shadowing is disabled. The variable '{{name}}' is already declared in an outer scope."
     }
   }
 }

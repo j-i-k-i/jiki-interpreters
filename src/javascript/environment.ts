@@ -12,6 +12,19 @@ export class Environment {
     this.values.set(name, value);
   }
 
+  public isDefinedInEnclosingScope(name: string): boolean {
+    if (this.enclosing === null) {
+      return false;
+    }
+
+    // Check if the variable is defined in any enclosing scope
+    if (this.enclosing.values.has(name)) {
+      return true;
+    }
+
+    return this.enclosing.isDefinedInEnclosingScope(name);
+  }
+
   public get(name: string): JikiObject | undefined {
     if (this.values.has(name)) {
       return this.values.get(name);

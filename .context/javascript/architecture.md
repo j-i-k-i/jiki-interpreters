@@ -312,7 +312,46 @@ Wrapper objects around JavaScript primitives for enhanced tracking.
 - Debugging context
 - Cross-interpreter compatibility
 
-### 7. Frame System
+### 7. Language Features System (`src/javascript/interfaces.ts`)
+
+The JavaScript interpreter supports configurable language features that allow fine-grained control over language behavior for educational purposes.
+
+**Architecture:**
+
+```typescript
+interface LanguageFeatures {
+  excludeList?: string[];
+  includeList?: string[];
+  allowShadowing?: boolean; // Controls variable shadowing behavior
+}
+```
+
+**Language Features:**
+
+- **allowShadowing** (boolean, default: `false`): Controls whether variables in inner scopes can shadow (hide) variables in outer scopes
+  - When `false` (default): Runtime error "ShadowingDisabled" if inner `let` declaration tries to shadow an outer variable
+  - When `true`: Normal JavaScript behavior, inner variables can shadow outer ones
+  - Educational benefit: Helps students understand scoping without confusion from shadowing
+
+**Implementation Details:**
+
+- Features are passed to `interpret(sourceCode, languageFeatures)` function
+- Executor stores features in `this.languageFeatures` with defaults applied
+- Environment class provides `isDefinedInEnclosingScope()` method for shadowing detection
+- Variable declaration executor checks shadowing before defining variables
+- Runtime errors use system message format: `"ShadowingDisabled: name: variableName"`
+
+**Usage Examples:**
+
+```javascript
+// Default behavior - shadowing disabled
+interpret("let x = 5; { let x = 10; }"); // Runtime error
+
+// Allow shadowing
+interpret("let x = 5; { let x = 10; }", { allowShadowing: true }); // Success
+```
+
+### 8. Frame System
 
 **Follows Shared Framework**: Uses the unified frame system defined in the [Shared Architecture](../shared/interpreter-architecture.md#frame-structure-mandatory).
 
@@ -338,8 +377,17 @@ Wrapper objects around JavaScript primitives for enhanced tracking.
 - Never returned as `error` - always become frames with `status: "ERROR"`
 - Type errors with context
 - Variable reference errors for undefined variables
+- Variable shadowing errors when `allowShadowing: false`
 - Educational error messages with location context
 - Use system message format for consistency
+
+**Error Types:**
+
+- `VariableNotDeclared`: Variable used but not declared
+- `ShadowingDisabled`: Variable shadowing attempted when disabled
+- `InvalidBinaryExpression`: Invalid binary operation
+- `InvalidUnaryExpression`: Invalid unary operation
+- `UnsupportedOperation`: Unsupported language feature
 
 ## Extensibility
 

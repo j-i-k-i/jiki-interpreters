@@ -52,7 +52,7 @@ export class Parser {
 
       // Handle variable declarations
       if (this.match("LET")) {
-        return this.variableDeclaration();
+        return this.variableDeclaration(this.previous()); // Pass the LET token
       }
 
       // Handle block statements
@@ -82,12 +82,12 @@ export class Parser {
     }
   }
 
-  private variableDeclaration(): Statement {
+  private variableDeclaration(letToken: Token): Statement {
     const name = this.consume("IDENTIFIER", "MissingVariableName");
     this.consume("EQUAL", "MissingInitializerInVariableDeclaration");
     const initializer = this.expression();
     const semicolonToken = this.consumeSemicolon();
-    return new VariableDeclaration(name, initializer, Location.between(name, semicolonToken));
+    return new VariableDeclaration(name, initializer, Location.between(letToken, semicolonToken));
   }
 
   private blockStatement(): Statement {

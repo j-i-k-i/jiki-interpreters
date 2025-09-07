@@ -191,4 +191,144 @@ describe("Runtime Errors", () => {
       expect(frames[2].error!.message).toBe("VariableNotDeclared: name: x");
     });
   });
+
+  describe("ShadowingDisabled", () => {
+    describe("allowShadowing: false (default)", () => {
+      test("simple variable shadowing in block", () => {
+        const code = "let x = 5; { let x = 10; }";
+        const { frames } = interpret(code);
+        expect(frames).toBeArrayOfSize(2); // Execution stops after error
+        expect(frames[0].status).toBe("SUCCESS"); // Outer variable declaration
+        expectFrameToBeError(frames[1], "let x = 10;", "ShadowingDisabled"); // Inner variable declaration should fail
+        expect(frames[1].error!.message).toBe("ShadowingDisabled: name: x");
+      });
+
+      test("nested block shadowing", () => {
+        const code = "let x = 1; { { let x = 2; } }";
+        const { frames } = interpret(code);
+        expect(frames).toBeArrayOfSize(2); // Execution stops after error
+        expect(frames[0].status).toBe("SUCCESS"); // let x = 1
+        expectFrameToBeError(frames[1], "let x = 2;", "ShadowingDisabled"); // Inner variable should fail
+        expect(frames[1].error!.message).toBe("ShadowingDisabled: name: x");
+      });
+
+      test("multiple level shadowing", () => {
+        const code = "let x = 1; { let y = 2; { let x = 3; } }";
+        const { frames } = interpret(code);
+        expect(frames).toBeArrayOfSize(3); // Execution stops after error
+        expect(frames[0].status).toBe("SUCCESS"); // let x = 1
+        expect(frames[1].status).toBe("SUCCESS"); // let y = 2
+        expectFrameToBeError(frames[2], "let x = 3;", "ShadowingDisabled"); // let x = 3 should fail
+        expect(frames[2].error!.message).toBe("ShadowingDisabled: name: x");
+      });
+
+      test("different variable names should work", () => {
+        const code = "let x = 5; { let y = 10; }";
+        const { frames } = interpret(code);
+        expect(frames).toBeArrayOfSize(3);
+        expect(frames[0].status).toBe("SUCCESS"); // let x = 5
+        expect(frames[1].status).toBe("SUCCESS"); // let y = 10
+        expect(frames[2].status).toBe("SUCCESS"); // block
+      });
+
+      test("variable state after block with shadowing error", () => {
+        const code = "let x = 5; { let x = 10; } x;";
+        const { frames } = interpret(code);
+        expect(frames).toBeArrayOfSize(2); // Should stop after shadowing error
+        expect(frames[0].status).toBe("SUCCESS"); // let x = 5
+        expectFrameToBeError(frames[1], "let x = 10;", "ShadowingDisabled"); // Shadowing error
+        expect(frames[1].error!.message).toBe("ShadowingDisabled: name: x");
+
+        // Verify original variable is unchanged
+        expect(frames[0].variables.x.value).toBe(5);
+        expect(frames[1].variables.x.value).toBe(5); // Still 5 after error
+      });
+    });
+
+    describe("allowShadowing: true", () => {
+      test("simple variable shadowing allowed in block", () => {
+        const code = "let x = 5; { let x = 10; x; }";
+        const { frames } = interpret(code, { allowShadowing: true });
+        expect(frames).toBeArrayOfSize(4);
+        expect(frames[0].status).toBe("SUCCESS"); // let x = 5
+        expect(frames[1].status).toBe("SUCCESS"); // let x = 10 (shadowing allowed)
+        expect(frames[2].status).toBe("SUCCESS"); // x; (should be 10)
+        expect(frames[3].status).toBe("SUCCESS"); // block
+
+        // Verify inner x has value 10
+        expect(frames[2].variables.x.value).toBe(10);
+      });
+
+      test("nested shadowing allowed", () => {
+        const code = "let x = 1; { let x = 2; { let x = 3; x; } x; } x;";
+        const { frames } = interpret(code, { allowShadowing: true });
+        expect(frames).toBeArrayOfSize(8);
+        expect(frames[0].status).toBe("SUCCESS"); // let x = 1
+        expect(frames[1].status).toBe("SUCCESS"); // let x = 2
+        expect(frames[2].status).toBe("SUCCESS"); // let x = 3
+        expect(frames[3].status).toBe("SUCCESS"); // x; (should be 3)
+        expect(frames[4].status).toBe("SUCCESS"); // inner block
+        expect(frames[5].status).toBe("SUCCESS"); // x; (should be 2)
+        expect(frames[6].status).toBe("SUCCESS"); // outer block
+        expect(frames[7].status).toBe("SUCCESS"); // x; (should be 1)
+
+        // Verify variables at different levels
+        expect(frames[3].variables.x.value).toBe(3); // innermost
+        expect(frames[5].variables.x.value).toBe(2); // middle
+        expect(frames[7].variables.x.value).toBe(1); // outer
+      });
+
+      test("variable state restoration after shadowed block", () => {
+        const code = "let x = 5; { let x = 10; } x;";
+        const { frames } = interpret(code, { allowShadowing: true });
+        expect(frames).toBeArrayOfSize(4);
+        expect(frames[0].status).toBe("SUCCESS"); // let x = 5
+        expect(frames[1].status).toBe("SUCCESS"); // let x = 10 (shadowing)
+        expect(frames[2].status).toBe("SUCCESS"); // block
+        expect(frames[3].status).toBe("SUCCESS"); // x; after block
+
+        // Verify original variable is restored after block
+        expect(frames[0].variables.x.value).toBe(5);
+        expect(frames[1].variables.x.value).toBe(10); // Inside block
+        expect(frames[3].variables.x.value).toBe(5); // After block, back to original
+      });
+
+      test("assignment to shadowed variable doesn't affect outer", () => {
+        const code = "let x = 5; { let x = 10; x = 20; } x;";
+        const { frames } = interpret(code, { allowShadowing: true });
+        expect(frames).toBeArrayOfSize(5);
+        expect(frames[0].status).toBe("SUCCESS"); // let x = 5
+        expect(frames[1].status).toBe("SUCCESS"); // let x = 10
+        expect(frames[2].status).toBe("SUCCESS"); // x = 20
+        expect(frames[3].status).toBe("SUCCESS"); // block
+        expect(frames[4].status).toBe("SUCCESS"); // x; after block
+
+        // Verify original variable is unchanged
+        expect(frames[0].variables.x.value).toBe(5);
+        expect(frames[1].variables.x.value).toBe(10); // Initial shadow value
+        expect(frames[2].variables.x.value).toBe(20); // Modified shadow value
+        expect(frames[4].variables.x.value).toBe(5); // Original restored
+      });
+    });
+
+    describe("feature flag default behavior", () => {
+      test("shadowing disabled by default", () => {
+        const code = "let x = 5; { let x = 10; }";
+        const { frames } = interpret(code); // No language features specified
+        expect(frames).toBeArrayOfSize(2); // Execution stops after error
+        expect(frames[0].status).toBe("SUCCESS"); // let x = 5
+        expectFrameToBeError(frames[1], "let x = 10;", "ShadowingDisabled"); // Should error
+        expect(frames[1].error!.message).toBe("ShadowingDisabled: name: x");
+      });
+
+      test("explicit allowShadowing false", () => {
+        const code = "let x = 5; { let x = 10; }";
+        const { frames } = interpret(code, { allowShadowing: false });
+        expect(frames).toBeArrayOfSize(2); // Execution stops after error
+        expect(frames[0].status).toBe("SUCCESS"); // let x = 5
+        expectFrameToBeError(frames[1], "let x = 10;", "ShadowingDisabled"); // Should error
+        expect(frames[1].error!.message).toBe("ShadowingDisabled: name: x");
+      });
+    });
+  });
 });
