@@ -23,7 +23,8 @@
       "InvalidUnaryExpression": "InvalidUnaryExpression",
       "UnsupportedOperation": "UnsupportedOperation",
       "VariableNotDeclared": "VariableNotDeclared: name: {{name}}",
-      "ShadowingDisabled": "ShadowingDisabled: name: {{name}}"
+      "ShadowingDisabled": "ShadowingDisabled: name: {{name}}",
+      "TruthinessDisabled": "TruthinessDisabled: value: {{value}}"
     }
   }
 }

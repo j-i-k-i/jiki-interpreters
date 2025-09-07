@@ -19,8 +19,8 @@ export function executeIfStatement(executor: Executor, statement: IfStatement) {
 function executeCondition(executor: Executor, statement: IfStatement): EvaluationResultIfStatement {
   const result = executor.evaluate(statement.condition);
 
-  // Convert the result to boolean for if statement logic
-  const booleanValue = Boolean(result.jikiObject.value);
+  // Verify that the condition is a boolean if truthiness is disabled
+  executor.verifyBoolean(result.jikiObject, statement.condition.location);
 
   return {
     type: "IfStatement",

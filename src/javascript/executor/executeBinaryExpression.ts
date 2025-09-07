@@ -37,8 +37,12 @@ function handleBinaryOperation(
     case "SLASH":
       return createJSObject(left / right);
     case "LOGICAL_AND":
+      executor.verifyBoolean(leftResult.jikiObject, expression.left.location);
+      executor.verifyBoolean(rightResult.jikiObject, expression.right.location);
       return createJSObject(left && right);
     case "LOGICAL_OR":
+      executor.verifyBoolean(leftResult.jikiObject, expression.left.location);
+      executor.verifyBoolean(rightResult.jikiObject, expression.right.location);
       return createJSObject(left || right);
     case "EQUAL_EQUAL":
       return createJSObject(left == right);

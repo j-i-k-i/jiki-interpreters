@@ -242,6 +242,14 @@ export class Parser {
       return new LiteralExpression(false, this.previous().location);
     }
 
+    if (this.match("NULL")) {
+      return new LiteralExpression(null, this.previous().location);
+    }
+
+    if (this.match("UNDEFINED")) {
+      return new LiteralExpression(undefined, this.previous().location);
+    }
+
     if (this.match("NUMBER")) {
       return new LiteralExpression(this.previous().literal as number, this.previous().location);
     }

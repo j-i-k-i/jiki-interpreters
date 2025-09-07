@@ -38,7 +38,8 @@ export type RuntimeErrorType =
   | "UnsupportedOperation"
   | "VariableNotDeclared"
   | "ShadowingDisabled"
-  | "ComparisonRequiresNumber";
+  | "ComparisonRequiresNumber"
+  | "TruthinessDisabled";
 
 export class RuntimeError extends Error {
   public category: string = "RuntimeError";
@@ -251,6 +252,20 @@ export class Executor {
 
   public getVariables(): Record<string, JikiObject> {
     return this.environment.getAllVariables();
+  }
+
+  public verifyBoolean(value: JikiObject, location: Location): void {
+    // If truthiness is allowed, any value is acceptable
+    if (this.languageFeatures.allowTruthiness) {
+      return;
+    }
+
+    // If truthiness is disabled, only boolean values are allowed
+    if (value.type !== "boolean") {
+      this.error("TruthinessDisabled", location, {
+        value: value.type,
+      });
+    }
   }
 
   public error(type: RuntimeErrorType, location: Location, context?: any): never {

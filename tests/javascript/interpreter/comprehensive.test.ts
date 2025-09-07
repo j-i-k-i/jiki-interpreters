@@ -24,8 +24,8 @@ describe("comprehensive interpreter", () => {
     });
 
     test("arithmetic and logical combined", () => {
-      // Simple test without comparison operators for now
-      const { frames, error } = interpret("(1 + 2) && true;");
+      // With truthiness enabled to allow numbers in logical operations
+      const { frames, error } = interpret("(1 + 2) && true;", { allowTruthiness: true });
       expect(error).toBeNull();
       expect(frames).toBeArrayOfSize(1);
       expect(frames[0].status).toBe("SUCCESS");

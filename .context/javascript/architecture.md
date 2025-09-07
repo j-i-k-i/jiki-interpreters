@@ -47,7 +47,10 @@ Wrapper objects extending shared `JikiObject` base class. Supports JSNumber, JSS
 
 ### 7. Language Features System (`src/javascript/interfaces.ts`)
 
-Configurable language features including `allowShadowing` flag for educational control over variable shadowing behavior.
+Configurable language features:
+
+- `allowShadowing`: Controls variable shadowing behavior in nested scopes
+- `allowTruthiness`: Controls whether non-boolean values can be used in conditions (default: false)
 
 ### 8. Frame System
 

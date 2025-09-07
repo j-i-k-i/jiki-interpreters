@@ -9,7 +9,7 @@ export abstract class Expression {
 
 export class LiteralExpression extends Expression {
   constructor(
-    public value: number | string | boolean,
+    public value: number | string | boolean | null | undefined,
     public location: Location
   ) {
     super("LiteralExpression");

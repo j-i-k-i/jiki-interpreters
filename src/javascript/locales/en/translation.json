@@ -23,7 +23,8 @@
       "InvalidUnaryExpression": "Invalid unary operation.",
       "UnsupportedOperation": "This operation is not supported.",
       "VariableNotDeclared": "The variable '{{name}}' has not been declared.",
-      "ShadowingDisabled": "Variable shadowing is disabled. The variable '{{name}}' is already declared in an outer scope."
+      "ShadowingDisabled": "Variable shadowing is disabled. The variable '{{name}}' is already declared in an outer scope.",
+      "TruthinessDisabled": "Only boolean values are allowed in conditions, but got '{{value}}'."
     }
   }
 }

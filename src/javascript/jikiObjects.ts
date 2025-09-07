@@ -44,9 +44,41 @@ export class JSBoolean extends JikiObject {
   }
 }
 
+export class JSNull extends JikiObject {
+  constructor() {
+    super("null");
+  }
+
+  public get value(): null {
+    return null;
+  }
+
+  public toString(): string {
+    return "null";
+  }
+}
+
+export class JSUndefined extends JikiObject {
+  constructor() {
+    super("undefined");
+  }
+
+  public get value(): undefined {
+    return undefined;
+  }
+
+  public toString(): string {
+    return "undefined";
+  }
+}
+
 // Helper function to create JSObjects from JavaScript values
 export function createJSObject(value: any): JikiObject {
-  if (typeof value === "number") {
+  if (value === null) {
+    return new JSNull();
+  } else if (value === undefined) {
+    return new JSUndefined();
+  } else if (typeof value === "number") {
     return new JSNumber(value);
   } else if (typeof value === "string") {
     return new JSString(value);
