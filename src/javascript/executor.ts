@@ -13,6 +13,7 @@ import type { Statement } from "./statement";
 import { ExpressionStatement, VariableDeclaration, BlockStatement } from "./statement";
 import type { EvaluationResult } from "./evaluation-result";
 import { createJSObject, type JikiObject } from "./jsObjects";
+import { translate } from "./translator";
 
 // Import individual executors
 import { executeLiteralExpression } from "./executor/executeLiteralExpression";
@@ -24,9 +25,15 @@ import { executeBlockStatement } from "./executor/executeBlockStatement";
 import { executeExpressionStatement } from "./executor/executeExpressionStatement";
 import { executeVariableDeclaration } from "./executor/executeVariableDeclaration";
 
-export type RuntimeErrorType = "InvalidBinaryExpression" | "InvalidUnaryExpression" | "UnsupportedOperation";
+export type RuntimeErrorType =
+  | "InvalidBinaryExpression"
+  | "InvalidUnaryExpression"
+  | "UnsupportedOperation"
+  | "VariableNotDeclared";
 
 export class RuntimeError extends Error {
+  public category: string = "RuntimeError";
+
   constructor(
     message: string,
     public location: Location,
@@ -107,6 +114,7 @@ export class Executor {
   }
 
   public error(type: RuntimeErrorType, location: Location, context?: any): never {
-    throw new RuntimeError(`Runtime error: ${type}`, location, type, context);
+    const message = translate(`error.runtime.${type}`, context);
+    throw new RuntimeError(message, location, type, context);
   }
 }

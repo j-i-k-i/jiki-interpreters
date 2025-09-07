@@ -90,13 +90,13 @@ describe("variables interpreter", () => {
       test("accessing undefined variable", () => {
         const { frames, error } = interpret("x;");
         expect(error).not.toBeNull();
-        expect(error?.message).toContain("Undefined variable 'x'");
+        expect(error?.message).toContain("The variable 'x' has not been declared");
       });
 
       test("using variable in same declaration", () => {
         const { frames, error } = interpret("let x = x + 1;");
         expect(error).not.toBeNull();
-        expect(error?.message).toContain("Undefined variable 'x'");
+        expect(error?.message).toContain("The variable 'x' has not been declared");
       });
     });
   });

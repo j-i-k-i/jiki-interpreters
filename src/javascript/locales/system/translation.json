@@ -14,6 +14,12 @@
       "UnknownCharacter": "Unknown character",
       "UnterminatedComment": "UnterminatedComment",
       "UnterminatedString": "Did you forget to add end quote?"
+    },
+    "runtime": {
+      "InvalidBinaryExpression": "InvalidBinaryExpression",
+      "InvalidUnaryExpression": "InvalidUnaryExpression",
+      "UnsupportedOperation": "UnsupportedOperation",
+      "VariableNotDeclared": "VariableNotDeclared: name: {{name}}"
     }
   }
 }

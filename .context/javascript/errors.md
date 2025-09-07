@@ -8,7 +8,7 @@ The JavaScript interpreter implements a standardized error system following the 
 
 ### Error Types
 
-JavaScript defines **SyntaxError** only as it currently focuses on basic syntax parsing:
+JavaScript defines **SyntaxError** and **RuntimeError** for comprehensive error handling:
 
 **Syntax Errors (13 types):**
 
@@ -16,6 +16,13 @@ JavaScript defines **SyntaxError** only as it currently focuses on basic syntax 
 - String termination errors
 - Expression and statement syntax errors
 - Variable declaration syntax errors
+
+**Runtime Errors (4 types):**
+
+- InvalidBinaryExpression
+- InvalidUnaryExpression
+- UnsupportedOperation
+- VariableNotDeclared
 
 ### Error Classes
 
@@ -29,6 +36,20 @@ export class SyntaxError extends Error {
   ) {
     super(message);
     this.name = "SyntaxError";
+  }
+}
+
+export class RuntimeError extends Error {
+  public category: string = "RuntimeError";
+  
+  constructor(
+    message: string,
+    public location: Location,
+    public type: RuntimeErrorType,
+    public context?: any
+  ) {
+    super(message);
+    this.name = "RuntimeError";
   }
 }
 ```
@@ -138,6 +159,13 @@ The JavaScript interpreter maintains complete independence:
 - **MissingRightParenthesisAfterExpression**: "MissingRightParenthesisAfterExpression"
 - **UnknownCharacter**: "Unknown character"
 - **MissingSemicolon**: "MissingSemicolon"
+
+### Runtime Errors
+
+- **VariableNotDeclared**: "The variable '{{name}}' has not been declared."
+- **InvalidBinaryExpression**: "Invalid operation between values."
+- **InvalidUnaryExpression**: "Invalid unary operation."
+- **UnsupportedOperation**: "This operation is not supported."
 
 ## Educational Benefits
 

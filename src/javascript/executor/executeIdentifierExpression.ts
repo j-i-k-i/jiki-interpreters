@@ -9,7 +9,7 @@ export function executeIdentifierExpression(
   const value = executor.environment.get(expression.name.lexeme);
 
   if (value === undefined) {
-    throw new Error(`Undefined variable '${expression.name.lexeme}'`);
+    executor.error("VariableNotDeclared", expression.location, { name: expression.name.lexeme });
   }
 
   return {

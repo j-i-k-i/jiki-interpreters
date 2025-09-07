@@ -47,7 +47,7 @@ export function interpret(sourceCode: string): InterpretResult {
                 line: statement.location.line,
                 code: currentSourceCode.substring(
                   statement.location.absolute.begin - 1,
-                  statement.location.absolute.end - 1
+                  statement.location.absolute.end
                 ),
                 status: "SUCCESS",
                 result: {
@@ -89,10 +89,7 @@ export function interpret(sourceCode: string): InterpretResult {
           // Create an error frame
           const frame: Frame = {
             line: statement.location.line,
-            code: currentSourceCode.substring(
-              statement.location.absolute.begin - 1,
-              statement.location.absolute.end - 1
-            ),
+            code: currentSourceCode.substring(statement.location.absolute.begin - 1, statement.location.absolute.end),
             status: "ERROR",
             error: error as RuntimeError,
             time: 0.01,
@@ -104,7 +101,8 @@ export function interpret(sourceCode: string): InterpretResult {
           };
 
           frames.push(frame);
-          throw error;
+          // Don't re-throw the error - we want to continue processing or return the error frame
+          return;
         }
       }
     }
@@ -121,7 +119,7 @@ export function interpret(sourceCode: string): InterpretResult {
 
       return {
         line: statement.location.line,
-        code: sourceCode.substring(statement.location.absolute.begin - 1, statement.location.absolute.end - 1),
+        code: sourceCode.substring(statement.location.absolute.begin - 1, statement.location.absolute.end),
         status: "SUCCESS",
         result: frameResult || undefined,
         time: 0.01, // Simplified timing
@@ -129,7 +127,7 @@ export function interpret(sourceCode: string): InterpretResult {
         description: result
           ? describeFrame({
               line: statement.location.line,
-              code: sourceCode.substring(statement.location.absolute.begin - 1, statement.location.absolute.end - 1),
+              code: sourceCode.substring(statement.location.absolute.begin - 1, statement.location.absolute.end),
               status: "SUCCESS",
               result: result,
               time: 0.01,
@@ -147,6 +145,12 @@ export function interpret(sourceCode: string): InterpretResult {
     }
 
     executeStatementsWithFrames(statements);
+
+    // Check if any frame had an error
+    const errorFrame = frames.find(f => f.status === "ERROR");
+    if (errorFrame) {
+      return { frames, error: errorFrame.error as Error, success: false };
+    }
 
     return { frames, error: null, success: true };
   } catch (error) {
