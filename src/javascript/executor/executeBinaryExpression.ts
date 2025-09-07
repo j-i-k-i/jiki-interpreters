@@ -40,11 +40,49 @@ function handleBinaryOperation(
       return createJSObject(left && right);
     case "LOGICAL_OR":
       return createJSObject(left || right);
+    case "EQUAL_EQUAL":
+      return createJSObject(left == right);
+    case "NOT_EQUAL":
+      return createJSObject(left != right);
+    case "GREATER":
+      verifyNumbersForComparison(executor, expression, leftResult, rightResult);
+      return createJSObject(left > right);
+    case "GREATER_EQUAL":
+      verifyNumbersForComparison(executor, expression, leftResult, rightResult);
+      return createJSObject(left >= right);
+    case "LESS":
+      verifyNumbersForComparison(executor, expression, leftResult, rightResult);
+      return createJSObject(left < right);
+    case "LESS_EQUAL":
+      verifyNumbersForComparison(executor, expression, leftResult, rightResult);
+      return createJSObject(left <= right);
     default:
       throw new RuntimeError(
         `Unsupported binary operator: ${expression.operator.type}`,
         expression.location,
         "InvalidBinaryExpression"
       );
+  }
+}
+
+function verifyNumbersForComparison(
+  executor: Executor,
+  expression: BinaryExpression,
+  leftResult: EvaluationResult,
+  rightResult: EvaluationResult
+): void {
+  if (typeof leftResult.jikiObject.value !== "number") {
+    throw new RuntimeError(
+      `ComparisonRequiresNumber: operator: ${expression.operator.lexeme}: left: ${leftResult.jikiObject.type}`,
+      expression.location,
+      "ComparisonRequiresNumber"
+    );
+  }
+  if (typeof rightResult.jikiObject.value !== "number") {
+    throw new RuntimeError(
+      `ComparisonRequiresNumber: operator: ${expression.operator.lexeme}: right: ${rightResult.jikiObject.type}`,
+      expression.location,
+      "ComparisonRequiresNumber"
+    );
   }
 }

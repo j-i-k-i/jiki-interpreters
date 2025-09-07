@@ -2,6 +2,48 @@
 
 This document tracks the historical development and changes specific to the JavaScript interpreter.
 
+## Comparison Operators Implementation (January 2025)
+
+### Changes Made
+
+Added full support for comparison and equality operators to the JavaScript interpreter:
+
+**Operators Added**:
+
+- `>` (greater than)
+- `<` (less than)
+- `>=` (greater than or equal)
+- `<=` (less than or equal)
+- `==` (equality with type coercion)
+- `!=` (inequality with type coercion)
+
+**Implementation Details**:
+
+1. **Parser Updates** (`src/javascript/parser.ts`):
+   - Added `comparison()` method between `addition()` and `equality()` in precedence chain
+   - Added `equality()` method between `comparison()` and `logicalAnd()`
+   - Proper operator precedence: multiplication → addition → comparison → equality → logical
+
+2. **Executor Updates** (`src/javascript/executor/executeBinaryExpression.ts`):
+   - Added cases for all comparison operators in `handleBinaryOperation()`
+   - Added `verifyNumbersForComparison()` helper for type checking
+   - Comparison operators (`>`, `<`, `>=`, `<=`) require numbers
+   - Equality operators (`==`, `!=`) use JavaScript's type coercion
+
+3. **Error Handling**:
+   - Added `ComparisonRequiresNumber` runtime error type
+   - Comparison operators throw error when used with non-numbers
+   - Error format: `"ComparisonRequiresNumber: operator: >: left: string"`
+
+4. **Tests** (`tests/javascript/concepts/comparison.test.ts`):
+   - Comprehensive test coverage for all operators
+   - Tests for numbers (integers, decimals, negatives)
+   - Tests for error cases with non-numbers
+   - Tests for operator precedence and complex expressions
+   - Tests for equality with type coercion
+
+**Note**: Type coercion for comparison operators will be controlled by feature flags in future updates.
+
 ## Major Architecture Alignment (January 2025)
 
 ### Background

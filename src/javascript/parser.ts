@@ -164,9 +164,33 @@ export class Parser {
   }
 
   private logicalAnd(): Expression {
-    let expr = this.addition();
+    let expr = this.equality();
 
     while (this.match("LOGICAL_AND")) {
+      const operator = this.previous();
+      const right = this.equality();
+      expr = new BinaryExpression(expr, operator, right, Location.between(expr, right));
+    }
+
+    return expr;
+  }
+
+  private equality(): Expression {
+    let expr = this.comparison();
+
+    while (this.match("EQUAL_EQUAL", "NOT_EQUAL")) {
+      const operator = this.previous();
+      const right = this.comparison();
+      expr = new BinaryExpression(expr, operator, right, Location.between(expr, right));
+    }
+
+    return expr;
+  }
+
+  private comparison(): Expression {
+    let expr = this.addition();
+
+    while (this.match("GREATER", "GREATER_EQUAL", "LESS", "LESS_EQUAL")) {
       const operator = this.previous();
       const right = this.addition();
       expr = new BinaryExpression(expr, operator, right, Location.between(expr, right));

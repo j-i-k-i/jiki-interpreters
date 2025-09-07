@@ -37,7 +37,8 @@ export type RuntimeErrorType =
   | "InvalidUnaryExpression"
   | "UnsupportedOperation"
   | "VariableNotDeclared"
-  | "ShadowingDisabled";
+  | "ShadowingDisabled"
+  | "ComparisonRequiresNumber";
 
 export class RuntimeError extends Error {
   public category: string = "RuntimeError";
