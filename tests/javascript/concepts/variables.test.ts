@@ -83,6 +83,13 @@ describe("variables concept", () => {
       expect(frames[2].variables.x.value).toBe(2);
     });
 
+    test("assignment in different scopes persists", () => {
+      const { frames, error } = interpret("let x = 1; { x = 2; } x;");
+      expect(error).toBeNull();
+      expect(frames).toBeArrayOfSize(4);
+      expect(frames[3].variables.x.value).toBe(2);
+    });
+
     test("assignment with complex expressions", () => {
       const { frames, error } = interpret("let a = 5; let b = 10; a = b + 3;");
       expect(error).toBeNull();
