@@ -10,7 +10,7 @@ import {
 } from "./expression";
 import { Location } from "../shared/location";
 import type { Statement } from "./statement";
-import { ExpressionStatement, AssignmentStatement, PrintStatement } from "./statement";
+import { ExpressionStatement, AssignmentStatement, PrintStatement, IfStatement, BlockStatement } from "./statement";
 import type { EvaluationResult } from "./evaluation-result";
 import { createPyObject, type JikiObject } from "./pyObjects";
 import type { Frame, FrameExecutionStatus } from "../shared/frames";
@@ -24,12 +24,15 @@ import { executeUnaryExpression } from "./executor/executeUnaryExpression";
 import { executeGroupingExpression } from "./executor/executeGroupingExpression";
 import { executeIdentifierExpression } from "./executor/executeIdentifierExpression";
 import { executeAssignmentStatement } from "./executor/executeAssignmentStatement";
+import { executeIfStatement } from "./executor/executeIfStatement";
+import { executeBlockStatement } from "./executor/executeBlockStatement";
 
 export type RuntimeErrorType =
   | "InvalidBinaryExpression"
   | "InvalidUnaryExpression"
   | "UndefinedVariable"
-  | "UnsupportedOperation";
+  | "UnsupportedOperation"
+  | "TypeError";
 
 export class RuntimeError extends Error {
   public category: string = "RuntimeError";
@@ -116,6 +119,10 @@ export class Executor {
       result = this.executeFrame(statement, () => executeExpressionStatement(this, statement));
     } else if (statement instanceof AssignmentStatement) {
       result = this.executeFrame(statement, () => executeAssignmentStatement(this, statement));
+    } else if (statement instanceof IfStatement) {
+      result = executeIfStatement(this, statement);
+    } else if (statement instanceof BlockStatement) {
+      result = executeBlockStatement(this, statement);
     }
 
     return result;
@@ -197,13 +204,33 @@ export class Executor {
   }
 
   private generateDescription(frame: Frame): string {
-    // Simple description for now - can be enhanced with describers later
     if (frame.status === "ERROR") {
       return `Error: ${frame.error?.message || "Unknown error"}`;
     }
+
     if (frame.result) {
-      return `Evaluating: ${frame.result.jikiObject.toString()}`;
+      const result = frame.result;
+
+      // Handle different statement types
+      switch (result.type) {
+        case "IfStatement":
+          const conditionValue = result.jikiObject.toString();
+          return `Evaluating if condition: ${conditionValue}`;
+
+        case "BlockStatement":
+          return "Executing block statement";
+
+        case "AssignmentStatement":
+          return `Assignment: ${(result as any).name} = ${result.jikiObject.toString()}`;
+
+        case "ExpressionStatement":
+          return `Evaluating expression: ${result.jikiObject.toString()}`;
+
+        default:
+          return `Evaluating: ${result.jikiObject.toString()}`;
+      }
     }
+
     return "Statement executed";
   }
 

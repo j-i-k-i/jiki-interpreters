@@ -105,7 +105,8 @@ Builds an Abstract Syntax Tree (AST) from tokens using recursive descent parsing
 
 - `ExpressionStatement`: Standalone expressions ✅ **IMPLEMENTED**
 - `AssignmentStatement`: Variable assignments ✅ **IMPLEMENTED**
-- `IfStatement`: Conditionals (planned)
+- `IfStatement`: Conditionals with if/elif/else support ✅ **IMPLEMENTED**
+- `BlockStatement`: Indented code blocks ✅ **IMPLEMENTED**
 - `WhileStatement`: Loops (planned)
 - `FunctionDeclaration`: Functions (planned)
 
@@ -140,6 +141,8 @@ Each expression and statement type has its own executor module:
 
 - `executor/executeExpressionStatement.ts` ✅ **IMPLEMENTED**
 - `executor/executeAssignmentStatement.ts` ✅ **IMPLEMENTED**
+- `executor/executeIfStatement.ts` ✅ **IMPLEMENTED**
+- `executor/executeBlockStatement.ts` ✅ **IMPLEMENTED**
 
 **Modular Executor Pattern:**
 
@@ -281,13 +284,15 @@ The modular architecture allows easy addition of Python features:
 - **Scanner Tests**: Token generation accuracy with Python syntax
 - **Parser Tests**: AST construction correctness for Python grammar
 - **Executor Tests**: Evaluation results and frame generation
-- **Concept Tests**: 128 comprehensive tests covering all implemented features ✅ **IMPLEMENTED**
+- **Concept Tests**: 158 comprehensive tests covering all implemented features ✅ **IMPLEMENTED**
   - **Numbers**: 5 tests for integer, float, and scientific notation parsing
   - **Booleans**: 18 tests for True/False literals and logical operations
   - **Strings**: 16 tests for single/double quotes and concatenation
   - **Operations**: 30 tests for arithmetic, comparison, logical, and precedence
   - **Variables**: 22 tests for assignment, access, reassignment, and complex expressions
   - **Negation**: 17 tests for basic negation, nested negation, and precedence rules
+  - **If Statements**: 30 tests for if/elif/else parsing and execution with indentation
 - **Syntax Error Tests**: 14 tests for undefined variables and invalid assignments ✅ **IMPLEMENTED**
+- **Parser Tests**: 13 tests for if statement parsing including error cases ✅ **IMPLEMENTED**
 - **Integration Tests**: End-to-end Python interpretation ✅ **IMPLEMENTED**
 - **Error Tests**: Proper error handling with Python-specific messages ✅ **IMPLEMENTED**

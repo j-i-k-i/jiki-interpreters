@@ -126,10 +126,11 @@ describe("variables syntax errors", () => {
 
   describe("edge cases", () => {
     test("empty variable name", () => {
-      // This would be caught by the scanner as an invalid token
+      // This would be caught by the scanner as an indentation error
+      // since " = 5" starts with 1 space (not multiple of 4)
       const { frames, error } = interpret(" = 5");
       expect(error).not.toBeNull();
-      expect((error as SyntaxError)?.type).toBe("ParseError");
+      expect((error as SyntaxError)?.type).toBe("IndentationError");
     });
   });
 });

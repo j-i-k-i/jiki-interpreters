@@ -17,16 +17,18 @@ The Python interpreter for Jiki provides educational visualization of Python cod
 - **Grouping Expressions**: Parentheses for precedence control
 - **Variable System**: Assignment (x = value) and access with proper scoping
 - **Unary Negation**: Negation operator (-) for numbers and expressions with proper precedence
-- **Runtime Error Handling**: Undefined variable detection with educational messages
-- **Complete Scanner**: Tokenizes all implemented Python syntax
-- **Recursive Parser**: Builds correct AST with Python operator precedence
-- **Modular Executor**: 128 tests passing with comprehensive coverage
+- **Control Flow**: Complete if/elif/else statement support with proper indentation handling
+- **Code Blocks**: Python-style indented blocks with 4-space enforcement
+- **Runtime Error Handling**: Undefined variable detection and type checking with educational messages
+- **Complete Scanner**: Tokenizes all implemented Python syntax including INDENT/DEDENT tokens
+- **Recursive Parser**: Builds correct AST with Python operator precedence and block structures
+- **Modular Executor**: 158 tests passing with comprehensive coverage including control flow
 - **PyObjects**: Python-specific objects (PyNumber, PyString, PyBoolean)
 - **Frame Generation**: Educational step-by-step execution visualization
 
 ### Planned Features
 
-- Control flow (if statements, loops)
+- Loops (while, for statements)
 - Functions and scope
 - Data structures (lists, dictionaries, tuples)
 

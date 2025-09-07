@@ -20,6 +20,8 @@ export class Scanner {
   private line: number = 1;
   private lineOffset: number = 0;
   private sourceCode: string = "";
+  private currentIndentLevel: number = 0;
+  private atLineStart: boolean = true;
 
   private static readonly keywords: Record<string, TokenType> = {
     and: "AND",
@@ -97,10 +99,30 @@ export class Scanner {
     this.current = 0;
     this.line = 1;
     this.lineOffset = 0;
+    this.currentIndentLevel = 0;
+    this.atLineStart = true;
 
     while (!this.isAtEnd()) {
       this.start = this.current;
-      this.scanToken();
+
+      // Handle indentation at the start of lines
+      if (this.atLineStart && this.peek() !== "\n") {
+        this.handleIndentation();
+        this.atLineStart = false;
+        // After handling indentation, continue to scan the actual token
+        if (!this.isAtEnd()) {
+          this.start = this.current;
+          this.scanToken();
+        }
+      } else {
+        this.scanToken();
+      }
+    }
+
+    // Add any remaining DEDENT tokens at end of file
+    while (this.currentIndentLevel > 0) {
+      this.addToken("DEDENT");
+      this.currentIndentLevel -= 4;
     }
 
     this.tokens.push({
@@ -260,6 +282,7 @@ export class Scanner {
     this.line++;
     this.lineOffset = this.current;
     this.addToken("NEWLINE");
+    this.atLineStart = true;
   }
 
   private tokenizeComment(): void {
@@ -359,5 +382,52 @@ export class Scanner {
 
   private isAlphaNumeric(c: string): boolean {
     return this.isAlpha(c) || this.isDigit(c);
+  }
+
+  private handleIndentation(): void {
+    let spaces = 0;
+
+    // Count spaces at the beginning of the line
+    while (this.peek() === " " && !this.isAtEnd()) {
+      spaces++;
+      this.advance();
+    }
+
+    // Check if tabs are used (we don't support tabs for simplicity)
+    if (this.peek() === "\t") {
+      throw new SyntaxError(
+        "IndentationError",
+        translate("Tabs are not allowed for indentation. Use 4 spaces per indent level."),
+        Location.fromLineOffset(this.start, this.current, this.line, this.lineOffset)
+      );
+    }
+
+    // Check if indentation is a multiple of 4
+    if (spaces % 4 !== 0) {
+      throw new SyntaxError(
+        "IndentationError",
+        translate("Indentation must be a multiple of 4 spaces."),
+        Location.fromLineOffset(this.start, this.current, this.line, this.lineOffset)
+      );
+    }
+
+    const newIndentLevel = spaces;
+
+    // Generate INDENT or DEDENT tokens based on the change
+    if (newIndentLevel > this.currentIndentLevel) {
+      // Generate INDENT tokens for each 4-space increase
+      const indentDiff = newIndentLevel - this.currentIndentLevel;
+      for (let i = 0; i < indentDiff / 4; i++) {
+        this.addToken("INDENT");
+      }
+    } else if (newIndentLevel < this.currentIndentLevel) {
+      // Generate DEDENT tokens for each 4-space decrease
+      const dedentDiff = this.currentIndentLevel - newIndentLevel;
+      for (let i = 0; i < dedentDiff / 4; i++) {
+        this.addToken("DEDENT");
+      }
+    }
+
+    this.currentIndentLevel = newIndentLevel;
   }
 }

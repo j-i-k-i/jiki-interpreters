@@ -9,7 +9,14 @@ import {
 } from "./expression";
 import { Location } from "../shared/location";
 import { Scanner } from "./scanner";
-import { Statement, ExpressionStatement, AssignmentStatement, PrintStatement } from "./statement";
+import {
+  Statement,
+  ExpressionStatement,
+  AssignmentStatement,
+  PrintStatement,
+  IfStatement,
+  BlockStatement,
+} from "./statement";
 import { type Token, type TokenType } from "./token";
 
 export class Parser {
@@ -46,6 +53,11 @@ export class Parser {
       // If we've consumed all tokens, return null
       if (this.isAtEnd()) {
         return null;
+      }
+
+      // Check for if statement
+      if (this.match("IF")) {
+        return this.ifStatement();
       }
 
       // Check for assignment statement (IDENTIFIER = expression)
@@ -257,6 +269,71 @@ export class Parser {
 
   private error(token: Token, message: string): SyntaxError {
     return new SyntaxError("ParseError" as SyntaxErrorType, message, token.location);
+  }
+
+  private ifStatement(): Statement {
+    const ifToken = this.previous();
+    const condition = this.expression();
+    this.consume("COLON", "Expect ':' after if condition.");
+
+    // Consume the newline after the colon
+    if (this.check("NEWLINE")) {
+      this.advance();
+    }
+
+    const thenBranch = this.block();
+
+    // Check for elif/else clauses
+    let elseBranch: Statement | null = null;
+    if (this.match("ELIF")) {
+      // elif is handled as a nested if statement
+      elseBranch = this.ifStatement();
+    } else if (this.match("ELSE")) {
+      this.consume("COLON", "Expect ':' after else.");
+
+      // Consume the newline after the colon
+      if (this.check("NEWLINE")) {
+        this.advance();
+      }
+
+      elseBranch = this.block();
+    }
+
+    const endToken = elseBranch || thenBranch;
+    return new IfStatement(condition, thenBranch, elseBranch, Location.between(ifToken, endToken));
+  }
+
+  private block(): Statement {
+    const startToken = this.peek();
+
+    // Expect an INDENT token to start the block
+    this.consume("INDENT", "Expected indented block.");
+
+    const statements: Statement[] = [];
+
+    // Parse statements until we hit a DEDENT
+    while (!this.check("DEDENT") && !this.isAtEnd()) {
+      // Skip empty lines
+      while (this.check("NEWLINE")) {
+        this.advance();
+      }
+
+      if (this.check("DEDENT") || this.isAtEnd()) {
+        break;
+      }
+
+      const stmt = this.statement();
+      if (stmt) {
+        statements.push(stmt);
+      }
+    }
+
+    // Consume the DEDENT token
+    this.consume("DEDENT", "Expected dedent after block.");
+
+    const endToken = this.previous();
+
+    return new BlockStatement(statements, Location.between(startToken, endToken));
   }
 
   private synchronize(): void {
