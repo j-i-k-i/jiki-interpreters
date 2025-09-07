@@ -1,19 +1,10 @@
 import { parse } from "@jikiscript/parser";
 import { EvaluationContext, interpret } from "@jikiscript/interpreter";
-import { changeLanguage } from "@jikiscript/translator";
 import { FunctionCallStatement, FunctionStatement, LogStatement, ReturnStatement } from "@jikiscript/statement";
 import { last } from "lodash";
 import { unwrapJikiObject } from "@jikiscript/jikiObjects";
 import { FunctionCallExpression, GetElementExpression, LiteralExpression } from "@jikiscript/expression";
 import * as Jiki from "@jikiscript/jikiObjects";
-
-beforeAll(() => {
-  changeLanguage("system");
-});
-
-afterAll(() => {
-  changeLanguage("en");
-});
 
 describe("parse", () => {
   test("without arguments", () => {

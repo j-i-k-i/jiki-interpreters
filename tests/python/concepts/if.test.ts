@@ -1,13 +1,4 @@
 import { interpret } from "@python/interpreter";
-import { changeLanguage } from "@python/translator";
-
-beforeAll(async () => {
-  await changeLanguage("system");
-});
-
-afterAll(async () => {
-  await changeLanguage("en");
-});
 
 describe("Python If Statements", () => {
   test("executes then branch when condition is true", () => {

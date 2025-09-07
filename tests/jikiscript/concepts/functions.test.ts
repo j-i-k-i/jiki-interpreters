@@ -1,16 +1,7 @@
 import { parse } from "@jikiscript/parser";
 import { interpret } from "@jikiscript/interpreter";
-import { changeLanguage } from "@jikiscript/translator";
 import { FunctionStatement, ReturnStatement } from "@jikiscript/statement";
 import { unwrapJikiObject } from "@jikiscript/jikiObjects";
-
-beforeAll(() => {
-  changeLanguage("system");
-});
-
-afterAll(() => {
-  changeLanguage("en");
-});
 
 describe("parse", () => {
   test("without parameters", () => {

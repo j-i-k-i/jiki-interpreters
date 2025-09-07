@@ -1,15 +1,6 @@
 import { interpret } from "@javascript/interpreter";
 import { RuntimeErrorType } from "@javascript/executor";
 import { Frame } from "../../src/shared/frames";
-import { changeLanguage } from "@javascript/translator";
-
-beforeAll(async () => {
-  await changeLanguage("system");
-});
-
-afterAll(async () => {
-  await changeLanguage("en");
-});
 
 function expectFrameToBeError(frame: Frame, code: string, type: RuntimeErrorType) {
   expect(frame.code.trim()).toBe(code.trim());

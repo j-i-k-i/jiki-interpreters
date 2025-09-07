@@ -1,10 +1,5 @@
 import { interpret } from "@python/interpreter";
 import { SyntaxError } from "@python/error";
-import { changeLanguage } from "@python/translator";
-
-beforeAll(async () => {
-  changeLanguage("system");
-});
 
 describe("variables syntax errors", () => {
   describe("undefined variable access", () => {

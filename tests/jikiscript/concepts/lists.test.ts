@@ -1,6 +1,5 @@
 import { interpret } from "@jikiscript/interpreter";
 import { parse } from "@jikiscript/parser";
-import { changeLanguage } from "@jikiscript/translator";
 import * as Jiki from "@jikiscript/jikiObjects";
 import { ChangeElementStatement, LogStatement, SetVariableStatement } from "@jikiscript/statement";
 import {
@@ -15,14 +14,6 @@ import {
   VariableLookupExpression,
 } from "@jikiscript/expression";
 import { unwrapJikiObject } from "@jikiscript/jikiObjects";
-
-beforeAll(() => {
-  changeLanguage("system");
-});
-
-afterAll(() => {
-  changeLanguage("en");
-});
 
 describe("parse", () => {
   test("empty", () => {

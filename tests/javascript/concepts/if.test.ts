@@ -1,13 +1,4 @@
 import { interpret } from "@javascript/interpreter";
-import { changeLanguage } from "@javascript/translator";
-
-beforeAll(async () => {
-  await changeLanguage("system");
-});
-
-afterAll(async () => {
-  await changeLanguage("en");
-});
 
 describe("if statement concept", () => {
   describe("parser", () => {

@@ -1,16 +1,7 @@
-import { test, expect, describe, beforeAll, afterAll } from "bun:test";
+import { test, expect, describe } from "bun:test";
 import { interpret, evaluateFunction, EvaluationContext } from "@jikiscript/interpreter";
 import type { ExecutionContext } from "@jikiscript/executor";
-import { changeLanguage } from "@jikiscript/translator";
 import { Number, unwrapJikiObject } from "@jikiscript/jikiObjects";
-
-beforeAll(() => {
-  changeLanguage("system");
-});
-
-afterAll(() => {
-  changeLanguage("en");
-});
 
 describe("statements", () => {
   describe("set expression", () => {

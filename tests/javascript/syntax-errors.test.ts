@@ -1,9 +1,4 @@
 import { parse } from "@javascript/parser";
-import { changeLanguage } from "@javascript/translator";
-
-beforeAll(async () => {
-  changeLanguage("system");
-});
 
 describe("syntax errors", () => {
   describe("string errors", () => {

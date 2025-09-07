@@ -1,16 +1,7 @@
 import { parse } from "@jikiscript/parser";
 import { interpret } from "@jikiscript/interpreter";
-import { changeLanguage } from "@jikiscript/translator";
 import { ReturnStatement } from "@jikiscript/statement";
 import { LiteralExpression } from "@jikiscript/expression";
-
-beforeAll(() => {
-  changeLanguage("system");
-});
-
-afterAll(() => {
-  changeLanguage("en");
-});
 
 describe("return", () => {
   describe("parse", () => {

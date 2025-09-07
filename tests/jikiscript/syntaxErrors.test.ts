@@ -1,13 +1,4 @@
 import { parse } from "@jikiscript/parser";
-import { changeLanguage } from "@jikiscript/translator";
-
-beforeAll(() => {
-  changeLanguage("system");
-});
-
-afterAll(() => {
-  changeLanguage("en");
-});
 
 describe("InvalidFunctionNameExpression", () => {
   test("number as a function name", () => {

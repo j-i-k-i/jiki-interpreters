@@ -1,14 +1,5 @@
 import { interpret } from "@jikiscript/interpreter";
 import { unwrapJikiObject } from "@jikiscript/jikiObjects";
-import { changeLanguage } from "@jikiscript/translator";
-
-beforeAll(() => {
-  changeLanguage("system");
-});
-
-afterAll(() => {
-  changeLanguage("en");
-});
 
 describe("if", () => {
   test("true means run block", () => {

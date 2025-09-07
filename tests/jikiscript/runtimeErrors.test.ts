@@ -2,16 +2,7 @@ import { RuntimeErrorType } from "@jikiscript/error";
 import { Frame } from "../../src/shared/frames";
 import { EvaluationContext, interpret } from "@jikiscript/interpreter";
 import { Location, Span } from "@jikiscript/location";
-import { changeLanguage } from "@jikiscript/translator";
 import * as Jiki from "@jikiscript/jikiObjects";
-
-beforeAll(() => {
-  changeLanguage("system");
-});
-
-afterAll(() => {
-  changeLanguage("en");
-});
 
 const location = new Location(0, new Span(0, 0), new Span(0, 0));
 const getNameFunction = {

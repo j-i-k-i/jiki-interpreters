@@ -1,6 +1,5 @@
 import { parse } from "@jikiscript/parser";
 import { EvaluationContext, interpret } from "@jikiscript/interpreter";
-import { changeLanguage } from "@jikiscript/translator";
 import { LogStatement, MethodCallStatement } from "@jikiscript/statement";
 import { last } from "lodash";
 import * as Jiki from "@jikiscript/jikiObjects";
@@ -15,14 +14,6 @@ import {
   ClassLookupExpression,
 } from "@jikiscript/expression";
 import { ExecutionContext } from "@jikiscript/executor";
-
-beforeAll(() => {
-  changeLanguage("system");
-});
-
-afterAll(() => {
-  changeLanguage("en");
-});
 
 describe("parse", () => {
   test("without arguments", () => {

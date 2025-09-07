@@ -1,14 +1,5 @@
 import { interpret } from "@javascript/interpreter";
 import { JSNumber, JSString, JSBoolean } from "@javascript/jikiObjects";
-import { changeLanguage } from "@javascript/translator";
-
-beforeAll(async () => {
-  await changeLanguage("system");
-});
-
-afterAll(async () => {
-  await changeLanguage("en");
-});
 
 describe("variables interpreter", () => {
   describe("execute", () => {
