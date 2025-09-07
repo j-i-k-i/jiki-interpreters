@@ -200,7 +200,9 @@ Manages variable scoping and storage using Python's scoping rules.
 - **Function Scoping**: Variables are scoped to functions, not blocks
 - **Global/Nonlocal Keywords**: Explicit scope modification (planned)
 
-### 6. PyObjects (`src/python/pyObjects.ts`)
+### 6. JikiObjects (`src/python/jikiObjects.ts`)
+
+**⚠️ Updated (2025-01)**: File renamed from `pyObjects.ts` to `jikiObjects.ts` for consistency across all interpreters.
 
 Wrapper objects around Python primitives for enhanced tracking.
 
@@ -225,6 +227,27 @@ Wrapper objects around Python primitives for enhanced tracking.
 - String immutability
 - Truthiness rules (empty containers are falsy)
 - Type coercion behaviors
+
+**Object Field Standardization (2025-01):**
+
+All `EvaluationResult` types now use a single standardized `jikiObject` field:
+
+```typescript
+// BEFORE (had duplicate fields):
+type EvaluationResult = {
+  type: string;
+  jikiObject: JikiObject;
+  pyObject: JikiObject; // ❌ Duplicate field - removed
+};
+
+// AFTER (standardized):
+type EvaluationResult = {
+  type: string;
+  jikiObject: JikiObject; // ✅ Single, consistent field
+};
+```
+
+This ensures consistency across all three interpreters (JikiScript, JavaScript, Python) and eliminates potential confusion about which field to use.
 
 ### 7. Frame System
 

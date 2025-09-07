@@ -160,6 +160,28 @@ class PyFloat extends JikiObject {} // Python
 class JNumber extends JikiObject {} // JikiScript
 ```
 
+**Object Field Standardization (2025-01):**
+
+All interpreters now use a single standardized `jikiObject` field in their EvaluationResult types:
+
+```typescript
+// STANDARDIZED across all interpreters:
+type EvaluationResult = {
+  type: string;
+  jikiObject: JikiObject; // Single field for all interpreters
+};
+```
+
+**Previous inconsistency (now resolved):**
+
+- ❌ JikiScript used: `jikiObject: JikiObject`
+- ❌ JavaScript used: `jikiObject: JikiObject` + `jsObject: JikiObject` (duplicate)
+- ❌ Python used: `jikiObject: JikiObject` + `pyObject: JikiObject` (duplicate)
+
+**Current state:**
+
+- ✅ All interpreters use: `jikiObject: JikiObject` (single, consistent field)
+
 ### 2. Frame System (`src/shared/frames.ts`)
 
 - Shared frame interface and types

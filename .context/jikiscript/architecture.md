@@ -71,12 +71,15 @@ JikiScript uses a fully modular executor architecture where each language constr
 - Represent actions and control flow (assignments, loops, conditionals, etc.)
 - Each statement type has corresponding executor and describer
 
-#### JikiObjects (`jikiObjects.ts`)
+#### JikiObjects (`objects.ts`)
+
+**⚠️ Updated (2025-01)**: File renamed from `jikiObjects.ts` to `objects.ts` as part of object field standardization.
 
 - **Architecture**: All JikiScript objects extend the shared `JikiObject` base class from `src/shared/jikiObject.ts`
-- **Cross-Interpreter Compatibility**: Uses same base class as JavaScript and future interpreters
+- **Cross-Interpreter Compatibility**: Uses same base class as JavaScript and Python interpreters
 - **JikiScript-Specific Features**: Maintains `toArg()` method and educational features
 - **Object Types**: JikiNumber, JikiString, JikiBoolean, JikiList, JikiDictionary, etc.
+- **Standardization (2025-01)**: The original pattern that other interpreters now follow
 
 #### Frame System
 

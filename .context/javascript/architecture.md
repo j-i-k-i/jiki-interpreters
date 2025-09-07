@@ -306,7 +306,9 @@ x; // Value is 20 (updated from inner scope)
 innerVar; // ✗ Runtime Error: Variable not accessible outside block
 ```
 
-### 6. JSObjects (`src/javascript/jsObjects.ts`)
+### 6. JikiObjects (`src/javascript/jikiObjects.ts`)
+
+**⚠️ Updated (2025-01)**: File renamed from `jsObjects.ts` to `jikiObjects.ts` for consistency across all interpreters.
 
 Wrapper objects around JavaScript primitives for enhanced tracking.
 
@@ -331,6 +333,27 @@ Wrapper objects around JavaScript primitives for enhanced tracking.
 - Educational metadata
 - Debugging context
 - Cross-interpreter compatibility
+
+**Object Field Standardization (2025-01):**
+
+All `EvaluationResult` types now use a single standardized `jikiObject` field:
+
+```typescript
+// BEFORE (had duplicate fields):
+type EvaluationResult = {
+  type: string;
+  jikiObject: JikiObject;
+  jsObject: JikiObject; // ❌ Duplicate field - removed
+};
+
+// AFTER (standardized):
+type EvaluationResult = {
+  type: string;
+  jikiObject: JikiObject; // ✅ Single, consistent field
+};
+```
+
+This ensures consistency across all three interpreters (JikiScript, JavaScript, Python) and eliminates potential confusion about which field to use.
 
 ### 7. Language Features System (`src/javascript/interfaces.ts`)
 
