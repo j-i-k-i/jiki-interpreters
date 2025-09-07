@@ -6,6 +6,7 @@ import {
   UnaryExpression,
   GroupingExpression,
   IdentifierExpression,
+  AssignmentExpression,
 } from "./expression";
 import { Location, Span } from "../shared/location";
 import { Scanner } from "./scanner";
@@ -110,7 +111,23 @@ export class Parser {
   }
 
   private expression(): Expression {
-    return this.logicalOr();
+    return this.assignment();
+  }
+
+  private assignment(): Expression {
+    const expr = this.logicalOr();
+
+    if (this.match("EQUAL")) {
+      const value = this.assignment();
+
+      if (expr instanceof IdentifierExpression) {
+        return new AssignmentExpression(expr.name, value, Location.between(expr, value));
+      }
+
+      this.error("InvalidAssignmentTargetExpression", expr.location);
+    }
+
+    return expr;
   }
 
   private logicalOr(): Expression {

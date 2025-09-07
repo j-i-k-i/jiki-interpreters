@@ -17,7 +17,7 @@
     "runtime": {
       "InvalidBinaryExpression": "InvalidBinaryExpression",
       "InvalidUnaryExpression": "InvalidUnaryExpression",
-      "UndefinedVariable": "Undefined variable '{{name}}'",
+      "UndefinedVariable": "UndefinedVariable: name: {{name}}",
       "UnsupportedOperation": "UnsupportedOperation"
     }
   }

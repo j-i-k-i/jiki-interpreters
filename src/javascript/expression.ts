@@ -69,3 +69,16 @@ export class IdentifierExpression extends Expression {
     return [];
   }
 }
+
+export class AssignmentExpression extends Expression {
+  constructor(
+    public name: Token,
+    public value: Expression,
+    public location: Location
+  ) {
+    super("AssignmentExpression");
+  }
+  public children() {
+    return [this.value];
+  }
+}

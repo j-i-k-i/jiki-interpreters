@@ -6,6 +6,9 @@
 
 The `.context/` folder contains comprehensive documentation about:
 
+- **Shared Architecture** (`.context/shared/`)
+  - **MANDATORY**: [Interpreter Architecture](./context/shared/interpreter-architecture.md) - Critical patterns ALL interpreters must follow
+  - **COMMON ISSUES**: [Common Issues](./context/shared/common-issues.md) - Mistakes to avoid that break UI compatibility or issues LLMs often run into on this code base.
 - **JikiScript interpreter** (`.context/jikiscript/`)
   - Architecture (Scanner→Parser→Executor→Frames pipeline)
   - Key concepts (JikiObjects, Frames, EvaluationResults)
@@ -15,14 +18,25 @@ The `.context/` folder contains comprehensive documentation about:
   - Architecture overview and pipeline details
   - Modular executor system with describers
   - Frame generation for UI integration
-  - Current features and planned extensions
+  - Recent architecture alignment (2025-01)
 - **Python interpreter** (`.context/python/`)
   - Architecture documentation and implementation details
   - Python-specific features and object system
   - Educational Python syntax and frame generation
-  - Basic numeric literal support implemented
+  - Recent architecture alignment (2025-01)
 
 **Always start by reading the relevant `.context/` files to understand the system before proceeding with any task.**
+
+## ⚠️ CRITICAL: Error Handling & System Messages
+
+**ALL interpreters MUST follow the shared error handling pattern:**
+
+- **Parse Errors**: Returned as `error` with empty `frames[]`
+- **Runtime Errors**: Always `error: null`, runtime errors become error frames with `status: "ERROR"`
+- **System Messages**: Use format `"ErrorType: context: value"` (e.g., `"VariableNotDeclared: name: x"`)
+- **Test Language**: Set to `"system"` for error message tests to ensure consistency
+
+**Any deviation from this pattern WILL break UI compatibility. See [Common Errors](./context/shared/common-errors.md) for detailed examples of what NOT to do.**
 
 ## Instructions
 

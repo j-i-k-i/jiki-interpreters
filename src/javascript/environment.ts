@@ -24,19 +24,18 @@ export class Environment {
     return undefined;
   }
 
-  public update(name: string, value: JikiObject): void {
+  public update(name: string, value: JikiObject): boolean {
     if (this.values.has(name)) {
       this.values.set(name, value);
-      return;
+      return true;
     }
 
     if (this.enclosing !== null) {
-      this.enclosing.update(name, value);
-      return;
+      return this.enclosing.update(name, value);
     }
 
     // Variable not found in any scope
-    throw new Error(`Variable '${name}' is not defined`);
+    return false;
   }
 
   public getAllVariables(): Record<string, JikiObject> {

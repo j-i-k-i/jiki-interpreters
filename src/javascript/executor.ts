@@ -7,6 +7,7 @@ import {
   UnaryExpression,
   GroupingExpression,
   IdentifierExpression,
+  AssignmentExpression,
 } from "./expression";
 import { Location } from "../shared/location";
 import type { Statement } from "./statement";
@@ -19,6 +20,7 @@ import { describeFrame } from "./frameDescribers";
 import cloneDeep from "lodash.clonedeep";
 
 // Import individual executors
+import { executeAssignmentExpression } from "./executor/executeAssignmentExpression";
 import { executeLiteralExpression } from "./executor/executeLiteralExpression";
 import { executeBinaryExpression } from "./executor/executeBinaryExpression";
 import { executeUnaryExpression } from "./executor/executeUnaryExpression";
@@ -146,6 +148,10 @@ export class Executor {
 
     if (expression instanceof IdentifierExpression) {
       return executeIdentifierExpression(this, expression);
+    }
+
+    if (expression instanceof AssignmentExpression) {
+      return executeAssignmentExpression(this, expression);
     }
 
     throw new RuntimeError(

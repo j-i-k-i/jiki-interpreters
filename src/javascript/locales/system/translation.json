@@ -2,6 +2,7 @@
   "error": {
     "syntax": {
       "GenericSyntaxError": "GenericSyntaxError",
+      "InvalidAssignmentTargetExpression": "InvalidAssignmentTargetExpression",
       "MissingBacktickToTerminateTemplateLiteral": "MissingBacktickToTerminateTemplateLiteral",
       "MissingDoubleQuoteToTerminateString": "Did you forget to add end quote?",
       "MissingExpression": "MissingExpression",

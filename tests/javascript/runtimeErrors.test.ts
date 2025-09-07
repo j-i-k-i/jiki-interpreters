@@ -135,4 +135,60 @@ describe("Runtime Errors", () => {
       expect(frames[0].error!.message).toBe("VariableNotDeclared: name: x");
     });
   });
+
+  describe("VariableNotDeclared for Updates", () => {
+    test("simple undefined variable assignment", () => {
+      const code = "x = 5;";
+      const { frames } = interpret(code);
+      expectFrameToBeError(frames[0], code, "VariableNotDeclared");
+      expect(frames[0].error!.message).toBe("VariableNotDeclared: name: x");
+    });
+
+    test("undefined variable assignment with expression", () => {
+      const code = "y = 10 + 5;";
+      const { frames } = interpret(code);
+      expectFrameToBeError(frames[0], code, "VariableNotDeclared");
+      expect(frames[0].error!.message).toBe("VariableNotDeclared: name: y");
+    });
+
+    test("undefined variable assignment after defined variable", () => {
+      const code = "let x = 5; y = 10;";
+      const { frames } = interpret(code);
+      expect(frames).toBeArrayOfSize(2);
+      expect(frames[0].status).toBe("SUCCESS");
+      expectFrameToBeError(frames[1], "y = 10;", "VariableNotDeclared");
+      expect(frames[1].error!.message).toBe("VariableNotDeclared: name: y");
+    });
+
+    test("undefined variable assignment in block scope", () => {
+      const code = "{ x = 5; }";
+      const { frames } = interpret(code);
+      expectFrameToBeError(frames[0], "x = 5;", "VariableNotDeclared");
+      expect(frames[0].error!.message).toBe("VariableNotDeclared: name: x");
+    });
+
+    test("undefined variable assignment with string value", () => {
+      const code = 'name = "John";';
+      const { frames } = interpret(code);
+      expectFrameToBeError(frames[0], code, "VariableNotDeclared");
+      expect(frames[0].error!.message).toBe("VariableNotDeclared: name: name");
+    });
+
+    test("undefined variable assignment with boolean value", () => {
+      const code = "flag = true;";
+      const { frames } = interpret(code);
+      expectFrameToBeError(frames[0], code, "VariableNotDeclared");
+      expect(frames[0].error!.message).toBe("VariableNotDeclared: name: flag");
+    });
+
+    test("variable out of scope assignment", () => {
+      const code = "{ let x = 5; } x = 10;";
+      const { frames } = interpret(code);
+      expect(frames).toBeArrayOfSize(3);
+      expect(frames[0].status).toBe("SUCCESS"); // Variable declaration inside block
+      expect(frames[1].status).toBe("SUCCESS"); // Block statement
+      expectFrameToBeError(frames[2], "x = 10;", "VariableNotDeclared");
+      expect(frames[2].error!.message).toBe("VariableNotDeclared: name: x");
+    });
+  });
 });

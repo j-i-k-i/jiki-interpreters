@@ -4,14 +4,16 @@ Your job is to work through this file. Find the next jobs that is not crossed of
 
 ⚠️⚠️ If asked to work on a TODO, you should follow these steps: ⚠️⚠️
 
-1. Read this file.
-2. Come up with an execution plan. Always start by reading the `.context` files where things are clearly explained. The execution plan should include the steps in this list.
-3. CONFIRM THE PLAN WITH THE HUMAN.
-4. Once confirmed by the human, work on the task.
-5. Ensure the tests all pass and the typescript types are correct.
-6. Update the `.context` files to reflect what you've done.
-7. Update this file to mark the TODO as complete
-8. Commit to git
+1. Read this file and find the relevant todo.
+2. Read the `.context` files for anything potentially relevant. These explain the architecture and common issues you face.
+3. Look at how JikiScript does it.
+4. Come up with an execution plan. The execution plan should include the steps in this list.
+5. CONFIRM THE PLAN WITH THE HUMAN.
+6. Once confirmed by the human, work on the task.
+7. Ensure the tests all pass and the typescript types are correct.
+8. Update the `.context` files to reflect what you've done.
+9. Update this file to mark the TODO as complete
+10. Commit to git
 
 Important:
 
@@ -34,7 +36,7 @@ For everything in here, base your work in the JikiScript interpreter.
 - [x] Add a block with scope. A variable defined via let in this scope should only exist inside the scope. For now, don't worry about shadowing. Remember to add concept tests and syntax error tests (e.g. an unclosing block). Look at the JikiScript tests for inspiration.
 - [x] Add negation.
 - [x] Add errors for missing variables, so if you do `5 + a` and there is no `a` that's a runtime error on that frame etc. For this you might need to add the ability to actually use variables if that's not defined yet. Make sure you read the .context file on how errors work.
-- [ ] Add errors for updating a variable before it's defined. That should be a runtime error on that frame. Don't worry about seeing if it's defined later. We're just wanting to say "We don't know about this `a` thing you're discussing"
+- [x] Add errors for updating a variable before it's defined. That should be a runtime error on that frame. Don't worry about seeing if it's defined later. We're just wanting to say "We don't know about this `a` thing you're discussing"
 - [ ] Add a new language feature interpreter for allowShadowing. See language features for JikiScript to see how this works. If the feature is enabled, then inner variables can be created by let inside blocks to shadow outer variables. If it is false, then any attempt to shadow with let should result in a shadowing disabled runtime error. Remember to add tests for both cases. Look how runtime errors work in JikiScript.
 - [ ] Add an if statement to the JavaScript interpreter. Add tests for parsing and executing. Ensure that any syntax errors are caught. Look at the JikiScript tests for examples.
 - [ ] Add a language feature to the JavaScript interpreter for truthiness. See language features for JikiScript to see how this works. If enabled then truthiness should behave as normal in JS. If not, then only booleans (or functions/variables returning booleans etc) are allowed to be compared. If you compare non-booleans, a runtime error of TruthinessDisabled (or similar) should be added to the frame etc. Look how runtime errors work in JikiScript.

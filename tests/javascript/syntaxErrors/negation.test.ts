@@ -65,9 +65,5 @@ describe("negation syntax errors", () => {
     test("multiple operators without operand", () => {
       expect(() => parse("--!;")).toThrow();
     });
-
-    test("negation of assignment (not allowed in expression context)", () => {
-      expect(() => parse("-(x = 5);")).toThrow();
-    });
   });
 });

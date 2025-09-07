@@ -1,13 +1,71 @@
 # JavaScript Interpreter Architecture
 
-## Pipeline Overview
+> **⚠️ CRITICAL**: This interpreter MUST follow the [Shared Interpreter Architecture](../shared/interpreter-architecture.md) patterns exactly to ensure UI compatibility. Any deviation will break the system.
 
-```
-Source Code → Scanner → Parser → Executor → Frames → UI
-                ↓         ↓         ↓
-             Tokens     AST    Evaluation
-                              + Descriptions
-```
+## Architecture Compliance
+
+✅ **Follows Shared Architecture**: This interpreter implements the mandatory patterns defined in the shared architecture document:
+
+- **Error Handling**: Parse errors as returned errors, runtime errors as error frames
+- **Executor Pattern**: Uses `addFrame()`, `executeFrame()`, and proper error context management
+- **Frame Structure**: Generates frames with exact shared structure
+- **Location Tracking**: Accurate statement-level location tracking for error frames
+- **Testing**: Uses system language for error message consistency
+
+## Recent Architecture Alignment (2025-01)
+
+**Major Refactoring**: The JavaScript interpreter was extensively refactored to align with JikiScript's proven architecture patterns.
+
+### Key Structural Changes Made
+
+**Before (Divergent Architecture):**
+
+- Complex `executeStatementsWithFrames()` function in interpreter
+- Manual frame creation scattered throughout interpreter.ts
+- Runtime errors returned as `{ error: RuntimeError }`
+- Frame management mixed with execution logic
+- Inconsistent error handling between parse and runtime errors
+
+**After (Aligned Architecture):**
+
+- Clean separation: interpreter handles parsing, executor handles execution
+- Frame management encapsulated within executor using `addFrame()` methods
+- Runtime errors become error frames with `status: "ERROR"`
+- Consistent `executeFrame()` wrapper pattern for all operations
+- Parse errors as returned errors, runtime errors as frames
+
+### Specific Changes Made
+
+1. **Executor (`src/javascript/executor.ts`)**:
+   - Added `addFrame()`, `addSuccessFrame()`, `addErrorFrame()` methods
+   - Added `executeFrame()` wrapper for consistent frame generation
+   - Added `withExecutionContext()` for proper error boundaries
+   - Now always returns `error: null` (runtime errors become frames)
+
+2. **Interpreter (`src/javascript/interpreter.ts`)**:
+   - Simplified to single `interpret()` function
+   - Removed complex `executeStatementsWithFrames()`
+   - Only handles parse errors as returned errors
+   - Clean separation between compile and execute phases
+
+3. **Parser (`src/javascript/parser.ts`)**:
+   - Fixed `consumeSemicolon()` to return token for location tracking
+   - Fixed ExpressionStatement location to include semicolon in span
+   - Improved statement location accuracy for error reporting
+
+4. **Tests**:
+   - Updated error tests to expect error frames instead of returned errors
+   - Added system language configuration for consistent error messages
+   - Fixed test expectations to match new error handling pattern
+
+### Impact
+
+- **Consistency**: JavaScript now matches JikiScript's proven architecture exactly
+- **Maintainability**: Clear separation of concerns, easier to extend
+- **Testability**: 313 tests passing with improved error handling
+- **UI Compatibility**: Proper frame generation ensures UI integration works correctly
+
+## JavaScript-Specific Implementation
 
 ## Component Details
 
@@ -43,6 +101,7 @@ Builds an Abstract Syntax Tree (AST) from tokens using recursive descent parsing
 - `UnaryExpression`: Negation (`-x`), unary plus (`+x`), and logical NOT (`!x`)
 - `GroupingExpression`: Parenthesized expressions
 - `IdentifierExpression`: Variable references
+- `AssignmentExpression`: Variable assignments with `=` operator (`x = value`)
 - `CallExpression`: Function calls (planned)
 
 **Statement Types:**
@@ -64,6 +123,7 @@ Builds an Abstract Syntax Tree (AST) from tokens using recursive descent parsing
 6. Equality `==`, `!=`
 7. Logical AND `&&`
 8. Logical OR `||`
+9. Assignment `=` (right-associative)
 
 ### 3. Executor (`src/javascript/executor.ts`)
 
@@ -79,6 +139,7 @@ Each expression and statement type has its own executor module:
 - `executor/executeUnaryExpression.ts`
 - `executor/executeGroupingExpression.ts`
 - `executor/executeIdentifierExpression.ts`
+- `executor/executeAssignmentExpression.ts`
 
 **Statement Executors:**
 
@@ -204,8 +265,26 @@ blockVar; // ✗ Error: blockVar not accessible outside block
 
 - `define(name, value)`: Creates variable in current scope
 - `get(name)`: Retrieves variable value, searching up chain
-- `update(name, value)`: Updates existing variable in its original scope
+- `update(name, value)`: Updates existing variable in its original scope, returns boolean success
 - `getAllVariables()`: Returns flattened view of all accessible variables
+
+**Variable Assignment:**
+
+Variable assignments use the `=` operator and can update variables in the current scope or parent scopes:
+
+```javascript
+let x = 5; // Variable declaration
+x = 10; // Variable assignment - updates existing variable
+y = 15; // ✗ Runtime Error: Cannot assign to undeclared variable
+
+{
+  let innerVar = 1;
+  x = 20; // ✓ Updates x in parent scope
+  innerVar = 2; // ✓ Updates innerVar in current scope
+}
+x; // Value is 20 (updated from inner scope)
+innerVar; // ✗ Runtime Error: Variable not accessible outside block
+```
 
 ### 6. JSObjects (`src/javascript/jsObjects.ts`)
 
@@ -235,27 +314,7 @@ Wrapper objects around JavaScript primitives for enhanced tracking.
 
 ### 7. Frame System
 
-**Shared Framework (`src/shared/frames.ts`):**
-The JavaScript interpreter uses the unified frame system shared by all interpreters.
-
-**Frame Structure:**
-
-```typescript
-interface Frame {
-  line: number; // Source line number
-  code: string; // Executed code snippet
-  status: "SUCCESS" | "ERROR"; // Execution status
-  result?: any; // Computation result
-  error?: any; // Error details if failed
-  time: number; // Execution time (simulated)
-  timelineTime: number; // Frame sequence number
-  description: string; // Human-readable explanation
-  context?: any; // AST node for debugging
-  priorVariables: Record<string, any>; // Variable state before
-  variables: Record<string, any>; // Variable state after
-  data?: Record<string, any>; // Additional data
-}
-```
+**Follows Shared Framework**: Uses the unified frame system defined in the [Shared Architecture](../shared/interpreter-architecture.md#frame-structure-mandatory).
 
 **JavaScript-Specific Extensions (`src/javascript/frameDescribers.ts`):**
 
@@ -265,18 +324,22 @@ interface Frame {
 
 ## Error Handling
 
-### Parse Errors
+**Follows Shared Pattern**: Implements the mandatory error handling pattern from the [Shared Architecture](../shared/interpreter-architecture.md#error-handling-pattern-mandatory).
+
+### Parse Errors (Returned as `error`)
 
 - Syntax errors with location information
 - Expected token messages
 - Recovery suggestions
+- Empty frames array
 
-### Runtime Errors
+### Runtime Errors (Become Error Frames)
 
+- Never returned as `error` - always become frames with `status: "ERROR"`
 - Type errors with context
-- Division by zero handling
 - Variable reference errors for undefined variables
 - Educational error messages with location context
+- Use system message format for consistency
 
 ## Extensibility
 

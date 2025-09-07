@@ -57,3 +57,11 @@ export type EvaluationResultVariableDeclaration = {
   jikiObject: JikiObject;
   jsObject: JikiObject;
 };
+
+export type EvaluationResultAssignmentExpression = {
+  type: "AssignmentExpression";
+  name: string;
+  value: EvaluationResultExpression;
+  jikiObject: JikiObject;
+  jsObject: JikiObject;
+};

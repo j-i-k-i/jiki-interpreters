@@ -1,13 +1,69 @@
 # Python Interpreter Architecture
 
-## Pipeline Overview
+> **⚠️ CRITICAL**: This interpreter MUST follow the [Shared Interpreter Architecture](../shared/interpreter-architecture.md) patterns exactly to ensure UI compatibility. Any deviation will break the system.
 
-```
-Source Code → Scanner → Parser → Executor → Frames → UI
-                ↓         ↓         ↓
-             Tokens     AST    Evaluation
-                              + Descriptions
-```
+## Architecture Compliance
+
+✅ **Follows Shared Architecture**: This interpreter implements the mandatory patterns defined in the shared architecture document:
+
+- **Error Handling**: Parse errors as returned errors, runtime errors as error frames
+- **Executor Pattern**: Uses `addFrame()`, `executeFrame()`, and proper error context management
+- **Frame Structure**: Generates frames with exact shared structure
+- **Location Tracking**: Accurate statement-level location tracking for error frames
+- **Testing**: Uses system language for error message consistency
+
+## Recent Architecture Alignment (2025-01)
+
+**Major Refactoring**: The Python interpreter was extensively refactored to align with the shared architecture patterns established by JikiScript and JavaScript.
+
+### Key Changes Made
+
+**Before (Old Architecture):**
+
+- Manual frame creation scattered throughout interpreter.ts
+- Runtime errors returned as `{ error: RuntimeError }`
+- Complex frame generation logic mixed with execution logic
+- Inconsistent error handling between parse and runtime errors
+
+**After (Aligned Architecture):**
+
+- Clean separation: interpreter handles parsing, executor handles execution
+- Frame management encapsulated within executor using `addFrame()` methods
+- Runtime errors become error frames with `status: "ERROR"`
+- Consistent `executeFrame()` wrapper pattern for all operations
+- Parse errors as returned errors, runtime errors as frames
+
+### Specific Changes Made
+
+1. **Executor (`src/python/executor.ts`)**:
+   - Added `addFrame()`, `addSuccessFrame()`, `addErrorFrame()` methods
+   - Added `executeFrame()` wrapper for consistent frame generation
+   - Added `withExecutionContext()` for proper error boundaries
+   - Now always returns `error: null` (runtime errors become frames)
+
+2. **Interpreter (`src/python/interpreter.ts`)**:
+   - Simplified to single `interpret()` function
+   - Removed manual frame creation logic
+   - Only handles parse errors as returned errors
+   - Clean separation between compile and execute phases
+
+3. **System Messages (`src/python/locales/system/translation.json`)**:
+   - Updated error message format to match shared pattern
+   - Changed from `"Undefined variable '{{name}}'"` to `"UndefinedVariable: name: {{name}}"`
+
+4. **Tests**:
+   - Updated error tests to expect error frames instead of returned errors
+   - Maintained system language configuration for consistent error messages
+   - Fixed test expectations to match new error handling pattern
+
+### Impact
+
+- **Consistency**: Python now matches JikiScript and JavaScript architecture exactly
+- **UI Compatibility**: Proper frame generation ensures seamless UI integration
+- **Testability**: All 128 Python tests passing with improved error handling
+- **Maintainability**: Clear separation of concerns, easier to extend
+
+## Python-Specific Implementation
 
 ## Component Details
 

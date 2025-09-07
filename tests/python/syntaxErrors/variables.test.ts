@@ -10,24 +10,30 @@ describe("variables syntax errors", () => {
   describe("undefined variable access", () => {
     test("accessing undefined variable", () => {
       const { frames, error } = interpret("undefined_var");
-      expect(error).not.toBeNull();
-      expect(error?.message).toContain("Undefined variable 'undefined_var'");
+      expect(error).toBeNull(); // Runtime errors are in frames, not returned
+      const errorFrame = frames.find(f => f.status === "ERROR");
+      expect(errorFrame).toBeTruthy();
+      expect(errorFrame?.error?.message).toContain("UndefinedVariable");
       expect(frames).toBeArrayOfSize(1);
       expect(frames[0].status).toBe("ERROR");
     });
 
     test("accessing undefined variable in expression", () => {
       const { frames, error } = interpret("5 + missing_var");
-      expect(error).not.toBeNull();
-      expect(error?.message).toContain("Undefined variable 'missing_var'");
+      expect(error).toBeNull(); // Runtime errors are in frames, not returned
+      const errorFrame = frames.find(f => f.status === "ERROR");
+      expect(errorFrame).toBeTruthy();
+      expect(errorFrame?.error?.message).toContain("UndefinedVariable");
       expect(frames).toBeArrayOfSize(1);
       expect(frames[0].status).toBe("ERROR");
     });
 
     test("using undefined variable after defining another", () => {
       const { frames, error } = interpret("x = 10\ny");
-      expect(error).not.toBeNull();
-      expect(error?.message).toContain("Undefined variable 'y'");
+      expect(error).toBeNull(); // Runtime errors are in frames, not returned
+      const errorFrame = frames.find(f => f.status === "ERROR");
+      expect(errorFrame).toBeTruthy();
+      expect(errorFrame?.error?.message).toContain("UndefinedVariable");
       expect(frames).toBeArrayOfSize(2);
       expect(frames[0].status).toBe("SUCCESS");
       expect(frames[1].status).toBe("ERROR");
@@ -69,40 +75,50 @@ describe("variables syntax errors", () => {
   describe("complex undefined variable scenarios", () => {
     test("undefined variable in complex expression", () => {
       const { frames, error } = interpret("result = (5 + unknown) * 2");
-      expect(error).not.toBeNull();
-      expect(error?.message).toContain("Undefined variable 'unknown'");
+      expect(error).toBeNull(); // Runtime errors are in frames, not returned
+      const errorFrame = frames.find(f => f.status === "ERROR");
+      expect(errorFrame).toBeTruthy();
+      expect(errorFrame?.error?.message).toContain("UndefinedVariable");
       expect(frames).toBeArrayOfSize(1);
       expect(frames[0].status).toBe("ERROR");
     });
 
     test("multiple undefined variables", () => {
       const { frames, error } = interpret("a + b");
-      expect(error).not.toBeNull();
-      expect(error?.message).toContain("Undefined variable");
+      expect(error).toBeNull(); // Runtime errors are in frames, not returned
+      const errorFrame = frames.find(f => f.status === "ERROR");
+      expect(errorFrame).toBeTruthy();
+      expect(errorFrame?.error?.message).toContain("UndefinedVariable");
       expect(frames).toBeArrayOfSize(1);
       expect(frames[0].status).toBe("ERROR");
     });
 
     test("assigning undefined variable to another variable", () => {
       const { frames, error } = interpret("x = undefined_var");
-      expect(error).not.toBeNull();
-      expect(error?.message).toContain("Undefined variable 'undefined_var'");
+      expect(error).toBeNull(); // Runtime errors are in frames, not returned
+      const errorFrame = frames.find(f => f.status === "ERROR");
+      expect(errorFrame).toBeTruthy();
+      expect(errorFrame?.error?.message).toContain("UndefinedVariable");
       expect(frames).toBeArrayOfSize(1);
       expect(frames[0].status).toBe("ERROR");
     });
 
     test("using undefined variable in comparison", () => {
       const { frames, error } = interpret("missing > 5");
-      expect(error).not.toBeNull();
-      expect(error?.message).toContain("Undefined variable 'missing'");
+      expect(error).toBeNull(); // Runtime errors are in frames, not returned
+      const errorFrame = frames.find(f => f.status === "ERROR");
+      expect(errorFrame).toBeTruthy();
+      expect(errorFrame?.error?.message).toContain("UndefinedVariable");
       expect(frames).toBeArrayOfSize(1);
       expect(frames[0].status).toBe("ERROR");
     });
 
     test("using undefined variable in logical expression", () => {
       const { frames, error } = interpret("True and missing");
-      expect(error).not.toBeNull();
-      expect(error?.message).toContain("Undefined variable 'missing'");
+      expect(error).toBeNull(); // Runtime errors are in frames, not returned
+      const errorFrame = frames.find(f => f.status === "ERROR");
+      expect(errorFrame).toBeTruthy();
+      expect(errorFrame?.error?.message).toContain("UndefinedVariable");
       expect(frames).toBeArrayOfSize(1);
       expect(frames[0].status).toBe("ERROR");
     });

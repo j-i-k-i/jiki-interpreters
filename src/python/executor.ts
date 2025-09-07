@@ -13,6 +13,8 @@ import type { Statement } from "./statement";
 import { ExpressionStatement, AssignmentStatement, PrintStatement } from "./statement";
 import type { EvaluationResult } from "./evaluation-result";
 import { createPyObject, type JikiObject } from "./pyObjects";
+import type { Frame, FrameExecutionStatus } from "../shared/frames";
+import cloneDeep from "lodash.clonedeep";
 
 // Import individual executors
 import { executeLiteralExpression } from "./executor/executeLiteralExpression";
@@ -30,6 +32,8 @@ export type RuntimeErrorType =
   | "UnsupportedOperation";
 
 export class RuntimeError extends Error {
+  public category: string = "RuntimeError";
+
   constructor(
     message: string,
     public location: Location,
@@ -41,28 +45,80 @@ export class RuntimeError extends Error {
   }
 }
 
+export type ExecutorResult = {
+  frames: Frame[];
+  error: null; // Always null - runtime errors become frames
+  success: boolean;
+};
+
 export class Executor {
+  private frames: Frame[] = [];
+  private location: Location | null = null;
+  private time: number = 0;
+  private timePerFrame: number = 0.01;
   public environment: Environment;
 
-  constructor() {
+  constructor(private readonly sourceCode: string) {
     this.environment = new Environment();
   }
 
+  public execute(statements: Statement[]): ExecutorResult {
+    for (const statement of statements) {
+      try {
+        const success = this.withExecutionContext(() => {
+          this.executeStatement(statement);
+        });
+
+        if (!success) {
+          break;
+        }
+      } catch (error) {
+        if (error instanceof RuntimeError) {
+          this.addErrorFrame(this.location || error.location, error);
+          break;
+        }
+        throw error;
+      }
+    }
+
+    return {
+      frames: this.frames,
+      error: null, // Always null - runtime errors are in frames
+      success: !this.frames.find(f => f.status === "ERROR"),
+    };
+  }
+
+  private withExecutionContext(fn: Function): boolean {
+    try {
+      fn();
+      return true;
+    } catch (error) {
+      // Re-throw RuntimeErrors to be handled by outer try-catch
+      if (error instanceof RuntimeError) {
+        throw error;
+      }
+      throw error;
+    }
+  }
+
+  public executeFrame<T extends EvaluationResult>(context: Statement | Expression, code: () => T): T {
+    this.location = context.location;
+    const result = code();
+    this.addSuccessFrame(context.location, result, context);
+    this.location = null;
+    return result;
+  }
+
   public executeStatement(statement: Statement): EvaluationResult | null {
+    let result: EvaluationResult | null = null;
+
     if (statement instanceof ExpressionStatement) {
-      return executeExpressionStatement(this, statement);
+      result = this.executeFrame(statement, () => executeExpressionStatement(this, statement));
+    } else if (statement instanceof AssignmentStatement) {
+      result = this.executeFrame(statement, () => executeAssignmentStatement(this, statement));
     }
 
-    if (statement instanceof AssignmentStatement) {
-      return executeAssignmentStatement(this, statement);
-    }
-
-    // TODO: Add other statement types as needed
-    // if (statement instanceof PrintStatement) {
-    //   return executePrintStatement(this, statement);
-    // }
-
-    return null;
+    return result;
   }
 
   public evaluate(expression: Expression): EvaluationResult {
@@ -87,5 +143,75 @@ export class Executor {
     }
 
     throw new RuntimeError(`Unknown expression type: ${expression.type}`, expression.location, "UnsupportedOperation");
+  }
+
+  public addSuccessFrame(
+    location: Location | null,
+    result: EvaluationResult | null,
+    context?: Statement | Expression
+  ): void {
+    this.addFrame(location, "SUCCESS", result, undefined, context);
+  }
+
+  public addErrorFrame(location: Location | null, error: RuntimeError, context?: Statement | Expression): void {
+    this.addFrame(location, "ERROR", undefined, error, context);
+  }
+
+  private addFrame(
+    location: Location | null,
+    status: FrameExecutionStatus,
+    result?: EvaluationResult | null,
+    error?: RuntimeError,
+    context?: Statement | Expression
+  ): void {
+    if (location == null) {
+      location = Location.unknown;
+    }
+
+    const frame: Frame = {
+      code: location.toCode(this.sourceCode),
+      line: location.line,
+      status,
+      result: result || undefined,
+      error,
+      time: this.time,
+      timelineTime: Math.round(this.time * 100),
+      description: "",
+      context: context,
+      priorVariables: this.frames.length > 0 ? cloneDeep(this.frames[this.frames.length - 1].variables) : {},
+      variables: {},
+    };
+
+    // Clone current variables
+    if (process.env.NODE_ENV === "test") {
+      frame.variables = cloneDeep(this.getVariables());
+    } else {
+      frame.variables = this.getVariables();
+    }
+
+    // Generate description
+    frame.description = this.generateDescription(frame);
+
+    this.frames.push(frame);
+    this.time += this.timePerFrame;
+  }
+
+  private generateDescription(frame: Frame): string {
+    // Simple description for now - can be enhanced with describers later
+    if (frame.status === "ERROR") {
+      return `Error: ${frame.error?.message || "Unknown error"}`;
+    }
+    if (frame.result) {
+      return `Evaluating: ${frame.result.jikiObject.toString()}`;
+    }
+    return "Statement executed";
+  }
+
+  public getVariables(): Record<string, JikiObject> {
+    return this.environment.getAllVariables();
+  }
+
+  public error(type: RuntimeErrorType, location: Location, context?: any): never {
+    throw new RuntimeError(`${type}: ${JSON.stringify(context)}`, location, type, context);
   }
 }
