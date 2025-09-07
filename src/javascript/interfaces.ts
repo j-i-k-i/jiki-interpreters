@@ -3,4 +3,5 @@ export interface LanguageFeatures {
   includeList?: string[];
   allowShadowing?: boolean;
   allowTruthiness?: boolean;
+  requireVariableInstantiation?: boolean;
 }

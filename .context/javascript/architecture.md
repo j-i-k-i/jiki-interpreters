@@ -51,6 +51,7 @@ Configurable language features:
 
 - `allowShadowing`: Controls variable shadowing behavior in nested scopes
 - `allowTruthiness`: Controls whether non-boolean values can be used in conditions (default: false)
+- `requireVariableInstantiation`: Controls whether variables must be initialized when declared (default: true)
 
 ### 8. Frame System
 

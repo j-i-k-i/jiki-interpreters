@@ -35,13 +35,13 @@ export class ConsoleLogStatement extends Statement {
 export class VariableDeclaration extends Statement {
   constructor(
     public name: Token,
-    public initializer: Expression,
+    public initializer: Expression | null,
     public location: Location
   ) {
     super("VariableDeclaration");
   }
   public children() {
-    return [this.initializer];
+    return this.initializer ? [this.initializer] : [];
   }
 }
 

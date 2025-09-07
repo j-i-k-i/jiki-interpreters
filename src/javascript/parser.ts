@@ -13,14 +13,17 @@ import { Scanner } from "./scanner";
 import { Statement, ExpressionStatement, VariableDeclaration, BlockStatement, IfStatement } from "./statement";
 import { type Token, type TokenType } from "./token";
 import { translate } from "./translator";
+import type { LanguageFeatures } from "./interfaces";
 
 export class Parser {
   private readonly scanner: Scanner;
   private current: number = 0;
   private tokens: Token[] = [];
+  private languageFeatures: LanguageFeatures;
 
-  constructor() {
+  constructor(languageFeatures?: LanguageFeatures) {
     this.scanner = new Scanner();
+    this.languageFeatures = languageFeatures || {};
   }
 
   public parse(sourceCode: string): Statement[] {
@@ -89,9 +92,24 @@ export class Parser {
 
   private variableDeclaration(letToken: Token): Statement {
     const name = this.consume("IDENTIFIER", "MissingVariableName");
-    this.consume("EQUAL", "MissingInitializerInVariableDeclaration");
-    const initializer = this.expression();
-    const semicolonToken = this.consumeSemicolon();
+
+    let initializer: Expression | null = null;
+    let semicolonToken: Token;
+
+    // Check if we have an initializer
+    if (this.check("EQUAL")) {
+      this.advance(); // consume the EQUAL token
+      initializer = this.expression();
+      semicolonToken = this.consumeSemicolon();
+    } else {
+      // No initializer - check if this is allowed
+      const requireInstantiation = this.languageFeatures.requireVariableInstantiation ?? true;
+      if (requireInstantiation) {
+        throw this.error("MissingInitializerInVariableDeclaration", this.peek().location);
+      }
+      semicolonToken = this.consumeSemicolon();
+    }
+
     return new VariableDeclaration(name, initializer, Location.between(letToken, semicolonToken));
   }
 
@@ -343,6 +361,6 @@ export class Parser {
   }
 }
 
-export function parse(sourceCode: string): Statement[] {
-  return new Parser().parse(sourceCode);
+export function parse(sourceCode: string, languageFeatures?: LanguageFeatures): Statement[] {
+  return new Parser(languageFeatures).parse(sourceCode);
 }

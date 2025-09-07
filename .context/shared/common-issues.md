@@ -44,4 +44,26 @@ This document outlines the most common mistakes developers make when working on 
 
 **✅ CORRECT**: Statement locations MUST include full statement span (with semicolons, keywords).
 
+## Language Features Integration
+
+### ❌ Language Features Only in Executor
+
+**WRONG**: Checking language features only in the executor, not in parser for syntax-level features.
+
+**✅ CORRECT**: Parser needs access to language features for syntax decisions (e.g., `requireVariableInstantiation`). Pass features to both parser and executor.
+
+### ❌ Wrong Error Handling in Parser
+
+**WRONG**: Using `this.error(token, errorType)` with wrong argument order.
+
+**✅ CORRECT**: Parser's error method signature is `error(type: SyntaxErrorType, location: Location, context?: any)`.
+
+## Describer Type Issues
+
+### ❌ Using String[] Instead of string[]
+
+**WRONG**: Returning `String[]` (capital S) from describers causes TypeScript errors.
+
+**✅ CORRECT**: Use `string[]` (lowercase) for TypeScript primitive types.
+
 **Any deviation from the shared architecture WILL break UI compatibility!**

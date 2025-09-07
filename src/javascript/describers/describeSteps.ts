@@ -14,7 +14,7 @@ export function describeExpression(
   expression: Expression,
   result: EvaluationResult,
   context: DescriptionContext
-): String[] {
+): string[] {
   if (expression instanceof BinaryExpression) {
     return describeBinaryExpression(expression, result as EvaluationResultBinaryExpression, context);
   }

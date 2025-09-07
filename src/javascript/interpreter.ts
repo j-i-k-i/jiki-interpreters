@@ -14,7 +14,7 @@ export type InterpretResult = {
 export function interpret(sourceCode: string, languageFeatures?: LanguageFeatures): InterpretResult {
   try {
     // Parse the source code (compilation step)
-    const statements = parse(sourceCode);
+    const statements = parse(sourceCode, languageFeatures);
 
     // Execute statements
     const executor = new Executor(sourceCode, languageFeatures);

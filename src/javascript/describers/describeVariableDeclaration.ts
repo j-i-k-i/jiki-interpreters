@@ -10,12 +10,20 @@ export function describeVariableDeclaration(frame: FrameWithResult, context: Des
   const value = formatJSObject(frameResult.jikiObject);
   const name = variableDeclaration.name.lexeme;
 
-  const result = `<p>Declared variable <code>${name}</code> and set it to <code>${value}</code>.</p>`;
-  let steps = describeExpression(variableDeclaration.initializer, frameResult.value, context);
-  steps = [
-    ...steps,
-    `<li>JavaScript created variable <code>${name}</code> and assigned it the value <code>${value}</code>.</li>`,
-  ];
+  let result: string;
+  let steps: string[];
+
+  if (variableDeclaration.initializer) {
+    result = `<p>Declared variable <code>${name}</code> and set it to <code>${value}</code>.</p>`;
+    const initializerSteps = describeExpression(variableDeclaration.initializer, frameResult.value, context);
+    steps = [
+      ...initializerSteps,
+      `<li>JavaScript created variable <code>${name}</code> and assigned it the value <code>${value}</code>.</li>`,
+    ];
+  } else {
+    result = `<p>Declared variable <code>${name}</code>.</p>`;
+    steps = [`<li>JavaScript created variable <code>${name}</code> with value <code>undefined</code>.</li>`];
+  }
 
   return {
     result,
