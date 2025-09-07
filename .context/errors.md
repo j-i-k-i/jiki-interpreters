@@ -38,85 +38,26 @@ All interpreters support these categories:
 
 ### Prefixes by Category
 
-#### Syntax Errors
+**Error Prefix Reference:**
 
-- **Missing** - Required syntax element is absent
-  - `MissingRightBraceAfterBlock`
-  - `MissingSemicolonAfterStatement`
-- **Invalid** - Incorrect syntax usage
-  - `InvalidFunctionNameUsingNumber`
-  - `InvalidVariableNameStartingWithDigit`
-- **Unexpected** - Element appears in wrong context
-  - `UnexpectedElseWithoutMatchingIf`
-  - `UnexpectedTokenAfterExpression`
-- **Unterminated** - Unclosed language constructs
-  - `UnterminatedStringLiteralAtEndOfFile`
-  - `UnterminatedCommentAtEndOfLine`
-- **Malformed** - Incorrectly structured elements
-  - `MalformedNumberWithMultipleDecimals`
-  - `MalformedNumberEndingWithDecimal`
-
-#### Semantic Errors
-
-- **Duplicate** - Multiple declarations of same entity
-  - `DuplicateVariableDeclarationInScope`
-  - `DuplicateParameterNameInFunction`
-- **Invalid** - Semantically incorrect usage
-  - `InvalidReturnStatementOutsideFunction`
-  - `InvalidBreakStatementOutsideLoop`
-
-#### Runtime Errors
-
-- **NotFound** - Missing references at runtime
-  - `VariableNotFoundInCurrentScope`
-  - `FunctionNotFoundWithSimilarName`
-- **TypeError** - Type-related runtime issues
-  - `TypeErrorNonCallableTargetInvocation`
-  - `TypeErrorInvalidOperandTypeForArithmetic`
-- **RangeError** - Value out of acceptable range
-  - `RangeErrorIndexOutOfBoundsForArray`
-  - `RangeErrorTooManyArgumentsForFunction`
-- **StateError** - Invalid program state
-  - `StateErrorInfiniteLoopDetected`
-  - `StateErrorMaxRecursionDepthExceeded`
-
-#### Feature Errors
-
-- **Disabled** - Feature not enabled in current mode
-  - `DisabledFeatureShadowingNotAllowed`
-  - `DisabledFeatureTruthinessNotEnabled`
-  - `DisabledFeatureTypeCoercionNotAllowed`
+| Category     | Prefix                                                | Purpose                         |
+| ------------ | ----------------------------------------------------- | ------------------------------- |
+| **Syntax**   | Missing, Invalid, Unexpected, Unterminated, Malformed | Parse-time structure issues     |
+| **Semantic** | Duplicate, Invalid                                    | Logic/meaning validation issues |
+| **Runtime**  | NotFound, TypeError, RangeError, StateError           | Execution-time issues           |
+| **Feature**  | Disabled                                              | Educational feature controls    |
 
 ## Translation File Rules
 
-### System Translation File
+### System Translation
 
-The system translation file (`locales/system/translation.json`) should follow this strict pattern:
+- Message exactly matches error name
+- Variables: `"ErrorName: variable: {{variable}}"`
 
-- **Message matches name**: The translation message should exactly match the error type name
-- **Variable pattern**: Any context variables should follow the format `": variableName: {{variableName}}"`
+### English Translation
 
-**Examples:**
-
-```json
-{
-  "VariableNotFoundInScope": "VariableNotFoundInScope: name: {{name}}",
-  "IndexOutOfRangeForArrayAccess": "IndexOutOfRangeForArrayAccess: index: {{index}}, length: {{length}}",
-  "MissingRightParenthesisAfterExpression": "MissingRightParenthesisAfterExpression"
-}
-```
-
-### English Translation File
-
-The English translation file (`locales/en/translation.json`) contains human-readable educational messages:
-
-```json
-{
-  "VariableNotFoundInScope": "The variable '{{name}}' has not been declared in this scope.",
-  "IndexOutOfRangeForArrayAccess": "Array index {{index}} is out of range. The array has {{length}} elements.",
-  "MissingRightParenthesisAfterExpression": "Expected a closing parenthesis ')' after this expression."
-}
-```
+- Human-readable educational messages
+- Use interpolated variables: `{{variable}}`
 
 ## Implementation Checklist
 
@@ -129,99 +70,26 @@ When creating a new error:
 - [ ] Add test coverage for the error case
 - [ ] Pass context variables for dynamic information
 
-## Example: Adding a New Error
-
-Let's say you're adding an error for using a variable before it's declared:
-
-### 1. Add to error.ts
-
-```typescript
-export type RuntimeErrorType =
-  | "StateErrorVariableUsedBeforeDeclaration"
-  | // ... other errors alphabetically
-```
-
-### 2. Add system translation
-
-```json
-{
-  "StateErrorVariableUsedBeforeDeclaration": "StateErrorVariableUsedBeforeDeclaration: name: {{name}}"
-}
-```
-
-### 3. Add English translation
-
-```json
-{
-  "StateErrorVariableUsedBeforeDeclaration": "Cannot use variable '{{name}}' before it has been declared."
-}
-```
-
-### 4. Throw the error in code
-
-```typescript
-throw new RuntimeError("StateErrorVariableUsedBeforeDeclaration", location, { name: variableName });
-```
-
-### 5. Add test coverage
-
-```typescript
-test("using variable before declaration throws error", () => {
-  const { frames } = interpret("x + 5;");
-  expectFrameToBeError(frames[0], "x + 5", "StateErrorVariableUsedBeforeDeclaration");
-});
-```
-
 ## Migration Process
 
-When updating existing error names:
-
-1. Update the error type definition
-2. Update all references in parser/executor code
-3. Update both translation files (system and en)
-4. Update test files
-5. Run full test suite
-6. Update documentation
+Update error type, references, translations, tests, and documentation.
 
 ## Testing Errors
 
-- Every error type must have test coverage
-- Test both the error being thrown and the error message
-- Use helper functions like `expectFrameToBeError` for consistency
-- Test edge cases and boundary conditions
+Every error type requires test coverage using `expectFrameToBeError` helpers.
 
 ## Cross-Language Consistency
 
-Similar errors should use similar naming across interpreters:
+Use identical error names across all interpreters for consistent learning experience.
 
-- JikiScript: `VariableNotFoundInScope`
-- JavaScript: `VariableNotFoundInScope`
-- Python: `VariableNotFoundInScope`
+## Key Requirements
 
-This ensures a consistent learning experience across languages.
-
-## Common Pitfalls to Avoid
-
-1. **Forgetting translations** - Always add both system and English translations
-2. **Generic error names** - Be specific about what went wrong
-3. **Missing context** - Pass relevant variables for error messages
-4. **Unalphabetized lists** - Keep error types sorted for maintainability
-5. **Inconsistent naming** - Follow the naming pattern strictly
+- Add both system and English translations
+- Use specific error names with context variables
+- Keep error types alphabetically sorted
 
 ## Quick Reference
 
-### When to use each prefix:
-
-- **Missing**: Something required is not present
-- **Invalid**: Something is present but incorrectly formed
-- **Unexpected**: Something appears where it shouldn't
-- **Unterminated**: Something started but never ended
-- **Malformed**: Something has the wrong structure
-- **Duplicate**: Something appears more than once when it shouldn't
-- **NotFound**: Runtime reference to non-existent entity
-- **TypeError**: Wrong type used in operation
-- **RangeError**: Value outside acceptable bounds
-- **StateError**: Invalid program state or flow
-- **Disabled**: Feature not enabled in current configuration
+See prefix reference table above for error naming guidelines.
 
 Remember: **Every error needs translations, or the interpreter will crash!**

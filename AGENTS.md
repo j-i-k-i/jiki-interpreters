@@ -38,6 +38,24 @@ The `.context/` folder contains comprehensive documentation about:
 
 **Any deviation from this pattern WILL break UI compatibility. See [Common Errors](./context/shared/common-errors.md) for detailed examples of what NOT to do.**
 
+## 🚨 ESSENTIAL DEVELOPMENT REMINDERS
+
+**On EVERY development task, you MUST:**
+
+1. **Update Evolution Documentation**: Add all significant changes to `.context/evolution.md` or `.context/[interpreter]/evolution.md` following the guidelines in [Documentation Guidelines](.context/documentation-guidelines.md)
+
+2. **Preserve Historical Information**: Never delete point-in-time information - move it to appropriate evolution documents
+
+3. **Follow Architecture Patterns**: Strictly adhere to shared interpreter architecture patterns for UI compatibility
+
+4. **Update Both Translation Files**: When adding errors, update both `system/translation.json` and `en/translation.json`
+
+5. **Test Error Handling**: Set language to "system" for runtime error tests
+
+6. **Maintain Context Size**: Keep documentation concise - extract detailed examples to evolution documents
+
+**These reminders ensure consistency across the entire Jiki interpreter ecosystem.**
+
 ## Instructions
 
 If you are asked to work on a TODO, look at TODO.md. Read the instructions at the top. Ensure to CONFIRM WITH A HUMAN between the execution plan and the coding. Ensure to commit at the end.

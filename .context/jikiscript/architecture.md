@@ -36,64 +36,17 @@ Source Code → Scanner → Parser → Executor → Frames/UI
 - **Input**: AST from Parser
 - **Output**: Execution frames with variable states and descriptions
 
-**Modular Executor Pattern:**
-
-JikiScript uses a fully modular executor architecture where each language construct has its own dedicated executor:
-
-1. **Main Executor**: The `Executor` class coordinates execution by delegating to specialized functions
-2. **Individual Executors**: Each AST node type has its own executor module (e.g., `executor/executeIfStatement.ts`)
-3. **Visitor Pattern**: Main executor uses `visit*` methods that delegate to `execute*` functions
-4. **Consistent Interface**: All executors follow uniform patterns and return structured results
-5. **Complete Coverage**: Every expression and statement type has its own executor module
-
-**Available Executors:**
-
-- **Expression Executors**: `executeBinaryExpression`, `executeLiteralExpression`, `executeVariableLookupExpression`, etc.
-- **Statement Executors**: `executeIfStatement`, `executeBlockStatement`, `executeFunctionStatement`, etc.
-- **Specialized Executors**: `executeMethodCallExpression`, `executeInstantiationExpression`, etc.
-
-**Key Components**:
-
-- **Environment**: Variable scoping and storage
-- **ExecutionContext**: Runtime state and configuration
-- **Frame Generation**: Captures each execution step
-- **Specialized Executors**: Handle different expression/statement types
+Uses modular architecture with specialized executors for each AST node type. Main Executor delegates to individual executor modules using visitor pattern. Includes Environment for scoping, ExecutionContext for runtime state, and Frame Generation.
 
 ### 4. Support Systems
 
-#### Expressions (`expression.ts`)
+**AST Components**: Expressions (values/computations) and Statements (actions/control flow). Each type has dedicated executor and describer.
 
-- Represent values and computations (literals, variables, function calls, etc.)
-- Each expression type has corresponding executor and describer
+**Objects**: All extend shared `JikiObject` base class with JikiScript-specific types.
 
-#### Statements (`statement.ts`)
+**Frame System**: Uses shared framework with JikiScript-specific educational descriptions for UI integration.
 
-- Represent actions and control flow (assignments, loops, conditionals, etc.)
-- Each statement type has corresponding executor and describer
-
-#### JikiObjects (`objects.ts`)
-
-**⚠️ Updated (2025-01)**: File renamed from `jikiObjects.ts` to `objects.ts` as part of object field standardization.
-
-- **Architecture**: All JikiScript objects extend the shared `JikiObject` base class from `src/shared/jikiObject.ts`
-- **Cross-Interpreter Compatibility**: Uses same base class as JavaScript and Python interpreters
-- **JikiScript-Specific Features**: Maintains `toArg()` method and educational features
-- **Object Types**: JikiNumber, JikiString, JikiBoolean, JikiList, JikiDictionary, etc.
-- **Standardization (2025-01)**: The original pattern that other interpreters now follow
-
-#### Frame System
-
-- **Shared Framework**: Uses unified frame system from `src/shared/frames.ts`
-- **JikiScript Extensions**: `frameDescribers.ts` provides JikiScript-specific educational descriptions
-- **Cross-Interpreter Consistency**: Same frame format used by all interpreters for UI integration
-
-#### Describers (`describers/` + `frameDescribers.ts`)
-
-- Generate human-readable explanations of execution steps
-- `frameDescribers.ts`: Main entry point with `describeFrame()` function
-- Individual describer modules for each statement/expression type
-- Provides educational context for what each line of code does
-- Localized descriptions for different languages/audiences
+**Describers**: Generate human-readable explanations with localized educational context.
 
 ## Execution Flow
 

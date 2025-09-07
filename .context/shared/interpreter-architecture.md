@@ -24,64 +24,20 @@ Source Code → Scanner → Parser → Executor → Frames → UI
 - **Success**: Always returns `error: null` for successful execution
 
 ```typescript
-// CORRECT Pattern (used by all interpreters):
 type InterpretResult = {
   frames: Frame[];
-  error: SyntaxError | null; // ONLY parse errors, NEVER runtime errors
+  error: SyntaxError | null; // ONLY parse errors
   success: boolean;
 };
-
-// Interpreter function:
-function interpret(sourceCode: string): InterpretResult {
-  try {
-    const statements = parse(sourceCode); // May throw parse errors
-    const executor = new Executor(sourceCode);
-    const result = executor.execute(statements); // Runtime errors become frames
-
-    return {
-      frames: result.frames,
-      error: null, // Always null - runtime errors are in frames
-      success: result.success,
-    };
-  } catch (error) {
-    // ONLY parsing/compilation errors are returned as errors
-    return {
-      frames: [],
-      error: error as SyntaxError,
-      success: false,
-    };
-  }
-}
 ```
 
 ### 2. Executor Pattern (MANDATORY)
 
-All executors MUST implement these methods:
+All executors MUST implement:
 
-```typescript
-class Executor {
-  private frames: Frame[] = [];
-  private location: Location | null = null;
-  private time: number = 0;
-  private timePerFrame: number = 0.01;
-
-  // REQUIRED: Main execution entry point
-  public execute(statements: Statement[]): ExecutorResult {
-    // Runtime errors become frames, never thrown to interpreter
-  }
-
-  // REQUIRED: Frame management methods
-  public addFrame(location, status, result?, error?, context?): void;
-  public addSuccessFrame(location, result, context?): void;
-  public addErrorFrame(location, error, context?): void;
-
-  // REQUIRED: Execution wrapper for consistent frame generation
-  public executeFrame<T>(context: Statement | Expression, code: () => T): T;
-
-  // REQUIRED: Error context management
-  private withExecutionContext(fn: Function): boolean;
-}
-```
+- `execute(statements)` - main execution entry point
+- `addFrame()`, `addSuccessFrame()`, `addErrorFrame()` - frame management
+- `executeFrame()` - execution wrapper for consistent frame generation
 
 ### 3. Frame Structure (MANDATORY)
 
@@ -112,22 +68,6 @@ interface Frame {
 - Expression locations can be more granular
 - Error frames MUST use statement locations, not sub-expression locations
 
-**Example - JavaScript parser fix:**
-
-```typescript
-// WRONG: Only expression location
-return new ExpressionStatement(expr, expr.location);
-
-// CORRECT: Full statement location (expression + semicolon)
-const semicolonToken = this.consumeSemicolon();
-const statementLocation = new Location(
-  expr.location.line,
-  expr.location.relative,
-  new Span(expr.location.absolute.begin, semicolonToken.location.absolute.end)
-);
-return new ExpressionStatement(expr, statementLocation);
-```
-
 ### 5. Error Message Format (MANDATORY)
 
 Runtime errors MUST use system message format for consistency:
@@ -136,131 +76,34 @@ Runtime errors MUST use system message format for consistency:
 - Error messages MUST follow pattern: `"ErrorType: context: value"`
 - Example: `"VariableNotDeclared: name: x"`
 
-```typescript
-// Test setup (REQUIRED for error tests):
-beforeAll(async () => {
-  await changeLanguage("system");
-});
-
-afterAll(async () => {
-  await changeLanguage("en");
-});
-```
-
 ## Shared Components
 
 ### 1. JikiObject Base Class (`src/shared/jikiObject.ts`)
 
-All language-specific objects MUST extend the shared `JikiObject` base class:
-
-```typescript
-// Language-specific implementations:
-class JSNumber extends JikiObject {} // JavaScript
-class PyFloat extends JikiObject {} // Python
-class JNumber extends JikiObject {} // JikiScript
-```
-
-**Object Field Standardization (2025-01):**
-
-All interpreters now use a single standardized `jikiObject` field in their EvaluationResult types:
-
-```typescript
-// STANDARDIZED across all interpreters:
-type EvaluationResult = {
-  type: string;
-  jikiObject: JikiObject; // Single field for all interpreters
-};
-```
-
-**Previous inconsistency (now resolved):**
-
-- ❌ JikiScript used: `jikiObject: JikiObject`
-- ❌ JavaScript used: `jikiObject: JikiObject` + `jsObject: JikiObject` (duplicate)
-- ❌ Python used: `jikiObject: JikiObject` + `pyObject: JikiObject` (duplicate)
-
-**Current state:**
-
-- ✅ All interpreters use: `jikiObject: JikiObject` (single, consistent field)
+All language-specific objects MUST extend the shared `JikiObject` base class. All interpreters use a single standardized `jikiObject` field in their EvaluationResult types for consistency.
 
 ### 2. Frame System (`src/shared/frames.ts`)
 
-- Shared frame interface and types
-- `DescriptionContext` for describers
-- `FrameWithResult` for successful executions
-- Common frame status types
+Shared frame interface and types used by all interpreters for consistent UI integration.
 
 ### 3. Location System (`src/shared/location.ts`)
 
-- Shared `Location` and `Span` classes
-- Consistent location tracking across all parsers
-- Source code mapping utilities
+Shared `Location` and `Span` classes for consistent location tracking across all parsers.
 
 ## Testing Requirements
 
-### Test Structure Consistency
+All interpreters MUST have consistent test categories:
 
-All interpreters MUST have these test categories:
-
-1. **Runtime Error Tests**: Use system language, expect error frames
-2. **Syntax Error Tests**: Expect returned errors with empty frames
-3. **Concept Tests**: Feature-specific testing
-4. **Integration Tests**: End-to-end interpretation
-5. **Scope Tests**: Variable scoping behavior
-
-### Error Test Pattern
-
-```typescript
-// REQUIRED pattern for runtime error tests:
-test("runtime error example", () => {
-  const { frames, error } = interpret("invalid code");
-  expect(error).toBeNull(); // Runtime errors are in frames
-  const errorFrame = frames.find(f => f.status === "ERROR");
-  expect(errorFrame).toBeTruthy();
-  expect(errorFrame?.error?.message).toBe("ErrorType: context: value");
-});
-
-// REQUIRED pattern for syntax error tests:
-test("syntax error example", () => {
-  const { frames, error } = interpret("invalid syntax");
-  expect(error).toBeTruthy(); // Parse errors are returned
-  expect(frames).toHaveLength(0);
-});
-```
+- Runtime Error Tests: Use system language, expect error frames
+- Syntax Error Tests: Expect returned errors with empty frames
+- Concept Tests: Feature-specific testing
+- Integration Tests: End-to-end interpretation
 
 ## UI Compatibility Requirements
 
-### Frame Timeline
-
-- All frames MUST have consistent timing: `timelineTime = Math.round(time * 100)`
-- Time increments by `timePerFrame` (default 0.01) per frame
-- Frames MUST be in execution order
-
-### Variable Tracking
-
-- `priorVariables`: State before frame execution
-- `variables`: State after frame execution
-- Must use deep cloning in test environments
-- Variables MUST be JikiObject instances, not raw values
-
-### Description Format
-
-- All descriptions MUST be educational and human-readable
-- Code snippets MUST be wrapped in appropriate tags
-- Step-by-step explanations for complex operations
-- Consistent terminology across all languages
-
-## Migration Checklist
-
-When updating an interpreter to follow this architecture:
-
-- [ ] Executor returns `error: null` for runtime errors
-- [ ] Runtime errors become error frames with `status: "ERROR"`
-- [ ] Parse errors are returned as `error` with empty frames
-- [ ] Statement locations include full statement span
-- [ ] Error tests use system language configuration
-- [ ] Error messages use system format
-- [ ] Frame structure matches shared interface
-- [ ] All objects extend shared JikiObject base class
-- [ ] Tests follow consistent patterns
+- Frame timing must be consistent across interpreters
+- Variable tracking with before/after states
+- Educational descriptions in human-readable format
+- Variables must be JikiObject instances
 
 **Any deviation from these patterns will break UI compatibility and MUST be avoided.**
