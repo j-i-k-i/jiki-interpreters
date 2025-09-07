@@ -7,7 +7,7 @@ import {
   GroupingExpression,
   IdentifierExpression,
 } from "./expression";
-import { Location } from "../shared/location";
+import { Location, Span } from "../shared/location";
 import { Scanner } from "./scanner";
 import { Statement, ExpressionStatement, VariableDeclaration, BlockStatement } from "./statement";
 import { type Token, type TokenType } from "./token";
@@ -66,8 +66,14 @@ export class Parser {
 
       // Handle expression statements
       const expr = this.expression();
-      this.consumeSemicolon();
-      return new ExpressionStatement(expr, expr.location);
+      const semicolonToken = this.consumeSemicolon();
+      // Create location that spans from expression start to semicolon end
+      const statementLocation = new Location(
+        expr.location.line,
+        expr.location.relative,
+        new Span(expr.location.absolute.begin, semicolonToken.location.absolute.end)
+      );
+      return new ExpressionStatement(expr, statementLocation);
     } catch (error) {
       // Skip to next statement on error
       this.synchronize();
@@ -79,8 +85,8 @@ export class Parser {
     const name = this.consume("IDENTIFIER", "MissingVariableName");
     this.consume("EQUAL", "MissingInitializerInVariableDeclaration");
     const initializer = this.expression();
-    this.consumeSemicolon();
-    return new VariableDeclaration(name, initializer, Location.between(name, initializer));
+    const semicolonToken = this.consumeSemicolon();
+    return new VariableDeclaration(name, initializer, Location.between(name, semicolonToken));
   }
 
   private blockStatement(): Statement {
@@ -222,11 +228,16 @@ export class Parser {
     this.error(errorType, this.peek().location);
   }
 
-  private consumeSemicolon(): void {
-    if (!this.match("SEMICOLON") && !this.isAtEnd()) {
+  private consumeSemicolon(): Token {
+    if (this.match("SEMICOLON")) {
+      return this.previous();
+    }
+    if (!this.isAtEnd()) {
       // In JavaScript, semicolons are often optional, but for simplicity we'll require them for now
       this.error("MissingSemicolon", this.peek().location);
     }
+    // Return the current token as fallback (for end of file cases)
+    return this.previous();
   }
 
   private synchronize(): void {

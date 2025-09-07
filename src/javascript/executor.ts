@@ -14,6 +14,9 @@ import { ExpressionStatement, VariableDeclaration, BlockStatement } from "./stat
 import type { EvaluationResult } from "./evaluation-result";
 import { createJSObject, type JikiObject } from "./jsObjects";
 import { translate } from "./translator";
+import type { Frame, FrameExecutionStatus } from "../shared/frames";
+import { describeFrame } from "./frameDescribers";
+import cloneDeep from "lodash.clonedeep";
 
 // Import individual executors
 import { executeLiteralExpression } from "./executor/executeLiteralExpression";
@@ -45,27 +48,83 @@ export class RuntimeError extends Error {
   }
 }
 
+// InterpretResult type is now defined in interpreter.ts
+export type ExecutorResult = {
+  frames: Frame[];
+  error: null; // Always null - runtime errors become frames
+  success: boolean;
+};
+
 export class Executor {
+  private frames: Frame[] = [];
+  private location: Location | null = null;
+  private time: number = 0;
+  private timePerFrame: number = 0.01;
   public environment: Environment;
 
-  constructor() {
+  constructor(private readonly sourceCode: string) {
     this.environment = new Environment();
   }
 
+  public execute(statements: Statement[]): ExecutorResult {
+    for (const statement of statements) {
+      try {
+        const success = this.withExecutionContext(() => {
+          this.executeStatement(statement);
+        });
+
+        if (!success) {
+          break;
+        }
+      } catch (error) {
+        if (error instanceof RuntimeError) {
+          this.addErrorFrame(this.location || error.location, error);
+          break;
+        }
+        throw error;
+      }
+    }
+
+    return {
+      frames: this.frames,
+      error: null, // Always null - runtime errors are in frames
+      success: !this.frames.find(f => f.status === "ERROR"),
+    };
+  }
+
+  private withExecutionContext(fn: Function): boolean {
+    try {
+      fn();
+      return true;
+    } catch (error) {
+      // Re-throw RuntimeErrors to be handled by outer try-catch
+      if (error instanceof RuntimeError) {
+        throw error;
+      }
+      throw error;
+    }
+  }
+
+  public executeFrame<T extends EvaluationResult>(context: Statement | Expression, code: () => T): T {
+    this.location = context.location;
+    const result = code();
+    this.addSuccessFrame(context.location, result, context);
+    this.location = null;
+    return result;
+  }
+
   public executeStatement(statement: Statement): EvaluationResult | null {
+    let result: EvaluationResult | null = null;
+
     if (statement instanceof ExpressionStatement) {
-      return executeExpressionStatement(this, statement);
+      result = this.executeFrame(statement, () => executeExpressionStatement(this, statement));
+    } else if (statement instanceof VariableDeclaration) {
+      result = this.executeFrame(statement, () => executeVariableDeclaration(this, statement));
+    } else if (statement instanceof BlockStatement) {
+      result = this.executeFrame(statement, () => executeBlockStatement(this, statement));
     }
 
-    if (statement instanceof VariableDeclaration) {
-      return executeVariableDeclaration(this, statement);
-    }
-
-    if (statement instanceof BlockStatement) {
-      return executeBlockStatement(this, statement);
-    }
-
-    return null;
+    return result;
   }
 
   public evaluate(expression: Expression): EvaluationResult {
@@ -97,6 +156,14 @@ export class Executor {
   }
 
   public executeBlock(statements: Statement[], environment: Environment): void {
+    // Don't create a new scope if we're already in the same environment
+    if (this.environment === environment) {
+      for (const statement of statements) {
+        this.executeStatement(statement);
+      }
+      return;
+    }
+
     const previous = this.environment;
     try {
       this.environment = environment;
@@ -107,6 +174,59 @@ export class Executor {
     } finally {
       this.environment = previous;
     }
+  }
+
+  public addSuccessFrame(
+    location: Location | null,
+    result: EvaluationResult | null,
+    context?: Statement | Expression
+  ): void {
+    this.addFrame(location, "SUCCESS", result, undefined, context);
+  }
+
+  public addErrorFrame(location: Location | null, error: RuntimeError, context?: Statement | Expression): void {
+    this.addFrame(location, "ERROR", undefined, error, context);
+  }
+
+  private addFrame(
+    location: Location | null,
+    status: FrameExecutionStatus,
+    result?: EvaluationResult | null,
+    error?: RuntimeError,
+    context?: Statement | Expression
+  ): void {
+    if (location == null) {
+      location = Location.unknown;
+    }
+
+    const frame: Frame = {
+      code: location.toCode(this.sourceCode),
+      line: location.line,
+      status,
+      result: result || undefined,
+      error,
+      time: this.time,
+      timelineTime: Math.round(this.time * 100),
+      description: "",
+      context: context,
+      priorVariables: this.frames.length > 0 ? cloneDeep(this.frames[this.frames.length - 1].variables) : {},
+      variables: {},
+    };
+
+    // Clone current variables
+    if (process.env.NODE_ENV === "test") {
+      frame.variables = cloneDeep(this.getVariables());
+    } else {
+      frame.variables = this.getVariables();
+    }
+
+    // Generate description
+    frame.description = describeFrame(frame, {
+      functionDescriptions: {}, // JavaScript doesn't have external functions yet
+    });
+
+    this.frames.push(frame);
+    this.time += this.timePerFrame;
   }
 
   public getVariables(): Record<string, JikiObject> {

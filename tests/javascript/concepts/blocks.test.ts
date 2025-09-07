@@ -1,4 +1,13 @@
 import { interpret } from "@javascript/interpreter";
+import { changeLanguage } from "@javascript/translator";
+
+beforeAll(async () => {
+  await changeLanguage("system");
+});
+
+afterAll(async () => {
+  await changeLanguage("en");
+});
 
 describe("blocks concept", () => {
   describe("parser", () => {
@@ -68,8 +77,10 @@ describe("blocks concept", () => {
     test("inner variables are not accessible from outer scope", () => {
       // This should cause a runtime error when trying to access innerVar outside the block
       const { frames, error } = interpret("{ let innerVar = 42; } innerVar;");
-      expect(error).toBeTruthy();
-      expect(error?.message).toContain("innerVar");
+      expect(error).toBeNull(); // Runtime errors are in frames, not returned
+      const errorFrame = frames.find(f => f.status === "ERROR");
+      expect(errorFrame).toBeTruthy();
+      expect(errorFrame?.error?.message).toBe("VariableNotDeclared: name: innerVar");
     });
 
     test("multiple blocks have separate scopes", () => {

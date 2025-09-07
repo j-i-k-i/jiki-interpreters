@@ -1,5 +1,14 @@
 import { interpret } from "@javascript/interpreter";
 import { JSNumber, JSString, JSBoolean } from "@javascript/jsObjects";
+import { changeLanguage } from "@javascript/translator";
+
+beforeAll(async () => {
+  await changeLanguage("system");
+});
+
+afterAll(async () => {
+  await changeLanguage("en");
+});
 
 describe("variables interpreter", () => {
   describe("execute", () => {
@@ -89,14 +98,18 @@ describe("variables interpreter", () => {
     describe("error cases", () => {
       test("accessing undefined variable", () => {
         const { frames, error } = interpret("x;");
-        expect(error).not.toBeNull();
-        expect(error?.message).toContain("VariableNotDeclared: name: x");
+        expect(error).toBeNull(); // Runtime errors are in frames, not returned
+        const errorFrame = frames.find(f => f.status === "ERROR");
+        expect(errorFrame).toBeTruthy();
+        expect(errorFrame?.error?.message).toBe("VariableNotDeclared: name: x");
       });
 
       test("using variable in same declaration", () => {
         const { frames, error } = interpret("let x = x + 1;");
-        expect(error).not.toBeNull();
-        expect(error?.message).toContain("VariableNotDeclared: name: x");
+        expect(error).toBeNull(); // Runtime errors are in frames, not returned
+        const errorFrame = frames.find(f => f.status === "ERROR");
+        expect(errorFrame).toBeTruthy();
+        expect(errorFrame?.error?.message).toBe("VariableNotDeclared: name: x");
       });
     });
   });
