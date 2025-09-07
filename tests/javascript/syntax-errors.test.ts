@@ -199,6 +199,44 @@ describe("syntax errors", () => {
     });
   });
 
+  describe("if statement errors", () => {
+    test("missing left parenthesis after if", () => {
+      expect(() => parse("if true) { let x = 5; }")).toThrow("MissingLeftParenthesisAfterIf");
+    });
+
+    test("missing right parenthesis after condition", () => {
+      expect(() => parse("if (true { let x = 5; }")).toThrow("MissingRightParenthesisAfterIfCondition");
+    });
+
+    test("missing condition", () => {
+      expect(() => parse("if () { let x = 5; }")).toThrow("MissingExpression");
+    });
+
+    test("if without parentheses", () => {
+      expect(() => parse("if true { let x = 5; }")).toThrow("MissingLeftParenthesisAfterIf");
+    });
+
+    test("if with missing then statement", () => {
+      expect(() => parse("if (true)")).toThrow();
+    });
+
+    test("nested missing parentheses", () => {
+      expect(() => parse("if (true) { if false { let x = 1; } }")).toThrow("MissingLeftParenthesisAfterIf");
+    });
+
+    test("else without if", () => {
+      expect(() => parse("else { let x = 5; }")).toThrow();
+    });
+
+    test("unbalanced parentheses in condition", () => {
+      expect(() => parse("if ((true) { let x = 5; }")).toThrow("MissingRightParenthesisAfterIfCondition");
+    });
+
+    test("missing expression in condition with operator", () => {
+      expect(() => parse("if (true &&) { let x = 5; }")).toThrow("MissingExpression");
+    });
+  });
+
   describe("edge cases", () => {
     test("empty input", () => {
       const result = parse("");

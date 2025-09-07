@@ -3,12 +3,14 @@ import type {
   EvaluationResult,
   EvaluationResultExpressionStatement,
   EvaluationResultVariableDeclaration,
+  EvaluationResultIfStatement,
 } from "./evaluation-result";
 import type { Statement } from "./statement";
 import type { Expression } from "./expression";
 import { describeExpressionStatement } from "./describers/describeExpressionStatement";
 import { describeVariableDeclaration } from "./describers/describeVariableDeclaration";
 import { describeBlockStatement } from "./describers/describeBlockStatement";
+import { describeIfStatement } from "./describers/describeIfStatement";
 
 // JavaScript-specific frame extending the shared base
 export interface JavaScriptFrame extends Frame {
@@ -64,6 +66,8 @@ function generateDescription(frame: FrameWithResult, context: DescriptionContext
       return describeVariableDeclaration(frame, context);
     case "BlockStatement":
       return describeBlockStatement(frame, context);
+    case "IfStatement":
+      return describeIfStatement(frame, context);
   }
   return null;
 }

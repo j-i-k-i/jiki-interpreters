@@ -65,3 +65,10 @@ export type EvaluationResultAssignmentExpression = {
   jikiObject: JikiObject;
   jsObject: JikiObject;
 };
+
+export type EvaluationResultIfStatement = {
+  type: "IfStatement";
+  condition: EvaluationResultExpression;
+  jikiObject: JikiObject;
+  jsObject: JikiObject;
+};

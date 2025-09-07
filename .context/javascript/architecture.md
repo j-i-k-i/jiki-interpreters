@@ -109,7 +109,7 @@ Builds an Abstract Syntax Tree (AST) from tokens using recursive descent parsing
 - `ExpressionStatement`: Standalone expressions
 - `VariableDeclaration`: Variable declarations with `let` keyword
 - `BlockStatement`: Code blocks with lexical scope isolation `{ ... }`
-- `IfStatement`: Conditionals (planned)
+- `IfStatement`: Conditionals with optional else clauses `if (condition) statement else statement`
 - `WhileStatement`: Loops (planned)
 - `FunctionDeclaration`: Functions (planned)
 
@@ -146,6 +146,7 @@ Each expression and statement type has its own executor module:
 - `executor/executeExpressionStatement.ts`
 - `executor/executeVariableDeclaration.ts`
 - `executor/executeBlockStatement.ts`
+- `executor/executeIfStatement.ts`
 
 **Modular Executor Pattern:**
 
@@ -188,6 +189,7 @@ Generate human-readable descriptions of execution steps.
 - `describeExpressionStatement.ts`: Describes standalone expressions
 - `describeVariableDeclaration.ts`: Explains variable declarations and initialization
 - `describeBlockStatement.ts`: Explains block scope behavior and variable isolation
+- `describeIfStatement.ts`: Explains conditional execution logic and branching
 - `describeSteps.ts`: Provides step-by-step execution descriptions
 
 **Description Examples:**
@@ -215,6 +217,22 @@ count;
 // Variable Frame: "Declared variable 'x' and initialized it with value 10"
 // Access Frame: "Accessed variable 'x' with value 10"
 // Addition Frame: "Evaluating addition: 10 + 5 = 15"
+
+if (true) {
+  let result = 42;
+}
+// If Frame: "The condition evaluated to true, so the if block was executed."
+// Variable Frame: "Declared variable 'result' and initialized it with value 42"
+// Block Frame: "This block executed 1 statement in its own scope."
+
+if (false) {
+  let x = 1;
+} else {
+  let y = 2;
+}
+// If Frame: "The condition evaluated to false, so the else block was executed."
+// Variable Frame: "Declared variable 'y' and initialized it with value 2"
+// Block Frame: "This block executed 1 statement in its own scope."
 ```
 
 ### 5. Environment (`src/javascript/environment.ts`)

@@ -56,3 +56,21 @@ export class BlockStatement extends Statement {
     return this.statements.flatMap(stmt => stmt.children());
   }
 }
+
+export class IfStatement extends Statement {
+  constructor(
+    public condition: Expression,
+    public thenBranch: Statement,
+    public elseBranch: Statement | null,
+    public location: Location
+  ) {
+    super("IfStatement");
+  }
+  public children() {
+    const children = [this.condition, ...this.thenBranch.children()];
+    if (this.elseBranch) {
+      children.push(...this.elseBranch.children());
+    }
+    return children;
+  }
+}

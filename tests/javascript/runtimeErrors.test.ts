@@ -331,4 +331,67 @@ describe("Runtime Errors", () => {
       });
     });
   });
+
+  describe("If Statement Runtime Errors", () => {
+    test("undefined variable in if condition", () => {
+      const code = "if (x) { let y = 5; }";
+      const { frames } = interpret(code);
+      expectFrameToBeError(frames[0], code, "VariableNotDeclared");
+      expect(frames[0].error!.message).toBe("VariableNotDeclared: name: x");
+    });
+
+    test("undefined variable in complex if condition", () => {
+      const code = "if (x && true) { let y = 10; }";
+      const { frames } = interpret(code);
+      expectFrameToBeError(frames[0], code, "VariableNotDeclared");
+      expect(frames[0].error!.message).toBe("VariableNotDeclared: name: x");
+    });
+
+    test("undefined variable in logical condition", () => {
+      const code = "if (true && unknown) { let y = 1; }";
+      const { frames } = interpret(code);
+      expectFrameToBeError(frames[0], code, "VariableNotDeclared");
+      expect(frames[0].error!.message).toBe("VariableNotDeclared: name: unknown");
+    });
+
+    test("undefined variable in if body should not execute", () => {
+      const code = "if (true) { x = 5; }";
+      const { frames } = interpret(code);
+      expect(frames).toBeArrayOfSize(2); // If condition frame + assignment error frame
+      expect(frames[0].status).toBe("SUCCESS"); // If condition evaluated
+      expectFrameToBeError(frames[1], "x = 5;", "VariableNotDeclared");
+      expect(frames[1].error!.message).toBe("VariableNotDeclared: name: x");
+    });
+
+    test("undefined variable in else body", () => {
+      const code = "if (false) { let y = 1; } else { x = 5; }";
+      const { frames } = interpret(code);
+      expect(frames).toBeArrayOfSize(2); // If condition frame + else assignment error
+      expect(frames[0].status).toBe("SUCCESS"); // If condition evaluated
+      expectFrameToBeError(frames[1], "x = 5;", "VariableNotDeclared");
+      expect(frames[1].error!.message).toBe("VariableNotDeclared: name: x");
+    });
+
+    test("shadowing error in if body", () => {
+      const code = "let x = 5; if (true) { let x = 10; }";
+      const { frames } = interpret(code); // Default allowShadowing: false
+      expect(frames).toBeArrayOfSize(3);
+      expect(frames[0].status).toBe("SUCCESS"); // let x = 5
+      expect(frames[1].status).toBe("SUCCESS"); // if condition
+      expectFrameToBeError(frames[2], "let x = 10;", "ShadowingDisabled");
+      expect(frames[2].error!.message).toBe("ShadowingDisabled: name: x");
+    });
+
+    test("shadowing allowed in if body", () => {
+      const code = "let x = 5; if (true) { let x = 10; x; }";
+      const { frames } = interpret(code, { allowShadowing: true });
+      expect(frames).toBeArrayOfSize(5);
+      expect(frames[0].status).toBe("SUCCESS"); // let x = 5
+      expect(frames[1].status).toBe("SUCCESS"); // if condition
+      expect(frames[2].status).toBe("SUCCESS"); // let x = 10 (allowed)
+      expect(frames[3].status).toBe("SUCCESS"); // x; (should be 10)
+      expect(frames[4].status).toBe("SUCCESS"); // block
+      expect(frames[3].variables.x.value).toBe(10);
+    });
+  });
 });

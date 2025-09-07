@@ -10,7 +10,7 @@ import {
 } from "./expression";
 import { Location, Span } from "../shared/location";
 import { Scanner } from "./scanner";
-import { Statement, ExpressionStatement, VariableDeclaration, BlockStatement } from "./statement";
+import { Statement, ExpressionStatement, VariableDeclaration, BlockStatement, IfStatement } from "./statement";
 import { type Token, type TokenType } from "./token";
 import { translate } from "./translator";
 
@@ -53,6 +53,11 @@ export class Parser {
       // Handle variable declarations
       if (this.match("LET")) {
         return this.variableDeclaration(this.previous()); // Pass the LET token
+      }
+
+      // Handle if statements
+      if (this.match("IF")) {
+        return this.ifStatement();
       }
 
       // Handle block statements
@@ -108,6 +113,22 @@ export class Parser {
     }
 
     return statements;
+  }
+
+  private ifStatement(): Statement {
+    const ifToken = this.previous();
+    this.consume("LEFT_PAREN", "MissingLeftParenthesisAfterIf");
+    const condition = this.expression();
+    this.consume("RIGHT_PAREN", "MissingRightParenthesisAfterIfCondition");
+    const thenBranch = this.statement();
+    let elseBranch: Statement | null = null;
+
+    if (this.match("ELSE")) {
+      elseBranch = this.statement();
+    }
+
+    const endToken = elseBranch || thenBranch;
+    return new IfStatement(condition, thenBranch!, elseBranch, Location.between(ifToken, endToken!));
   }
 
   private expression(): Expression {
