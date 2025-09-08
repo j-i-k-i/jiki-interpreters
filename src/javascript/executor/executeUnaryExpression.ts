@@ -22,13 +22,31 @@ function handleUnaryOperation(
   operandResult: EvaluationResult
 ): JikiObject {
   const operand = operandResult.jikiObject.value;
+  const operandType = operandResult.jikiObject.type;
 
   switch (expression.operator.type) {
     case "MINUS":
+      // Check for type coercion when disabled
+      if (!executor.languageFeatures.allowTypeCoercion && operandType !== "number") {
+        throw new RuntimeError(
+          `TypeCoercionNotAllowed: operator: ${expression.operator.lexeme}: operand: ${operandType}`,
+          expression.location,
+          "TypeCoercionNotAllowed"
+        );
+      }
       return createJSObject(-operand);
     case "PLUS":
+      // Check for type coercion when disabled
+      if (!executor.languageFeatures.allowTypeCoercion && operandType !== "number") {
+        throw new RuntimeError(
+          `TypeCoercionNotAllowed: operator: ${expression.operator.lexeme}: operand: ${operandType}`,
+          expression.location,
+          "TypeCoercionNotAllowed"
+        );
+      }
       return createJSObject(+operand);
     case "NOT":
+      // Logical NOT doesn't need type coercion check as it works with all types
       return createJSObject(!operand);
     default:
       throw new RuntimeError(

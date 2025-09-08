@@ -178,7 +178,7 @@ describe("negation concept", () => {
 
   describe("mixed negation operations", () => {
     test("arithmetic and logical negation in same expression", () => {
-      const { frames, error } = interpret("let x = -5; let y = !false; x + y;");
+      const { frames, error } = interpret("let x = -5; let y = !false; x + y;", { allowTypeCoercion: true });
       expect(error).toBeNull();
       expect(frames.length).toBe(3);
       expect(frames[0].result?.jikiObject.value).toBe(-5);
@@ -187,7 +187,7 @@ describe("negation concept", () => {
     });
 
     test("nested mixed negations", () => {
-      const { frames, error } = interpret("-(!false);");
+      const { frames, error } = interpret("-(!false);", { allowTypeCoercion: true });
       expect(error).toBeNull();
       expect(frames.length).toBe(1);
       expect(frames[0].result?.jikiObject.value).toBe(-1); // -(true) = -1

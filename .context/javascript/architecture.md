@@ -49,9 +49,10 @@ Wrapper objects extending shared `JikiObject` base class. Supports JSNumber, JSS
 
 Configurable language features:
 
-- `allowShadowing`: Controls variable shadowing behavior in nested scopes
+- `allowShadowing`: Controls variable shadowing behavior in nested scopes (default: false)
 - `allowTruthiness`: Controls whether non-boolean values can be used in conditions (default: false)
 - `requireVariableInstantiation`: Controls whether variables must be initialized when declared (default: true)
+- `allowTypeCoercion`: Controls whether type coercion is allowed in operations (default: false)
 
 ### 8. Frame System
 

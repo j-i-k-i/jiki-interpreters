@@ -39,7 +39,8 @@ export type RuntimeErrorType =
   | "VariableNotDeclared"
   | "ShadowingDisabled"
   | "ComparisonRequiresNumber"
-  | "TruthinessDisabled";
+  | "TruthinessDisabled"
+  | "TypeCoercionNotAllowed";
 
 export class RuntimeError extends Error {
   public category: string = "RuntimeError";
@@ -77,6 +78,7 @@ export class Executor {
     this.environment = new Environment();
     this.languageFeatures = {
       allowShadowing: false, // Default to false (shadowing disabled)
+      allowTypeCoercion: false, // Default to false (type coercion disabled)
       ...languageFeatures,
     };
   }

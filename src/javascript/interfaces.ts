@@ -4,4 +4,5 @@ export interface LanguageFeatures {
   allowShadowing?: boolean;
   allowTruthiness?: boolean;
   requireVariableInstantiation?: boolean;
+  allowTypeCoercion?: boolean;
 }

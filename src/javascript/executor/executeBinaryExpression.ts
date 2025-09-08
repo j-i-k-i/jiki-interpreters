@@ -26,46 +26,111 @@ function handleBinaryOperation(
 ): JikiObject {
   const left = leftResult.jikiObject.value;
   const right = rightResult.jikiObject.value;
+  const leftType = leftResult.jikiObject.type;
+  const rightType = rightResult.jikiObject.type;
 
   switch (expression.operator.type) {
     case "PLUS":
+      // Check for type coercion when disabled
+      if (!executor.languageFeatures.allowTypeCoercion) {
+        // Allow string concatenation (string + string)
+        if (leftType === "string" && rightType === "string") {
+          return createJSObject(left + right);
+        }
+        // Allow number addition (number + number)
+        if (leftType === "number" && rightType === "number") {
+          return createJSObject(left + right);
+        }
+        // Everything else is type coercion and should error
+        throw new RuntimeError(
+          `TypeCoercionNotAllowed: operator: ${expression.operator.lexeme}: left: ${leftType}: right: ${rightType}`,
+          expression.location,
+          "TypeCoercionNotAllowed"
+        );
+      }
       return createJSObject(left + right);
+
     case "MINUS":
+      if (!executor.languageFeatures.allowTypeCoercion) {
+        verifyNumbersForArithmetic(executor, expression, leftResult, rightResult);
+      }
       return createJSObject(left - right);
+
     case "STAR":
+      if (!executor.languageFeatures.allowTypeCoercion) {
+        verifyNumbersForArithmetic(executor, expression, leftResult, rightResult);
+      }
       return createJSObject(left * right);
+
     case "SLASH":
+      if (!executor.languageFeatures.allowTypeCoercion) {
+        verifyNumbersForArithmetic(executor, expression, leftResult, rightResult);
+      }
       return createJSObject(left / right);
+
     case "LOGICAL_AND":
       executor.verifyBoolean(leftResult.jikiObject, expression.left.location);
       executor.verifyBoolean(rightResult.jikiObject, expression.right.location);
       return createJSObject(left && right);
+
     case "LOGICAL_OR":
       executor.verifyBoolean(leftResult.jikiObject, expression.left.location);
       executor.verifyBoolean(rightResult.jikiObject, expression.right.location);
       return createJSObject(left || right);
+
     case "EQUAL_EQUAL":
       return createJSObject(left == right);
+
     case "NOT_EQUAL":
       return createJSObject(left != right);
+
     case "GREATER":
       verifyNumbersForComparison(executor, expression, leftResult, rightResult);
       return createJSObject(left > right);
+
     case "GREATER_EQUAL":
       verifyNumbersForComparison(executor, expression, leftResult, rightResult);
       return createJSObject(left >= right);
+
     case "LESS":
       verifyNumbersForComparison(executor, expression, leftResult, rightResult);
       return createJSObject(left < right);
+
     case "LESS_EQUAL":
       verifyNumbersForComparison(executor, expression, leftResult, rightResult);
       return createJSObject(left <= right);
+
     default:
       throw new RuntimeError(
         `Unsupported binary operator: ${expression.operator.type}`,
         expression.location,
         "InvalidBinaryExpression"
       );
+  }
+}
+
+function verifyNumbersForArithmetic(
+  executor: Executor,
+  expression: BinaryExpression,
+  leftResult: EvaluationResult,
+  rightResult: EvaluationResult
+): void {
+  const leftType = leftResult.jikiObject.type;
+  const rightType = rightResult.jikiObject.type;
+
+  if (leftType !== "number") {
+    throw new RuntimeError(
+      `TypeCoercionNotAllowed: operator: ${expression.operator.lexeme}: left: ${leftType}`,
+      expression.location,
+      "TypeCoercionNotAllowed"
+    );
+  }
+  if (rightType !== "number") {
+    throw new RuntimeError(
+      `TypeCoercionNotAllowed: operator: ${expression.operator.lexeme}: right: ${rightType}`,
+      expression.location,
+      "TypeCoercionNotAllowed"
+    );
   }
 }
 

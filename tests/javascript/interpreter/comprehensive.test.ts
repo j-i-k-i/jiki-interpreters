@@ -41,8 +41,8 @@ describe("comprehensive interpreter", () => {
     });
 
     test("string and number operations", () => {
-      // JavaScript allows this - should concatenate
-      const { frames, error } = interpret('"Count: " + (1 + 2);');
+      // JavaScript allows this - should concatenate when type coercion is enabled
+      const { frames, error } = interpret('"Count: " + (1 + 2);', { allowTypeCoercion: true });
       expect(error).toBeNull();
       expect(frames).toBeArrayOfSize(1);
       expect(frames[0].status).toBe("SUCCESS");
