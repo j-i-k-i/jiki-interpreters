@@ -33,7 +33,7 @@ For everything in here, base your work in the JikiScript interpreter.
 - [x] Add strings.
 - [x] Add booleans.
 - [x] Add basic operations for working with numbers, strings and booleans.
-- [ ] For all tokens that are in the scanner. If they're not currently used, raise an UnimplementedToken error (or a message that fits with our naming scheme). Add a test for each Token (in a dedicated test file for this purpose). Add info about this to the `.context` for future use.
+- [x] For all tokens that are in the scanner. If they're not currently used, raise an UnimplementedToken error (or a message that fits with our naming scheme). Add a test for each Token (in a dedicated test file for this purpose). Add info about this to the `.context` for future use.
 - [x] Add variables. Reference the JikiScript implementation to see how things should be set up. For now, don't worry about scoping, etc. We'll add that next. Just implement `let`. Don't implement `const` or `var`. Make sure to add corrosponding parser and implementer concept tests. Also add syntax error tests. Look at the JikiScript tests for inspiration.
 - [x] Add a block with scope. A variable defined via let in this scope should only exist inside the scope. For now, don't worry about shadowing. Remember to add concept tests and syntax error tests (e.g. an unclosing block). Look at the JikiScript tests for inspiration.
 - [x] Add negation.

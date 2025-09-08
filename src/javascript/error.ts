@@ -15,6 +15,7 @@ export type SyntaxErrorType =
   | "MissingVariableName"
   | "MultipleStatementsPerLine"
   | "UnexpectedRightBrace"
+  | "UnimplementedToken"
   | "UnknownCharacter"
   | "UnterminatedComment"
   | "UnterminatedString";

@@ -534,6 +534,75 @@ export class Scanner {
   private addToken(type: TokenType, literal: any = null): void {
     this.verifyEnabled(type, this.lexeme());
 
+    // Check for unimplemented tokens
+    const unimplementedTokens: TokenType[] = [
+      // Statement keywords
+      "BREAK",
+      "CASE",
+      "CATCH",
+      "CLASS",
+      "CONST",
+      "CONTINUE",
+      "DEBUGGER",
+      "DEFAULT",
+      "DELETE",
+      "DO",
+      "EXPORT",
+      "EXTENDS",
+      "FINALLY",
+      "FUNCTION",
+      "IMPORT",
+      "IN",
+      "INSTANCEOF",
+      "NEW",
+      "RETURN",
+      "SUPER",
+      "SWITCH",
+      "THIS",
+      "THROW",
+      "TRY",
+      "TYPEOF",
+      "VAR",
+      "VOID",
+      "WITH",
+      "YIELD",
+      // Operators and syntax
+      "AMPERSAND",
+      "BACKTICK",
+      "CARET",
+      "COLON",
+      "COMMA",
+      "DOT",
+      "LEFT_BRACKET",
+      "RIGHT_BRACKET",
+      "PERCENT",
+      "PIPE",
+      "QUESTION",
+      "TILDE",
+      "ARROW",
+      "AND_EQUAL",
+      "DIVIDE_EQUAL",
+      "DOLLAR_LEFT_BRACE",
+      "LEFT_SHIFT",
+      "MINUS_EQUAL",
+      "MODULO_EQUAL",
+      "MULTIPLY_EQUAL",
+      "NOT_STRICT_EQUAL",
+      "OR_EQUAL",
+      "PLUS_EQUAL",
+      "RIGHT_SHIFT",
+      "STRICT_EQUAL",
+      "XOR_EQUAL",
+      "TEMPLATE_LITERAL_TEXT",
+    ];
+
+    if (unimplementedTokens.includes(type)) {
+      this.error("UnimplementedToken", {
+        tokenType: type,
+        lexeme: this.lexeme(),
+      });
+    }
+
     this.tokens.push({
       type,
       lexeme: this.lexeme(),
