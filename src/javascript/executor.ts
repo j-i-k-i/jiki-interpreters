@@ -13,7 +13,7 @@ import {
 } from "./expression";
 import { Location } from "../shared/location";
 import type { Statement } from "./statement";
-import { ExpressionStatement, VariableDeclaration, BlockStatement, IfStatement } from "./statement";
+import { ExpressionStatement, VariableDeclaration, BlockStatement, IfStatement, ForStatement } from "./statement";
 import type { EvaluationResult } from "./evaluation-result";
 import { createJSObject, type JikiObject } from "./jikiObjects";
 import { translate } from "./translator";
@@ -33,6 +33,7 @@ import { executeBlockStatement } from "./executor/executeBlockStatement";
 import { executeExpressionStatement } from "./executor/executeExpressionStatement";
 import { executeVariableDeclaration } from "./executor/executeVariableDeclaration";
 import { executeIfStatement } from "./executor/executeIfStatement";
+import { executeForStatement } from "./executor/executeForStatement";
 
 export type RuntimeErrorType =
   | "InvalidBinaryExpression"
@@ -143,6 +144,8 @@ export class Executor {
       result = this.executeFrame(statement, () => executeBlockStatement(this, statement));
     } else if (statement instanceof IfStatement) {
       executeIfStatement(this, statement);
+    } else if (statement instanceof ForStatement) {
+      executeForStatement(this, statement);
     }
 
     return result;

@@ -81,9 +81,9 @@ export class Parser {
         return this.blockStatement();
       }
 
-      // If we've reached a right brace outside of a block context, it's an error
+      // If we've reached a right brace, return null to let the block parser handle it
       if (this.check("RIGHT_BRACE")) {
-        this.error("UnexpectedRightBrace", this.peek().location);
+        return null;
       }
 
       // Handle empty statement (just a semicolon)
