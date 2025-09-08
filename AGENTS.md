@@ -138,6 +138,8 @@ All workflows run on pushes to `main` and pull requests targeting `main`. The pa
 - Use `.test.ts` suffix for test files
 - **NEVER comment out or disable tests to make things "work"** - always fix the underlying issue properly
 - If tests are failing, identify and resolve the root cause rather than masking the problem
+- **ABSOLUTELY NEVER use `--no-verify` flag when committing without explicit permission from the user**
+- **ALL tests MUST pass before considering a task complete - failing tests mean the work is NOT done**
 
 ## Version Control Guidelines
 

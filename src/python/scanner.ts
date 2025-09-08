@@ -129,7 +129,7 @@ export class Scanner {
       type: "EOF",
       lexeme: "",
       literal: null,
-      location: Location.fromLineOffset(this.current, this.current, this.line, this.lineOffset),
+      location: Location.fromLineOffset(this.current + 1, this.current + 1, this.line, this.lineOffset),
     });
 
     return this.tokens;
@@ -148,7 +148,7 @@ export class Scanner {
       throw new SyntaxError(
         "GenericSyntaxError",
         translate("Unexpected character."),
-        Location.fromLineOffset(this.start, this.current, this.line, this.lineOffset)
+        Location.fromLineOffset(this.start + 1, this.current + 1, this.line, this.lineOffset)
       );
     }
   }
@@ -228,7 +228,7 @@ export class Scanner {
           tokenType: type,
           lexeme: text,
         }),
-        Location.fromLineOffset(this.start, this.current, this.line, this.lineOffset),
+        Location.fromLineOffset(this.start + 1, this.current + 1, this.line, this.lineOffset),
         this.fileName,
         {
           tokenType: type,
@@ -241,7 +241,7 @@ export class Scanner {
       type,
       lexeme: text,
       literal: literal,
-      location: Location.fromLineOffset(this.start, this.current, this.line, this.lineOffset),
+      location: Location.fromLineOffset(this.start + 1, this.current + 1, this.line, this.lineOffset),
     });
   }
 
@@ -359,7 +359,7 @@ export class Scanner {
       throw new SyntaxError(
         "GenericSyntaxError",
         translate("Unterminated string."),
-        Location.fromLineOffset(this.start, this.current, this.line, this.lineOffset)
+        Location.fromLineOffset(this.start + 1, this.current + 1, this.line, this.lineOffset)
       );
     }
 
@@ -384,7 +384,7 @@ export class Scanner {
       throw new SyntaxError(
         "GenericSyntaxError",
         translate("Unterminated string."),
-        Location.fromLineOffset(this.start, this.current, this.line, this.lineOffset)
+        Location.fromLineOffset(this.start + 1, this.current + 1, this.line, this.lineOffset)
       );
     }
 
@@ -454,7 +454,7 @@ export class Scanner {
       throw new SyntaxError(
         "IndentationError",
         translate("Tabs are not allowed for indentation. Use 4 spaces per indent level."),
-        Location.fromLineOffset(this.start, this.current, this.line, this.lineOffset)
+        Location.fromLineOffset(this.start + 1, this.current + 1, this.line, this.lineOffset)
       );
     }
 
@@ -463,7 +463,7 @@ export class Scanner {
       throw new SyntaxError(
         "IndentationError",
         translate("Indentation must be a multiple of 4 spaces."),
-        Location.fromLineOffset(this.start, this.current, this.line, this.lineOffset)
+        Location.fromLineOffset(this.start + 1, this.current + 1, this.line, this.lineOffset)
       );
     }
 

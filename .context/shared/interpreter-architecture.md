@@ -64,6 +64,10 @@ interface Frame {
 **Critical for proper error reporting:**
 
 - All AST nodes MUST have accurate location information
+- **IMPORTANT**: Locations use 1-based indexing (first character is position 1, not 0)
+  - This makes error messages clearer for students (e.g., "character 1" is the first character they see)
+  - Scanners MUST add 1 to their internal 0-based indices when creating Location objects
+  - The shared `Location.toCode()` method accounts for this by subtracting 1 when extracting substrings
 - Statement locations MUST span the entire statement (including semicolons, keywords, etc.)
 - Expression locations can be more granular
 - Error frames MUST use statement locations, not sub-expression locations

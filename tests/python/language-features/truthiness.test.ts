@@ -1,7 +1,6 @@
 import { interpret } from "@python/interpreter";
 import { RuntimeErrorType } from "@python/executor";
 import { Frame } from "../../../src/shared/frames";
-import { changeLanguage } from "@python/translator";
 
 function expectFrameToBeError(frame: Frame, code: string, type: RuntimeErrorType) {
   expect(frame.code.trim()).toBe(code.trim());
@@ -12,10 +11,6 @@ function expectFrameToBeError(frame: Frame, code: string, type: RuntimeErrorType
 }
 
 describe("Python truthiness feature", () => {
-  beforeEach(() => {
-    changeLanguage("system");
-  });
-
   describe("allowTruthiness: true", () => {
     const features = { allowTruthiness: true };
 
@@ -135,7 +130,7 @@ result = x or y`;
         const code = `if not 42:
     x = 1`;
         const { frames } = interpret(code);
-        expectFrameToBeError(frames[0], "if not 42:", "TruthinessDisabled");
+        expectFrameToBeError(frames[0], code, "TruthinessDisabled");
         expect(frames[0].error!.message).toBe("TruthinessDisabled: value: number");
       });
 
@@ -143,7 +138,7 @@ result = x or y`;
         const code = `if not "hello":
     x = 1`;
         const { frames } = interpret(code);
-        expectFrameToBeError(frames[0], 'if not "hello":', "TruthinessDisabled");
+        expectFrameToBeError(frames[0], code, "TruthinessDisabled");
         expect(frames[0].error!.message).toBe("TruthinessDisabled: value: string");
       });
 
@@ -151,7 +146,7 @@ result = x or y`;
         const code = `if not None:
     x = 1`;
         const { frames } = interpret(code);
-        expectFrameToBeError(frames[0], "if not None:", "TruthinessDisabled");
+        expectFrameToBeError(frames[0], code, "TruthinessDisabled");
         expect(frames[0].error!.message).toBe("TruthinessDisabled: value: none");
       });
 
