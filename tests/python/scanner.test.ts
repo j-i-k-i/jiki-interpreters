@@ -1,12 +1,15 @@
 import { describe, expect, it } from "bun:test";
-import { interpret } from "../../../src/python/interpreter";
-import { changeLanguage } from "../../../src/python/translator";
+import { interpret } from "../../src/python/interpreter";
+import { changeLanguage } from "../../src/python/translator";
 
+// UNIMPLEMENTED TOKENS
+// When implementing a token, move it from this section to the appropriate implemented section
+// and create proper scanner tests for it.
 describe("Python - Unimplemented Tokens", () => {
   // Set language to system for consistent error messages
   changeLanguage("system");
 
-  describe("Keywords", () => {
+  describe("Unimplemented Keywords", () => {
     const unimplementedKeywords = [
       { token: "as", type: "AS" },
       { token: "assert", type: "ASSERT" },
@@ -50,7 +53,7 @@ describe("Python - Unimplemented Tokens", () => {
     });
   });
 
-  describe("Operators", () => {
+  describe("Unimplemented Operators", () => {
     const unimplementedOperators = [
       { code: "1, 2", token: ",", type: "COMMA" },
       { code: "obj.prop", token: ".", type: "DOT" },

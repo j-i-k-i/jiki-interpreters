@@ -41,9 +41,18 @@ export class Parser {
     const statements: Statement[] = [];
 
     while (!this.isAtEnd()) {
+      const startPosition = this.current;
       const statement = this.statement();
       if (statement) {
         statements.push(statement);
+      } else if (this.current === startPosition && !this.isAtEnd()) {
+        // statement() returned null without advancing - unexpected token
+        // Use a specific error based on the token type
+        if (this.peek().type === "RIGHT_BRACE") {
+          this.error("UnexpectedRightBrace", this.peek().location);
+        } else {
+          this.error("GenericSyntaxError", this.peek().location, { token: this.peek().lexeme });
+        }
       }
     }
 
@@ -85,11 +94,6 @@ export class Parser {
       // Handle block statements
       if (this.match("LEFT_BRACE")) {
         return this.blockStatement();
-      }
-
-      // If we've reached a right brace, return null to let the block parser handle it
-      if (this.check("RIGHT_BRACE")) {
-        return null;
       }
 
       // Handle empty statement (just a semicolon)
@@ -140,19 +144,34 @@ export class Parser {
 
   private blockStatement(): Statement {
     const leftBrace = this.previous();
-    const statements = this.block();
-    const rightBrace = this.consume("RIGHT_BRACE", "MissingRightBraceAfterBlock");
+    const statements = this.block(true); // true = consume the RIGHT_BRACE
+    const rightBrace = this.previous(); // block() consumed the RIGHT_BRACE
     return new BlockStatement(statements, Location.between(leftBrace, rightBrace));
   }
 
-  private block(): Statement[] {
+  private block(consumeRightBrace: boolean = false): Statement[] {
     const statements: Statement[] = [];
 
-    while (!this.check("RIGHT_BRACE") && !this.isAtEnd()) {
+    while (!this.isAtEnd()) {
+      // Skip EOL tokens before checking for RIGHT_BRACE
+      while (this.check("EOL")) {
+        this.advance();
+      }
+
+      // Check if we've reached the closing brace
+      if (this.check("RIGHT_BRACE")) {
+        break;
+      }
+
       const statement = this.statement();
       if (statement) {
         statements.push(statement);
       }
+    }
+
+    // Only consume the RIGHT_BRACE if requested
+    if (consumeRightBrace) {
+      this.consume("RIGHT_BRACE", "MissingRightBraceAfterBlock");
     }
 
     return statements;

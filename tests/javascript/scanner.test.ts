@@ -1,30 +1,32 @@
 import { scan } from "@javascript/scanner";
 import { type TokenType } from "@javascript/token";
+import { interpret } from "../../src/javascript/interpreter";
+import { changeLanguage } from "../../src/javascript/translator";
 
 describe("single-character", () => {
   test.each([
     ["{", "LEFT_BRACE"],
-    ["[", "LEFT_BRACKET"],
+    // ["[", "LEFT_BRACKET"], // Unimplemented
     ["(", "LEFT_PAREN"],
     ["}", "RIGHT_BRACE"],
-    ["]", "RIGHT_BRACKET"],
+    // ["]", "RIGHT_BRACKET"], // Unimplemented
     [")", "RIGHT_PAREN"],
-    [":", "COLON"],
-    [",", "COMMA"],
+    // [":", "COLON"], // Unimplemented
+    // [",", "COMMA"], // Unimplemented
     ["-", "MINUS"],
     ["+", "PLUS"],
     ["*", "STAR"],
     ["/", "SLASH"],
     ["=", "EQUAL"],
     ["!", "NOT"],
-    [".", "DOT"],
+    // [".", "DOT"], // Unimplemented
     [";", "SEMICOLON"],
-    ["?", "QUESTION"],
-    ["%", "PERCENT"],
-    ["&", "AMPERSAND"],
-    ["|", "PIPE"],
-    ["^", "CARET"],
-    ["~", "TILDE"],
+    // ["?", "QUESTION"], // Unimplemented
+    // ["%", "PERCENT"], // Unimplemented
+    // ["&", "AMPERSAND"], // Unimplemented
+    // ["|", "PIPE"], // Unimplemented
+    // ["^", "CARET"], // Unimplemented
+    // ["~", "TILDE"], // Unimplemented
   ])("'%s' token", (source: string, expectedType: string) => {
     const tokens = scan(source);
     expect(tokens[0].type).toBe(expectedType as TokenType);
@@ -40,24 +42,24 @@ describe("two-character operators", () => {
     ["<", "LESS"],
     ["<=", "LESS_EQUAL"],
     ["!=", "NOT_EQUAL"],
-    ["!==", "NOT_STRICT_EQUAL"],
+    // ["!==", "NOT_STRICT_EQUAL"], // Unimplemented
     ["==", "EQUAL_EQUAL"],
-    ["===", "STRICT_EQUAL"],
+    // ["===", "STRICT_EQUAL"], // Unimplemented
     ["&&", "LOGICAL_AND"],
     ["||", "LOGICAL_OR"],
     ["++", "INCREMENT"],
     ["--", "DECREMENT"],
-    ["+=", "PLUS_EQUAL"],
-    ["-=", "MINUS_EQUAL"],
-    ["*=", "MULTIPLY_EQUAL"],
-    ["/=", "DIVIDE_EQUAL"],
-    ["%=", "MODULO_EQUAL"],
-    ["<<", "LEFT_SHIFT"],
-    [">>", "RIGHT_SHIFT"],
-    ["&=", "AND_EQUAL"],
-    ["|=", "OR_EQUAL"],
-    ["^=", "XOR_EQUAL"],
-    ["=>", "ARROW"],
+    // ["+=", "PLUS_EQUAL"], // Unimplemented
+    // ["-=", "MINUS_EQUAL"], // Unimplemented
+    // ["*=", "MULTIPLY_EQUAL"], // Unimplemented
+    // ["/=", "DIVIDE_EQUAL"], // Unimplemented
+    // ["%=", "MODULO_EQUAL"], // Unimplemented
+    // ["<<", "LEFT_SHIFT"], // Unimplemented
+    // [">>", "RIGHT_SHIFT"], // Unimplemented
+    // ["&=", "AND_EQUAL"], // Unimplemented
+    // ["|=", "OR_EQUAL"], // Unimplemented
+    // ["^=", "XOR_EQUAL"], // Unimplemented
+    // ["=>", "ARROW"], // Unimplemented
   ])("'%s' token", (source: string, expectedType: string) => {
     const tokens = scan(source);
     expect(tokens[0].type).toBe(expectedType as TokenType);
@@ -68,44 +70,44 @@ describe("two-character operators", () => {
 
 describe("keyword", () => {
   test.each([
-    ["break", "BREAK"],
-    ["case", "CASE"],
-    ["catch", "CATCH"],
-    ["class", "CLASS"],
-    ["const", "CONST"],
-    ["continue", "CONTINUE"],
-    ["debugger", "DEBUGGER"],
-    ["default", "DEFAULT"],
-    ["delete", "DELETE"],
-    ["do", "DO"],
+    // ["break", "BREAK"], // Unimplemented
+    // ["case", "CASE"], // Unimplemented
+    // ["catch", "CATCH"], // Unimplemented
+    // ["class", "CLASS"], // Unimplemented
+    // ["const", "CONST"], // Unimplemented
+    // ["continue", "CONTINUE"], // Unimplemented
+    // ["debugger", "DEBUGGER"], // Unimplemented
+    // ["default", "DEFAULT"], // Unimplemented
+    // ["delete", "DELETE"], // Unimplemented
+    // ["do", "DO"], // Unimplemented
     ["else", "ELSE"],
-    ["export", "EXPORT"],
-    ["extends", "EXTENDS"],
+    // ["export", "EXPORT"], // Unimplemented
+    // ["extends", "EXTENDS"], // Unimplemented
     ["false", "FALSE"],
-    ["finally", "FINALLY"],
+    // ["finally", "FINALLY"], // Unimplemented
     ["for", "FOR"],
-    ["function", "FUNCTION"],
+    // ["function", "FUNCTION"], // Unimplemented
     ["if", "IF"],
-    ["import", "IMPORT"],
-    ["in", "IN"],
-    ["instanceof", "INSTANCEOF"],
+    // ["import", "IMPORT"], // Unimplemented
+    // ["in", "IN"], // Unimplemented
+    // ["instanceof", "INSTANCEOF"], // Unimplemented
     ["let", "LET"],
-    ["new", "NEW"],
+    // ["new", "NEW"], // Unimplemented
     ["null", "NULL"],
-    ["return", "RETURN"],
-    ["super", "SUPER"],
-    ["switch", "SWITCH"],
-    ["this", "THIS"],
-    ["throw", "THROW"],
+    // ["return", "RETURN"], // Unimplemented
+    // ["super", "SUPER"], // Unimplemented
+    // ["switch", "SWITCH"], // Unimplemented
+    // ["this", "THIS"], // Unimplemented
+    // ["throw", "THROW"], // Unimplemented
     ["true", "TRUE"],
-    ["try", "TRY"],
-    ["typeof", "TYPEOF"],
+    // ["try", "TRY"], // Unimplemented
+    // ["typeof", "TYPEOF"], // Unimplemented
     ["undefined", "UNDEFINED"],
-    ["var", "VAR"],
-    ["void", "VOID"],
+    // ["var", "VAR"], // Unimplemented
+    // ["void", "VOID"], // Unimplemented
     ["while", "WHILE"],
-    ["with", "WITH"],
-    ["yield", "YIELD"],
+    // ["with", "WITH"], // Unimplemented
+    // ["yield", "YIELD"], // Unimplemented
   ])("'%s' keyword", (source: string, expectedType: string) => {
     const tokens = scan(source);
     expect(tokens[0].type).toBe(expectedType as TokenType);
@@ -488,6 +490,98 @@ describe.skip("synthetic", () => {
         expect(tokens[3].type).toBe("NUMBER");
         expect(tokens[4].type).toBe("EOL");
         expect(tokens[5].type).toBe("EOF");
+      });
+    });
+  });
+});
+
+// UNIMPLEMENTED TOKENS
+// When implementing a token, move it from this section to the appropriate section above
+// and uncomment it in the test arrays.
+describe("JavaScript - Unimplemented Tokens", () => {
+  // Set language to system for consistent error messages
+  changeLanguage("system");
+
+  describe("Unimplemented Keywords", () => {
+    const unimplementedKeywords = [
+      { token: "break", type: "BREAK" },
+      { token: "case", type: "CASE" },
+      { token: "catch", type: "CATCH" },
+      { token: "class", type: "CLASS" },
+      { token: "const", type: "CONST" },
+      { token: "continue", type: "CONTINUE" },
+      { token: "debugger", type: "DEBUGGER" },
+      { token: "default", type: "DEFAULT" },
+      { token: "delete", type: "DELETE" },
+      { token: "do", type: "DO" },
+      { token: "export", type: "EXPORT" },
+      { token: "extends", type: "EXTENDS" },
+      { token: "finally", type: "FINALLY" },
+      { token: "function", type: "FUNCTION" },
+      { token: "import", type: "IMPORT" },
+      { token: "in", type: "IN" },
+      { token: "instanceof", type: "INSTANCEOF" },
+      { token: "new", type: "NEW" },
+      { token: "return", type: "RETURN" },
+      { token: "super", type: "SUPER" },
+      { token: "switch", type: "SWITCH" },
+      { token: "this", type: "THIS" },
+      { token: "throw", type: "THROW" },
+      { token: "try", type: "TRY" },
+      { token: "typeof", type: "TYPEOF" },
+      { token: "var", type: "VAR" },
+      { token: "void", type: "VOID" },
+      { token: "with", type: "WITH" },
+      { token: "yield", type: "YIELD" },
+    ];
+
+    unimplementedKeywords.forEach(({ token, type }) => {
+      test(`should error on '${token}' keyword`, () => {
+        const result = interpret(`${token};`);
+        expect(result.error).toBeDefined();
+        expect(result.error?.type).toBe("UnimplementedToken");
+        expect(result.error?.context).toEqual({
+          tokenType: type,
+          lexeme: token,
+        });
+      });
+    });
+  });
+
+  describe("Unimplemented Operators", () => {
+    const unimplementedOperators = [
+      { code: "5 & 3", token: "&", type: "AMPERSAND" },
+      { code: "`template`", token: "`", type: "BACKTICK" },
+      { code: "5 ^ 3", token: "^", type: "CARET" },
+      { code: "obj: 1", token: ":", type: "COLON" },
+      { code: "1, 2", token: ",", type: "COMMA" },
+      { code: "obj.prop", token: ".", type: "DOT" },
+      { code: "[1, 2]", token: "[", type: "LEFT_BRACKET" },
+      { code: "5 % 2", token: "%", type: "PERCENT" },
+      { code: "5 | 3", token: "|", type: "PIPE" },
+      { code: "true ? 1 : 2", token: "?", type: "QUESTION" },
+      { code: "~5", token: "~", type: "TILDE" },
+      { code: "() => 5", token: "=>", type: "ARROW" },
+      { code: "x &= 3", token: "&=", type: "AND_EQUAL" },
+      { code: "x /= 2", token: "/=", type: "DIVIDE_EQUAL" },
+      { code: "x << 2", token: "<<", type: "LEFT_SHIFT" },
+      { code: "x -= 2", token: "-=", type: "MINUS_EQUAL" },
+      { code: "x %= 2", token: "%=", type: "MODULO_EQUAL" },
+      { code: "x *= 2", token: "*=", type: "MULTIPLY_EQUAL" },
+      { code: "5 !== 3", token: "!==", type: "NOT_STRICT_EQUAL" },
+      { code: "x |= 3", token: "|=", type: "OR_EQUAL" },
+      { code: "x += 2", token: "+=", type: "PLUS_EQUAL" },
+      { code: "x >> 2", token: ">>", type: "RIGHT_SHIFT" },
+      { code: "5 === 5", token: "===", type: "STRICT_EQUAL" },
+      { code: "x ^= 3", token: "^=", type: "XOR_EQUAL" },
+    ];
+
+    unimplementedOperators.forEach(({ code, token, type }) => {
+      test(`should error on '${token}' operator`, () => {
+        const result = interpret(code + ";");
+        expect(result.error).toBeDefined();
+        expect(result.error?.type).toBe("UnimplementedToken");
+        expect(result.error?.context.tokenType).toBe(type);
       });
     });
   });
