@@ -13,6 +13,12 @@ describe("JavaScript oneStatementPerLine feature", () => {
       expect(frames[frames.length - 1].variables.z.value).toBe(15);
     });
 
+    test("allows for loops with all sections on one line", () => {
+      const code = `for (let i = 0; i < 10; i = i + 1) { }`;
+      const { error } = interpret(code);
+      expect(error).toBeNull();
+    });
+
     test("allows if and else on same line", () => {
       const code = `let result = 0; if (true) { result = 1; } else { result = 2; }`;
       const { frames, error } = interpret(code);
@@ -200,6 +206,37 @@ describe("JavaScript oneStatementPerLine feature", () => {
       expect(error).toBeNull();
       expect(frames[frames.length - 1].variables.x.value).toBe(5);
       expect(frames[frames.length - 1].variables.y.value).toBe(10);
+    });
+
+    test("allows for loops with semicolons in parentheses", () => {
+      // For loops have semicolons inside parentheses which should be allowed
+      const code = `for (let i = 0; i < 10; i = i + 1) { }`;
+      const { error } = interpret(code, features);
+      expect(error).toBeNull();
+    });
+
+    test("allows for loops with semicolons on multiple lines", () => {
+      const code = `
+        for (let i = 0; i < 10; i = i + 1) {
+          let x = i;
+        }
+      `;
+      const { error } = interpret(code, features);
+      expect(error).toBeNull();
+    });
+
+    test("allows for loops with empty sections", () => {
+      const code = `for (;;) { }`;
+      const { error } = interpret(code, features);
+      expect(error).toBeNull();
+    });
+
+    test("allows for loop followed by statement when brace separates them", () => {
+      // With our semicolon-based approach, this is allowed because the semicolon
+      // inside the block is followed by }, and the next statement starts fresh
+      const code = `for (let i = 0; i < 10; i = i + 1) { let y = i; } let x = 5;`;
+      const { error } = interpret(code, features);
+      expect(error).toBeNull();
     });
   });
 

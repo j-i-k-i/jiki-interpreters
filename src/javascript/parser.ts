@@ -10,7 +10,14 @@ import {
 } from "./expression";
 import { Location, Span } from "../shared/location";
 import { Scanner } from "./scanner";
-import { Statement, ExpressionStatement, VariableDeclaration, BlockStatement, IfStatement } from "./statement";
+import {
+  Statement,
+  ExpressionStatement,
+  VariableDeclaration,
+  BlockStatement,
+  IfStatement,
+  ForStatement,
+} from "./statement";
 import { type Token, type TokenType } from "./token";
 import { translate } from "./translator";
 import type { LanguageFeatures } from "./interfaces";
@@ -61,6 +68,11 @@ export class Parser {
       // Handle if statements
       if (this.match("IF")) {
         return this.ifStatement();
+      }
+
+      // Handle for loops
+      if (this.match("FOR")) {
+        return this.forStatement();
       }
 
       // Handle block statements
@@ -153,6 +165,55 @@ export class Parser {
 
     const endToken = elseBranch || thenBranch;
     return new IfStatement(condition, thenBranch!, elseBranch, Location.between(ifToken, endToken!));
+  }
+
+  private forStatement(): Statement {
+    const forToken = this.previous();
+    this.consume("LEFT_PAREN", "MissingLeftParenthesisAfterIf"); // Reuse error type for now
+
+    // Save the oneStatementPerLine setting and temporarily disable it
+    // inside for loop parentheses
+    const savedOneStatementPerLine = this.languageFeatures.oneStatementPerLine;
+    this.languageFeatures.oneStatementPerLine = false;
+
+    try {
+      // Parse init (can be variable declaration or expression)
+      let init: Statement | Expression | null = null;
+      if (this.match("SEMICOLON")) {
+        init = null; // Empty init
+      } else if (this.match("LET")) {
+        init = this.variableDeclaration(this.previous());
+      } else {
+        init = this.expression();
+        this.consume("SEMICOLON", "MissingSemicolon");
+      }
+
+      // Parse condition
+      let condition: Expression | null = null;
+      if (!this.check("SEMICOLON")) {
+        condition = this.expression();
+      }
+      this.consume("SEMICOLON", "MissingSemicolon");
+
+      // Parse update
+      let update: Expression | null = null;
+      if (!this.check("RIGHT_PAREN")) {
+        update = this.expression();
+      }
+
+      this.consume("RIGHT_PAREN", "MissingRightParenthesisAfterExpression");
+
+      // Restore the oneStatementPerLine setting
+      this.languageFeatures.oneStatementPerLine = savedOneStatementPerLine;
+
+      // Parse body
+      const body = this.statement();
+
+      return new ForStatement(init, condition, update, body!, Location.between(forToken, body!));
+    } finally {
+      // Make sure we restore the setting even if there's an error
+      this.languageFeatures.oneStatementPerLine = savedOneStatementPerLine;
+    }
   }
 
   private expression(): Expression {
@@ -326,7 +387,7 @@ export class Parser {
     if (this.match("SEMICOLON")) {
       const semicolon = this.previous();
 
-      // Check oneStatementPerLine: semicolon must be followed by EOL, EOF, or RIGHT_BRACE
+      // Check oneStatementPerLine: semicolon must be followed by EOL, EOF, RIGHT_BRACE, or RIGHT_PAREN (for loops)
       if (this.languageFeatures.oneStatementPerLine && !this.isAtEnd()) {
         // Skip any comments after the semicolon
         let nextIndex = this.current;
@@ -340,11 +401,12 @@ export class Parser {
         // Check the next non-comment token
         if (nextIndex < this.tokens.length) {
           const nextToken = this.tokens[nextIndex];
-          // Semicolon must be followed by newline, EOF, or closing brace
+          // Semicolon must be followed by newline, EOF, closing brace, or closing paren (for loops)
           if (
             nextToken.type !== "EOL" &&
             nextToken.type !== "EOF" &&
             nextToken.type !== "RIGHT_BRACE" &&
+            nextToken.type !== "RIGHT_PAREN" &&
             nextToken.location.line === semicolon.location.line
           ) {
             throw this.error("MultipleStatementsPerLine", nextToken.location);

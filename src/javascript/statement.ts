@@ -1,4 +1,4 @@
-import type { Expression } from "./expression";
+import { Expression } from "./expression";
 import type { Token } from "./token";
 import { Location } from "../shared/location";
 
@@ -71,6 +71,32 @@ export class IfStatement extends Statement {
     if (this.elseBranch) {
       children.push(...this.elseBranch.children());
     }
+    return children;
+  }
+}
+
+export class ForStatement extends Statement {
+  constructor(
+    public init: Statement | Expression | null,
+    public condition: Expression | null,
+    public update: Expression | null,
+    public body: Statement,
+    public location: Location
+  ) {
+    super("ForStatement");
+  }
+  public children() {
+    const children: Expression[] = [];
+    if (this.init && this.init instanceof Expression) {
+      children.push(this.init);
+    }
+    if (this.condition) {
+      children.push(this.condition);
+    }
+    if (this.update) {
+      children.push(this.update);
+    }
+    children.push(...this.body.children());
     return children;
   }
 }
