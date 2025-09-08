@@ -19,7 +19,6 @@ The scanner checks for unimplemented tokens in the `addToken` method and throws 
 
 - Bitwise: `&`, `|`, `^`, `~`, `<<`, `>>`
 - Assignment: `+=`, `-=`, `*=`, `/=`, `%=`, `&=`, `|=`, `^=`
-- Comparison: `===`, `!==`
 - Other: `.` (dot), `[` (bracket), `%` (modulo), `?` (ternary), `:` (colon)
 - Template literals: `` ` `` (backtick)
 - Arrow functions: `=>`

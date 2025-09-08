@@ -6,4 +6,5 @@ export interface LanguageFeatures {
   requireVariableInstantiation?: boolean;
   allowTypeCoercion?: boolean;
   oneStatementPerLine?: boolean;
+  enforceStrictEquality?: boolean;
 }

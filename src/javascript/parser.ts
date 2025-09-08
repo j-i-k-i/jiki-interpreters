@@ -302,7 +302,7 @@ export class Parser {
   private equality(): Expression {
     let expr = this.comparison();
 
-    while (this.match("EQUAL_EQUAL", "NOT_EQUAL")) {
+    while (this.match("EQUAL_EQUAL", "NOT_EQUAL", "STRICT_EQUAL", "NOT_STRICT_EQUAL")) {
       const operator = this.previous();
       const right = this.comparison();
       expr = new BinaryExpression(expr, operator, right, Location.between(expr, right));

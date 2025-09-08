@@ -42,9 +42,9 @@ describe("two-character operators", () => {
     ["<", "LESS"],
     ["<=", "LESS_EQUAL"],
     ["!=", "NOT_EQUAL"],
-    // ["!==", "NOT_STRICT_EQUAL"], // Unimplemented
+    ["!==", "NOT_STRICT_EQUAL"],
     ["==", "EQUAL_EQUAL"],
-    // ["===", "STRICT_EQUAL"], // Unimplemented
+    ["===", "STRICT_EQUAL"],
     ["&&", "LOGICAL_AND"],
     ["||", "LOGICAL_OR"],
     ["++", "INCREMENT"],
@@ -568,11 +568,9 @@ describe("JavaScript - Unimplemented Tokens", () => {
       { code: "x -= 2", token: "-=", type: "MINUS_EQUAL" },
       { code: "x %= 2", token: "%=", type: "MODULO_EQUAL" },
       { code: "x *= 2", token: "*=", type: "MULTIPLY_EQUAL" },
-      { code: "5 !== 3", token: "!==", type: "NOT_STRICT_EQUAL" },
       { code: "x |= 3", token: "|=", type: "OR_EQUAL" },
       { code: "x += 2", token: "+=", type: "PLUS_EQUAL" },
       { code: "x >> 2", token: ">>", type: "RIGHT_SHIFT" },
-      { code: "5 === 5", token: "===", type: "STRICT_EQUAL" },
       { code: "x ^= 3", token: "^=", type: "XOR_EQUAL" },
     ];
 

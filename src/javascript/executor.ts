@@ -51,7 +51,8 @@ export type RuntimeErrorType =
   | "ShadowingDisabled"
   | "ComparisonRequiresNumber"
   | "TruthinessDisabled"
-  | "TypeCoercionNotAllowed";
+  | "TypeCoercionNotAllowed"
+  | "StrictEqualityRequired";
 
 export class RuntimeError extends Error {
   public category: string = "RuntimeError";
@@ -90,6 +91,7 @@ export class Executor {
     this.languageFeatures = {
       allowShadowing: false, // Default to false (shadowing disabled)
       allowTypeCoercion: false, // Default to false (type coercion disabled)
+      enforceStrictEquality: true, // Default to true (strict equality required)
       ...languageFeatures,
     };
   }

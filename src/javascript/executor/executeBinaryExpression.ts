@@ -79,10 +79,32 @@ function handleBinaryOperation(
       return createJSObject(left || right);
 
     case "EQUAL_EQUAL":
+      // Check if strict equality is enforced
+      if (executor.languageFeatures.enforceStrictEquality) {
+        throw new RuntimeError(
+          `StrictEqualityRequired: operator: ${expression.operator.lexeme}`,
+          expression.location,
+          "StrictEqualityRequired"
+        );
+      }
       return createJSObject(left == right);
 
     case "NOT_EQUAL":
+      // Check if strict equality is enforced
+      if (executor.languageFeatures.enforceStrictEquality) {
+        throw new RuntimeError(
+          `StrictEqualityRequired: operator: ${expression.operator.lexeme}`,
+          expression.location,
+          "StrictEqualityRequired"
+        );
+      }
       return createJSObject(left != right);
+
+    case "STRICT_EQUAL":
+      return createJSObject(left === right);
+
+    case "NOT_STRICT_EQUAL":
+      return createJSObject(left !== right);
 
     case "GREATER":
       verifyNumbersForComparison(executor, expression, leftResult, rightResult);

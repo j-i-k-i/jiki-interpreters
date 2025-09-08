@@ -49,7 +49,7 @@ For everything in here, base your work in the JikiScript interpreter.
 - [x] Add a language feature for `oneStatementPerLine` that, when true, means you are only allowed one statement per line. So effectively you are not allowed semicolons within a line - although there will be some exceptions (e.g. a for loop), but this is not really an exception as it's still one statement (a for statement) but it's inner has semicolons. Propose sensible approaches to this dilema with the Human.
 - [x] Add a for loop. Look at the JikiScript implementation of repeat to get a feel.
 - [x] Add a while loop. Look at the for loop implementation.
-- [ ] Add triple equals. Add a language feature for `enforceStrictEquality` which raises a custom error that we can use to tell the student that they need to use `===` not `==` if this is true. Set its default to `true`.
+- [x] Add triple equals. Add a language feature for `enforceStrictEquality` which raises a custom error that we can use to tell the student that they need to use `===` not `==` if this is true. Set its default to `true`.
 - [ ] Add template literals.
 - [ ] Add List.
 - [ ] Add object (call it a Dictionary internally as object is too broad and already overloaded)

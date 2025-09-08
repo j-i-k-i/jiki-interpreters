@@ -587,11 +587,9 @@ export class Scanner {
       "MINUS_EQUAL",
       "MODULO_EQUAL",
       "MULTIPLY_EQUAL",
-      "NOT_STRICT_EQUAL",
       "OR_EQUAL",
       "PLUS_EQUAL",
       "RIGHT_SHIFT",
-      "STRICT_EQUAL",
       "XOR_EQUAL",
       "TEMPLATE_LITERAL_TEXT",
     ];

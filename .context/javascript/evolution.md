@@ -2,6 +2,45 @@
 
 This document tracks the historical development and changes specific to the JavaScript interpreter.
 
+## Strict Equality Operators Implementation (January 2025)
+
+### Changes Made
+
+Added support for strict equality operators (`===` and `!==`) with an `enforceStrictEquality` language feature:
+
+**Features Added**:
+
+- `===` (strict equality - no type coercion)
+- `!==` (strict inequality - no type coercion)
+- `enforceStrictEquality` language feature (default: true)
+
+**Implementation Details**:
+
+1. **Scanner Updates** (`src/javascript/scanner.ts`):
+   - Removed `STRICT_EQUAL` and `NOT_STRICT_EQUAL` from unimplemented tokens list
+   - Tokens were already being properly tokenized
+
+2. **Parser Updates** (`src/javascript/parser.ts`):
+   - Updated `equality()` method to handle `STRICT_EQUAL` and `NOT_STRICT_EQUAL` tokens
+   - Same precedence level as `EQUAL_EQUAL` and `NOT_EQUAL`
+
+3. **Executor Updates**:
+   - Added `enforceStrictEquality` to `LanguageFeatures` interface
+   - Default set to `true` in executor constructor
+   - Added `StrictEqualityRequired` runtime error type
+   - Updated `executeBinaryExpression.ts`:
+     - When `enforceStrictEquality` is true, using `==` or `!=` throws error
+     - `===` and `!==` perform strict equality (no type coercion)
+     - Error format: `"StrictEqualityRequired: operator: =="`
+
+4. **Tests** (`tests/javascript/language-features/strictEquality.test.ts`):
+   - Comprehensive test coverage for both feature states
+   - Tests for strict equality with different types
+   - Tests for error cases when loose equality is used with enforcement
+   - Tests for both loose and strict equality when feature is disabled
+
+**Rationale**: This feature helps students learn the importance of strict equality in JavaScript by making it the default behavior, while still allowing loose equality when explicitly enabled for educational progression.
+
 ## Comparison Operators Implementation (January 2025)
 
 ### Changes Made

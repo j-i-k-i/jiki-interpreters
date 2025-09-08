@@ -101,7 +101,7 @@ describe("JavaScript nested blocks regression tests", () => {
           result = 1;
           for (let i = 0; i < 2; i++) {
             result = result + 1;
-            if (i == 0) {
+            if (i === 0) {
               result = result + 10;
             } else {
               let j = 0;
@@ -113,7 +113,7 @@ describe("JavaScript nested blocks regression tests", () => {
           }
         } else {
           while (x < 10) {
-            if (x == 7) {
+            if (x === 7) {
               for (let k = 0; k < 3; k++) {
                 result = result + k;
               }
@@ -209,11 +209,11 @@ describe("JavaScript nested blocks regression tests", () => {
         
         if (x < 0) {
           result = "negative";
-        } else if (x == 0) {
+        } else if (x === 0) {
           result = "zero";
         } else if (x < 10) {
           result = "small";
-          if (x == 5) {
+          if (x === 5) {
             result = "five";
             {
               let temp = "nested";
@@ -239,7 +239,7 @@ describe("JavaScript nested blocks regression tests", () => {
         let sum = 0;
         for (let i = 0; i < 4; i++) {
           {
-            if (i == 0 || i == 2) {
+            if (i === 0 || i === 2) {
               sum = sum + i;
             } else {
               sum = sum + (i * 2);
