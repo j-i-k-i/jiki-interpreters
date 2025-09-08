@@ -1,6 +1,125 @@
 import { interpret } from "@python/interpreter";
 
 describe("negation concepts", () => {
+  describe("boolean NOT operator", () => {
+    test("not True", () => {
+      const { frames, error } = interpret("not True");
+      expect(error).toBeNull();
+      expect(frames).toBeArrayOfSize(1);
+      expect(frames[0].status).toBe("SUCCESS");
+      expect(frames[0].result?.jikiObject.value).toBe(false);
+    });
+
+    test("not False", () => {
+      const { frames, error } = interpret("not False");
+      expect(error).toBeNull();
+      expect(frames).toBeArrayOfSize(1);
+      expect(frames[0].status).toBe("SUCCESS");
+      expect(frames[0].result?.jikiObject.value).toBe(true);
+    });
+
+    test("not not True (double negation)", () => {
+      const { frames, error } = interpret("not not True");
+      expect(error).toBeNull();
+      expect(frames).toBeArrayOfSize(1);
+      expect(frames[0].status).toBe("SUCCESS");
+      expect(frames[0].result?.jikiObject.value).toBe(true);
+    });
+
+    test("not not False (double negation)", () => {
+      const { frames, error } = interpret("not not False");
+      expect(error).toBeNull();
+      expect(frames).toBeArrayOfSize(1);
+      expect(frames[0].status).toBe("SUCCESS");
+      expect(frames[0].result?.jikiObject.value).toBe(false);
+    });
+  });
+
+  describe("NOT with truthiness (enabled)", () => {
+    test("not 0 should return True", () => {
+      const { frames, error } = interpret("not 0", "test.py", { allowTruthiness: true });
+      expect(error).toBeNull();
+      expect(frames).toBeArrayOfSize(1);
+      expect(frames[0].status).toBe("SUCCESS");
+      expect(frames[0].result?.jikiObject.value).toBe(true);
+    });
+
+    test("not 1 should return False", () => {
+      const { frames, error } = interpret("not 1", "test.py", { allowTruthiness: true });
+      expect(error).toBeNull();
+      expect(frames).toBeArrayOfSize(1);
+      expect(frames[0].status).toBe("SUCCESS");
+      expect(frames[0].result?.jikiObject.value).toBe(false);
+    });
+
+    test('not "" should return True', () => {
+      const { frames, error } = interpret('not ""', "test.py", { allowTruthiness: true });
+      expect(error).toBeNull();
+      expect(frames).toBeArrayOfSize(1);
+      expect(frames[0].status).toBe("SUCCESS");
+      expect(frames[0].result?.jikiObject.value).toBe(true);
+    });
+
+    test('not "hello" should return False', () => {
+      const { frames, error } = interpret('not "hello"', "test.py", { allowTruthiness: true });
+      expect(error).toBeNull();
+      expect(frames).toBeArrayOfSize(1);
+      expect(frames[0].status).toBe("SUCCESS");
+      expect(frames[0].result?.jikiObject.value).toBe(false);
+    });
+
+    test("not None should return True", () => {
+      const { frames, error } = interpret("not None", "test.py", { allowTruthiness: true });
+      expect(error).toBeNull();
+      expect(frames).toBeArrayOfSize(1);
+      expect(frames[0].status).toBe("SUCCESS");
+      expect(frames[0].result?.jikiObject.value).toBe(true);
+    });
+  });
+
+  describe("NOT with truthiness disabled (default)", () => {
+    test("not 0 should raise TruthinessDisabled error", () => {
+      const { frames, error } = interpret("not 0");
+      expect(error).toBeNull();
+      expect(frames).toBeArrayOfSize(1);
+      expect(frames[0].status).toBe("ERROR");
+      expect(frames[0].error?.type).toBe("TruthinessDisabled");
+    });
+
+    test("not 1 should raise TruthinessDisabled error", () => {
+      const { frames, error } = interpret("not 1");
+      expect(error).toBeNull();
+      expect(frames).toBeArrayOfSize(1);
+      expect(frames[0].status).toBe("ERROR");
+      expect(frames[0].error?.type).toBe("TruthinessDisabled");
+    });
+
+    test('not "hello" should raise TruthinessDisabled error', () => {
+      const { frames, error } = interpret('not "hello"');
+      expect(error).toBeNull();
+      expect(frames).toBeArrayOfSize(1);
+      expect(frames[0].status).toBe("ERROR");
+      expect(frames[0].error?.type).toBe("TruthinessDisabled");
+    });
+  });
+
+  describe("NOT with complex expressions", () => {
+    test("not (True and False)", () => {
+      const { frames, error } = interpret("not (True and False)");
+      expect(error).toBeNull();
+      expect(frames).toBeArrayOfSize(1);
+      expect(frames[0].status).toBe("SUCCESS");
+      expect(frames[0].result?.jikiObject.value).toBe(true);
+    });
+
+    test("not (True or False)", () => {
+      const { frames, error } = interpret("not (True or False)");
+      expect(error).toBeNull();
+      expect(frames).toBeArrayOfSize(1);
+      expect(frames[0].status).toBe("SUCCESS");
+      expect(frames[0].result?.jikiObject.value).toBe(false);
+    });
+  });
   describe("basic negation", () => {
     test("negative integer", () => {
       const { frames, error } = interpret("-5");

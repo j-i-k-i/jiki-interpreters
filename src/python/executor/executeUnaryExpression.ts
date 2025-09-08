@@ -1,7 +1,7 @@
 import type { Executor } from "../executor";
 import type { UnaryExpression } from "../expression";
 import type { EvaluationResult } from "../evaluation-result";
-import { createPyObject, PyBoolean } from "../jikiObjects";
+import { createPyObject, PyBoolean, type JikiObject } from "../jikiObjects";
 import { RuntimeError } from "../executor";
 
 export function executeUnaryExpression(executor: Executor, expression: UnaryExpression): EvaluationResult {
@@ -16,14 +16,28 @@ export function executeUnaryExpression(executor: Executor, expression: UnaryExpr
   } as any;
 }
 
-function handleUnaryOperation(executor: Executor, expression: UnaryExpression, rightResult: EvaluationResult): any {
-  const right = rightResult.jikiObject.value;
+function handleUnaryOperation(
+  executor: Executor,
+  expression: UnaryExpression,
+  rightResult: EvaluationResult
+): JikiObject {
+  const rightObject = rightResult.jikiObject;
 
   switch (expression.operator.type) {
     case "MINUS":
-      return createPyObject(-right);
+      return createPyObject(-rightObject.value);
     case "NOT":
-      return new PyBoolean(!right);
+      // Check if truthiness is disabled and we have a non-boolean
+      if (!executor.languageFeatures.allowTruthiness && rightObject.type !== "boolean") {
+        throw new RuntimeError(
+          `TruthinessDisabled: value: ${rightObject.type}`,
+          expression.location,
+          "TruthinessDisabled"
+        );
+      }
+
+      // Apply Python's truthiness rules
+      return new PyBoolean(!isTruthy(rightObject));
     default:
       throw new RuntimeError(
         `Unsupported unary operator: ${expression.operator.type}`,
@@ -31,4 +45,20 @@ function handleUnaryOperation(executor: Executor, expression: UnaryExpression, r
         "InvalidUnaryExpression"
       );
   }
+}
+
+// Python truthiness rules
+function isTruthy(obj: JikiObject): boolean {
+  const value = obj.value;
+  const type = obj.type;
+
+  // Python falsy values: False, None, 0, 0.0, "", [], {}, set()
+  if (type === "boolean") return value as boolean;
+  if (type === "none") return false;
+  if (type === "number") return value !== 0;
+  if (type === "string") return (value as string).length > 0;
+
+  // For now, we'll treat any other type as truthy
+  // This will be expanded when we add lists, dicts, etc.
+  return true;
 }

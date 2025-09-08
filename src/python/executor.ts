@@ -14,6 +14,7 @@ import { ExpressionStatement, AssignmentStatement, PrintStatement, IfStatement, 
 import type { EvaluationResult } from "./evaluation-result";
 import { createPyObject, type JikiObject } from "./jikiObjects";
 import type { Frame, FrameExecutionStatus } from "../shared/frames";
+import type { LanguageFeatures } from "./interfaces";
 import cloneDeep from "lodash.clonedeep";
 
 // Import individual executors
@@ -32,7 +33,8 @@ export type RuntimeErrorType =
   | "InvalidUnaryExpression"
   | "UndefinedVariable"
   | "UnsupportedOperation"
-  | "TypeError";
+  | "TypeError"
+  | "TruthinessDisabled";
 
 export class RuntimeError extends Error {
   public category: string = "RuntimeError";
@@ -60,9 +62,18 @@ export class Executor {
   private time: number = 0;
   private timePerFrame: number = 0.01;
   public environment: Environment;
+  public languageFeatures: LanguageFeatures;
 
-  constructor(private readonly sourceCode: string) {
+  constructor(
+    private readonly sourceCode: string,
+    languageFeatures?: LanguageFeatures
+  ) {
     this.environment = new Environment();
+    this.languageFeatures = {
+      allowTruthiness: false, // Default to false for educational purposes
+      allowTypeCoercion: false,
+      ...languageFeatures,
+    };
   }
 
   public execute(statements: Statement[]): ExecutorResult {
@@ -224,6 +235,13 @@ export class Executor {
           return `Assignment: ${(result as any).name} = ${result.jikiObject.toString()}`;
 
         case "ExpressionStatement":
+          // Check if the expression is a unary NOT operation
+          const expr = (result as any).expression;
+          if (expr?.type === "UnaryExpression" && expr?.operator?.type === "NOT") {
+            const operandValue = expr.right?.jikiObject?.toString() || "value";
+            const resultValue = result.jikiObject.toString();
+            return `Applying 'not' operator to ${operandValue}, result: ${resultValue}`;
+          }
           return `Evaluating expression: ${result.jikiObject.toString()}`;
 
         default:
@@ -236,6 +254,20 @@ export class Executor {
 
   public getVariables(): Record<string, JikiObject> {
     return this.environment.getAllVariables();
+  }
+
+  public verifyBoolean(value: JikiObject, location: Location): void {
+    // If truthiness is allowed, any value is acceptable
+    if (this.languageFeatures.allowTruthiness) {
+      return;
+    }
+
+    // If truthiness is disabled, only boolean values are allowed
+    if (value.type !== "boolean") {
+      this.error("TruthinessDisabled", location, {
+        value: value.type,
+      });
+    }
   }
 
   public error(type: RuntimeErrorType, location: Location, context?: any): never {
