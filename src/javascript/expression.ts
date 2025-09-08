@@ -82,3 +82,17 @@ export class AssignmentExpression extends Expression {
     return [this.value];
   }
 }
+
+export class UpdateExpression extends Expression {
+  constructor(
+    public operator: Token, // INCREMENT or DECREMENT
+    public operand: IdentifierExpression,
+    public prefix: boolean, // true for ++i, false for i++
+    public location: Location
+  ) {
+    super("UpdateExpression");
+  }
+  public children() {
+    return [this.operand];
+  }
+}

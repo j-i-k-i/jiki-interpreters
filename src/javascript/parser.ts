@@ -7,6 +7,7 @@ import {
   GroupingExpression,
   IdentifierExpression,
   AssignmentExpression,
+  UpdateExpression,
 } from "./expression";
 import { Location, Span } from "../shared/location";
 import { Scanner } from "./scanner";
@@ -172,7 +173,7 @@ export class Parser {
     this.consume("LEFT_PAREN", "MissingLeftParenthesisAfterIf"); // Reuse error type for now
 
     // Save the oneStatementPerLine setting and temporarily disable it
-    // inside for loop parentheses
+    // inside for loop parentheses since semicolons there are part of the for syntax
     const savedOneStatementPerLine = this.languageFeatures.oneStatementPerLine;
     this.languageFeatures.oneStatementPerLine = false;
 
@@ -309,13 +310,38 @@ export class Parser {
   }
 
   private unary(): Expression {
+    // Handle prefix increment/decrement
+    if (this.match("INCREMENT", "DECREMENT")) {
+      const operator = this.previous();
+      const operand = this.unary();
+      if (!(operand instanceof IdentifierExpression)) {
+        this.error("InvalidAssignmentTargetExpression", operator.location);
+      }
+      return new UpdateExpression(operator, operand as IdentifierExpression, true, Location.between(operator, operand));
+    }
+
     if (this.match("MINUS", "PLUS", "NOT")) {
       const operator = this.previous();
       const right = this.unary();
       return new UnaryExpression(operator, right, Location.between(operator, right));
     }
 
-    return this.primary();
+    return this.postfix();
+  }
+
+  private postfix(): Expression {
+    let expr = this.primary();
+
+    // Handle postfix increment/decrement
+    while (this.match("INCREMENT", "DECREMENT")) {
+      const operator = this.previous();
+      if (!(expr instanceof IdentifierExpression)) {
+        this.error("InvalidAssignmentTargetExpression", operator.location);
+      }
+      expr = new UpdateExpression(operator, expr as IdentifierExpression, false, Location.between(expr, operator));
+    }
+
+    return expr;
   }
 
   private primary(): Expression {

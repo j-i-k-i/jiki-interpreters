@@ -9,6 +9,7 @@ import {
   GroupingExpression,
   IdentifierExpression,
   AssignmentExpression,
+  UpdateExpression,
 } from "./expression";
 import { Location } from "../shared/location";
 import type { Statement } from "./statement";
@@ -27,6 +28,7 @@ import { executeBinaryExpression } from "./executor/executeBinaryExpression";
 import { executeUnaryExpression } from "./executor/executeUnaryExpression";
 import { executeGroupingExpression } from "./executor/executeGroupingExpression";
 import { executeIdentifierExpression } from "./executor/executeIdentifierExpression";
+import { executeUpdateExpression } from "./executor/executeUpdateExpression";
 import { executeBlockStatement } from "./executor/executeBlockStatement";
 import { executeExpressionStatement } from "./executor/executeExpressionStatement";
 import { executeVariableDeclaration } from "./executor/executeVariableDeclaration";
@@ -169,6 +171,10 @@ export class Executor {
 
     if (expression instanceof AssignmentExpression) {
       return executeAssignmentExpression(this, expression);
+    }
+
+    if (expression instanceof UpdateExpression) {
+      return executeUpdateExpression(this, expression);
     }
 
     throw new RuntimeError(
