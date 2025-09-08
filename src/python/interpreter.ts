@@ -13,8 +13,8 @@ export type InterpretResult = {
 
 export function interpret(
   sourceCode: string,
-  fileName: string = "python-script",
-  languageFeatures?: LanguageFeatures
+  languageFeatures?: LanguageFeatures,
+  fileName: string = "python-script"
 ): InterpretResult {
   try {
     // Parse the source code (compilation step)

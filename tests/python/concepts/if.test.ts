@@ -109,7 +109,7 @@ if True:
     // Check that there's an error frame
     const errorFrame = frames.find(f => f.status === "ERROR");
     expect(errorFrame).toBeTruthy();
-    expect(errorFrame?.error?.message).toContain("boolean");
+    expect(errorFrame?.error?.message).toContain("TruthinessDisabled");
   });
 
   test("generates proper frame descriptions", () => {

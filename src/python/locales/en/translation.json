@@ -18,6 +18,7 @@
     "runtime": {
       "InvalidBinaryExpression": "Invalid binary operation between these values.",
       "InvalidUnaryExpression": "Invalid unary operation on this value.",
+      "TruthinessDisabled": "Cannot use {{value}} as a boolean value. Only boolean values are allowed in conditions when truthiness is disabled.",
       "UndefinedVariable": "Undefined variable referenced in code.",
       "UnsupportedOperation": "This operation is not supported."
     }

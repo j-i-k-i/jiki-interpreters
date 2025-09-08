@@ -1,20 +1,36 @@
 import { Executor, RuntimeError } from "../executor";
 import { IfStatement } from "../statement";
 import { EvaluationResult } from "../evaluation-result";
-import { PyBoolean } from "../jikiObjects";
+import { PyBoolean, JikiObject } from "../jikiObjects";
 import { translate } from "../translator";
+
+// Python truthiness rules (same as in executeBinaryExpression)
+function isTruthy(obj: JikiObject): boolean {
+  const value = obj.value;
+  const type = obj.type;
+
+  // Python falsy values: False, None, 0, 0.0, "", [], {}, set()
+  if (type === "boolean") return value as boolean;
+  if (type === "none") return false;
+  if (type === "number") return value !== 0;
+  if (type === "string") return (value as string).length > 0;
+
+  // For now, we'll treat any other type as truthy
+  // This will be expanded when we add lists, dicts, etc.
+  return true;
+}
 
 export function executeIfStatement(executor: Executor, statement: IfStatement): EvaluationResult {
   // Evaluate the condition and generate a frame for it
   const conditionResult = executor.executeFrame(statement, () => {
     const result = executor.evaluate(statement.condition);
 
-    // Check if the result is a boolean (for now, we'll enforce booleans)
-    if (!(result.jikiObject instanceof PyBoolean)) {
+    // Check if truthiness is disabled and we have a non-boolean
+    if (!executor.languageFeatures.allowTruthiness && result.jikiObject.type !== "boolean") {
       throw new RuntimeError(
-        translate(`Condition must be a boolean, got ${result.jikiObject.type}`),
+        `TruthinessDisabled: value: ${result.jikiObject.type}`,
         statement.condition.location,
-        "TypeError"
+        "TruthinessDisabled"
       );
     }
 
@@ -25,8 +41,8 @@ export function executeIfStatement(executor: Executor, statement: IfStatement): 
     };
   });
 
-  // Check the condition value and execute the appropriate branch
-  const conditionValue = (conditionResult.jikiObject as PyBoolean).value;
+  // Check the condition value using truthiness rules
+  const conditionValue = isTruthy(conditionResult.jikiObject);
 
   if (conditionValue) {
     // Execute the then branch

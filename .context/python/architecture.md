@@ -57,8 +57,11 @@ Parse errors with Python syntax context and runtime errors including undefined v
 
 **Numbers**: Integer/float distinction, scientific notation, division behavior
 **Strings**: Single/double/triple quotes, escape sequences, Unicode support
-**Boolean Operations**: Full support for `not` operator with truthiness rules
-**Language Features**: Configurable truthiness (`allowTruthiness`) and type coercion (`allowTypeCoercion`) for educational purposes
+**Boolean Operations**: Full support for `not`, `and`, and `or` operators with Python truthiness rules
+**Language Features**:
+
+- `allowTruthiness` (default: false) - Controls whether non-boolean values can be used in boolean contexts (if statements, logical operators)
+- `allowTypeCoercion` (default: false) - Controls type coercion in operations (to be implemented)
 
 ## Extensibility
 
