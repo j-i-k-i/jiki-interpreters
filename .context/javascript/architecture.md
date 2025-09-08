@@ -53,6 +53,7 @@ Configurable language features:
 - `allowTruthiness`: Controls whether non-boolean values can be used in conditions (default: false)
 - `requireVariableInstantiation`: Controls whether variables must be initialized when declared (default: true)
 - `allowTypeCoercion`: Controls whether type coercion is allowed in operations (default: false)
+- `oneStatementPerLine`: Controls whether multiple statements are allowed on a single line (default: false)
 
 ### 8. Frame System
 

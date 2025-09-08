@@ -13,6 +13,7 @@
       "MissingRightParenthesisAfterIfCondition": "MissingRightParenthesisAfterIfCondition",
       "MissingSemicolon": "MissingSemicolon",
       "MissingVariableName": "MissingVariableName",
+      "MultipleStatementsPerLine": "MultipleStatementsPerLine: line: {{line}}",
       "UnexpectedRightBrace": "UnexpectedRightBrace",
       "UnknownCharacter": "Unknown character",
       "UnterminatedComment": "UnterminatedComment",

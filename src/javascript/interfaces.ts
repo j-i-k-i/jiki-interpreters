@@ -5,4 +5,5 @@ export interface LanguageFeatures {
   allowTruthiness?: boolean;
   requireVariableInstantiation?: boolean;
   allowTypeCoercion?: boolean;
+  oneStatementPerLine?: boolean;
 }

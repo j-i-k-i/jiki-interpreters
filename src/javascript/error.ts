@@ -13,6 +13,7 @@ export type SyntaxErrorType =
   | "MissingRightParenthesisAfterIfCondition"
   | "MissingSemicolon"
   | "MissingVariableName"
+  | "MultipleStatementsPerLine"
   | "UnexpectedRightBrace"
   | "UnknownCharacter"
   | "UnterminatedComment"

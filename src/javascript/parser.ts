@@ -73,6 +73,12 @@ export class Parser {
         this.error("UnexpectedRightBrace", this.peek().location);
       }
 
+      // Handle empty statement (just a semicolon)
+      if (this.match("SEMICOLON")) {
+        // Empty statement - return null to skip it
+        return null;
+      }
+
       // Handle expression statements
       const expr = this.expression();
       const semicolonToken = this.consumeSemicolon();
@@ -318,7 +324,35 @@ export class Parser {
 
   private consumeSemicolon(): Token {
     if (this.match("SEMICOLON")) {
-      return this.previous();
+      const semicolon = this.previous();
+
+      // Check oneStatementPerLine: semicolon must be followed by EOL, EOF, or RIGHT_BRACE
+      if (this.languageFeatures.oneStatementPerLine && !this.isAtEnd()) {
+        // Skip any comments after the semicolon
+        let nextIndex = this.current;
+        while (
+          nextIndex < this.tokens.length &&
+          (this.tokens[nextIndex].type === "LINE_COMMENT" || this.tokens[nextIndex].type === "BLOCK_COMMENT")
+        ) {
+          nextIndex++;
+        }
+
+        // Check the next non-comment token
+        if (nextIndex < this.tokens.length) {
+          const nextToken = this.tokens[nextIndex];
+          // Semicolon must be followed by newline, EOF, or closing brace
+          if (
+            nextToken.type !== "EOL" &&
+            nextToken.type !== "EOF" &&
+            nextToken.type !== "RIGHT_BRACE" &&
+            nextToken.location.line === semicolon.location.line
+          ) {
+            throw this.error("MultipleStatementsPerLine", nextToken.location);
+          }
+        }
+      }
+
+      return semicolon;
     }
     if (!this.isAtEnd()) {
       // In JavaScript, semicolons are often optional, but for simplicity we'll require them for now
