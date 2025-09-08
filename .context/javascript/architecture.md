@@ -23,7 +23,7 @@ Supports single/two-character tokens, literals, keywords, and identifiers.
 
 Builds an Abstract Syntax Tree (AST) from tokens using recursive descent parsing.
 
-**AST Nodes**: Literals, binary/unary expressions, grouping, identifiers, assignments, expression statements, variable declarations, block statements, if statements.
+**AST Nodes**: Literals, binary/unary expressions, grouping, identifiers, assignments, expression statements, variable declarations, block statements, if statements, for statements, while statements.
 
 Standard operator precedence from grouping through assignment.
 
@@ -58,6 +58,23 @@ Configurable language features:
 ### 8. Frame System
 
 Uses unified frame system with JavaScript-specific extensions for educational descriptions.
+
+## Loop Constructs
+
+### For Loops
+
+- Full C-style for loop with init, condition, and update expressions
+- Creates new scope for loop variables
+- Each component (init, condition, update) generates its own frame
+- Supports all variations: empty init, missing condition, no update
+
+### While Loops
+
+- Standard while loop with condition expression
+- Creates new scope for loop body
+- Condition evaluated before each iteration
+- Generates frame for condition evaluation
+- Respects truthiness language feature flag
 
 ## Error Handling
 

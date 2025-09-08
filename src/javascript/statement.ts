@@ -100,3 +100,18 @@ export class ForStatement extends Statement {
     return children;
   }
 }
+
+export class WhileStatement extends Statement {
+  constructor(
+    public condition: Expression,
+    public body: Statement,
+    public location: Location
+  ) {
+    super("WhileStatement");
+  }
+  public children() {
+    const children: Expression[] = [this.condition];
+    children.push(...this.body.children());
+    return children;
+  }
+}

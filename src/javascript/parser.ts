@@ -18,6 +18,7 @@ import {
   BlockStatement,
   IfStatement,
   ForStatement,
+  WhileStatement,
 } from "./statement";
 import { type Token, type TokenType } from "./token";
 import { translate } from "./translator";
@@ -74,6 +75,11 @@ export class Parser {
       // Handle for loops
       if (this.match("FOR")) {
         return this.forStatement();
+      }
+
+      // Handle while loops
+      if (this.match("WHILE")) {
+        return this.whileStatement();
       }
 
       // Handle block statements
@@ -166,6 +172,19 @@ export class Parser {
 
     const endToken = elseBranch || thenBranch;
     return new IfStatement(condition, thenBranch!, elseBranch, Location.between(ifToken, endToken!));
+  }
+
+  private whileStatement(): Statement {
+    const whileToken = this.previous();
+    this.consume("LEFT_PAREN", "MissingLeftParenthesisAfterIf"); // Reuse error type for now
+
+    // Parse condition
+    const condition = this.expression();
+    this.consume("RIGHT_PAREN", "MissingRightParenthesisAfterExpression");
+
+    // Parse body
+    const body = this.statement();
+    return new WhileStatement(condition, body!, Location.between(whileToken, body!));
   }
 
   private forStatement(): Statement {
