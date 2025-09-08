@@ -29,6 +29,7 @@ export type SyntaxErrorType =
   | "ParseError"
   | "UnexpectedCharacter"
   | "UnexpectedIndentation"
+  | "UnimplementedToken"
   | "UnknownCharacter"
   | "UnterminatedComment"
   | "UnterminatedString";

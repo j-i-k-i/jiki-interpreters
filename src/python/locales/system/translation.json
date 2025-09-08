@@ -10,6 +10,7 @@
       "ParseError": "ParseError",
       "UnexpectedCharacter": "UnexpectedCharacter",
       "UnexpectedIndentation": "UnexpectedIndentation",
+      "UnimplementedToken": "UnimplementedToken: token: {{tokenType}}: lexeme: {{lexeme}}",
       "UnknownCharacter": "UnknownCharacter: lexeme: {{lexeme}}",
       "UnterminatedComment": "UnterminatedComment",
       "UnterminatedString": "UnterminatedString"

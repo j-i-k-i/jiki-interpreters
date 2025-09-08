@@ -181,6 +181,62 @@ export class Scanner {
 
   private addToken(type: TokenType, literal?: any): void {
     const text = this.sourceCode.substring(this.start, this.current);
+
+    // Check for unimplemented tokens
+    const unimplementedTokens: TokenType[] = [
+      // Statement keywords
+      "AS",
+      "ASSERT",
+      "ASYNC",
+      "AWAIT",
+      "BREAK",
+      "CLASS",
+      "CONTINUE",
+      "DEF",
+      "DEL",
+      "EXCEPT",
+      "FINALLY",
+      "FOR",
+      "FROM",
+      "GLOBAL",
+      "IMPORT",
+      "IN",
+      "IS",
+      "LAMBDA",
+      "NONLOCAL",
+      // "NOT", - Already implemented as unary operator
+      "PASS",
+      "RAISE",
+      "RETURN",
+      "TRY",
+      "WHILE",
+      "WITH",
+      "YIELD",
+      // Operators
+      "COMMA",
+      "DOT",
+      // "PERCENT", - Already implemented as binary operator
+      "SEMICOLON",
+      "LEFT_BRACKET",
+      "RIGHT_BRACKET",
+    ];
+
+    if (unimplementedTokens.includes(type)) {
+      throw new SyntaxError(
+        "UnimplementedToken",
+        translate("error.syntax.UnimplementedToken", {
+          tokenType: type,
+          lexeme: text,
+        }),
+        Location.fromLineOffset(this.start, this.current, this.line, this.lineOffset),
+        this.fileName,
+        {
+          tokenType: type,
+          lexeme: text,
+        }
+      );
+    }
+
     this.tokens.push({
       type,
       lexeme: text,
