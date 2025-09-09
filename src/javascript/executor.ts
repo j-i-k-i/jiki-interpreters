@@ -153,7 +153,8 @@ export class Executor {
     } else if (statement instanceof VariableDeclaration) {
       result = this.executeFrame(statement, () => executeVariableDeclaration(this, statement));
     } else if (statement instanceof BlockStatement) {
-      result = this.executeFrame(statement, () => executeBlockStatement(this, statement));
+      // Block statements should not generate frames, just execute their contents
+      executeBlockStatement(this, statement);
     } else if (statement instanceof IfStatement) {
       executeIfStatement(this, statement);
     } else if (statement instanceof ForStatement) {

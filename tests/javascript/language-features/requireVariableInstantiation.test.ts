@@ -122,7 +122,7 @@ describe("requireVariableInstantiation language feature", () => {
 
       const result = interpret(code, languageFeatures);
       expect(result.error).toBeNull();
-      expect(result.frames.length).toBe(3); // block, declaration, assignment
+      expect(result.frames.length).toBe(2); // declaration, assignment
     });
 
     test("should work with shadowing and uninitialized variables", () => {
@@ -140,7 +140,7 @@ describe("requireVariableInstantiation language feature", () => {
 
       const result = interpret(code, languageFeatures);
       expect(result.error).toBeNull();
-      expect(result.frames.length).toBe(4); // outer declaration, block, inner declaration, assignment
+      expect(result.frames.length).toBe(3); // outer declaration, inner declaration, assignment
     });
 
     test("should work in if statements", () => {

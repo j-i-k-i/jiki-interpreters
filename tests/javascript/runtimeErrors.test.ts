@@ -76,11 +76,10 @@ describe("Runtime Errors", () => {
     test("variable out of scope", () => {
       const code = "{ let x = 5; } x;";
       const { frames } = interpret(code);
-      expect(frames).toBeArrayOfSize(3);
+      expect(frames).toBeArrayOfSize(2);
       expect(frames[0].status).toBe("SUCCESS"); // Variable declaration inside block
-      expect(frames[1].status).toBe("SUCCESS"); // Block statement
-      expectFrameToBeError(frames[2], "x;", "VariableNotDeclared");
-      expect(frames[2].error!.message).toBe("VariableNotDeclared: name: x");
+      expectFrameToBeError(frames[1], "x;", "VariableNotDeclared");
+      expect(frames[1].error!.message).toBe("VariableNotDeclared: name: x");
     });
 
     test("nested block undefined variable", () => {
@@ -175,11 +174,10 @@ describe("Runtime Errors", () => {
     test("variable out of scope assignment", () => {
       const code = "{ let x = 5; } x = 10;";
       const { frames } = interpret(code);
-      expect(frames).toBeArrayOfSize(3);
+      expect(frames).toBeArrayOfSize(2);
       expect(frames[0].status).toBe("SUCCESS"); // Variable declaration inside block
-      expect(frames[1].status).toBe("SUCCESS"); // Block statement
-      expectFrameToBeError(frames[2], "x = 10;", "VariableNotDeclared");
-      expect(frames[2].error!.message).toBe("VariableNotDeclared: name: x");
+      expectFrameToBeError(frames[1], "x = 10;", "VariableNotDeclared");
+      expect(frames[1].error!.message).toBe("VariableNotDeclared: name: x");
     });
   });
 
@@ -216,10 +214,9 @@ describe("Runtime Errors", () => {
       test("different variable names should work", () => {
         const code = "let x = 5; { let y = 10; }";
         const { frames } = interpret(code);
-        expect(frames).toBeArrayOfSize(3);
+        expect(frames).toBeArrayOfSize(2);
         expect(frames[0].status).toBe("SUCCESS"); // let x = 5
         expect(frames[1].status).toBe("SUCCESS"); // let y = 10
-        expect(frames[2].status).toBe("SUCCESS"); // block
       });
 
       test("variable state after block with shadowing error", () => {
@@ -240,11 +237,10 @@ describe("Runtime Errors", () => {
       test("simple variable shadowing allowed in block", () => {
         const code = "let x = 5; { let x = 10; x; }";
         const { frames } = interpret(code, { allowShadowing: true });
-        expect(frames).toBeArrayOfSize(4);
+        expect(frames).toBeArrayOfSize(3);
         expect(frames[0].status).toBe("SUCCESS"); // let x = 5
         expect(frames[1].status).toBe("SUCCESS"); // let x = 10 (shadowing allowed)
         expect(frames[2].status).toBe("SUCCESS"); // x; (should be 10)
-        expect(frames[3].status).toBe("SUCCESS"); // block
 
         // Verify inner x has value 10
         expect(frames[2].variables.x.value).toBe(10);
@@ -253,52 +249,48 @@ describe("Runtime Errors", () => {
       test("nested shadowing allowed", () => {
         const code = "let x = 1; { let x = 2; { let x = 3; x; } x; } x;";
         const { frames } = interpret(code, { allowShadowing: true });
-        expect(frames).toBeArrayOfSize(8);
+        expect(frames).toBeArrayOfSize(6);
         expect(frames[0].status).toBe("SUCCESS"); // let x = 1
         expect(frames[1].status).toBe("SUCCESS"); // let x = 2
         expect(frames[2].status).toBe("SUCCESS"); // let x = 3
         expect(frames[3].status).toBe("SUCCESS"); // x; (should be 3)
-        expect(frames[4].status).toBe("SUCCESS"); // inner block
-        expect(frames[5].status).toBe("SUCCESS"); // x; (should be 2)
-        expect(frames[6].status).toBe("SUCCESS"); // outer block
-        expect(frames[7].status).toBe("SUCCESS"); // x; (should be 1)
+        expect(frames[4].status).toBe("SUCCESS"); // x; (should be 2)
+        expect(frames[5].status).toBe("SUCCESS"); // x; (should be 1)
 
         // Verify variables at different levels
         expect(frames[3].variables.x.value).toBe(3); // innermost
-        expect(frames[5].variables.x.value).toBe(2); // middle
-        expect(frames[7].variables.x.value).toBe(1); // outer
+        expect(frames[4].variables.x.value).toBe(2); // middle
+        expect(frames[5].variables.x.value).toBe(1); // outer
       });
 
       test("variable state restoration after shadowed block", () => {
         const code = "let x = 5; { let x = 10; } x;";
         const { frames } = interpret(code, { allowShadowing: true });
-        expect(frames).toBeArrayOfSize(4);
+        expect(frames).toBeArrayOfSize(3);
         expect(frames[0].status).toBe("SUCCESS"); // let x = 5
         expect(frames[1].status).toBe("SUCCESS"); // let x = 10 (shadowing)
-        expect(frames[2].status).toBe("SUCCESS"); // block
-        expect(frames[3].status).toBe("SUCCESS"); // x; after block
+        expect(frames[2].status).toBe("SUCCESS"); // x; after block
 
         // Verify original variable is restored after block
         expect(frames[0].variables.x.value).toBe(5);
         expect(frames[1].variables.x.value).toBe(10); // Inside block
-        expect(frames[3].variables.x.value).toBe(5); // After block, back to original
+        expect(frames[2].variables.x.value).toBe(5); // After block, back to original
       });
 
       test("assignment to shadowed variable doesn't affect outer", () => {
         const code = "let x = 5; { let x = 10; x = 20; } x;";
         const { frames } = interpret(code, { allowShadowing: true });
-        expect(frames).toBeArrayOfSize(5);
+        expect(frames).toBeArrayOfSize(4);
         expect(frames[0].status).toBe("SUCCESS"); // let x = 5
         expect(frames[1].status).toBe("SUCCESS"); // let x = 10
         expect(frames[2].status).toBe("SUCCESS"); // x = 20
-        expect(frames[3].status).toBe("SUCCESS"); // block
-        expect(frames[4].status).toBe("SUCCESS"); // x; after block
+        expect(frames[3].status).toBe("SUCCESS"); // x; after block
 
         // Verify original variable is unchanged
         expect(frames[0].variables.x.value).toBe(5);
         expect(frames[1].variables.x.value).toBe(10); // Initial shadow value
         expect(frames[2].variables.x.value).toBe(20); // Modified shadow value
-        expect(frames[4].variables.x.value).toBe(5); // Original restored
+        expect(frames[3].variables.x.value).toBe(5); // Original restored
       });
     });
 
@@ -376,12 +368,11 @@ describe("Runtime Errors", () => {
     test("shadowing allowed in if body", () => {
       const code = "let x = 5; if (true) { let x = 10; x; }";
       const { frames } = interpret(code, { allowShadowing: true });
-      expect(frames).toBeArrayOfSize(5);
+      expect(frames).toBeArrayOfSize(4);
       expect(frames[0].status).toBe("SUCCESS"); // let x = 5
       expect(frames[1].status).toBe("SUCCESS"); // if condition
       expect(frames[2].status).toBe("SUCCESS"); // let x = 10 (allowed)
       expect(frames[3].status).toBe("SUCCESS"); // x; (should be 10)
-      expect(frames[4].status).toBe("SUCCESS"); // block
       expect(frames[3].variables.x.value).toBe(10);
     });
   });

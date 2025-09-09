@@ -214,10 +214,9 @@ describe("Template Literals", () => {
         { allowTruthiness: true }
       );
       expect(result.error).toBeNull();
-      expect(result.frames).toHaveLength(3);
+      expect(result.frames).toHaveLength(2);
       expect(result.frames[0].status).toBe("SUCCESS");
       expect(result.frames[1].status).toBe("SUCCESS");
-      expect(result.frames[2].status).toBe("SUCCESS");
       expect(result.frames[1].variables.x.value).toBe(1);
     });
 

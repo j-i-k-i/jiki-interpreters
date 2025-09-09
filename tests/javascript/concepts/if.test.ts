@@ -5,14 +5,14 @@ describe("if statement concept", () => {
     test("parses if statement correctly", () => {
       const { frames, error } = interpret("if (true) { let x = 5; }");
       expect(error).toBeNull();
-      expect(frames).toBeArrayOfSize(3); // if condition frame + var decl frame + block frame
+      expect(frames).toBeArrayOfSize(2); // if condition frame + var decl frame
       expect(frames[0].context?.type).toBe("IfStatement");
     });
 
     test("parses if-else statement correctly", () => {
       const { frames, error } = interpret("if (false) { let x = 5; } else { let y = 10; }");
       expect(error).toBeNull();
-      expect(frames).toBeArrayOfSize(3); // if condition frame + var decl frame + block frame
+      expect(frames).toBeArrayOfSize(2); // if condition frame + var decl frame
       expect(frames[0].context?.type).toBe("IfStatement");
     });
 
@@ -28,7 +28,7 @@ describe("if statement concept", () => {
     test("executes then branch when condition is true", () => {
       const { frames, error } = interpret("let x = 1; if (true) { x = 5; }");
       expect(error).toBeNull();
-      expect(frames).toBeArrayOfSize(4); // var decl + if condition + block + assignment
+      expect(frames).toBeArrayOfSize(3); // var decl + if condition + assignment
 
       // Check final variable value
       const finalFrame = frames[frames.length - 1];
@@ -48,7 +48,7 @@ describe("if statement concept", () => {
     test("executes else branch when condition is false", () => {
       const { frames, error } = interpret("let x = 1; if (false) { x = 5; } else { x = 10; }");
       expect(error).toBeNull();
-      expect(frames).toBeArrayOfSize(4); // var decl + if condition + else block + assignment
+      expect(frames).toBeArrayOfSize(3); // var decl + if condition + assignment
 
       // Check variable value from else branch
       const finalFrame = frames[frames.length - 1];
@@ -58,7 +58,7 @@ describe("if statement concept", () => {
     test("works with boolean conditions", () => {
       const { frames, error } = interpret("let x = 5; if (true) { x = 100; }");
       expect(error).toBeNull();
-      expect(frames).toBeArrayOfSize(4); // var decl + if condition + assignment + block
+      expect(frames).toBeArrayOfSize(3); // var decl + if condition + assignment
 
       const finalFrame = frames[frames.length - 1];
       expect(finalFrame.variables.x.value).toBe(100);
@@ -67,11 +67,11 @@ describe("if statement concept", () => {
     test("works with logical operators", () => {
       const { frames, error } = interpret("let a = true; let b = false; if (a && !b) { let result = 1; }");
       expect(error).toBeNull();
-      expect(frames).toBeArrayOfSize(5); // 2 var decls + if condition + inner var decl + block
+      expect(frames).toBeArrayOfSize(4); // 2 var decls + if condition + inner var decl
 
-      // result variable should not exist in final frame (outside the block)
+      // result variable should exist in the last frame (inside the block)
       const finalFrame = frames[frames.length - 1];
-      expect(finalFrame.variables.result).toBeUndefined();
+      expect(finalFrame.variables.result).toBeTruthy();
     });
 
     test("simple nested if statements work correctly", () => {
@@ -92,9 +92,10 @@ describe("if statement concept", () => {
       `);
       expect(error).toBeNull();
 
-      // blockVar should not exist in final frame (outside the block)
+      // blockVar should exist in the declaration frame (inside the block)
       const finalFrame = frames[frames.length - 1];
-      expect(finalFrame.variables.blockVar).toBeUndefined();
+      expect(finalFrame.variables.blockVar).toBeTruthy();
+      expect(finalFrame.variables.blockVar.value).toBe(42);
     });
 
     test("variables from outer scope accessible in if block", () => {
@@ -236,7 +237,8 @@ describe("if statement concept", () => {
 
       const finalFrame = frames[frames.length - 1];
       expect(finalFrame.variables.blockVar1).toBeUndefined();
-      expect(finalFrame.variables.blockVar2).toBeUndefined();
+      expect(finalFrame.variables.blockVar2).toBeTruthy();
+      expect(finalFrame.variables.blockVar2.value).toBe(2);
       expect(finalFrame.variables.blockVar3).toBeUndefined();
     });
 

@@ -5,51 +5,49 @@ describe("blocks concept", () => {
     test("parses empty block correctly", () => {
       const { frames, error } = interpret("{}");
       expect(error).toBeNull();
-      expect(frames).toBeArrayOfSize(1);
-      expect(frames[0].context?.type).toBe("BlockStatement");
+      expect(frames).toBeArrayOfSize(0); // Empty blocks generate no frames
     });
 
     test("parses block with single statement", () => {
       const { frames, error } = interpret("{ 42; }");
       expect(error).toBeNull();
-      expect(frames).toBeArrayOfSize(2); // Block frame + expression frame
+      expect(frames).toBeArrayOfSize(1); // Only expression frame, no block frame
       expect(frames[0].context?.type).toBe("ExpressionStatement");
-      expect(frames[1].context?.type).toBe("BlockStatement");
     });
 
     test("parses block with multiple statements", () => {
       const { frames, error } = interpret("{ 1; 2; 3; }");
       expect(error).toBeNull();
-      expect(frames).toBeArrayOfSize(4); // 3 expression frames + block frame
+      expect(frames).toBeArrayOfSize(3); // 3 expression frames, no block frame
       expect(frames[0].context?.type).toBe("ExpressionStatement");
       expect(frames[1].context?.type).toBe("ExpressionStatement");
       expect(frames[2].context?.type).toBe("ExpressionStatement");
-      expect(frames[3].context?.type).toBe("BlockStatement");
     });
 
     test("parses nested blocks", () => {
       const { frames, error } = interpret("{ { 42; } }");
       expect(error).toBeNull();
-      expect(frames).toBeArrayOfSize(3); // Expression + inner block + outer block
+      expect(frames).toBeArrayOfSize(1); // Only expression frame, no block frames
       expect(frames[0].context?.type).toBe("ExpressionStatement");
-      expect(frames[1].context?.type).toBe("BlockStatement");
-      expect(frames[2].context?.type).toBe("BlockStatement");
     });
   });
 
   describe("scope management", () => {
     test("variables declared in block are scoped to that block", () => {
-      const { frames, error } = interpret("{ let innerVar = 42; }");
+      const { frames, error } = interpret("{ let innerVar = 42; } let afterBlock = 1;");
       expect(error).toBeNull();
 
       // Check that the variable exists during block execution
-      const variableFrame = frames.find(frame => frame.context?.type === "VariableDeclaration");
+      const variableFrame = frames.find(
+        frame => frame.context?.type === "VariableDeclaration" && frame.variables.innerVar
+      );
       expect(variableFrame).toBeTruthy();
       expect(variableFrame!.variables.innerVar).toBeTruthy();
 
-      // Check that the variable doesn't exist after block execution (in final frame)
-      const finalFrame = frames[frames.length - 1];
-      expect(finalFrame.variables.innerVar).toBeUndefined();
+      // Check that the variable doesn't exist after block execution
+      const afterBlockFrame = frames.find(frame => frame.variables.afterBlock);
+      expect(afterBlockFrame).toBeTruthy();
+      expect(afterBlockFrame!.variables.innerVar).toBeUndefined();
     });
 
     test("outer variables are accessible from inner blocks", () => {
@@ -107,14 +105,9 @@ describe("blocks concept", () => {
   });
 
   describe("educational descriptions", () => {
-    test("block statement has description", () => {
-      const { frames, error } = interpret("{ 42; }");
-      expect(error).toBeNull();
-
-      const blockFrame = frames.find(frame => frame.context?.type === "BlockStatement");
-      expect(blockFrame).toBeTruthy();
-      expect(blockFrame!.description).toBeTruthy();
-      expect(blockFrame!.description).toContain("block");
+    // Block statements no longer generate frames, so this test is removed
+    test.skip("block statement has description", () => {
+      // Blocks don't generate frames anymore - only their contents do
     });
 
     test("variable scoping is described in frames", () => {
