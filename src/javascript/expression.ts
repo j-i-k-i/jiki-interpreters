@@ -96,3 +96,15 @@ export class UpdateExpression extends Expression {
     return [this.operand];
   }
 }
+
+export class TemplateLiteralExpression extends Expression {
+  constructor(
+    public parts: (string | Expression)[], // Array of template parts (strings) and interpolations (expressions)
+    public location: Location
+  ) {
+    super("TemplateLiteralExpression");
+  }
+  public children() {
+    return this.parts.filter((part): part is Expression => typeof part !== "string");
+  }
+}

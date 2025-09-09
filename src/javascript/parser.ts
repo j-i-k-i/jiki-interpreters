@@ -8,6 +8,7 @@ import {
   IdentifierExpression,
   AssignmentExpression,
   UpdateExpression,
+  TemplateLiteralExpression,
 } from "./expression";
 import { Location, Span } from "../shared/location";
 import { Scanner } from "./scanner";
@@ -411,6 +412,10 @@ export class Parser {
       return new IdentifierExpression(this.previous(), this.previous().location);
     }
 
+    if (this.match("BACKTICK")) {
+      return this.parseTemplateLiteral();
+    }
+
     if (this.match("LEFT_PAREN")) {
       const lparen = this.previous();
       const expr = this.expression();
@@ -502,6 +507,30 @@ export class Parser {
 
       this.advance();
     }
+  }
+
+  private parseTemplateLiteral(): Expression {
+    const startToken = this.previous(); // The opening backtick
+    const parts: (string | Expression)[] = [];
+
+    while (!this.check("BACKTICK") && !this.isAtEnd()) {
+      if (this.match("TEMPLATE_LITERAL_TEXT")) {
+        parts.push(this.previous().literal as string);
+      } else if (this.match("DOLLAR_LEFT_BRACE")) {
+        // Parse the interpolated expression
+        const expr = this.expression();
+        this.consume("RIGHT_BRACE", "MissingRightBraceInTemplateLiteral");
+        parts.push(expr);
+      } else {
+        // Unexpected token in template literal
+        this.error("UnexpectedTokenInTemplateLiteral", this.peek().location);
+      }
+    }
+
+    this.consume("BACKTICK", "MissingBacktickToTerminateTemplateLiteral");
+    const endToken = this.previous();
+
+    return new TemplateLiteralExpression(parts, Location.between(startToken, endToken));
   }
 
   private error(type: SyntaxErrorType, location: Location, context?: any): never {

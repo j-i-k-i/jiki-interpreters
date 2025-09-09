@@ -4,11 +4,19 @@ import {
   EvaluationResultGroupingExpression,
   EvaluationResultUnaryExpression,
 } from "../evaluation-result";
-import { Expression, GroupingExpression, BinaryExpression, UnaryExpression } from "../expression";
+import type { EvaluationResultTemplateLiteralExpression } from "../executor/executeTemplateLiteralExpression";
+import {
+  Expression,
+  GroupingExpression,
+  BinaryExpression,
+  UnaryExpression,
+  TemplateLiteralExpression,
+} from "../expression";
 import { DescriptionContext } from "../../shared/frames";
 import { describeBinaryExpression } from "./describeBinaryExpression";
 import { describeGroupingExpression } from "./describeGroupingExpression";
 import { describeUnaryExpression } from "./describeUnaryExpression";
+import { describeTemplateLiteralExpression } from "./describeTemplateLiteralExpression";
 
 export function describeExpression(
   expression: Expression,
@@ -23,6 +31,9 @@ export function describeExpression(
   }
   if (expression instanceof UnaryExpression) {
     return describeUnaryExpression(expression, result as EvaluationResultUnaryExpression, context);
+  }
+  if (expression instanceof TemplateLiteralExpression) {
+    return describeTemplateLiteralExpression(expression, result as EvaluationResultTemplateLiteralExpression, context);
   }
 
   return [];

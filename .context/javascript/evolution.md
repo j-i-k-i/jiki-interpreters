@@ -2,6 +2,51 @@
 
 This document tracks the historical development and changes specific to the JavaScript interpreter.
 
+## Template Literals Implementation (January 2025)
+
+### Changes Made
+
+Added full support for JavaScript template literals (backtick strings with interpolation):
+
+**Features Added**:
+
+- Template literals with backticks `` `text` ``
+- String interpolation with `${expression}`
+- Multi-line template literals
+- Dollar sign literals (e.g., `` `Price: $100` ``)
+
+**Implementation Details**:
+
+1. **Scanner Updates** (`src/javascript/scanner.ts`):
+   - Removed `BACKTICK`, `DOLLAR_LEFT_BRACE`, and `TEMPLATE_LITERAL_TEXT` from unimplemented tokens
+   - Fixed infinite loop bug when dollar sign appears without interpolation
+   - Added logic to include standalone `$` characters in template text
+
+2. **Expression Class** (`src/javascript/expression.ts`):
+   - Added `TemplateLiteralExpression` class with `parts` array
+   - Parts can be strings (literal text) or Expressions (interpolations)
+
+3. **Parser Updates** (`src/javascript/parser.ts`):
+   - Added `parseTemplateLiteral()` method
+   - Integrated template literal parsing in `primary()` method
+   - Handles nested expressions within `${}` interpolations
+
+4. **Executor Module** (`src/javascript/executor/executeTemplateLiteralExpression.ts`):
+   - Evaluates each interpolated expression
+   - Converts all values to strings (following JavaScript semantics)
+   - Returns combined string result
+
+5. **Describers** (`src/javascript/describers/describeTemplateLiteralExpression.ts`):
+   - Describes evaluation of interpolated expressions
+   - Shows final combined string result
+
+**Known Limitations**:
+
+- Escape sequences in template literals not fully supported (e.g., `` \` ``)
+- Complex escape handling may need future refinement
+
+**Tests**: 24 out of 27 tests passing in `tests/javascript/template-literals.test.ts`
+
 ## Strict Equality Operators Implementation (January 2025)
 
 ### Changes Made

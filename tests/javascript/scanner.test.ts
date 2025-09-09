@@ -551,7 +551,6 @@ describe("JavaScript - Unimplemented Tokens", () => {
   describe("Unimplemented Operators", () => {
     const unimplementedOperators = [
       { code: "5 & 3", token: "&", type: "AMPERSAND" },
-      { code: "`template`", token: "`", type: "BACKTICK" },
       { code: "5 ^ 3", token: "^", type: "CARET" },
       { code: "obj: 1", token: ":", type: "COLON" },
       { code: "1, 2", token: ",", type: "COMMA" },

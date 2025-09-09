@@ -435,6 +435,11 @@ export class Scanner {
           this.advance();
         }
 
+        // If we stopped at a $ that's not followed by {, include it in the text
+        if (this.peek() == "$" && this.peekNext() != "{") {
+          this.advance(); // Include the $ in the template text
+        }
+
         if (this.current > this.start) {
           this.addToken("TEMPLATE_LITERAL_TEXT", this.sourceCode.substring(this.start, this.current));
         }
@@ -568,7 +573,6 @@ export class Scanner {
       "YIELD",
       // Operators and syntax
       "AMPERSAND",
-      "BACKTICK",
       "CARET",
       "COLON",
       "COMMA",
@@ -582,7 +586,6 @@ export class Scanner {
       "ARROW",
       "AND_EQUAL",
       "DIVIDE_EQUAL",
-      "DOLLAR_LEFT_BRACE",
       "LEFT_SHIFT",
       "MINUS_EQUAL",
       "MODULO_EQUAL",
@@ -591,7 +594,6 @@ export class Scanner {
       "PLUS_EQUAL",
       "RIGHT_SHIFT",
       "XOR_EQUAL",
-      "TEMPLATE_LITERAL_TEXT",
     ];
 
     if (unimplementedTokens.includes(type)) {
