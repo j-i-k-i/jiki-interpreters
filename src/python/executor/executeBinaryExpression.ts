@@ -31,41 +31,36 @@ function handleBinaryOperation(
   leftResult: EvaluationResult,
   rightResult: EvaluationResult
 ): JikiObject {
-  const left = leftResult.jikiObject.value;
-  const right = rightResult.jikiObject.value;
-
   switch (expression.operator.type) {
     // Arithmetic operations
     case "PLUS":
-      return createPyObject(left + right);
+      return handlePlusOperation(executor, expression, leftResult, rightResult);
     case "MINUS":
-      return createPyObject(left - right);
+      return handleMinusOperation(executor, expression, leftResult, rightResult);
     case "STAR":
-      return createPyObject(left * right);
+      return handleMultiplyOperation(executor, expression, leftResult, rightResult);
     case "SLASH":
-      return createPyObject(left / right);
+      return handleDivisionOperation(executor, expression, leftResult, rightResult);
     case "DOUBLE_SLASH":
-      // Floor division in Python
-      return createPyObject(Math.floor(left / right));
+      return handleFloorDivisionOperation(executor, expression, leftResult, rightResult);
     case "PERCENT":
-      return createPyObject(left % right);
+      return handleModuloOperation(executor, expression, leftResult, rightResult);
     case "DOUBLE_STAR":
-      // Power operator in Python
-      return createPyObject(Math.pow(left, right));
+      return handlePowerOperation(executor, expression, leftResult, rightResult);
 
     // Comparison operations
     case "GREATER":
-      return new PyBoolean(left > right);
+      return handleGreaterOperation(leftResult, rightResult);
     case "GREATER_EQUAL":
-      return new PyBoolean(left >= right);
+      return handleGreaterEqualOperation(leftResult, rightResult);
     case "LESS":
-      return new PyBoolean(left < right);
+      return handleLessOperation(leftResult, rightResult);
     case "LESS_EQUAL":
-      return new PyBoolean(left <= right);
+      return handleLessEqualOperation(leftResult, rightResult);
     case "EQUAL_EQUAL":
-      return new PyBoolean(left === right);
+      return handleEqualOperation(leftResult, rightResult);
     case "NOT_EQUAL":
-      return new PyBoolean(left !== right);
+      return handleNotEqualOperation(leftResult, rightResult);
 
     default:
       throw new RuntimeError(
@@ -175,5 +170,235 @@ function handleLogicalOperation(
       right: rightResult,
       jikiObject: rightObject,
     } as any;
+  }
+}
+
+// Arithmetic operation handlers
+function handlePlusOperation(
+  executor: Executor,
+  expression: BinaryExpression,
+  leftResult: EvaluationResult,
+  rightResult: EvaluationResult
+): JikiObject {
+  const left = leftResult.jikiObject.value;
+  const right = rightResult.jikiObject.value;
+  const leftType = leftResult.jikiObject.type;
+  const rightType = rightResult.jikiObject.type;
+
+  // Check for type coercion when disabled
+  if (!executor.languageFeatures.allowTypeCoercion) {
+    // Allow string concatenation (string + string)
+    if (leftType === "string" && rightType === "string") {
+      return createPyObject(left + right);
+    }
+    // Allow number addition (number + number)
+    if (leftType === "number" && rightType === "number") {
+      return createPyObject(left + right);
+    }
+    // Everything else is type coercion and should error
+    throw new RuntimeError(
+      `TypeCoercionNotAllowed: operator: ${expression.operator.lexeme}: left: ${leftType}: right: ${rightType}`,
+      expression.location,
+      "TypeCoercionNotAllowed"
+    );
+  }
+
+  // With type coercion enabled, Python still doesn't allow string + number
+  if ((leftType === "string" && rightType !== "string") || (leftType !== "string" && rightType === "string")) {
+    throw new RuntimeError(
+      `TypeCoercionNotAllowed: operator: ${expression.operator.lexeme}: left: ${leftType}: right: ${rightType}`,
+      expression.location,
+      "TypeCoercionNotAllowed"
+    );
+  }
+
+  return createPyObject(left + right);
+}
+
+function handleMinusOperation(
+  executor: Executor,
+  expression: BinaryExpression,
+  leftResult: EvaluationResult,
+  rightResult: EvaluationResult
+): JikiObject {
+  if (!executor.languageFeatures.allowTypeCoercion) {
+    verifyNumbersForArithmetic(executor, expression, leftResult, rightResult);
+  }
+
+  const left = leftResult.jikiObject.value;
+  const right = rightResult.jikiObject.value;
+  return createPyObject(left - right);
+}
+
+function handleMultiplyOperation(
+  executor: Executor,
+  expression: BinaryExpression,
+  leftResult: EvaluationResult,
+  rightResult: EvaluationResult
+): JikiObject {
+  const left = leftResult.jikiObject.value;
+  const right = rightResult.jikiObject.value;
+  const leftType = leftResult.jikiObject.type;
+  const rightType = rightResult.jikiObject.type;
+
+  if (!executor.languageFeatures.allowTypeCoercion) {
+    // For type coercion disabled, allow string * number and number * string (Python behavior)
+    if (leftType === "string" && rightType === "number") {
+      return createPyObject((left as string).repeat(right as number));
+    }
+    if (leftType === "number" && rightType === "string") {
+      return createPyObject((right as string).repeat(left as number));
+    }
+    // Allow number * number
+    if (leftType === "number" && rightType === "number") {
+      return createPyObject(left * right);
+    }
+    // Everything else is type coercion and should error
+    if (leftType !== "number") {
+      throw new RuntimeError(
+        `TypeCoercionNotAllowed: operator: ${expression.operator.lexeme}: left: ${leftType}`,
+        expression.location,
+        "TypeCoercionNotAllowed"
+      );
+    }
+    if (rightType !== "number") {
+      throw new RuntimeError(
+        `TypeCoercionNotAllowed: operator: ${expression.operator.lexeme}: right: ${rightType}`,
+        expression.location,
+        "TypeCoercionNotAllowed"
+      );
+    }
+  }
+
+  // With type coercion enabled, handle string repetition and regular multiplication
+  if (leftType === "string" && rightType === "number") {
+    return createPyObject((left as string).repeat(right as number));
+  }
+  if (leftType === "number" && rightType === "string") {
+    return createPyObject((right as string).repeat(left as number));
+  }
+
+  return createPyObject(left * right);
+}
+
+function handleDivisionOperation(
+  executor: Executor,
+  expression: BinaryExpression,
+  leftResult: EvaluationResult,
+  rightResult: EvaluationResult
+): JikiObject {
+  if (!executor.languageFeatures.allowTypeCoercion) {
+    verifyNumbersForArithmetic(executor, expression, leftResult, rightResult);
+  }
+
+  const left = leftResult.jikiObject.value;
+  const right = rightResult.jikiObject.value;
+  return createPyObject(left / right);
+}
+
+function handleFloorDivisionOperation(
+  executor: Executor,
+  expression: BinaryExpression,
+  leftResult: EvaluationResult,
+  rightResult: EvaluationResult
+): JikiObject {
+  if (!executor.languageFeatures.allowTypeCoercion) {
+    verifyNumbersForArithmetic(executor, expression, leftResult, rightResult);
+  }
+
+  const left = leftResult.jikiObject.value;
+  const right = rightResult.jikiObject.value;
+  return createPyObject(Math.floor(left / right));
+}
+
+function handleModuloOperation(
+  executor: Executor,
+  expression: BinaryExpression,
+  leftResult: EvaluationResult,
+  rightResult: EvaluationResult
+): JikiObject {
+  if (!executor.languageFeatures.allowTypeCoercion) {
+    verifyNumbersForArithmetic(executor, expression, leftResult, rightResult);
+  }
+
+  const left = leftResult.jikiObject.value;
+  const right = rightResult.jikiObject.value;
+  return createPyObject(left % right);
+}
+
+function handlePowerOperation(
+  executor: Executor,
+  expression: BinaryExpression,
+  leftResult: EvaluationResult,
+  rightResult: EvaluationResult
+): JikiObject {
+  if (!executor.languageFeatures.allowTypeCoercion) {
+    verifyNumbersForArithmetic(executor, expression, leftResult, rightResult);
+  }
+
+  const left = leftResult.jikiObject.value;
+  const right = rightResult.jikiObject.value;
+  return createPyObject(Math.pow(left, right));
+}
+
+// Comparison operation handlers
+function handleGreaterOperation(leftResult: EvaluationResult, rightResult: EvaluationResult): JikiObject {
+  const left = leftResult.jikiObject.value;
+  const right = rightResult.jikiObject.value;
+  return new PyBoolean(left > right);
+}
+
+function handleGreaterEqualOperation(leftResult: EvaluationResult, rightResult: EvaluationResult): JikiObject {
+  const left = leftResult.jikiObject.value;
+  const right = rightResult.jikiObject.value;
+  return new PyBoolean(left >= right);
+}
+
+function handleLessOperation(leftResult: EvaluationResult, rightResult: EvaluationResult): JikiObject {
+  const left = leftResult.jikiObject.value;
+  const right = rightResult.jikiObject.value;
+  return new PyBoolean(left < right);
+}
+
+function handleLessEqualOperation(leftResult: EvaluationResult, rightResult: EvaluationResult): JikiObject {
+  const left = leftResult.jikiObject.value;
+  const right = rightResult.jikiObject.value;
+  return new PyBoolean(left <= right);
+}
+
+function handleEqualOperation(leftResult: EvaluationResult, rightResult: EvaluationResult): JikiObject {
+  const left = leftResult.jikiObject.value;
+  const right = rightResult.jikiObject.value;
+  return new PyBoolean(left === right);
+}
+
+function handleNotEqualOperation(leftResult: EvaluationResult, rightResult: EvaluationResult): JikiObject {
+  const left = leftResult.jikiObject.value;
+  const right = rightResult.jikiObject.value;
+  return new PyBoolean(left !== right);
+}
+
+function verifyNumbersForArithmetic(
+  executor: Executor,
+  expression: BinaryExpression,
+  leftResult: EvaluationResult,
+  rightResult: EvaluationResult
+): void {
+  const leftType = leftResult.jikiObject.type;
+  const rightType = rightResult.jikiObject.type;
+
+  if (leftType !== "number") {
+    throw new RuntimeError(
+      `TypeCoercionNotAllowed: operator: ${expression.operator.lexeme}: left: ${leftType}`,
+      expression.location,
+      "TypeCoercionNotAllowed"
+    );
+  }
+  if (rightType !== "number") {
+    throw new RuntimeError(
+      `TypeCoercionNotAllowed: operator: ${expression.operator.lexeme}: right: ${rightType}`,
+      expression.location,
+      "TypeCoercionNotAllowed"
+    );
   }
 }

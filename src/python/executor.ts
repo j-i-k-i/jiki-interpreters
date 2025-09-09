@@ -34,7 +34,8 @@ export type RuntimeErrorType =
   | "UndefinedVariable"
   | "UnsupportedOperation"
   | "TypeError"
-  | "TruthinessDisabled";
+  | "TruthinessDisabled"
+  | "TypeCoercionNotAllowed";
 
 export class RuntimeError extends Error {
   public category: string = "RuntimeError";

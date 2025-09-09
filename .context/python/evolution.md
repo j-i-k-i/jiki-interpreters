@@ -218,3 +218,79 @@ Python interpreter now serves as the third major interpreter in the Jiki ecosyst
 - Data structures (lists, dictionaries, tuples)
 
 This evolution establishes Python as a fully integrated component of the Jiki educational ecosystem with complete architectural consistency and comprehensive Python language support.
+
+## Type Coercion Language Feature (January 2025)
+
+### Implementation Overview
+
+Added `allowTypeCoercion` language feature flag to control type coercion behavior in arithmetic operations.
+
+### Feature Details
+
+**Default Behavior (allowTypeCoercion: false)**:
+
+- Only allows operations between same types (string + string, number + number)
+- String multiplication works with numbers (`"hi" * 3 = "hihihi"`)
+- Boolean arithmetic operations throw `TypeCoercionNotAllowed` errors
+- Matches educational mode to prevent confusing implicit conversions
+
+**When Enabled (allowTypeCoercion: true)**:
+
+- Allows Python-style boolean coercion (True = 1, False = 0)
+- String + number still throws error (Python doesn't coerce)
+- String repetition continues to work (`"hi" * 3`)
+- Matches standard Python behavior for most operations
+
+### Implementation Changes
+
+**1. Binary Expression Handler Refactor**:
+
+- Split large `handleBinaryOperation` function into individual handlers
+- `handlePlusOperation`, `handleMinusOperation`, `handleMultiplyOperation`, etc.
+- Improved maintainability and readability
+
+**2. Python-Specific Behaviors**:
+
+- String repetition supported even with type coercion disabled
+- String + number operations never allowed (matches Python)
+- Boolean arithmetic allowed only when type coercion is enabled
+
+**3. Error Handling**:
+
+- Added `TypeCoercionNotAllowed` to runtime error types
+- Comprehensive error messages with operator and type context
+- Consistent with existing error format patterns
+
+**4. String Multiplication Support**:
+
+- `"hello" * 3` produces `"hellohellohello"`
+- `3 * "hello"` also works (Python allows both forms)
+- Works in both allowTypeCoercion modes (Python native feature)
+
+### Test Coverage
+
+**54 comprehensive tests** covering:
+
+- Type coercion disabled (default): All mixed-type operations throw errors
+- Type coercion enabled: Boolean arithmetic works, string+number still errors
+- String repetition: Works in both modes
+- Complex expressions: Proper error propagation
+- Variable interactions: Type checking with stored values
+
+### Technical Details
+
+**Modular Implementation**:
+
+- Each operator handled by dedicated function
+- Type checking before operation execution
+- Consistent error message formatting
+- Proper Python semantics preservation
+
+**Python Compliance**:
+
+- Follows Python's type coercion rules exactly
+- String + number never works (unlike JavaScript)
+- Boolean treated as integer when coercion enabled
+- String repetition as native Python feature
+
+This implementation provides educational control over type coercion while maintaining Python semantic accuracy.

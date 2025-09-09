@@ -61,7 +61,7 @@ Parse errors with Python syntax context and runtime errors including undefined v
 **Language Features**:
 
 - `allowTruthiness` (default: false) - Controls whether non-boolean values can be used in boolean contexts (if statements, logical operators)
-- `allowTypeCoercion` (default: false) - Controls type coercion in operations (to be implemented)
+- `allowTypeCoercion` (default: false) - Controls type coercion in arithmetic and other operations
 
 ## Extensibility
 
