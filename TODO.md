@@ -75,4 +75,5 @@ For everything in here, base your work in the JikiScript interpreter.
 - [ ] Add a for loop. Look at the JavaScript implementation.
 - [ ] Add a while loop. Look at the JavaScript implementation.
 - [ ] Add fstrings
+- [ ] Implement the next Python built-in function from [.context/python/features-and-functions.md](.context/python/features-and-functions.md). Only mark this as complete when all functions in the "Including" list are done. Ensure to move each function from TODO to Implemented in the context document when finished. Remember to confirm the plan with the human before implementing each function.
 - [ ] Don't allow statements that don't actually do anything. For example, a statement that is just a variable. Or a grouping expression that doesn't have assignmennt. Add a TOOD that you will need to modify this for calling functions (which should just be allowed by themselves) later. Look at how this works in JikiScript as there is a specific type for it.
