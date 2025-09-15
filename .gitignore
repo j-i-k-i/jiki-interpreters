@@ -6,4 +6,4 @@ dist/
 .env.production
 .DS_Store
 coverage/
-.claude/
+.claude/settings.local.json
