@@ -28,7 +28,7 @@ function describeChangeElementStatementList(
 
   const oldValue = formatJikiObject(frameResult.oldValue);
   const valueResult = frameResult.value as EvaluationResultExpression;
-  const value = formatJikiObject(valueResult.immutableJikiObject || valueResult.jikiObject);
+  const value = formatJikiObject(valueResult.immutableJikiObject);
   const valueCodeTag = codeTag(value, frameContext.value.location);
 
   let dictDescription = "the list";
@@ -74,9 +74,9 @@ function describeChangeElementStatementDictionary(
   }
 
   const fieldResult = frameResult.field as EvaluationResultExpression;
-  const key = fieldResult.immutableJikiObject || fieldResult.jikiObject;
+  const key = fieldResult.immutableJikiObject;
   const valueResult = frameResult.value as EvaluationResultExpression;
-  const value = formatJikiObject(valueResult.immutableJikiObject || valueResult.jikiObject);
+  const value = formatJikiObject(valueResult.immutableJikiObject);
   const keyCodeTag = key ? codeTag(key, frameContext.field.location) : "unknown";
   const valueCodeTag = codeTag(value, frameContext.value.location);
 

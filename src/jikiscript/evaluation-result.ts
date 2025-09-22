@@ -132,7 +132,7 @@ export type EvaluationResultFullyEvaluatedLogicalExpression = EvaluationResultLo
 export type EvaluationResultBinaryExpression = {
   type: "BinaryExpression";
   jikiObject: JikiTypes.Primitive;
-  immutableJikiObject?: JikiTypes.JikiObject;
+  immutableJikiObject: JikiTypes.JikiObject;
   left: EvaluationResult;
   right: EvaluationResult;
   data?: Record<string, any>;

@@ -14,13 +14,13 @@ export function describeBinaryExpression(
 
   const left = result.left as EvaluationResultExpression;
   const right = result.right as EvaluationResultExpression;
-  const leftRes = formatJikiObject(left.immutableJikiObject || left.jikiObject);
+  const leftRes = formatJikiObject(left.immutableJikiObject);
   const op = expression.operator.lexeme;
-  const rightRes = formatJikiObject(right.immutableJikiObject || right.jikiObject);
+  const rightRes = formatJikiObject(right.immutableJikiObject);
 
   const finalStep = `<li>Jiki evaluated ${codeTag(
     `${leftRes} ${op} ${rightRes}`,
     expression.location
-  )} and determined it was ${codeTag(result.immutableJikiObject || result.jikiObject, expression.location)}.</li>`;
+  )} and determined it was ${codeTag(result.immutableJikiObject, expression.location)}.</li>`;
   return [...leftSteps, ...rightSteps, finalStep];
 }
