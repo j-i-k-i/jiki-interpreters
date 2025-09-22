@@ -26,8 +26,8 @@ All interpreters generate frame data that powers Jiki's interactive editor featu
 
 ## Development
 
-- **Test**: `bun test`
-- **Type Check**: `bun run typecheck`
-- **Format**: `bun run format`
+- **Test**: `pnpm test`
+- **Type Check**: `pnpm run typecheck`
+- **Format**: `pnpm run format`
 
 The project uses parallel GitHub Actions workflows for CI: tests, type checking, and formatting.

@@ -1,4 +1,4 @@
-import { test, expect } from "bun:test";
+import { test, expect } from "vitest";
 import { sanityCheck } from "../src/sanity";
 
 test("sanity check returns Hello World", () => {
