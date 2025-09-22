@@ -143,13 +143,17 @@ All workflows run on pushes to `main` and pull requests targeting `main`. The pa
 
 ## Version Control Guidelines
 
+**⚠️ CRITICAL: ALWAYS use feature branches for development - NEVER commit directly to main.**
+
 **IMPORTANT: Always commit your changes when you complete an instruction or task.**
 
+- **ALWAYS create a feature branch before starting work** (e.g., `git checkout -b feature/add-new-operator`)
 - Create descriptive commit messages that explain what was changed and why
 - Commit after finishing each discrete task or instruction
 - This ensures work is saved and provides clear history of changes
 - Use conventional commit format when appropriate
 - Include context about the implementation in commit messages
+- Push your feature branch and create a pull request when ready for review
 
 ## Notes
 
