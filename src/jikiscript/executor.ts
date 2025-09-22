@@ -1202,16 +1202,19 @@ export class Executor {
       time: this.time,
       // Multiple the time by 100 and floor it to get an integer
       timelineTime: Math.round(this.time * 100),
-      description: "",
+      generateDescription: () => "", // Will be replaced below
       context: context,
       variables: {},
     };
-    if (process.env.NODE_ENV == "test") {
+    if (process.env.NODE_ENV == "test" && process.env.SKIP_VARIABLE_CLONING !== "true") {
       frame.variables = cloneDeep(this.environment.variables());
     }
-    frame.description = describeFrame(frame, {
-      functionDescriptions: this.externalFunctionDescriptions,
-    });
+    // Create a lazy description function that captures the current frame state
+    frame.generateDescription = () =>
+      describeFrame(frame, {
+        functionDescriptions: this.externalFunctionDescriptions,
+      });
+
     this.frames.push(frame);
 
     this.time += this.timePerFrame;

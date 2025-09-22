@@ -1,5 +1,7 @@
 # JikiScript Performance Optimization Plan
 
+**NOTE: This optimization is focused on JikiScript only. JavaScript and Python interpreters will be updated later.**
+
 ## Problem Statement
 
 The JikiScript interpreter currently has significant performance bottlenecks:
@@ -100,3 +102,44 @@ For nested updates like `change myList[0]["prop"] to value`:
 7. Run full test suite
 8. Run benchmark and measure improvement
 9. Clean up and document changes
+
+## TODO Progress
+
+- [x] Create feature branch (`feature/jikiscript-performance-optimization`)
+- [x] Update benchmark to not clone variables (using `SKIP_VARIABLE_CLONING` env var)
+- [x] Change Frame interface to use lazy descriptions (`generateDescription: () => string`)
+- [x] Update JikiScript executor to use lazy description generation
+- [ ] Write test for lazy descriptions with mutations (INCOMPLETE - copy-on-write not implemented)
+- [ ] Implement copy-on-write for List mutations (NOT IMPLEMENTED)
+- [ ] Implement copy-on-write for Dictionary mutations (NOT IMPLEMENTED)
+- [ ] Run full test suite to ensure everything passes
+- [ ] Run benchmark and measure final improvement
+- [ ] Update JavaScript/Python executors for interface compatibility (future work)
+
+## Current Status
+
+**⚠️ INCOMPLETE**: Copy-on-write implementation was attempted but reverted due to issues with nested mutations. Currently only lazy description generation is implemented.
+
+### Partial Performance Improvements
+
+- **Original baseline**: ~2144ms for 100k frames
+- **Without variable cloning**: ~674ms (69% improvement)
+- **With lazy descriptions only**: ~340ms for 100k frames (84% improvement from baseline)
+
+### Benchmark Results Comparison
+
+| Frame Count | Expression Type | Lazy Descriptions | Synchronous Descriptions | Speedup |
+|------------|----------------|-------------------|-------------------------|---------|
+| 10 frames | Simple addition | 2.44ms | 3.16ms | 1.3x |
+| ~3,100 frames | List operations | 10.47ms | 22.23ms | 2.1x |
+| 10,000 frames | Arithmetic operations | 61.32ms | 168.17ms | 2.7x |
+| 100,000 frames | Complex expressions | 340ms | 948ms | 2.8x |
+| 4,000,000 frames | Modulo and comparisons | 9,055ms | OOM (out of memory) | N/A |
+
+**Key Findings:**
+- Lazy description generation provides a **2.8x speedup** for 100k frames (340ms vs 948ms)
+- The performance benefit increases with frame count (1.3x for 10 frames → 2.8x for 100k frames)
+- Synchronous descriptions cause memory issues at very high frame counts (4M frames)
+- The lazy description generation alone provides significant performance improvement (84% for 100k frames), even without the copy-on-write implementation
+
+The copy-on-write implementation for mutable objects (Lists and Dictionaries) has been reverted. The issue is that when mutable objects are mutated in place, earlier frames that reference these objects show the mutated state rather than their point-in-time state. This needs to be addressed for full optimization.

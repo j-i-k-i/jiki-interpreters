@@ -21,17 +21,17 @@ describe("variables concept", () => {
     test("variable declaration has description", () => {
       const { frames, error } = interpret("let count = 5;");
       expect(error).toBeNull();
-      expect(frames[0].description).toBeTruthy();
-      expect(frames[0].description).toContain("count");
-      expect(frames[0].description).toContain("5");
+      expect(frames[0].generateDescription()).toBeTruthy();
+      expect(frames[0].generateDescription()).toContain("count");
+      expect(frames[0].generateDescription()).toContain("5");
     });
 
     test("variable access has description", () => {
       const { frames, error } = interpret("let x = 10; x;");
       expect(error).toBeNull();
-      expect(frames[1].description).toBeTruthy();
-      expect(frames[1].description).toContain("x");
-      expect(frames[1].description).toContain("10");
+      expect(frames[1].generateDescription()).toBeTruthy();
+      expect(frames[1].generateDescription()).toContain("x");
+      expect(frames[1].generateDescription()).toContain("10");
     });
   });
 

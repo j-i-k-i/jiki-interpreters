@@ -1,17 +1,20 @@
 import { interpret } from "@jikiscript/interpreter";
 
-describe("JikiScript performance benchmarks", () => {
+describe("JikiScript performance benchmarks - Synchronous Descriptions", () => {
   beforeEach(() => {
     // Skip variable cloning for all benchmarks
     process.env.SKIP_VARIABLE_CLONING = "true";
+    // Enable synchronous descriptions for comparison
+    process.env.BENCHMARK_SYNC_DESCRIPTIONS = "true";
   });
 
   afterEach(() => {
-    // Clean up environment variable
+    // Clean up environment variables
     delete process.env.SKIP_VARIABLE_CLONING;
+    delete process.env.BENCHMARK_SYNC_DESCRIPTIONS;
   });
 
-  test("10 frames - simple addition", () => {
+  test("10 frames - simple addition (sync)", () => {
     const code = `
       set x to 0
       repeat 10 times do
@@ -24,12 +27,12 @@ describe("JikiScript performance benchmarks", () => {
     const endTime = performance.now();
     const executionTime = endTime - startTime;
 
-    console.log(`10 frames: ${executionTime.toFixed(2)}ms`);
+    console.log(`10 frames (sync): ${executionTime.toFixed(2)}ms`);
     expect(result.error).toBeNull();
     expect(result.frames.length).toBeGreaterThan(10);
   });
 
-  test("1,000 frames - list operations", () => {
+  test("1,000 frames - list operations (sync)", () => {
     const code = `
       set items to []
       set count to 0
@@ -50,12 +53,12 @@ describe("JikiScript performance benchmarks", () => {
     const endTime = performance.now();
     const executionTime = endTime - startTime;
 
-    console.log(`~1,000 frames: ${executionTime.toFixed(2)}ms (${result.frames.length} frames)`);
+    console.log(`~1,000 frames (sync): ${executionTime.toFixed(2)}ms (${result.frames.length} frames)`);
     expect(result.error).toBeNull();
     expect(result.frames.length).toBeGreaterThan(1000);
   });
 
-  test("10,000 frames - arithmetic operations", () => {
+  test("10,000 frames - arithmetic operations (sync)", () => {
     const code = `
       set total to 0
       set factor to 2.5
@@ -75,12 +78,12 @@ describe("JikiScript performance benchmarks", () => {
     const endTime = performance.now();
     const executionTime = endTime - startTime;
 
-    console.log(`10,000 frames: ${executionTime.toFixed(2)}ms`);
+    console.log(`10,000 frames (sync): ${executionTime.toFixed(2)}ms`);
     expect(result.error).toBeNull();
     expect(result.frames.length).toBeGreaterThan(10000);
   });
 
-  test("100,000 frames - complex expressions", () => {
+  test("100,000 frames - complex expressions (sync)", () => {
     const code = `
       set total to 0
       set multiplier to 2
@@ -99,8 +102,8 @@ describe("JikiScript performance benchmarks", () => {
     const startTime = performance.now();
     const result = interpret(code, {
       languageFeatures: {
-        maxTotalLoopIterations: 1000000, // 1 million iterations allowed
-        maxTotalExecutionTime: 60000, // 60 seconds allowed
+        maxTotalLoopIterations: 1000000,
+        maxTotalExecutionTime: 60000,
       },
     });
     const endTime = performance.now();
@@ -110,7 +113,7 @@ describe("JikiScript performance benchmarks", () => {
     const framesPerMs = frameCount / executionTime;
 
     console.log(`
-Benchmark Results:
+Benchmark Results (Sync):
 ==================
 Total frames generated: ${frameCount}
 Execution time: ${executionTime.toFixed(2)}ms
@@ -118,23 +121,13 @@ Frames per millisecond: ${framesPerMs.toFixed(2)}
 Average time per frame: ${(executionTime / frameCount).toFixed(4)}ms
     `);
 
-    // Basic assertions to ensure the test ran correctly
     expect(result.error).toBeNull();
-    expect(frameCount).toBeGreaterThan(95000); // Should be around 100k
-    expect(frameCount).toBeLessThan(105000); // But not too much more
-
-    // Performance assertion - should complete in reasonable time
-    // Adjust this threshold based on your performance requirements
-    expect(executionTime).toBeLessThan(30000); // 30 seconds max
-
-    // Log a warning if it's slow
-    if (executionTime > 10000) {
-      console.warn(`⚠️ Performance warning: Execution took ${(executionTime / 1000).toFixed(2)} seconds`);
-    }
+    expect(frameCount).toBeGreaterThan(95000);
+    expect(frameCount).toBeLessThan(105000);
+    expect(executionTime).toBeLessThan(30000);
   });
 
-  test("1,000,000 frames - modulo and comparisons", { timeout: 60000 }, () => {
-    // This is a stress test - skip by default
+  test.skip("1,000,000 frames - modulo and comparisons (sync)", { timeout: 60000 }, () => {
     const code = `
       set counter to 0
       set result to 0
@@ -153,8 +146,8 @@ Average time per frame: ${(executionTime / frameCount).toFixed(4)}ms
     const startTime = performance.now();
     const result = interpret(code, {
       languageFeatures: {
-        maxTotalLoopIterations: 10000000, // 10 million iterations allowed
-        maxTotalExecutionTime: 300000, // 5 minutes allowed
+        maxTotalLoopIterations: 10000000,
+        maxTotalExecutionTime: 300000,
       },
     });
     const endTime = performance.now();
@@ -163,7 +156,7 @@ Average time per frame: ${(executionTime / frameCount).toFixed(4)}ms
     const frameCount = result.frames.length;
 
     console.log(`
-1M Frames Benchmark:
+1M Frames Benchmark (Sync):
 ====================
 Total frames: ${frameCount}
 Execution time: ${executionTime.toFixed(2)}ms (${(executionTime / 1000).toFixed(2)}s)

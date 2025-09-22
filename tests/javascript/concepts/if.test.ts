@@ -116,17 +116,19 @@ describe("if statement concept", () => {
     test("if statement has meaningful description", () => {
       const { frames, error } = interpret("if (true) { let x = 5; }");
       expect(error).toBeNull();
-      expect(frames[0].description).toBeTruthy();
-      expect(frames[0].description).toContain("condition");
-      expect(frames[0].description).toContain("true");
+      const desc = frames[0].generateDescription();
+      expect(desc).toBeTruthy();
+      expect(desc).toContain("condition");
+      expect(desc).toContain("true");
     });
 
     test("if-else statement describes both branches", () => {
       const { frames, error } = interpret("if (false) { let x = 5; } else { let y = 10; }");
       expect(error).toBeNull();
-      expect(frames[0].description).toBeTruthy();
-      expect(frames[0].description).toContain("false");
-      expect(frames[0].description).toContain("else");
+      const desc = frames[0].generateDescription();
+      expect(desc).toBeTruthy();
+      expect(desc).toContain("false");
+      expect(desc).toContain("else");
     });
   });
 

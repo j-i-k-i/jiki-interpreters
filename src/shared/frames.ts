@@ -28,8 +28,8 @@ export type Frame = {
   /** Position in the timeline */
   timelineTime: number;
 
-  /** Human-readable description of what happened */
-  description: string;
+  /** Human-readable description of what happened (lazy evaluation) */
+  generateDescription: () => string;
 
   /** Variables after this frame executed */
   variables: Record<string, any>;
