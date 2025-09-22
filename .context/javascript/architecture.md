@@ -50,6 +50,8 @@ Nested environment chain supporting lexical scoping, variable declaration, acces
 
 Wrapper objects extending shared `JikiObject` base class. Supports JSNumber, JSString, JSBoolean, JSNull, JSUndefined with consistent cross-interpreter compatibility.
 
+**Note on immutableJikiObject**: JavaScript currently only implements primitive types (number, string, boolean, null, undefined) which are inherently immutable. The `immutableJikiObject` optimization is not needed here as these objects cannot change state. If mutable collections (arrays, objects) are added in the future, they should implement the `immutableJikiObject` pattern for performance.
+
 ### 7. Language Features System (`src/javascript/interfaces.ts`)
 
 Configurable language features:
