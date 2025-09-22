@@ -9,6 +9,7 @@ export function executeMethodCallStatement(executor: Executor, statement: Method
     return {
       type: "MethodCallStatement",
       jikiObject: result.jikiObject,
+      immutableJikiObject: result.jikiObject?.clone(),
       expression: result,
     };
   });

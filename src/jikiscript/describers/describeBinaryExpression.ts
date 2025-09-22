@@ -1,4 +1,4 @@
-import { EvaluationResultBinaryExpression } from "../evaluation-result";
+import { EvaluationResultBinaryExpression, EvaluationResultExpression } from "../evaluation-result";
 import { BinaryExpression } from "../expression";
 import { DescriptionContext } from "../../shared/frames";
 import { codeTag, formatJikiObject } from "../helpers";
@@ -12,13 +12,15 @@ export function describeBinaryExpression(
   const leftSteps = describeExpression(expression.left, result.left, context);
   const rightSteps = describeExpression(expression.right, result.right, context);
 
-  const leftRes = formatJikiObject(result.left.immutableJikiObject || result.left.jikiObject);
+  const left = result.left as EvaluationResultExpression;
+  const right = result.right as EvaluationResultExpression;
+  const leftRes = formatJikiObject(left.immutableJikiObject || left.jikiObject);
   const op = expression.operator.lexeme;
-  const rightRes = formatJikiObject(result.right.immutableJikiObject || result.right.jikiObject);
+  const rightRes = formatJikiObject(right.immutableJikiObject || right.jikiObject);
 
   const finalStep = `<li>Jiki evaluated ${codeTag(
     `${leftRes} ${op} ${rightRes}`,
     expression.location
-  )} and determined it was ${codeTag(result.immutableJikiObject, expression.location)}.</li>`;
+  )} and determined it was ${codeTag(result.immutableJikiObject || result.jikiObject, expression.location)}.</li>`;
   return [...leftSteps, ...rightSteps, finalStep];
 }

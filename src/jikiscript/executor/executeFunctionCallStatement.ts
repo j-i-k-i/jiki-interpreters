@@ -12,6 +12,7 @@ export function executeFunctionCallStatement(executor: Executor, statement: Func
     return {
       type: "FunctionCallStatement",
       jikiObject: result.jikiObject,
+      immutableJikiObject: result.jikiObject?.clone(),
       expression: result,
     };
   });

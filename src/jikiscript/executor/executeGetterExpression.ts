@@ -52,6 +52,7 @@ export function executeGetterExpression(
   return {
     type: "GetterExpression",
     jikiObject: value,
+    immutableJikiObject: value?.clone(),
     object,
   };
 }

@@ -180,6 +180,7 @@ export type EvaluationResultFunctionLookupExpression = {
   name: string;
   function: Callable;
   jikiObject?: JikiTypes.Boolean;
+  immutableJikiObject?: JikiTypes.JikiObject;
   data?: Record<string, any>;
 };
 

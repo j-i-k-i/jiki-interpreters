@@ -9,10 +9,12 @@ export function executeClassLookupExpression(
 ): EvaluationResultClassLookupExpression {
   const klass = executor.lookupClass(expression.name);
 
+  const jikiObject = new Jiki.Boolean(true);
   return {
     type: "ClassLookupExpression",
     name: expression.name.lexeme,
     class: klass,
-    jikiObject: new Jiki.Boolean(true),
+    jikiObject: jikiObject,
+    immutableJikiObject: jikiObject.clone(),
   };
 }
