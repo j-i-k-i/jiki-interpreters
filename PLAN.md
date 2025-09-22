@@ -21,11 +21,11 @@ The JikiScript interpreter currently has significant performance bottlenecks:
 
 ## Solution Overview
 
-1. **Lazy Description Generation**: Convert frame descriptions from eagerly computed strings to lazy functions that generate descriptions on-demand.
+1. **Lazy Description Generation**: Convert frame descriptions from eagerly computed strings to lazy functions that generate descriptions on-demand. ✅ IMPLEMENTED
 
-2. **Copy-on-Write for Mutations**: Instead of mutating Lists and Dictionaries in place, create shallow copies when mutations occur.
+2. **Immutable Result Cloning**: Add an `immutableJikiObject` field to each EvaluationResult that contains a deep clone of the JikiObject at evaluation time. This preserves the point-in-time state for descriptions.
 
-3. **Conditional Variable Cloning**: Only clone variables in test mode when actually needed, not in benchmarks or production.
+3. **Conditional Variable Cloning**: Only clone variables in test mode when actually needed, not in benchmarks or production. ✅ IMPLEMENTED
 
 ## Implementation Plan
 
@@ -35,17 +35,36 @@ The JikiScript interpreter currently has significant performance bottlenecks:
 - Keep variable persistence for regular tests
 - Never persist variables in production/development (only in tests)
 
-### Phase 2: Lazy Description Generation
+### Phase 2: Lazy Description Generation ✅ COMPLETED
 
-- Change Frame interface from `description: string` to `description: () => string`
-- Update `describeFrame` to return a closure that captures the current frame state
-- Ensure all frame consumers handle the new lazy description format
+- Changed Frame interface from `description: string` to `generateDescription: () => string`
+- Updated `describeFrame` to be called lazily
+- All frame consumers handle the new lazy description format
 
-### Phase 3: Copy-on-Write Implementation
+### Phase 3: Immutable Result Cloning
 
-- Implement copy-on-write for List mutations (`change list[index] to value`)
-- Implement copy-on-write for Dictionary mutations (`change dict[key] to value`)
-- Use shallow copies (sufficient since we only mutate one level at a time)
+#### Step 1: Comprehensive Test Creation
+- Create tests for all primitive types (Number, String, Boolean, Null, Undefined)
+- Create tests for collection types (List, Dictionary)
+- Create tests for nested collections (List of Lists, Dictionary of Dictionaries, mixed)
+- Create tests for deep nesting (3+ levels)
+- All tests check log statement descriptions only
+
+#### Step 2: Add immutableJikiObject Field
+- Add `immutableJikiObject?: JikiObject` to EvaluationResult interface
+- Update each execute function to populate this field
+- Tests will fail with undefined immutableJikiObject
+
+#### Step 3: Implement Clone Methods
+- Add `clone(): JikiObject` method to base JikiObject class
+- Immutable types (Number, String, Boolean, Null, Undefined) return `this`
+- List implements deep clone of elements
+- Dictionary implements deep clone of values
+- Create recursive deep clone utility
+
+#### Step 4: Update Describers
+- Modify describeLogStatement to use `immutableJikiObject`
+- Other describers that show values should also use immutable versions
 
 ### Phase 4: Testing
 
@@ -109,11 +128,13 @@ For nested updates like `change myList[0]["prop"] to value`:
 - [x] Update benchmark to not clone variables (using `SKIP_VARIABLE_CLONING` env var)
 - [x] Change Frame interface to use lazy descriptions (`generateDescription: () => string`)
 - [x] Update JikiScript executor to use lazy description generation
-- [ ] Write test for lazy descriptions with mutations (INCOMPLETE - copy-on-write not implemented)
-- [ ] Implement copy-on-write for List mutations (NOT IMPLEMENTED)
-- [ ] Implement copy-on-write for Dictionary mutations (NOT IMPLEMENTED)
+- [x] Add comprehensive benchmarks for various frame counts
+- [ ] Create tests for immutable descriptions with mutations
+- [ ] Add immutableJikiObject field to EvaluationResult types
+- [ ] Implement clone() methods for all JikiObject types
+- [ ] Update describers to use immutableJikiObject
 - [ ] Run full test suite to ensure everything passes
-- [ ] Run benchmark and measure final improvement
+- [ ] Run benchmark and measure final improvement with immutable cloning
 - [ ] Update JavaScript/Python executors for interface compatibility (future work)
 
 ## Current Status
