@@ -9,6 +9,7 @@ export function executeLogStatement(executor: Executor, statement: LogStatement)
       type: "LogStatement",
       expression: value,
       jikiObject: value.jikiObject,
+      immutableJikiObject: value.jikiObject.clone(), // For now, just reference the same object
     };
   });
 }

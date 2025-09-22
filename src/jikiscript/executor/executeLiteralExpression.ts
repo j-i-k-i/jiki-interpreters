@@ -24,5 +24,6 @@ export function executeLiteralExpression(
   return {
     type: "LiteralExpression",
     jikiObject: jikiObject,
+    immutableJikiObject: jikiObject.clone(),
   };
 }

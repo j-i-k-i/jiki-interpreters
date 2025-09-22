@@ -7,12 +7,14 @@ export type EvaluationResultFunctionCallStatement = {
   type: "FunctionCallStatement";
   expression: EvaluationResultFunctionCallExpression;
   jikiObject: JikiTypes.JikiObject;
+  immutableJikiObject?: JikiTypes.JikiObject;
   data?: Record<string, any>;
 };
 export type EvaluationResultMethodCallStatement = {
   type: "MethodCallStatement";
   expression: EvaluationResultMethodCallExpression;
   jikiObject: JikiTypes.JikiObject;
+  immutableJikiObject?: JikiTypes.JikiObject;
   data?: Record<string, any>;
 };
 
@@ -70,6 +72,7 @@ export type EvaluationResultIfStatement = {
   type: "IfStatement";
   condition: EvaluationResult;
   jikiObject: JikiTypes.Boolean;
+  immutableJikiObject?: JikiTypes.JikiObject;
   data?: Record<string, any>;
 };
 
@@ -77,6 +80,7 @@ export type EvaluationResultLogStatement = {
   type: "LogStatement";
   expression: EvaluationResult;
   jikiObject: JikiTypes.JikiObject;
+  immutableJikiObject?: JikiTypes.JikiObject;
 };
 
 export type EvaluationResultRepeatStatement = {
@@ -91,6 +95,7 @@ export type EvaluationResultReturnStatement = {
   type: "ReturnStatement";
   expression?: EvaluationResult;
   jikiObject?: JikiTypes.JikiObject;
+  immutableJikiObject?: JikiTypes.JikiObject;
   data?: Record<string, any>;
 };
 
@@ -116,6 +121,7 @@ export type EvaluationResultLogicalExpression = {
   right?: EvaluationResult;
   shortCircuited: boolean;
   jikiObject: JikiTypes.Boolean;
+  immutableJikiObject?: JikiTypes.JikiObject;
   data?: Record<string, any>;
 };
 
@@ -126,6 +132,7 @@ export type EvaluationResultFullyEvaluatedLogicalExpression = EvaluationResultLo
 export type EvaluationResultBinaryExpression = {
   type: "BinaryExpression";
   jikiObject: JikiTypes.Primitive;
+  immutableJikiObject?: JikiTypes.JikiObject;
   left: EvaluationResult;
   right: EvaluationResult;
   data?: Record<string, any>;
@@ -134,6 +141,7 @@ export type EvaluationResultBinaryExpression = {
 export type EvaluationResultUnaryExpression = {
   type: "UnaryExpression";
   jikiObject: JikiTypes.Primitive;
+  immutableJikiObject?: JikiTypes.JikiObject;
   operand: EvaluationResult;
   data?: Record<string, any>;
 };
@@ -141,6 +149,7 @@ export type EvaluationResultUnaryExpression = {
 export type EvaluationResultGroupingExpression = {
   type: "GroupingExpression";
   jikiObject: JikiTypes.JikiObject;
+  immutableJikiObject?: JikiTypes.JikiObject;
   inner: EvaluationResult;
   data?: Record<string, any>;
 };
@@ -148,12 +157,14 @@ export type EvaluationResultGroupingExpression = {
 export type EvaluationResultLiteralExpression = {
   type: "LiteralExpression";
   jikiObject: JikiTypes.Literal;
+  immutableJikiObject?: JikiTypes.JikiObject;
   data?: Record<string, any>;
 };
 
 export type EvaluationResultThisExpression = {
   type: "ThisExpression";
   jikiObject: JikiTypes.Instance;
+  immutableJikiObject?: JikiTypes.JikiObject;
   data?: Record<string, any>;
 };
 
@@ -161,6 +172,7 @@ export type EvaluationResultVariableLookupExpression = {
   type: "VariableLookupExpression";
   name: string;
   jikiObject: JikiTypes.JikiObject;
+  immutableJikiObject?: JikiTypes.JikiObject;
   data?: Record<string, any>;
 };
 export type EvaluationResultFunctionLookupExpression = {
@@ -178,6 +190,7 @@ export type EvaluationResultGetElementExpression = {
   field: EvaluationResult;
   expression: string;
   jikiObject: JikiTypes.JikiObject;
+  immutableJikiObject?: JikiTypes.JikiObject;
   data?: Record<string, any>;
 };
 
@@ -187,24 +200,28 @@ export type EvaluationResultSetElementExpression = {
   field: EvaluationResult;
   expression: string;
   jikiObject: JikiTypes.JikiObject;
+  immutableJikiObject?: JikiTypes.JikiObject;
   data?: Record<string, any>;
 };
 
 export type EvaluationResultListExpression = {
   type: "ListExpression";
   jikiObject: JikiTypes.List;
+  immutableJikiObject?: JikiTypes.JikiObject;
   data?: Record<string, any>;
 };
 
 export type EvaluationResultDictionaryExpression = {
   type: "DictionaryExpression";
   jikiObject: JikiTypes.Dictionary;
+  immutableJikiObject?: JikiTypes.JikiObject;
   data?: Record<string, any>;
 };
 
 export type EvaluationResultFunctionCallExpression = {
   type: "FunctionCallExpression";
   jikiObject: JikiTypes.JikiObject;
+  immutableJikiObject?: JikiTypes.JikiObject;
   callee: EvaluationResultVariableLookupExpression | EvaluationResultFunctionLookupExpression;
   args: EvaluationResult[];
   data?: Record<string, any>;
@@ -212,6 +229,7 @@ export type EvaluationResultFunctionCallExpression = {
 export type EvaluationResultMethodCallExpression = {
   type: "MethodCallExpression";
   jikiObject: JikiTypes.JikiObject;
+  immutableJikiObject?: JikiTypes.JikiObject;
   object: EvaluationResult;
   method: JikiTypes.Method;
   args: EvaluationResult[];
@@ -222,11 +240,13 @@ export type EvaluationResultClassLookupExpression = {
   name: string;
   class: JikiTypes.Class;
   jikiObject: JikiTypes.Boolean;
+  immutableJikiObject?: JikiTypes.JikiObject;
   data?: Record<string, any>;
 };
 export type EvaluationResultInstantiationExpression = {
   type: "InstantiationExpression";
   jikiObject: JikiTypes.Instance;
+  immutableJikiObject?: JikiTypes.JikiObject;
   className: EvaluationResultClassLookupExpression;
   args: EvaluationResult[];
   data?: Record<string, any>;
@@ -234,6 +254,7 @@ export type EvaluationResultInstantiationExpression = {
 export type EvaluationResultGetterExpression = {
   type: "GetterExpression";
   jikiObject: JikiTypes.JikiObject;
+  immutableJikiObject?: JikiTypes.JikiObject;
   object: EvaluationResult;
   data?: Record<string, any>;
 };

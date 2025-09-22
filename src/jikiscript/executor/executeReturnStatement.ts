@@ -17,6 +17,7 @@ export function executeReturnStatement(executor: Executor, statement: ReturnStat
       type: "ReturnStatement",
       expression: value,
       jikiObject: value.jikiObject,
+      immutableJikiObject: value.jikiObject?.clone(),
     };
   });
   throw new ReturnValue(evaluationResult?.jikiObject, statement.location);

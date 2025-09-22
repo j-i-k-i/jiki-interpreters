@@ -12,16 +12,20 @@ export function executeUnaryExpression(
   switch (expression.operator.type) {
     case "NOT":
       executor.verifyBoolean(operand.jikiObject, expression.operand);
+      const notResult = new Jiki.Boolean(!(operand.jikiObject as Jiki.Boolean).value);
       return {
         type: "UnaryExpression",
-        jikiObject: new Jiki.Boolean(!(operand.jikiObject as Jiki.Boolean).value),
+        jikiObject: notResult,
+        immutableJikiObject: notResult.clone(),
         operand: operand,
       };
     case "MINUS":
       executor.verifyNumber(operand.jikiObject, expression.operand);
+      const minusResult = new Jiki.Number(-(operand.jikiObject as Jiki.Number).value);
       return {
         type: "UnaryExpression",
-        jikiObject: new Jiki.Number(-(operand.jikiObject as Jiki.Number).value),
+        jikiObject: minusResult,
+        immutableJikiObject: minusResult.clone(),
         operand: operand,
       };
   }

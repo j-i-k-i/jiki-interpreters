@@ -27,7 +27,7 @@ function describeChangeElementStatementList(
   const ordinaledIndex = addOrdinalSuffix(idx);
 
   const oldValue = formatJikiObject(frameResult.oldValue);
-  const value = formatJikiObject(frameResult.value.jikiObject);
+  const value = formatJikiObject(frameResult.value.immutableJikiObject);
   const valueCodeTag = codeTag(value, frameContext.value.location);
 
   let dictDescription = "the list";
@@ -72,8 +72,8 @@ function describeChangeElementStatementDictionary(
     boxStep = `<li>Jiki found the ${variableCodeTag} box.</li>`;
   }
 
-  const key = frameResult.field.jikiObject;
-  const value = formatJikiObject(frameResult.value.jikiObject);
+  const key = frameResult.field.immutableJikiObject;
+  const value = formatJikiObject(frameResult.value.immutableJikiObject);
   const keyCodeTag = key ? codeTag(key, frameContext.field.location) : "unknown";
   const valueCodeTag = codeTag(value, frameContext.value.location);
 

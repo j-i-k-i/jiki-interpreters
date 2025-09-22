@@ -861,6 +861,7 @@ export class Executor {
       expression: `${expression.obj.location.toCode(this.sourceCode)}[${key.jikiObject}]`,
       field: key,
       jikiObject: value,
+      immutableJikiObject: value.clone(),
     };
   }
 
@@ -883,6 +884,7 @@ export class Executor {
       expression: `${expression.obj.location.toCode(this.sourceCode)}[${idx.jikiObject}]`,
       field: idx,
       jikiObject: value,
+      immutableJikiObject: value.clone(),
     };
   }
 
@@ -907,6 +909,7 @@ export class Executor {
       expression: `${expression.obj.location.toCode(this.sourceCode)}[${idx.jikiObject}]`,
       field: idx,
       jikiObject: value,
+      immutableJikiObject: value.clone(),
     };
   }
 
