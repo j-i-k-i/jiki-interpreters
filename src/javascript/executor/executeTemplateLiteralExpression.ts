@@ -8,6 +8,7 @@ export type EvaluationResultTemplateLiteralExpression = {
   type: "TemplateLiteralExpression";
   parts: (string | EvaluationResultExpression)[];
   jikiObject: JSString;
+  immutableJikiObject?: JSString;
 };
 
 export function executeTemplateLiteralExpression(
@@ -36,5 +37,6 @@ export function executeTemplateLiteralExpression(
     type: "TemplateLiteralExpression",
     parts: evaluatedParts,
     jikiObject: new JSString(result),
+    immutableJikiObject: new JSString(result).clone(),
   };
 }

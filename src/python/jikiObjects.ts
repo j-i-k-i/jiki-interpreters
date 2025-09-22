@@ -15,6 +15,11 @@ export class PyNumber extends JikiObject {
     return this._value.toString();
   }
 
+  public clone(): PyNumber {
+    // Numbers are immutable, so return self
+    return this;
+  }
+
   // Python-specific: Check if this is an integer
   public isInteger(): boolean {
     return Number.isInteger(this._value);
@@ -39,6 +44,11 @@ export class PyString extends JikiObject {
     return this._value;
   }
 
+  public clone(): PyString {
+    // Strings are immutable, so return self
+    return this;
+  }
+
   // Python-specific: Get string representation with quotes
   public repr(): string {
     return `"${this._value}"`;
@@ -58,6 +68,11 @@ export class PyBoolean extends JikiObject {
     // Python uses True/False, not true/false
     return this._value ? "True" : "False";
   }
+
+  public clone(): PyBoolean {
+    // Booleans are immutable, so return self
+    return this;
+  }
 }
 
 export class PyNone extends JikiObject {
@@ -71,6 +86,11 @@ export class PyNone extends JikiObject {
 
   public toString(): string {
     return "None";
+  }
+
+  public clone(): PyNone {
+    // None is immutable, so return self
+    return this;
   }
 }
 

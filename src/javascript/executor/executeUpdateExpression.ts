@@ -31,12 +31,14 @@ export function executeUpdateExpression(executor: Executor, expression: UpdateEx
     return {
       type: "UpdateExpression",
       jikiObject: newValue,
+      immutableJikiObject: newValue.clone(),
     };
   } else {
     // Postfix: return the old value
     return {
       type: "UpdateExpression",
       jikiObject: currentValue,
+      immutableJikiObject: currentValue.clone(),
     };
   }
 }

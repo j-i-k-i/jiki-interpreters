@@ -22,5 +22,6 @@ export function executeAssignmentExpression(
     name: expression.name.lexeme,
     value: valueResult,
     jikiObject: valueResult.jikiObject,
+    immutableJikiObject: valueResult.jikiObject.clone(),
   };
 }

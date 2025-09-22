@@ -17,7 +17,7 @@ export function describeIfStatement(frame: FrameWithResult, context: Description
 }
 
 function describeFinalStep(result: EvaluationResultIfStatement, statement: IfStatement): string {
-  const conditionValue = Boolean(result.jikiObject.value);
+  const conditionValue = Boolean((result.immutableJikiObject || result.jikiObject).value);
 
   if (conditionValue) {
     return `<li>The condition evaluated to <code>true</code>, so JavaScript executed the if block.</li>`;
@@ -31,7 +31,7 @@ function describeFinalStep(result: EvaluationResultIfStatement, statement: IfSta
 }
 
 function describeResult(result: EvaluationResultIfStatement, statement: IfStatement): string {
-  const conditionValue = Boolean(result.jikiObject.value);
+  const conditionValue = Boolean((result.immutableJikiObject || result.jikiObject).value);
 
   if (conditionValue) {
     return `<p>The condition evaluated to <code>true</code>, so the if block was executed.</p>`;

@@ -9,5 +9,6 @@ export function executeGroupingExpression(executor: Executor, expression: Groupi
     type: "GroupingExpression",
     expression: result,
     jikiObject: result.jikiObject,
+    immutableJikiObject: result.jikiObject.clone(),
   } as any;
 }

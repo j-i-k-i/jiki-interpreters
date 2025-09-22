@@ -10,5 +10,6 @@ export function executeAssignmentStatement(executor: Executor, statement: Assign
     name: statement.name.lexeme,
     value: value,
     jikiObject: value.jikiObject,
+    immutableJikiObject: value.jikiObject.clone(),
   } as any;
 }

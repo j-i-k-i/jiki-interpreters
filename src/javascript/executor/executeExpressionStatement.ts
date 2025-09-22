@@ -8,5 +8,6 @@ export function executeExpressionStatement(executor: Executor, statement: Expres
     type: "ExpressionStatement",
     expression: expressionResult,
     jikiObject: expressionResult.jikiObject,
+    immutableJikiObject: expressionResult.jikiObject.clone(),
   } as any;
 }

@@ -26,6 +26,7 @@ export function executeVariableDeclaration(executor: Executor, statement: Variab
       type: "Literal",
       value: undefined,
       jikiObject: jikiObject,
+      immutableJikiObject: jikiObject.clone(),
     } as any;
   }
 
@@ -35,5 +36,6 @@ export function executeVariableDeclaration(executor: Executor, statement: Variab
     name: statement.name.lexeme,
     value: value,
     jikiObject: jikiObject,
+    immutableJikiObject: jikiObject.clone(),
   } as any;
 }

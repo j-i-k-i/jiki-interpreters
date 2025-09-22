@@ -8,5 +8,6 @@ export function executeLiteralExpression(executor: Executor, expression: Literal
   return {
     type: "LiteralExpression",
     jikiObject: jikiObject,
+    immutableJikiObject: jikiObject.clone(),
   };
 }
