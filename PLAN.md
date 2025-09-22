@@ -135,31 +135,33 @@ For nested updates like `change myList[0]["prop"] to value`:
 - [x] Update describers to use immutableJikiObject
 - [x] Run full test suite to ensure everything passes
 - [x] Run benchmark and measure final improvement with immutable cloning
-- [ ] Add immutableJikiObject to ALL remaining executor functions (executeIfStatement, executeMethodCallStatement, etc.)
+- [x] Add immutableJikiObject to ALL remaining executor functions
+- [x] Fix TypeScript errors - ensure ALL EvaluationResult types have immutableJikiObject
+- [x] Remove fallback patterns - use immutableJikiObject directly in describers
 - [ ] Generate descriptions inline during testing (similar to variable cloning) but NOT in benchmarks
-- [ ] Fix TypeScript errors - ensure ALL EvaluationResult types have immutableJikiObject
 - [ ] Update JavaScript/Python executors for interface compatibility (description → generateDescription)
 - [ ] Add immutableJikiObject support to JavaScript/Python interpreters (future work)
 
 ## Current Status
 
-**✅ MOSTLY COMPLETED**: Successfully implemented lazy description generation and immutable object cloning for most expression types.
+**✅ COMPLETED**: Successfully implemented lazy description generation and immutable object cloning for JikiScript.
 
-### Remaining Work
+### Next Steps
 
-Several executor functions still need `immutableJikiObject` field added to ensure TypeScript compilation passes and all describers work correctly:
-- executeIfStatement
-- executeMethodCallStatement
-- executeFunctionCallStatement
-- executeThisExpression
-- executeInstantiationExpression
-- executeGetterExpression
-- executeClassLookupExpression
-- executeFunctionLookupExpression
+The following tasks remain for full cross-interpreter compatibility and testing optimization:
 
-Additionally, need to:
-1. Generate descriptions inline during testing (not benchmarks) for better test performance
-2. Update JavaScript/Python interpreters to use `generateDescription()` instead of `description`
+1. **Generate descriptions inline during testing** (similar to variable cloning) but NOT in benchmarks
+   - This will improve test performance by generating descriptions immediately when needed
+   - Use environment variable similar to `SKIP_VARIABLE_CLONING`
+
+2. **Update JavaScript/Python interpreters** for interface compatibility
+   - Change from `description: string` to `generateDescription: () => string`
+   - Update all frame generation code in these interpreters
+
+3. **Add immutableJikiObject support to JavaScript/Python interpreters** (future work)
+   - Implement clone() methods for JavaScript/Python object types
+   - Add immutableJikiObject field to their EvaluationResult types
+   - Update their describers to use immutableJikiObject
 
 ### Final Performance Results
 
