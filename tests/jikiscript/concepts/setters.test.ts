@@ -1,4 +1,5 @@
 import { parse } from "@jikiscript/parser";
+import type { TestAugmentedFrame } from "@shared/frames";
 import { EvaluationContext, interpret } from "@jikiscript/interpreter";
 import {
   ChangeElementStatement,
@@ -56,5 +57,5 @@ test("execute", () => {
 
   // Last line
   const lastFrame = frames[frames.length - 1];
-  expect(Jiki.unwrapJikiObject(lastFrame.variables)["name"]).toBe("Nicole");
+  expect(Jiki.unwrapJikiObject((lastFrame as TestAugmentedFrame).variables)["name"]).toBe("Nicole");
 });

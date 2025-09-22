@@ -1,5 +1,6 @@
 import { describe, test, expect } from "vitest";
-import { interpret } from "../../../src/python/interpreter";
+import type { TestAugmentedFrame } from "@shared/frames";
+import { interpret } from "@python/interpreter";
 
 describe("Python nested blocks regression tests", () => {
   describe("complex nesting patterns", () => {
@@ -15,7 +16,7 @@ else:
       const { frames, error } = interpret(code);
       expect(error).toBeNull();
       const finalFrame = frames[frames.length - 1];
-      expect(finalFrame.variables.result.value).toBe("else-if");
+      expect((finalFrame as TestAugmentedFrame).variables.result.value).toBe("else-if");
     });
 
     test("deeply nested if-else-if-else chains", () => {
@@ -44,7 +45,7 @@ else:
       const { frames, error } = interpret(code);
       expect(error).toBeNull();
       const finalFrame = frames[frames.length - 1];
-      expect(finalFrame.variables.result.value).toBe("f");
+      expect((finalFrame as TestAugmentedFrame).variables.result.value).toBe("f");
     });
 
     test("nested if inside nested else", () => {
@@ -67,9 +68,9 @@ else:
       const { frames, error } = interpret(code);
       expect(error).toBeNull();
       const finalFrame = frames[frames.length - 1];
-      expect(finalFrame.variables.x.value).toBe(2);
-      expect(finalFrame.variables.y.value).toBe(2);
-      expect(finalFrame.variables.z.value).toBe(3);
+      expect((finalFrame as TestAugmentedFrame).variables.x.value).toBe(2);
+      expect((finalFrame as TestAugmentedFrame).variables.y.value).toBe(2);
+      expect((finalFrame as TestAugmentedFrame).variables.z.value).toBe(3);
     });
 
     test("elif chains with nested blocks", () => {
@@ -93,7 +94,7 @@ else:
       const { frames, error } = interpret(code);
       expect(error).toBeNull();
       const finalFrame = frames[frames.length - 1];
-      expect(finalFrame.variables.result.value).toBe("five-nested");
+      expect((finalFrame as TestAugmentedFrame).variables.result.value).toBe("five-nested");
     });
 
     test("complex nested elif with inner if-else", () => {
@@ -129,8 +130,8 @@ else:
       const { frames, error } = interpret(code);
       expect(error).toBeNull();
       const finalFrame = frames[frames.length - 1];
-      expect(finalFrame.variables.grade.value).toBe("B");
-      expect(finalFrame.variables.detail.value).toBe("satisfactory");
+      expect((finalFrame as TestAugmentedFrame).variables.grade.value).toBe("B");
+      expect((finalFrame as TestAugmentedFrame).variables.detail.value).toBe("satisfactory");
     });
 
     test("nested if with variable shadowing", () => {
@@ -151,8 +152,8 @@ if True:
       const { frames, error } = interpret(code);
       expect(error).toBeNull();
       const finalFrame = frames[frames.length - 1];
-      expect(finalFrame.variables.x.value).toBe(30);
-      expect(finalFrame.variables.y.value).toBe(40);
+      expect((finalFrame as TestAugmentedFrame).variables.x.value).toBe(30);
+      expect((finalFrame as TestAugmentedFrame).variables.y.value).toBe(40);
     });
 
     test("multiple elif branches with nested conditions", () => {
@@ -183,7 +184,7 @@ else:
       const { frames, error } = interpret(code);
       expect(error).toBeNull();
       const finalFrame = frames[frames.length - 1];
-      expect(finalFrame.variables.result.value).toBe(77);
+      expect((finalFrame as TestAugmentedFrame).variables.result.value).toBe(77);
     });
 
     test("deeply nested else branches", () => {
@@ -212,10 +213,10 @@ else:
       const { frames, error } = interpret(code);
       expect(error).toBeNull();
       const finalFrame = frames[frames.length - 1];
-      expect(finalFrame.variables.a.value).toBe(2);
-      expect(finalFrame.variables.b.value).toBe(2);
-      expect(finalFrame.variables.c.value).toBe(2);
-      expect(finalFrame.variables.d.value).toBe(2);
+      expect((finalFrame as TestAugmentedFrame).variables.a.value).toBe(2);
+      expect((finalFrame as TestAugmentedFrame).variables.b.value).toBe(2);
+      expect((finalFrame as TestAugmentedFrame).variables.c.value).toBe(2);
+      expect((finalFrame as TestAugmentedFrame).variables.d.value).toBe(2);
     });
 
     test("complex control flow with counters", () => {
@@ -244,8 +245,8 @@ if count == 1111:
       const { frames, error } = interpret(code);
       expect(error).toBeNull();
       const finalFrame = frames[frames.length - 1];
-      expect(finalFrame.variables.count.value).toBe(1111);
-      expect(finalFrame.variables.final.value).toBe(100);
+      expect((finalFrame as TestAugmentedFrame).variables.count.value).toBe(1111);
+      expect((finalFrame as TestAugmentedFrame).variables.final.value).toBe(100);
     });
 
     test("nested if-elif-else with multiple paths", () => {
@@ -283,7 +284,7 @@ else:
       const { frames, error } = interpret(code);
       expect(error).toBeNull();
       const finalFrame = frames[frames.length - 1];
-      expect(finalFrame.variables.result.value).toBe("exact match");
+      expect((finalFrame as TestAugmentedFrame).variables.result.value).toBe("exact match");
     });
   });
 });

@@ -13,7 +13,7 @@ import type { Statement } from "./statement";
 import { ExpressionStatement, AssignmentStatement, PrintStatement, IfStatement, BlockStatement } from "./statement";
 import type { EvaluationResult } from "./evaluation-result";
 import { createPyObject, type JikiObject } from "./jikiObjects";
-import type { Frame, FrameExecutionStatus } from "../shared/frames";
+import type { Frame, FrameExecutionStatus, TestAugmentedFrame } from "../shared/frames";
 import type { LanguageFeatures } from "./interfaces";
 import cloneDeep from "lodash.clonedeep";
 
@@ -195,20 +195,16 @@ export class Executor {
       error,
       time: this.time,
       timelineTime: Math.round(this.time * 100),
-      description: "",
+      generateDescription: () => this.generateDescription(frame),
       context: context,
-      variables: {},
     };
 
-    // Clone current variables
-    if (process.env.NODE_ENV === "test") {
-      frame.variables = cloneDeep(this.getVariables());
-    } else {
-      frame.variables = this.getVariables();
+    // In testing mode (but not benchmarks), augment frame with test-only fields
+    if (process.env.NODE_ENV === "test" && process.env.RUNNING_BENCHMARKS !== "true") {
+      (frame as TestAugmentedFrame).variables = cloneDeep(this.getVariables());
+      // Generate description immediately for testing
+      (frame as TestAugmentedFrame).description = this.generateDescription(frame);
     }
-
-    // Generate description
-    frame.description = this.generateDescription(frame);
 
     this.frames.push(frame);
     this.time += this.timePerFrame;

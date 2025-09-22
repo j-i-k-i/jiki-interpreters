@@ -1,6 +1,7 @@
 import { describe, expect, test } from "vitest";
-import { interpret } from "../../src/javascript";
-import { describeFrame } from "../../src/javascript/frameDescribers";
+import type { TestAugmentedFrame } from "@shared/frames";
+import { interpret } from "@javascript/interpreter";
+import { describeFrame } from "@javascript/frameDescribers";
 
 describe("describers", () => {
   describe("frames and descriptions", () => {

@@ -3,6 +3,7 @@ import { EvaluationContext, interpret } from "@jikiscript/interpreter";
 import { LogStatement, MethodCallStatement } from "@jikiscript/statement";
 import { last } from "lodash";
 import * as Jiki from "@jikiscript/jikiObjects";
+import type { TestAugmentedFrame } from "@shared/frames";
 import {
   MethodCallExpression,
   LiteralExpression,
@@ -116,7 +117,7 @@ describe("execute", () => {
 
     // Last line
     const lastFrame = frames[frames.length - 1];
-    expect(Jiki.unwrapJikiObject(lastFrame.variables)["name"]).toBe("Jeremy");
+    expect(Jiki.unwrapJikiObject((lastFrame as TestAugmentedFrame).variables)["name"]).toBe("Jeremy");
   });
 
   test("with args", () => {
@@ -143,6 +144,6 @@ describe("execute", () => {
 
     // Last line
     const lastFrame = frames[frames.length - 1];
-    expect(Jiki.unwrapJikiObject(lastFrame.variables)["name"]).toBe("r");
+    expect(Jiki.unwrapJikiObject((lastFrame as TestAugmentedFrame).variables)["name"]).toBe("r");
   });
 });

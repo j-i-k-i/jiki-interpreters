@@ -1,6 +1,7 @@
 import { interpret } from "@python/interpreter";
+import type { TestAugmentedFrame } from "@shared/frames";
 import { RuntimeErrorType } from "@python/executor";
-import { Frame } from "../../../src/shared/frames";
+import { Frame } from "@shared/frames";
 
 function expectFrameToBeError(frame: Frame, code: string, type: RuntimeErrorType) {
   expect(frame.code.trim()).toBe(code.trim());
@@ -23,7 +24,7 @@ else:
     result = "truthy"`;
         const { frames, error } = interpret(code, features);
         expect(error).toBeNull();
-        expect(frames[frames.length - 1].variables.result.value).toBe("falsy");
+        expect((frames[frames.length - 1] as TestAugmentedFrame).variables.result.value).toBe("falsy");
       });
 
       test("numbers - non-zero is truthy", () => {
@@ -34,7 +35,7 @@ else:
     result = "truthy"`;
         const { frames, error } = interpret(code, features);
         expect(error).toBeNull();
-        expect(frames[frames.length - 1].variables.result.value).toBe("truthy");
+        expect((frames[frames.length - 1] as TestAugmentedFrame).variables.result.value).toBe("truthy");
       });
 
       test("strings - empty string is falsy", () => {
@@ -45,7 +46,7 @@ else:
     result = "truthy"`;
         const { frames, error } = interpret(code, features);
         expect(error).toBeNull();
-        expect(frames[frames.length - 1].variables.result.value).toBe("falsy");
+        expect((frames[frames.length - 1] as TestAugmentedFrame).variables.result.value).toBe("falsy");
       });
 
       test("strings - non-empty string is truthy", () => {
@@ -56,7 +57,7 @@ else:
     result = "truthy"`;
         const { frames, error } = interpret(code, features);
         expect(error).toBeNull();
-        expect(frames[frames.length - 1].variables.result.value).toBe("truthy");
+        expect((frames[frames.length - 1] as TestAugmentedFrame).variables.result.value).toBe("truthy");
       });
 
       test("None is falsy", () => {
@@ -67,7 +68,7 @@ else:
     result = "truthy"`;
         const { frames, error } = interpret(code, features);
         expect(error).toBeNull();
-        expect(frames[frames.length - 1].variables.result.value).toBe("falsy");
+        expect((frames[frames.length - 1] as TestAugmentedFrame).variables.result.value).toBe("falsy");
       });
     });
 
@@ -77,7 +78,7 @@ else:
         const { frames, error } = interpret(code, features);
         expect(error).toBeNull();
         // In Python, 'and' returns the last value if all are truthy
-        expect(frames[frames.length - 1].variables.result.value).toBe("hello");
+        expect((frames[frames.length - 1] as TestAugmentedFrame).variables.result.value).toBe("hello");
       });
 
       test("AND with falsy value", () => {
@@ -85,7 +86,7 @@ else:
         const { frames, error } = interpret(code, features);
         expect(error).toBeNull();
         // In Python, 'and' returns the first falsy value
-        expect(frames[frames.length - 1].variables.result.value).toBe(0);
+        expect((frames[frames.length - 1] as TestAugmentedFrame).variables.result.value).toBe(0);
       });
 
       test("OR with falsy then truthy", () => {
@@ -93,7 +94,7 @@ else:
         const { frames, error } = interpret(code, features);
         expect(error).toBeNull();
         // In Python, 'or' returns the first truthy value
-        expect(frames[frames.length - 1].variables.result.value).toBe("default");
+        expect((frames[frames.length - 1] as TestAugmentedFrame).variables.result.value).toBe("default");
       });
 
       test("OR with truthy first", () => {
@@ -101,7 +102,7 @@ else:
         const { frames, error } = interpret(code, features);
         expect(error).toBeNull();
         // In Python, 'or' returns the first truthy value
-        expect(frames[frames.length - 1].variables.result.value).toBe("first");
+        expect((frames[frames.length - 1] as TestAugmentedFrame).variables.result.value).toBe("first");
       });
 
       test("AND with complex expressions", () => {
@@ -110,7 +111,7 @@ y = 5
 result = x and y`;
         const { frames, error } = interpret(code, features);
         expect(error).toBeNull();
-        expect(frames[frames.length - 1].variables.result.value).toBe(5);
+        expect((frames[frames.length - 1] as TestAugmentedFrame).variables.result.value).toBe(5);
       });
 
       test("OR with complex expressions", () => {
@@ -119,7 +120,7 @@ y = 10
 result = x or y`;
         const { frames, error } = interpret(code, features);
         expect(error).toBeNull();
-        expect(frames[frames.length - 1].variables.result.value).toBe(10);
+        expect((frames[frames.length - 1] as TestAugmentedFrame).variables.result.value).toBe(10);
       });
     });
   });
@@ -160,7 +161,7 @@ else:
     result = "else branch"`;
         const { frames, error } = interpret(code);
         expect(error).toBeNull();
-        expect(frames[frames.length - 1].variables.result.value).toBe("else branch");
+        expect((frames[frames.length - 1] as TestAugmentedFrame).variables.result.value).toBe("else branch");
       });
     });
 
@@ -199,9 +200,9 @@ result2 = True and True
 result3 = False and True`;
         const { frames, error } = interpret(code);
         expect(error).toBeNull();
-        expect(frames[frames.length - 1].variables.result1.value).toBe(false);
-        expect(frames[frames.length - 1].variables.result2.value).toBe(true);
-        expect(frames[frames.length - 1].variables.result3.value).toBe(false);
+        expect((frames[frames.length - 1] as TestAugmentedFrame).variables.result1.value).toBe(false);
+        expect((frames[frames.length - 1] as TestAugmentedFrame).variables.result2.value).toBe(true);
+        expect((frames[frames.length - 1] as TestAugmentedFrame).variables.result3.value).toBe(false);
       });
 
       test("OR with booleans works", () => {
@@ -210,9 +211,9 @@ result2 = False or False
 result3 = False or True`;
         const { frames, error } = interpret(code);
         expect(error).toBeNull();
-        expect(frames[frames.length - 1].variables.result1.value).toBe(true);
-        expect(frames[frames.length - 1].variables.result2.value).toBe(false);
-        expect(frames[frames.length - 1].variables.result3.value).toBe(true);
+        expect((frames[frames.length - 1] as TestAugmentedFrame).variables.result1.value).toBe(true);
+        expect((frames[frames.length - 1] as TestAugmentedFrame).variables.result2.value).toBe(false);
+        expect((frames[frames.length - 1] as TestAugmentedFrame).variables.result3.value).toBe(true);
       });
 
       test("Complex boolean expressions work", () => {
@@ -221,7 +222,7 @@ b = False
 result = (a and not b) or (b and not a)`;
         const { frames, error } = interpret(code);
         expect(error).toBeNull();
-        expect(frames[frames.length - 1].variables.result.value).toBe(true);
+        expect((frames[frames.length - 1] as TestAugmentedFrame).variables.result.value).toBe(true);
       });
     });
   });

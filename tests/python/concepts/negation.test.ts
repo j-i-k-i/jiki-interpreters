@@ -1,5 +1,5 @@
 import { interpret } from "@python/interpreter";
-
+import type { TestAugmentedFrame } from "@shared/frames";
 describe("negation concepts", () => {
   describe("boolean NOT operator", () => {
     test("not True", () => {
@@ -125,7 +125,7 @@ describe("negation concepts", () => {
       const { frames, error } = interpret("-5");
       expect(error).toBeNull();
       expect(frames).toBeArrayOfSize(1);
-      expect(frames[0].description).toContain("-5");
+      expect((frames[0] as TestAugmentedFrame).description).toContain("-5");
       expect(frames[0].result?.jikiObject.value).toBe(-5);
     });
 

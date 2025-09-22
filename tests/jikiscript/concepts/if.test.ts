@@ -1,4 +1,5 @@
 import { interpret } from "@jikiscript/interpreter";
+import type { TestAugmentedFrame } from "@shared/frames";
 import { unwrapJikiObject } from "@jikiscript/jikiObjects";
 
 describe("if", () => {
@@ -10,9 +11,9 @@ describe("if", () => {
     `);
     expect(frames).toBeArrayOfSize(2);
     expect(frames[0].status).toBe("SUCCESS");
-    expect(unwrapJikiObject(frames[0].variables)).toBeEmpty();
+    expect(unwrapJikiObject((frames[0] as TestAugmentedFrame).variables)).toBeEmpty();
     expect(frames[1].status).toBe("SUCCESS");
-    expect(unwrapJikiObject(frames[1].variables)).toMatchObject({ x: 2 });
+    expect(unwrapJikiObject((frames[1] as TestAugmentedFrame).variables)).toMatchObject({ x: 2 });
   });
 
   test("false means no block", () => {
@@ -23,7 +24,7 @@ describe("if", () => {
     `);
     expect(frames).toBeArrayOfSize(1);
     expect(frames[0].status).toBe("SUCCESS");
-    expect(unwrapJikiObject(frames[0].variables)).toBeEmpty();
+    expect(unwrapJikiObject((frames[0] as TestAugmentedFrame).variables)).toBeEmpty();
   });
 
   test("compare bools", () => {
@@ -34,9 +35,9 @@ describe("if", () => {
     `);
     expect(frames).toBeArrayOfSize(2);
     expect(frames[0].status).toBe("SUCCESS");
-    expect(unwrapJikiObject(frames[0].variables)).toBeEmpty();
+    expect(unwrapJikiObject((frames[0] as TestAugmentedFrame).variables)).toBeEmpty();
     expect(frames[1].status).toBe("SUCCESS");
-    expect(unwrapJikiObject(frames[1].variables)).toMatchObject({ x: 2 });
+    expect(unwrapJikiObject((frames[1] as TestAugmentedFrame).variables)).toMatchObject({ x: 2 });
   });
 
   test("with else", () => {
@@ -49,9 +50,9 @@ describe("if", () => {
     `);
     expect(frames).toBeArrayOfSize(2);
     expect(frames[0].status).toBe("SUCCESS");
-    expect(unwrapJikiObject(frames[0].variables)).toBeEmpty();
+    expect(unwrapJikiObject((frames[0] as TestAugmentedFrame).variables)).toBeEmpty();
     expect(frames[1].status).toBe("SUCCESS");
-    expect(unwrapJikiObject(frames[1].variables)).toMatchObject({ x: 3 });
+    expect(unwrapJikiObject((frames[1] as TestAugmentedFrame).variables)).toMatchObject({ x: 3 });
   });
 
   test("stacked", () => {
@@ -66,11 +67,11 @@ describe("if", () => {
     `);
     expect(frames).toBeArrayOfSize(3);
     expect(frames[0].status).toBe("SUCCESS");
-    expect(unwrapJikiObject(frames[0].variables)).toBeEmpty();
+    expect(unwrapJikiObject((frames[0] as TestAugmentedFrame).variables)).toBeEmpty();
     expect(frames[1].status).toBe("SUCCESS");
-    expect(unwrapJikiObject(frames[1].variables)).toBeEmpty();
+    expect(unwrapJikiObject((frames[1] as TestAugmentedFrame).variables)).toBeEmpty();
     expect(frames[2].status).toBe("SUCCESS");
-    expect(unwrapJikiObject(frames[2].variables)).toMatchObject({ x: 3 });
+    expect(unwrapJikiObject((frames[2] as TestAugmentedFrame).variables)).toMatchObject({ x: 3 });
   });
   test("nested if", () => {
     const { error, frames } = interpret(`

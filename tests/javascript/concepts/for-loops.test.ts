@@ -1,5 +1,5 @@
 import { interpret } from "@javascript/interpreter";
-
+import type { TestAugmentedFrame } from "@shared/frames";
 describe("JavaScript for loops", () => {
   describe("basic for loop", () => {
     test("simple counting loop", () => {
@@ -11,7 +11,7 @@ describe("JavaScript for loops", () => {
       `;
       const { frames, error } = interpret(code);
       expect(error).toBeNull();
-      expect(frames[frames.length - 1].variables.sum.value).toBe(10); // 0+1+2+3+4
+      expect((frames[frames.length - 1] as TestAugmentedFrame).variables.sum.value).toBe(10); // 0+1+2+3+4
     });
 
     test("loop with existing variable", () => {
@@ -24,8 +24,8 @@ describe("JavaScript for loops", () => {
       `;
       const { frames, error } = interpret(code);
       expect(error).toBeNull();
-      expect(frames[frames.length - 1].variables.i.value).toBe(3);
-      expect(frames[frames.length - 1].variables.count.value).toBe(3);
+      expect((frames[frames.length - 1] as TestAugmentedFrame).variables.i.value).toBe(3);
+      expect((frames[frames.length - 1] as TestAugmentedFrame).variables.count.value).toBe(3);
     });
 
     test("loop with decrement", () => {
@@ -37,7 +37,7 @@ describe("JavaScript for loops", () => {
       `;
       const { frames, error } = interpret(code);
       expect(error).toBeNull();
-      expect(frames[frames.length - 1].variables.sum.value).toBe(15); // 5+4+3+2+1
+      expect((frames[frames.length - 1] as TestAugmentedFrame).variables.sum.value).toBe(15); // 5+4+3+2+1
     });
   });
 
@@ -52,7 +52,7 @@ describe("JavaScript for loops", () => {
       `;
       const { frames, error } = interpret(code);
       expect(error).toBeNull();
-      expect(frames[frames.length - 1].variables.count.value).toBe(3);
+      expect((frames[frames.length - 1] as TestAugmentedFrame).variables.count.value).toBe(3);
     });
 
     test("no condition (infinite loop prevention needed)", () => {
@@ -70,7 +70,7 @@ describe("JavaScript for loops", () => {
       `;
       const { frames, error } = interpret(code);
       expect(error).toBeNull();
-      expect(frames[frames.length - 1].variables.count.value).toBe(3);
+      expect((frames[frames.length - 1] as TestAugmentedFrame).variables.count.value).toBe(3);
     });
   });
 
@@ -86,7 +86,7 @@ describe("JavaScript for loops", () => {
       `;
       const { frames, error } = interpret(code);
       expect(error).toBeNull();
-      // expect(frames[frames.length - 1].variables.sum.value).toBe(6); // 3 * 2
+      // expect((frames[frames.length - 1] as TestAugmentedFrame).variables.sum.value).toBe(6); // 3 * 2
     });
 
     test("simple nested loops", () => {
@@ -100,7 +100,7 @@ describe("JavaScript for loops", () => {
       `;
       const { frames, error } = interpret(code);
       expect(error).toBeNull();
-      // expect(frames[frames.length - 1].variables.sum.value).toBe(6); // 3 * 2
+      // expect((frames[frames.length - 1] as TestAugmentedFrame).variables.sum.value).toBe(6); // 3 * 2
     });
 
     test("nested loops with dependent conditions", () => {
@@ -114,7 +114,7 @@ describe("JavaScript for loops", () => {
       `;
       const { frames, error } = interpret(code);
       expect(error).toBeNull();
-      expect(frames[frames.length - 1].variables.count.value).toBe(6); // 1 + 2 + 3
+      expect((frames[frames.length - 1] as TestAugmentedFrame).variables.count.value).toBe(6); // 1 + 2 + 3
     });
   });
 
@@ -129,7 +129,7 @@ describe("JavaScript for loops", () => {
       const { frames, error } = interpret(code);
       expect(error).toBeNull();
       // After the loop, x should still be 10 (outer scope)
-      expect(frames[frames.length - 1].variables.x.value).toBe(10);
+      expect((frames[frames.length - 1] as TestAugmentedFrame).variables.x.value).toBe(10);
     });
 
     test("variables declared in loop body are scoped to the loop", () => {
@@ -142,9 +142,9 @@ describe("JavaScript for loops", () => {
       `;
       const { frames, error } = interpret(code);
       expect(error).toBeNull();
-      expect(frames[frames.length - 1].variables.sum.value).toBe(6); // 0 + 2 + 4
+      expect((frames[frames.length - 1] as TestAugmentedFrame).variables.sum.value).toBe(6); // 0 + 2 + 4
       // temp should not exist outside the loop
-      expect(frames[frames.length - 1].variables.temp).toBeUndefined();
+      expect((frames[frames.length - 1] as TestAugmentedFrame).variables.temp).toBeUndefined();
     });
   });
 
@@ -158,7 +158,7 @@ describe("JavaScript for loops", () => {
       `;
       const { frames, error } = interpret(code);
       expect(error).toBeNull();
-      expect(frames[frames.length - 1].variables.count.value).toBe(5);
+      expect((frames[frames.length - 1] as TestAugmentedFrame).variables.count.value).toBe(5);
     });
 
     test("multiple updates using comma operator", () => {
@@ -175,7 +175,7 @@ describe("JavaScript for loops", () => {
       `;
       const { frames, error } = interpret(code);
       expect(error).toBeNull();
-      expect(frames[frames.length - 1].variables.sum.value).toBe(15); // 1 + 2 + 4 + 8
+      expect((frames[frames.length - 1] as TestAugmentedFrame).variables.sum.value).toBe(15); // 1 + 2 + 4 + 8
     });
   });
 });

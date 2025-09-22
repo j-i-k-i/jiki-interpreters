@@ -1,5 +1,6 @@
 import { describe, expect, test } from "vitest";
-import { interpret } from "../../src/javascript/interpreter";
+import type { TestAugmentedFrame } from "@shared/frames";
+import { interpret } from "@javascript/interpreter";
 
 describe("Template Literals", () => {
   describe("basic template literals", () => {
@@ -8,7 +9,7 @@ describe("Template Literals", () => {
       expect(result.error).toBeNull();
       expect(result.frames).toHaveLength(1);
       expect(result.frames[0].status).toBe("SUCCESS");
-      expect(result.frames[0].variables).toEqual({});
+      expect((result.frames[0] as TestAugmentedFrame).variables).toEqual({});
     });
 
     test("template literal with only text", () => {
@@ -73,7 +74,7 @@ describe("Template Literals", () => {
       expect(result.frames).toHaveLength(2);
       expect(result.frames[0].status).toBe("SUCCESS");
       expect(result.frames[1].status).toBe("SUCCESS");
-      expect(result.frames[1].variables.name.value).toBe("Alice");
+      expect((result.frames[1] as TestAugmentedFrame).variables.name.value).toBe("Alice");
     });
 
     test("template literal with multiple variable interpolations", () => {
@@ -85,8 +86,8 @@ describe("Template Literals", () => {
       expect(result.error).toBeNull();
       expect(result.frames).toHaveLength(3);
       expect(result.frames[2].status).toBe("SUCCESS");
-      expect(result.frames[2].variables.first.value).toBe("Alice");
-      expect(result.frames[2].variables.last.value).toBe("Smith");
+      expect((result.frames[2] as TestAugmentedFrame).variables.first.value).toBe("Alice");
+      expect((result.frames[2] as TestAugmentedFrame).variables.last.value).toBe("Smith");
     });
 
     test("template literal with numeric variable", () => {
@@ -97,7 +98,7 @@ describe("Template Literals", () => {
       expect(result.error).toBeNull();
       expect(result.frames).toHaveLength(2);
       expect(result.frames[1].status).toBe("SUCCESS");
-      expect(result.frames[1].variables.age.value).toBe(25);
+      expect((result.frames[1] as TestAugmentedFrame).variables.age.value).toBe(25);
     });
   });
 
@@ -158,7 +159,7 @@ describe("Template Literals", () => {
       expect(result.error).toBeNull();
       expect(result.frames).toHaveLength(2);
       expect(result.frames[1].status).toBe("SUCCESS");
-      expect(result.frames[1].variables.greeting.value).toBe("Hello, Bob!");
+      expect((result.frames[1] as TestAugmentedFrame).variables.greeting.value).toBe("Hello, Bob!");
     });
   });
 
@@ -217,7 +218,7 @@ describe("Template Literals", () => {
       expect(result.frames).toHaveLength(2);
       expect(result.frames[0].status).toBe("SUCCESS");
       expect(result.frames[1].status).toBe("SUCCESS");
-      expect(result.frames[1].variables.x.value).toBe(1);
+      expect((result.frames[1] as TestAugmentedFrame).variables.x.value).toBe(1);
     });
 
     test("template literal in for loop", () => {

@@ -1,5 +1,5 @@
 import { interpret } from "@javascript/interpreter";
-
+import type { TestAugmentedFrame } from "@shared/frames";
 describe("blocks concept", () => {
   describe("parser", () => {
     test("parses empty block correctly", () => {
@@ -39,15 +39,15 @@ describe("blocks concept", () => {
 
       // Check that the variable exists during block execution
       const variableFrame = frames.find(
-        frame => frame.context?.type === "VariableDeclaration" && frame.variables.innerVar
+        frame => frame.context?.type === "VariableDeclaration" && (frame as TestAugmentedFrame).variables.innerVar
       );
       expect(variableFrame).toBeTruthy();
-      expect(variableFrame!.variables.innerVar).toBeTruthy();
+      expect((variableFrame as TestAugmentedFrame).variables.innerVar).toBeTruthy();
 
       // Check that the variable doesn't exist after block execution
-      const afterBlockFrame = frames.find(frame => frame.variables.afterBlock);
+      const afterBlockFrame = frames.find(frame => (frame as TestAugmentedFrame).variables.afterBlock);
       expect(afterBlockFrame).toBeTruthy();
-      expect(afterBlockFrame!.variables.innerVar).toBeUndefined();
+      expect((afterBlockFrame as TestAugmentedFrame).variables.innerVar).toBeUndefined();
     });
 
     test("outer variables are accessible from inner blocks", () => {
@@ -79,8 +79,8 @@ describe("blocks concept", () => {
       // Both blocks should execute successfully without conflicts
       const variableFrames = frames.filter(frame => frame.context?.type === "VariableDeclaration");
       expect(variableFrames).toBeArrayOfSize(2);
-      expect(variableFrames[0].variables.blockVar).toBeTruthy();
-      expect(variableFrames[1].variables.blockVar).toBeTruthy();
+      expect((variableFrames[0] as TestAugmentedFrame).variables.blockVar).toBeTruthy();
+      expect((variableFrames[1] as TestAugmentedFrame).variables.blockVar).toBeTruthy();
     });
 
     test("nested blocks have proper scope chain", () => {
@@ -116,8 +116,8 @@ describe("blocks concept", () => {
 
       const variableFrame = frames.find(frame => frame.context?.type === "VariableDeclaration");
       expect(variableFrame).toBeTruthy();
-      expect(variableFrame!.description).toBeTruthy();
-      expect(variableFrame!.description).toContain("scopedVar");
+      expect((variableFrame as TestAugmentedFrame).description).toBeTruthy();
+      expect((variableFrame as TestAugmentedFrame).description).toContain("scopedVar");
     });
   });
 });

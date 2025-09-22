@@ -1,5 +1,6 @@
 import { interpret } from "@jikiscript/interpreter";
 import { parse } from "@jikiscript/parser";
+import type { TestAugmentedFrame } from "@shared/frames";
 import { ContinueStatement, ForeachStatement, SetVariableStatement } from "@jikiscript/statement";
 import { FunctionCallExpression, ListExpression, LiteralExpression } from "@jikiscript/expression";
 import { RuntimeError } from "@jikiscript/error";
@@ -101,7 +102,7 @@ describe("for each", () => {
         );
         expect(frames).toBeArrayOfSize(1);
         expect(frames[0].status).toBe("SUCCESS");
-        expect(unwrapJikiObject(frames[0].variables)).toBeEmpty();
+        expect(unwrapJikiObject((frames[0] as TestAugmentedFrame).variables)).toBeEmpty();
         expect(echos).toBeEmpty();
       });
       test("once", () => {
@@ -116,9 +117,9 @@ describe("for each", () => {
         );
         expect(frames).toBeArrayOfSize(2);
         expect(frames[0].status).toBe("SUCCESS");
-        expect(unwrapJikiObject(frames[0].variables)).toMatchObject({ num: 1 });
+        expect(unwrapJikiObject((frames[0] as TestAugmentedFrame).variables)).toMatchObject({ num: 1 });
         expect(frames[1].status).toBe("SUCCESS");
-        expect(unwrapJikiObject(frames[1].variables)).toMatchObject({ num: 1 });
+        expect(unwrapJikiObject((frames[1] as TestAugmentedFrame).variables)).toMatchObject({ num: 1 });
         expect(echos).toEqual(["1"]);
       });
       test("multiple times", () => {
@@ -133,15 +134,15 @@ describe("for each", () => {
         );
         expect(frames).toBeArrayOfSize(6);
         expect(frames[0].status).toBe("SUCCESS");
-        expect(unwrapJikiObject(frames[0].variables)).toMatchObject({ num: 1 });
+        expect(unwrapJikiObject((frames[0] as TestAugmentedFrame).variables)).toMatchObject({ num: 1 });
         expect(frames[1].status).toBe("SUCCESS");
-        expect(unwrapJikiObject(frames[1].variables)).toMatchObject({ num: 1 });
+        expect(unwrapJikiObject((frames[1] as TestAugmentedFrame).variables)).toMatchObject({ num: 1 });
         expect(frames[2].status).toBe("SUCCESS");
         expect(frames[3].status).toBe("SUCCESS");
-        expect(unwrapJikiObject(frames[3].variables)).toMatchObject({ num: 2 });
+        expect(unwrapJikiObject((frames[3] as TestAugmentedFrame).variables)).toMatchObject({ num: 2 });
         expect(frames[4].status).toBe("SUCCESS");
         expect(frames[5].status).toBe("SUCCESS");
-        expect(unwrapJikiObject(frames[5].variables)).toMatchObject({ num: 3 });
+        expect(unwrapJikiObject((frames[5] as TestAugmentedFrame).variables)).toMatchObject({ num: 3 });
         expect(echos).toEqual(["1", "2", "3"]);
       });
     });
@@ -158,7 +159,7 @@ describe("for each", () => {
         );
         expect(frames).toBeArrayOfSize(1);
         expect(frames[0].status).toBe("SUCCESS");
-        expect(unwrapJikiObject(frames[0].variables)).toBeEmpty();
+        expect(unwrapJikiObject((frames[0] as TestAugmentedFrame).variables)).toBeEmpty();
         expect(echos).toBeEmpty();
       });
 
@@ -174,11 +175,11 @@ describe("for each", () => {
         );
         expect(frames).toBeArrayOfSize(2);
         expect(frames[0].status).toBe("SUCCESS");
-        expect(unwrapJikiObject(frames[0].variables)).toMatchObject({
+        expect(unwrapJikiObject((frames[0] as TestAugmentedFrame).variables)).toMatchObject({
           num: "a",
         });
         expect(frames[1].status).toBe("SUCCESS");
-        expect(unwrapJikiObject(frames[1].variables)).toMatchObject({
+        expect(unwrapJikiObject((frames[1] as TestAugmentedFrame).variables)).toMatchObject({
           num: "a",
         });
         expect(echos).toEqual(["a"]);
@@ -197,21 +198,21 @@ describe("for each", () => {
         );
         expect(frames).toBeArrayOfSize(6);
         expect(frames[0].status).toBe("SUCCESS");
-        expect(unwrapJikiObject(frames[0].variables)).toMatchObject({
+        expect(unwrapJikiObject((frames[0] as TestAugmentedFrame).variables)).toMatchObject({
           num: "a",
         });
         expect(frames[1].status).toBe("SUCCESS");
-        expect(unwrapJikiObject(frames[1].variables)).toMatchObject({
+        expect(unwrapJikiObject((frames[1] as TestAugmentedFrame).variables)).toMatchObject({
           num: "a",
         });
         expect(frames[2].status).toBe("SUCCESS");
         expect(frames[3].status).toBe("SUCCESS");
-        expect(unwrapJikiObject(frames[3].variables)).toMatchObject({
+        expect(unwrapJikiObject((frames[3] as TestAugmentedFrame).variables)).toMatchObject({
           num: "b",
         });
         expect(frames[4].status).toBe("SUCCESS");
         expect(frames[5].status).toBe("SUCCESS");
-        expect(unwrapJikiObject(frames[5].variables)).toMatchObject({
+        expect(unwrapJikiObject((frames[5] as TestAugmentedFrame).variables)).toMatchObject({
           num: "c",
         });
         expect(echos).toEqual(["a", "b", "c"]);
@@ -297,7 +298,7 @@ describe("for each", () => {
       );
       const lastFrame = frames[frames.length - 1];
       expect(lastFrame.status).toBe("SUCCESS");
-      expect(unwrapJikiObject(lastFrame.variables)).toMatchObject({
+      expect(unwrapJikiObject((lastFrame as TestAugmentedFrame).variables)).toMatchObject({
         foo: "bar",
       });
     });

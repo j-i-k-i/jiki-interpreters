@@ -1,5 +1,5 @@
 import { interpret } from "@python/interpreter";
-
+import type { TestAugmentedFrame } from "@shared/frames";
 describe("Python If Statements", () => {
   test("executes then branch when condition is true", () => {
     const code = `x = 1
@@ -13,7 +13,7 @@ if True:
 
     // Check that x was changed to 5
     const finalFrame = frames[frames.length - 1];
-    expect(finalFrame.variables.x.value).toBe(5);
+    expect((finalFrame as TestAugmentedFrame).variables.x.value).toBe(5);
   });
 
   test("skips then branch when condition is false", () => {
@@ -28,7 +28,7 @@ if False:
 
     // Check that x was not changed
     const finalFrame = frames[frames.length - 1];
-    expect(finalFrame.variables.x.value).toBe(1);
+    expect((finalFrame as TestAugmentedFrame).variables.x.value).toBe(1);
   });
 
   test("executes with boolean expression conditions", () => {
@@ -43,7 +43,7 @@ if x > 5:
 
     // Check that y was created
     const finalFrame = frames[frames.length - 1];
-    expect(finalFrame.variables.y.value).toBe(20);
+    expect((finalFrame as TestAugmentedFrame).variables.y.value).toBe(20);
   });
 
   test("works with complex conditions", () => {
@@ -59,7 +59,7 @@ if a and not b:
 
     // Check that result was created
     const finalFrame = frames[frames.length - 1];
-    expect(finalFrame.variables.result.value).toBe(42);
+    expect((finalFrame as TestAugmentedFrame).variables.result.value).toBe(42);
   });
 
   test("executes multiple statements in then branch", () => {
@@ -75,9 +75,9 @@ if a and not b:
 
     // Check that all variables were created
     const finalFrame = frames[frames.length - 1];
-    expect(finalFrame.variables.x.value).toBe(1);
-    expect(finalFrame.variables.y.value).toBe(2);
-    expect(finalFrame.variables.z.value).toBe(3);
+    expect((finalFrame as TestAugmentedFrame).variables.x.value).toBe(1);
+    expect((finalFrame as TestAugmentedFrame).variables.y.value).toBe(2);
+    expect((finalFrame as TestAugmentedFrame).variables.z.value).toBe(3);
   });
 
   test("handles nested if statements", () => {
@@ -94,7 +94,7 @@ if True:
 
     // Check that x was set to 3 by the nested if
     const finalFrame = frames[frames.length - 1];
-    expect(finalFrame.variables.x.value).toBe(3);
+    expect((finalFrame as TestAugmentedFrame).variables.x.value).toBe(3);
   });
 
   test("throws error for non-boolean condition", () => {
@@ -122,9 +122,9 @@ if True:
     expect(frames.length).toBeGreaterThan(0);
 
     // Check that if frame has proper description
-    const ifFrame = frames.find(f => f.description.includes("if condition"));
+    const ifFrame = frames.find(f => (f as TestAugmentedFrame).description.includes("if condition"));
     expect(ifFrame).toBeTruthy();
-    expect(ifFrame?.description).toContain("Evaluating if condition: True");
+    expect((ifFrame as TestAugmentedFrame)?.description).toContain("Evaluating if condition: True");
   });
 
   test("handles comparison operators as conditions", () => {
@@ -139,7 +139,7 @@ if x > y:
     expect(frames.length).toBeGreaterThan(0);
 
     const finalFrame = frames[frames.length - 1];
-    expect(finalFrame.variables.result.value).toBe("greater");
+    expect((finalFrame as TestAugmentedFrame).variables.result.value).toBe("greater");
   });
 
   test("handles equality comparison", () => {
@@ -153,7 +153,7 @@ if a == b:
     expect(error).toBeNull();
 
     const finalFrame = frames[frames.length - 1];
-    expect(finalFrame.variables.equal.value).toBe(true);
+    expect((finalFrame as TestAugmentedFrame).variables.equal.value).toBe(true);
   });
 
   test("executes else branch when condition is false", () => {
@@ -170,7 +170,7 @@ else:
 
     // Check that x was set to 10 by the else branch
     const finalFrame = frames[frames.length - 1];
-    expect(finalFrame.variables.x.value).toBe(10);
+    expect((finalFrame as TestAugmentedFrame).variables.x.value).toBe(10);
   });
 
   test("executes then branch when condition is true with else present", () => {
@@ -187,7 +187,7 @@ else:
 
     // Check that x was set to 5 by the then branch
     const finalFrame = frames[frames.length - 1];
-    expect(finalFrame.variables.x.value).toBe(5);
+    expect((finalFrame as TestAugmentedFrame).variables.x.value).toBe(5);
   });
 
   test("handles multiple statements in else branch", () => {
@@ -202,9 +202,9 @@ else:
     expect(error).toBeNull();
 
     const finalFrame = frames[frames.length - 1];
-    expect(finalFrame.variables.b.value).toBe(2);
-    expect(finalFrame.variables.c.value).toBe(3);
-    expect(finalFrame.variables.a).toBeUndefined();
+    expect((finalFrame as TestAugmentedFrame).variables.b.value).toBe(2);
+    expect((finalFrame as TestAugmentedFrame).variables.c.value).toBe(3);
+    expect((finalFrame as TestAugmentedFrame).variables.a).toBeUndefined();
   });
 
   test("executes elif when if condition is false", () => {
@@ -222,7 +222,7 @@ else:
 
     // Check that x was set to 10 by the elif branch
     const finalFrame = frames[frames.length - 1];
-    expect(finalFrame.variables.x.value).toBe(10);
+    expect((finalFrame as TestAugmentedFrame).variables.x.value).toBe(10);
   });
 
   test("executes first true condition in if-elif chain", () => {
@@ -242,7 +242,7 @@ elif True:
 
     // Should execute the first True elif (result = 3)
     const finalFrame = frames[frames.length - 1];
-    expect(finalFrame.variables.result.value).toBe(3);
+    expect((finalFrame as TestAugmentedFrame).variables.result.value).toBe(3);
   });
 
   test("executes else when all conditions are false", () => {
@@ -260,7 +260,7 @@ else:
 
     // Check that x was set to 15 by the else branch
     const finalFrame = frames[frames.length - 1];
-    expect(finalFrame.variables.x.value).toBe(15);
+    expect((finalFrame as TestAugmentedFrame).variables.x.value).toBe(15);
   });
 
   test("handles elif with expressions", () => {
@@ -278,6 +278,6 @@ else:
     expect(error).toBeNull();
 
     const finalFrame = frames[frames.length - 1];
-    expect(finalFrame.variables.result.value).toBe("greater");
+    expect((finalFrame as TestAugmentedFrame).variables.result.value).toBe("greater");
   });
 });

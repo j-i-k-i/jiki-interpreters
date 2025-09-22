@@ -1,6 +1,7 @@
 import { interpret } from "@javascript/interpreter";
+import type { TestAugmentedFrame } from "@shared/frames";
 import { RuntimeErrorType } from "@javascript/executor";
-import { Frame } from "../../src/shared/frames";
+import { Frame } from "@shared/frames";
 
 function expectFrameToBeError(frame: Frame, code: string, type: RuntimeErrorType) {
   expect(frame.code.trim()).toBe(code.trim());
@@ -228,8 +229,8 @@ describe("Runtime Errors", () => {
         expect(frames[1].error!.message).toBe("ShadowingDisabled: name: x");
 
         // Verify original variable is unchanged
-        expect(frames[0].variables.x.value).toBe(5);
-        expect(frames[1].variables.x.value).toBe(5); // Still 5 after error
+        expect((frames[0] as TestAugmentedFrame).variables.x.value).toBe(5);
+        expect((frames[1] as TestAugmentedFrame).variables.x.value).toBe(5); // Still 5 after error
       });
     });
 
@@ -243,7 +244,7 @@ describe("Runtime Errors", () => {
         expect(frames[2].status).toBe("SUCCESS"); // x; (should be 10)
 
         // Verify inner x has value 10
-        expect(frames[2].variables.x.value).toBe(10);
+        expect((frames[2] as TestAugmentedFrame).variables.x.value).toBe(10);
       });
 
       test("nested shadowing allowed", () => {
@@ -258,9 +259,9 @@ describe("Runtime Errors", () => {
         expect(frames[5].status).toBe("SUCCESS"); // x; (should be 1)
 
         // Verify variables at different levels
-        expect(frames[3].variables.x.value).toBe(3); // innermost
-        expect(frames[4].variables.x.value).toBe(2); // middle
-        expect(frames[5].variables.x.value).toBe(1); // outer
+        expect((frames[3] as TestAugmentedFrame).variables.x.value).toBe(3); // innermost
+        expect((frames[4] as TestAugmentedFrame).variables.x.value).toBe(2); // middle
+        expect((frames[5] as TestAugmentedFrame).variables.x.value).toBe(1); // outer
       });
 
       test("variable state restoration after shadowed block", () => {
@@ -272,9 +273,9 @@ describe("Runtime Errors", () => {
         expect(frames[2].status).toBe("SUCCESS"); // x; after block
 
         // Verify original variable is restored after block
-        expect(frames[0].variables.x.value).toBe(5);
-        expect(frames[1].variables.x.value).toBe(10); // Inside block
-        expect(frames[2].variables.x.value).toBe(5); // After block, back to original
+        expect((frames[0] as TestAugmentedFrame).variables.x.value).toBe(5);
+        expect((frames[1] as TestAugmentedFrame).variables.x.value).toBe(10); // Inside block
+        expect((frames[2] as TestAugmentedFrame).variables.x.value).toBe(5); // After block, back to original
       });
 
       test("assignment to shadowed variable doesn't affect outer", () => {
@@ -287,10 +288,10 @@ describe("Runtime Errors", () => {
         expect(frames[3].status).toBe("SUCCESS"); // x; after block
 
         // Verify original variable is unchanged
-        expect(frames[0].variables.x.value).toBe(5);
-        expect(frames[1].variables.x.value).toBe(10); // Initial shadow value
-        expect(frames[2].variables.x.value).toBe(20); // Modified shadow value
-        expect(frames[3].variables.x.value).toBe(5); // Original restored
+        expect((frames[0] as TestAugmentedFrame).variables.x.value).toBe(5);
+        expect((frames[1] as TestAugmentedFrame).variables.x.value).toBe(10); // Initial shadow value
+        expect((frames[2] as TestAugmentedFrame).variables.x.value).toBe(20); // Modified shadow value
+        expect((frames[3] as TestAugmentedFrame).variables.x.value).toBe(5); // Original restored
       });
     });
 
@@ -373,7 +374,7 @@ describe("Runtime Errors", () => {
       expect(frames[1].status).toBe("SUCCESS"); // if condition
       expect(frames[2].status).toBe("SUCCESS"); // let x = 10 (allowed)
       expect(frames[3].status).toBe("SUCCESS"); // x; (should be 10)
-      expect(frames[3].variables.x.value).toBe(10);
+      expect((frames[3] as TestAugmentedFrame).variables.x.value).toBe(10);
     });
   });
 });

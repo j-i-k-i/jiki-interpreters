@@ -1,5 +1,6 @@
 import { describe, test, expect } from "vitest";
-import { interpret } from "../../../src/javascript/interpreter";
+import type { TestAugmentedFrame } from "@shared/frames";
+import { interpret } from "@javascript/interpreter";
 
 describe("JavaScript nested blocks regression tests", () => {
   describe("complex nesting patterns", () => {
@@ -18,7 +19,7 @@ describe("JavaScript nested blocks regression tests", () => {
       const { frames, error } = interpret(code);
       expect(error).toBeNull();
       const finalFrame = frames[frames.length - 1];
-      expect(finalFrame.variables.result.value).toBe("else-if");
+      expect((finalFrame as TestAugmentedFrame).variables.result.value).toBe("else-if");
     });
 
     test("for loop inside else block", () => {
@@ -35,7 +36,7 @@ describe("JavaScript nested blocks regression tests", () => {
       const { frames, error } = interpret(code);
       expect(error).toBeNull();
       const finalFrame = frames[frames.length - 1];
-      expect(finalFrame.variables.count.value).toBe(3);
+      expect((finalFrame as TestAugmentedFrame).variables.count.value).toBe(3);
     });
 
     test("while loop inside else block", () => {
@@ -54,7 +55,7 @@ describe("JavaScript nested blocks regression tests", () => {
       const { frames, error } = interpret(code);
       expect(error).toBeNull();
       const finalFrame = frames[frames.length - 1];
-      expect(finalFrame.variables.count.value).toBe(3);
+      expect((finalFrame as TestAugmentedFrame).variables.count.value).toBe(3);
     });
 
     test("deeply nested if-else-if-else chains", () => {
@@ -89,7 +90,7 @@ describe("JavaScript nested blocks regression tests", () => {
       const { frames, error } = interpret(code);
       expect(error).toBeNull();
       const finalFrame = frames[frames.length - 1];
-      expect(finalFrame.variables.result.value).toBe("f");
+      expect((finalFrame as TestAugmentedFrame).variables.result.value).toBe("f");
     });
 
     test("nested blocks with mixed control structures", () => {
@@ -128,7 +129,7 @@ describe("JavaScript nested blocks regression tests", () => {
       expect(error).toBeNull();
       const finalFrame = frames[frames.length - 1];
       // result starts at 1, +1 (i=0), +10 (if), +1 (i=1), +200 (while j<2) = 213
-      expect(finalFrame.variables.result.value).toBe(213);
+      expect((finalFrame as TestAugmentedFrame).variables.result.value).toBe(213);
     });
 
     test("nested for loops inside if-else branches", () => {
@@ -153,7 +154,7 @@ describe("JavaScript nested blocks regression tests", () => {
       const { frames, error } = interpret(code);
       expect(error).toBeNull();
       const finalFrame = frames[frames.length - 1];
-      expect(finalFrame.variables.sum.value).toBe(6); // 2*3 = 6
+      expect((finalFrame as TestAugmentedFrame).variables.sum.value).toBe(6); // 2*3 = 6
     });
 
     test("standalone blocks with nested structures", () => {
@@ -176,7 +177,7 @@ describe("JavaScript nested blocks regression tests", () => {
       const { frames, error } = interpret(code);
       expect(error).toBeNull();
       const finalFrame = frames[frames.length - 1];
-      expect(finalFrame.variables.x.value).toBe(5); // 0+1+2+1+1
+      expect((finalFrame as TestAugmentedFrame).variables.x.value).toBe(5); // 0+1+2+1+1
     });
 
     test("while inside for inside if inside else", () => {
@@ -199,7 +200,7 @@ describe("JavaScript nested blocks regression tests", () => {
       const { frames, error } = interpret(code);
       expect(error).toBeNull();
       const finalFrame = frames[frames.length - 1];
-      expect(finalFrame.variables.result.value).toBe(6); // 2*3
+      expect((finalFrame as TestAugmentedFrame).variables.result.value).toBe(6); // 2*3
     });
 
     test("complex else-if chains with nested blocks", () => {
@@ -231,7 +232,7 @@ describe("JavaScript nested blocks regression tests", () => {
       const { frames, error } = interpret(code);
       expect(error).toBeNull();
       const finalFrame = frames[frames.length - 1];
-      expect(finalFrame.variables.result.value).toBe("five-nested");
+      expect((finalFrame as TestAugmentedFrame).variables.result.value).toBe("five-nested");
     });
 
     test("for loop with block body containing if-else", () => {
@@ -250,7 +251,7 @@ describe("JavaScript nested blocks regression tests", () => {
       const { frames, error } = interpret(code);
       expect(error).toBeNull();
       const finalFrame = frames[frames.length - 1];
-      expect(finalFrame.variables.sum.value).toBe(10); // 0 + 2 + 2 + 6
+      expect((finalFrame as TestAugmentedFrame).variables.sum.value).toBe(10); // 0 + 2 + 2 + 6
     });
   });
 });

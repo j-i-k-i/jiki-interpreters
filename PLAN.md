@@ -44,6 +44,7 @@ The JikiScript interpreter currently has significant performance bottlenecks:
 ### Phase 3: Immutable Result Cloning
 
 #### Step 1: Comprehensive Test Creation
+
 - Create tests for all primitive types (Number, String, Boolean, Null, Undefined)
 - Create tests for collection types (List, Dictionary)
 - Create tests for nested collections (List of Lists, Dictionary of Dictionaries, mixed)
@@ -51,11 +52,13 @@ The JikiScript interpreter currently has significant performance bottlenecks:
 - All tests check log statement descriptions only
 
 #### Step 2: Add immutableJikiObject Field
+
 - Add `immutableJikiObject?: JikiObject` to EvaluationResult interface
 - Update each execute function to populate this field
 - Tests will fail with undefined immutableJikiObject
 
 #### Step 3: Implement Clone Methods
+
 - Add `clone(): JikiObject` method to base JikiObject class
 - Immutable types (Number, String, Boolean, Null, Undefined) return `this`
 - List implements deep clone of elements
@@ -63,6 +66,7 @@ The JikiScript interpreter currently has significant performance bottlenecks:
 - Create recursive deep clone utility
 
 #### Step 4: Update Describers
+
 - Modify describeLogStatement to use `immutableJikiObject`
 - Other describers that show values should also use immutable versions
 
@@ -166,8 +170,18 @@ The following tasks remain for full cross-interpreter compatibility and testing 
 ### Final Performance Results
 
 - **Original baseline**: ~2,300ms for 100k frames
-- **Final optimized**: **344ms for 100k frames** (6.7x speedup!)
-- **1M frames**: 8,860ms (8.86 seconds)
+- **Final optimized**: **251ms for 100k frames** (9.2x speedup!)
+- **1M frames**: 5,871ms (5.87 seconds)
+
+### Latest Benchmark Results (with inline test descriptions)
+
+| Frame Count      | Time      | Frames/ms | Notes                                |
+| ---------------- | --------- | --------- | ------------------------------------ |
+| 10 frames        | 1.89ms    | 5.3       | Simple addition                      |
+| ~3,000 frames    | 8.19ms    | 379.2     | List operations (3,106 frames)       |
+| 10,000 frames    | 46.74ms   | 213.9     | Arithmetic operations                |
+| 100,000 frames   | **251ms** | 401.0     | Complex expressions (100,655 frames) |
+| 4,000,000 frames | 5,871ms   | 681.5     | Modulo and comparisons               |
 
 ### Implementation Summary
 
@@ -188,13 +202,13 @@ The following tasks remain for full cross-interpreter compatibility and testing 
 
 ### Benchmark Results - Final
 
-| Frame Count | Time | Frames/ms | Notes |
-|------------|------|-----------|-------|
-| 10 frames | 2.48ms | 4.0 | Simple addition |
-| ~1,000 frames | 11.45ms | 271.3 | List operations (3,106 frames) |
-| 10,000 frames | 66.31ms | 150.8 | Arithmetic operations |
-| 100,000 frames | **344ms** | 292.6 | Complex expressions (100,655 frames) |
-| 1,000,000 frames | 8,858ms | 451.7 | Modulo and comparisons (4M frames) |
+| Frame Count      | Time      | Frames/ms | Notes                                |
+| ---------------- | --------- | --------- | ------------------------------------ |
+| 10 frames        | 2.48ms    | 4.0       | Simple addition                      |
+| ~1,000 frames    | 11.45ms   | 271.3     | List operations (3,106 frames)       |
+| 10,000 frames    | 66.31ms   | 150.8     | Arithmetic operations                |
+| 100,000 frames   | **344ms** | 292.6     | Complex expressions (100,655 frames) |
+| 1,000,000 frames | 8,858ms   | 451.7     | Modulo and comparisons (4M frames)   |
 
 ### Key Achievements
 
@@ -205,6 +219,7 @@ The following tasks remain for full cross-interpreter compatibility and testing 
 - **Memory efficient**: No more OOM errors at high frame counts
 
 The optimization successfully addresses all three original problems:
+
 1. Frame description generation overhead (reduced via lazy evaluation)
 2. Unnecessary variable cloning (eliminated in production/benchmarks)
 3. Mutable object corruption (fixed via immutable cloning)

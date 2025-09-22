@@ -1,6 +1,7 @@
 import { interpret } from "@javascript/interpreter";
+import type { TestAugmentedFrame } from "@shared/frames";
 import { RuntimeErrorType } from "@javascript/executor";
-import { Frame } from "../../../src/shared/frames";
+import { Frame } from "@shared/frames";
 import { changeLanguage } from "@javascript/translator";
 
 function expectFrameToBeError(frame: Frame, code: string, type: RuntimeErrorType) {
@@ -38,7 +39,7 @@ describe("JavaScript strict equality feature", () => {
       const { frames, error } = interpret(code, features);
       expect(error).toBeNull();
       expect(frames[0].status).toBe("SUCCESS");
-      expect(frames[0].variables.result.value).toBe(true);
+      expect((frames[0] as TestAugmentedFrame).variables.result.value).toBe(true);
     });
 
     test("using === works correctly with different types", () => {
@@ -46,7 +47,7 @@ describe("JavaScript strict equality feature", () => {
       const { frames, error } = interpret(code, features);
       expect(error).toBeNull();
       expect(frames[0].status).toBe("SUCCESS");
-      expect(frames[0].variables.result.value).toBe(false);
+      expect((frames[0] as TestAugmentedFrame).variables.result.value).toBe(false);
     });
 
     test("using !== works correctly with same types", () => {
@@ -54,7 +55,7 @@ describe("JavaScript strict equality feature", () => {
       const { frames, error } = interpret(code, features);
       expect(error).toBeNull();
       expect(frames[0].status).toBe("SUCCESS");
-      expect(frames[0].variables.result.value).toBe(false);
+      expect((frames[0] as TestAugmentedFrame).variables.result.value).toBe(false);
     });
 
     test("using !== works correctly with different types", () => {
@@ -62,7 +63,7 @@ describe("JavaScript strict equality feature", () => {
       const { frames, error } = interpret(code, features);
       expect(error).toBeNull();
       expect(frames[0].status).toBe("SUCCESS");
-      expect(frames[0].variables.result.value).toBe(true);
+      expect((frames[0] as TestAugmentedFrame).variables.result.value).toBe(true);
     });
 
     test("strict equality with strings", () => {
@@ -74,9 +75,9 @@ describe("JavaScript strict equality feature", () => {
       const { frames, error } = interpret(code, features);
       expect(error).toBeNull();
       const lastFrame = frames[frames.length - 1];
-      expect(lastFrame.variables.a.value).toBe(true);
-      expect(lastFrame.variables.b.value).toBe(true);
-      expect(lastFrame.variables.c.value).toBe(false);
+      expect((lastFrame as TestAugmentedFrame).variables.a.value).toBe(true);
+      expect((lastFrame as TestAugmentedFrame).variables.b.value).toBe(true);
+      expect((lastFrame as TestAugmentedFrame).variables.c.value).toBe(false);
     });
 
     test("strict equality with booleans", () => {
@@ -88,9 +89,9 @@ describe("JavaScript strict equality feature", () => {
       const { frames, error } = interpret(code, features);
       expect(error).toBeNull();
       const lastFrame = frames[frames.length - 1];
-      expect(lastFrame.variables.a.value).toBe(true);
-      expect(lastFrame.variables.b.value).toBe(true);
-      expect(lastFrame.variables.c.value).toBe(false);
+      expect((lastFrame as TestAugmentedFrame).variables.a.value).toBe(true);
+      expect((lastFrame as TestAugmentedFrame).variables.b.value).toBe(true);
+      expect((lastFrame as TestAugmentedFrame).variables.c.value).toBe(false);
     });
 
     test("strict equality with null and undefined", () => {
@@ -103,10 +104,10 @@ describe("JavaScript strict equality feature", () => {
       const { frames, error } = interpret(code, features);
       expect(error).toBeNull();
       const lastFrame = frames[frames.length - 1];
-      expect(lastFrame.variables.a.value).toBe(true);
-      expect(lastFrame.variables.b.value).toBe(true);
-      expect(lastFrame.variables.c.value).toBe(false);
-      expect(lastFrame.variables.d.value).toBe(true);
+      expect((lastFrame as TestAugmentedFrame).variables.a.value).toBe(true);
+      expect((lastFrame as TestAugmentedFrame).variables.b.value).toBe(true);
+      expect((lastFrame as TestAugmentedFrame).variables.c.value).toBe(false);
+      expect((lastFrame as TestAugmentedFrame).variables.d.value).toBe(true);
     });
   });
 
@@ -118,7 +119,7 @@ describe("JavaScript strict equality feature", () => {
       const { frames, error } = interpret(code, features);
       expect(error).toBeNull();
       expect(frames[0].status).toBe("SUCCESS");
-      expect(frames[0].variables.result.value).toBe(true);
+      expect((frames[0] as TestAugmentedFrame).variables.result.value).toBe(true);
     });
 
     test("using != works with type coercion", () => {
@@ -126,7 +127,7 @@ describe("JavaScript strict equality feature", () => {
       const { frames, error } = interpret(code, features);
       expect(error).toBeNull();
       expect(frames[0].status).toBe("SUCCESS");
-      expect(frames[0].variables.result.value).toBe(true);
+      expect((frames[0] as TestAugmentedFrame).variables.result.value).toBe(true);
     });
 
     test("using === still works strictly", () => {
@@ -134,7 +135,7 @@ describe("JavaScript strict equality feature", () => {
       const { frames, error } = interpret(code, features);
       expect(error).toBeNull();
       expect(frames[0].status).toBe("SUCCESS");
-      expect(frames[0].variables.result.value).toBe(false);
+      expect((frames[0] as TestAugmentedFrame).variables.result.value).toBe(false);
     });
 
     test("using !== still works strictly", () => {
@@ -142,7 +143,7 @@ describe("JavaScript strict equality feature", () => {
       const { frames, error } = interpret(code, features);
       expect(error).toBeNull();
       expect(frames[0].status).toBe("SUCCESS");
-      expect(frames[0].variables.result.value).toBe(true);
+      expect((frames[0] as TestAugmentedFrame).variables.result.value).toBe(true);
     });
 
     test("loose equality with type coercion examples", () => {
@@ -156,11 +157,11 @@ describe("JavaScript strict equality feature", () => {
       const { frames, error } = interpret(code, features);
       expect(error).toBeNull();
       const lastFrame = frames[frames.length - 1];
-      expect(lastFrame.variables.a.value).toBe(true);
-      expect(lastFrame.variables.b.value).toBe(true);
-      expect(lastFrame.variables.c.value).toBe(true);
-      expect(lastFrame.variables.d.value).toBe(true);
-      expect(lastFrame.variables.e.value).toBe(true);
+      expect((lastFrame as TestAugmentedFrame).variables.a.value).toBe(true);
+      expect((lastFrame as TestAugmentedFrame).variables.b.value).toBe(true);
+      expect((lastFrame as TestAugmentedFrame).variables.c.value).toBe(true);
+      expect((lastFrame as TestAugmentedFrame).variables.d.value).toBe(true);
+      expect((lastFrame as TestAugmentedFrame).variables.e.value).toBe(true);
     });
 
     test("both loose and strict equality in same code", () => {
@@ -173,10 +174,10 @@ describe("JavaScript strict equality feature", () => {
       const { frames, error } = interpret(code, features);
       expect(error).toBeNull();
       const lastFrame = frames[frames.length - 1];
-      expect(lastFrame.variables.loose.value).toBe(true);
-      expect(lastFrame.variables.strict.value).toBe(false);
-      expect(lastFrame.variables.looseNot.value).toBe(false);
-      expect(lastFrame.variables.strictNot.value).toBe(true);
+      expect((lastFrame as TestAugmentedFrame).variables.loose.value).toBe(true);
+      expect((lastFrame as TestAugmentedFrame).variables.strict.value).toBe(false);
+      expect((lastFrame as TestAugmentedFrame).variables.looseNot.value).toBe(false);
+      expect((lastFrame as TestAugmentedFrame).variables.strictNot.value).toBe(true);
     });
   });
 
@@ -194,7 +195,7 @@ describe("JavaScript strict equality feature", () => {
       const { frames, error } = interpret(code, { enforceStrictEquality: true });
       expect(error).toBeNull();
       const lastFrame = frames[frames.length - 1];
-      expect(lastFrame.variables.result.value).toBe("equal different");
+      expect((lastFrame as TestAugmentedFrame).variables.result.value).toBe("equal different");
     });
 
     test("strict equality with variables", () => {
@@ -210,10 +211,10 @@ describe("JavaScript strict equality feature", () => {
       const { frames, error } = interpret(code, { enforceStrictEquality: true });
       expect(error).toBeNull();
       const lastFrame = frames[frames.length - 1];
-      expect(lastFrame.variables.a.value).toBe(false);
-      expect(lastFrame.variables.b.value).toBe(true);
-      expect(lastFrame.variables.c.value).toBe(true);
-      expect(lastFrame.variables.d.value).toBe(false);
+      expect((lastFrame as TestAugmentedFrame).variables.a.value).toBe(false);
+      expect((lastFrame as TestAugmentedFrame).variables.b.value).toBe(true);
+      expect((lastFrame as TestAugmentedFrame).variables.c.value).toBe(true);
+      expect((lastFrame as TestAugmentedFrame).variables.d.value).toBe(false);
     });
 
     test("chained comparisons with strict equality", () => {
@@ -227,8 +228,8 @@ describe("JavaScript strict equality feature", () => {
       const { frames, error } = interpret(code, { enforceStrictEquality: true });
       expect(error).toBeNull();
       const lastFrame = frames[frames.length - 1];
-      expect(lastFrame.variables.result1.value).toBe(true);
-      expect(lastFrame.variables.result2.value).toBe(true);
+      expect((lastFrame as TestAugmentedFrame).variables.result1.value).toBe(true);
+      expect((lastFrame as TestAugmentedFrame).variables.result2.value).toBe(true);
     });
   });
 
@@ -249,8 +250,8 @@ describe("JavaScript strict equality feature", () => {
       const { frames, error } = interpret(code); // No features specified
       expect(error).toBeNull();
       const lastFrame = frames[frames.length - 1];
-      expect(lastFrame.variables.a.value).toBe(true);
-      expect(lastFrame.variables.b.value).toBe(true);
+      expect((lastFrame as TestAugmentedFrame).variables.a.value).toBe(true);
+      expect((lastFrame as TestAugmentedFrame).variables.b.value).toBe(true);
     });
   });
 });

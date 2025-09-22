@@ -1,4 +1,5 @@
 import { interpret } from "@javascript/interpreter";
+import type { TestAugmentedFrame } from "@shared/frames";
 import { SyntaxError } from "@javascript/error";
 
 describe("JavaScript oneStatementPerLine feature", () => {
@@ -8,9 +9,9 @@ describe("JavaScript oneStatementPerLine feature", () => {
       const { frames, error } = interpret(code);
       expect(error).toBeNull();
       expect(frames).not.toHaveLength(0);
-      expect(frames[frames.length - 1].variables.x.value).toBe(5);
-      expect(frames[frames.length - 1].variables.y.value).toBe(10);
-      expect(frames[frames.length - 1].variables.z.value).toBe(15);
+      expect((frames[frames.length - 1] as TestAugmentedFrame).variables.x.value).toBe(5);
+      expect((frames[frames.length - 1] as TestAugmentedFrame).variables.y.value).toBe(10);
+      expect((frames[frames.length - 1] as TestAugmentedFrame).variables.z.value).toBe(15);
     });
 
     test("allows for loops with all sections on one line", () => {
@@ -23,14 +24,14 @@ describe("JavaScript oneStatementPerLine feature", () => {
       const code = `let result = 0; if (true) { result = 1; } else { result = 2; }`;
       const { frames, error } = interpret(code);
       expect(error).toBeNull();
-      expect(frames[frames.length - 1].variables.result.value).toBe(1);
+      expect((frames[frames.length - 1] as TestAugmentedFrame).variables.result.value).toBe(1);
     });
 
     test("allows multiple assignments on same line", () => {
       const code = `let a = 1; a = 2; a = 3;`;
       const { frames, error } = interpret(code);
       expect(error).toBeNull();
-      expect(frames[frames.length - 1].variables.a.value).toBe(3);
+      expect((frames[frames.length - 1] as TestAugmentedFrame).variables.a.value).toBe(3);
     });
 
     test("allows block with multiple statements on same line", () => {
@@ -52,9 +53,9 @@ describe("JavaScript oneStatementPerLine feature", () => {
       `;
       const { frames, error } = interpret(code, features);
       expect(error).toBeNull();
-      expect(frames[frames.length - 1].variables.x.value).toBe(5);
-      expect(frames[frames.length - 1].variables.y.value).toBe(10);
-      expect(frames[frames.length - 1].variables.z.value).toBe(15);
+      expect((frames[frames.length - 1] as TestAugmentedFrame).variables.x.value).toBe(5);
+      expect((frames[frames.length - 1] as TestAugmentedFrame).variables.y.value).toBe(10);
+      expect((frames[frames.length - 1] as TestAugmentedFrame).variables.z.value).toBe(15);
     });
 
     test("throws error for multiple variable declarations on same line", () => {
@@ -93,7 +94,7 @@ describe("JavaScript oneStatementPerLine feature", () => {
       `;
       const { frames, error } = interpret(code, features);
       expect(error).toBeNull();
-      expect(frames[frames.length - 1].variables.result.value).toBe(1);
+      expect((frames[frames.length - 1] as TestAugmentedFrame).variables.result.value).toBe(1);
     });
 
     test("allows single statement in block on one line", () => {
@@ -157,8 +158,8 @@ describe("JavaScript oneStatementPerLine feature", () => {
       `;
       const { frames, error } = interpret(simpleCode, features);
       expect(error).toBeNull();
-      expect(frames[frames.length - 1].variables.x.value).toBe(15);
-      expect(frames[frames.length - 1].variables.y.value).toBe(true);
+      expect((frames[frames.length - 1] as TestAugmentedFrame).variables.x.value).toBe(15);
+      expect((frames[frames.length - 1] as TestAugmentedFrame).variables.y.value).toBe(true);
     });
 
     test("allows nested blocks with proper line separation", () => {
@@ -173,7 +174,7 @@ describe("JavaScript oneStatementPerLine feature", () => {
       const { frames, error } = interpret(code, features);
       expect(error).toBeNull();
       expect(frames).not.toHaveLength(0);
-      expect(frames[frames.length - 1].variables.outer.value).toBe(1);
+      expect((frames[frames.length - 1] as TestAugmentedFrame).variables.outer.value).toBe(1);
     });
 
     test("throws error for multiple statements separated by semicolons on same line", () => {
@@ -204,8 +205,8 @@ describe("JavaScript oneStatementPerLine feature", () => {
       `;
       const { frames, error } = interpret(code, features);
       expect(error).toBeNull();
-      expect(frames[frames.length - 1].variables.x.value).toBe(5);
-      expect(frames[frames.length - 1].variables.y.value).toBe(10);
+      expect((frames[frames.length - 1] as TestAugmentedFrame).variables.x.value).toBe(5);
+      expect((frames[frames.length - 1] as TestAugmentedFrame).variables.y.value).toBe(10);
     });
 
     test("allows for loops with semicolons in parentheses", () => {
@@ -248,9 +249,9 @@ describe("JavaScript oneStatementPerLine feature", () => {
       const code = `let a = 1; let b = 2; let c = a + b;`;
       const { frames, error } = interpret(code, { oneStatementPerLine: false });
       expect(error).toBeNull();
-      expect(frames[frames.length - 1].variables.a.value).toBe(1);
-      expect(frames[frames.length - 1].variables.b.value).toBe(2);
-      expect(frames[frames.length - 1].variables.c.value).toBe(3);
+      expect((frames[frames.length - 1] as TestAugmentedFrame).variables.a.value).toBe(1);
+      expect((frames[frames.length - 1] as TestAugmentedFrame).variables.b.value).toBe(2);
+      expect((frames[frames.length - 1] as TestAugmentedFrame).variables.c.value).toBe(3);
     });
   });
 });
