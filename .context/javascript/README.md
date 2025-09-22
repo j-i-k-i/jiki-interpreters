@@ -72,7 +72,6 @@ interface Frame {
   timelineTime: number;
   description: string;
   context?: any;
-  priorVariables: Record<string, any>;
   variables: Record<string, any>;
   data?: Record<string, any>;
 }

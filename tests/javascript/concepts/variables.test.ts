@@ -48,16 +48,6 @@ describe("variables concept", () => {
       expect(frames[2].variables).toHaveProperty("a");
       expect(frames[2].variables).toHaveProperty("b");
     });
-
-    test("prior variables are captured", () => {
-      const { frames, error } = interpret("let x = 1; let y = 2;");
-      expect(error).toBeNull();
-
-      // Second frame should have priorVariables showing state before this statement
-      expect(frames[1].priorVariables).toHaveProperty("x");
-      expect(frames[1].priorVariables.x.value).toBe(1);
-      expect(frames[1].priorVariables).not.toHaveProperty("y");
-    });
   });
 
   describe("assignment", () => {

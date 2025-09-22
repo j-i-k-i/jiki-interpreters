@@ -31,9 +31,6 @@ export type Frame = {
   /** Human-readable description of what happened */
   description: string;
 
-  /** Variables before this frame executed */
-  priorVariables: Record<string, any>;
-
   /** Variables after this frame executed */
   variables: Record<string, any>;
 

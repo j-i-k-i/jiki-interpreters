@@ -54,7 +54,6 @@ interface Frame {
   timelineTime: number; // Frame sequence number (time * 100)
   description: string; // Human-readable explanation
   context?: any; // AST node for debugging
-  priorVariables: Record<string, JikiObject>; // Variables before execution
   variables: Record<string, JikiObject>; // Variables after execution
 }
 ```
@@ -106,7 +105,7 @@ All interpreters MUST have consistent test categories:
 ## UI Compatibility Requirements
 
 - Frame timing must be consistent across interpreters
-- Variable tracking with before/after states
+- Variable tracking for current state
 - Educational descriptions in human-readable format
 - Variables must be JikiObject instances
 

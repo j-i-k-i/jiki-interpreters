@@ -1204,7 +1204,6 @@ export class Executor {
       timelineTime: Math.round(this.time * 100),
       description: "",
       context: context,
-      priorVariables: {},
       variables: {},
     };
     if (process.env.NODE_ENV == "test") {

@@ -260,7 +260,6 @@ export class Executor {
       timelineTime: Math.round(this.time * 100),
       description: "",
       context: context,
-      priorVariables: this.frames.length > 0 ? cloneDeep(this.frames[this.frames.length - 1].variables) : {},
       variables: {},
     };
 
