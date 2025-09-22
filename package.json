@@ -1,11 +1,11 @@
 {
-  "name": "jikiscript",
+  "name": "interpreters",
   "version": "1.0.0",
   "description": "JikiScript language implementation",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && cp -r dist/src/* dist/ && rm -rf dist/src dist/tests",
     "dev": "tsc --watch",
     "test": "vitest",
     "test:watch": "vitest --watch",
