@@ -2,15 +2,15 @@ import { interpret } from "@jikiscript/interpreter";
 
 describe("JikiScript performance benchmarks - Synchronous Descriptions", () => {
   beforeEach(() => {
-    // Skip variable cloning for all benchmarks
-    process.env.SKIP_VARIABLE_CLONING = "true";
+    // Set benchmarking mode - skips variable cloning and inline description generation
+    process.env.RUNNING_BENCHMARKS = "true";
     // Enable synchronous descriptions for comparison
     process.env.BENCHMARK_SYNC_DESCRIPTIONS = "true";
   });
 
   afterEach(() => {
     // Clean up environment variables
-    delete process.env.SKIP_VARIABLE_CLONING;
+    delete process.env.RUNNING_BENCHMARKS;
     delete process.env.BENCHMARK_SYNC_DESCRIPTIONS;
   });
 

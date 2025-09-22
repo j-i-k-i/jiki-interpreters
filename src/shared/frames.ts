@@ -31,9 +31,6 @@ export type Frame = {
   /** Human-readable description of what happened (lazy evaluation) */
   generateDescription: () => string;
 
-  /** Variables after this frame executed */
-  variables: Record<string, any>;
-
   /** Result of the evaluation if applicable */
   result?: any;
 
@@ -77,3 +74,15 @@ export type DescriptionContext = {
  * Frame with result - used by describers
  */
 export type FrameWithResult = Frame & { result: any };
+
+/**
+ * Frame augmented with test-only fields for debugging and validation
+ * These fields are only populated when NODE_ENV=test and not running benchmarks
+ */
+export type TestAugmentedFrame = Frame & {
+  /** Snapshot of variables after this frame executed (test-only) */
+  variables: Record<string, any>;
+
+  /** Pre-generated description for immediate access (test-only) */
+  description: string;
+};

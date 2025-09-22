@@ -2,13 +2,13 @@ import { interpret } from "@jikiscript/interpreter";
 
 describe("JikiScript performance benchmarks", () => {
   beforeEach(() => {
-    // Skip variable cloning for all benchmarks
-    process.env.SKIP_VARIABLE_CLONING = "true";
+    // Set benchmarking mode - skips variable cloning and inline description generation
+    process.env.RUNNING_BENCHMARKS = "true";
   });
 
   afterEach(() => {
     // Clean up environment variable
-    delete process.env.SKIP_VARIABLE_CLONING;
+    delete process.env.RUNNING_BENCHMARKS;
   });
 
   test("10 frames - simple addition", () => {
