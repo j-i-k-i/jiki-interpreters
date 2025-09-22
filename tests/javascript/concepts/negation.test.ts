@@ -1,4 +1,4 @@
-import { describe, expect, test } from "bun:test";
+import { describe, expect, test } from "vitest";
 import { parse } from "../../../src/javascript/parser";
 import { interpret } from "../../../src/javascript/interpreter";
 import type { UnaryExpression } from "../../../src/javascript/expression";

@@ -1,4 +1,4 @@
-import { test, expect, describe } from "bun:test";
+import { test, expect, describe } from "vitest";
 import { interpret, evaluateFunction, EvaluationContext } from "@jikiscript/interpreter";
 import type { ExecutionContext } from "@jikiscript/executor";
 import { Number, unwrapJikiObject } from "@jikiscript/jikiObjects";

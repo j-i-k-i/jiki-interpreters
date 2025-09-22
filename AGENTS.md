@@ -63,7 +63,7 @@ If you are asked to do a job, confirm your understand and an execution plan befo
 
 ## Project Overview
 
-This is a Bun + TypeScript project that houses multiple educational interpreters for **Jiki** (by the Exercism team). Jiki is an educational coding environment that provides interactive, frame-by-frame code execution visualization.
+This is a TypeScript project that houses multiple educational interpreters for **Jiki** (by the Exercism team). Jiki is an educational coding environment that provides interactive, frame-by-frame code execution visualization.
 
 ### Interpreters
 
@@ -98,28 +98,28 @@ For detailed technical information, see the `.context/` folder, particularly `.c
 
 ## Commands
 
-- **Dev**: `bun run dev` - Runs in watch mode
-- **Test**: `bun test` - Runs all tests
-- **Test Watch**: `bun test --watch` - Runs tests in watch mode
-- **Type Check**: `bun run typecheck` - Type checking without emit
-- **Format**: `bun run format` - Format code with Prettier
-- **Format Check**: `bun run format:check` - Check if code is formatted
-- **Clean**: `bun run clean` - Removes dist/ folder
+- **Dev**: `pnpm run dev` - Runs in watch mode
+- **Test**: `pnpm test` - Runs all tests using Vitest
+- **Test Watch**: `pnpm test:watch` - Runs tests in watch mode
+- **Type Check**: `pnpm run typecheck` - Type checking without emit
+- **Format**: `pnpm run format` - Format code with Prettier
+- **Format Check**: `pnpm run format:check` - Check if code is formatted
+- **Clean**: `pnpm run clean` - Removes dist/ folder
 
 ## CI/CD
 
 The project uses GitHub Actions with three parallel workflows:
 
-- **Tests** (`.github/workflows/tests.yml`) - Runs `bun test`
-- **Type Check** (`.github/workflows/typecheck.yml`) - Runs `bun run typecheck`
-- **Format Check** (`.github/workflows/format.yml`) - Runs `bun run format:check`
+- **Tests** (`.github/workflows/tests.yml`) - Runs `pnpm test`
+- **Type Check** (`.github/workflows/typecheck.yml`) - Runs `pnpm run typecheck`
+- **Format Check** (`.github/workflows/format.yml`) - Runs `pnpm run format:check`
 
 All workflows run on pushes to `main` and pull requests targeting `main`. The parallel setup ensures fast feedback for developers.
 
 ## Directory Structure
 
 - `src/` - Source TypeScript files
-- `tests/` - Test files (Bun's built-in test runner)
+- `tests/` - Test files (Vitest test runner)
 - `examples/` - Example JikiScript programs
 - `docs/` - Documentation
 - `dist/` - Built output (generated)
@@ -128,12 +128,12 @@ All workflows run on pushes to `main` and pull requests targeting `main`. The pa
 
 - Use TypeScript with strict mode enabled
 - Follow ESNext module syntax
-- Use Bun's built-in test runner instead of Jest
+- Use Vitest test runner for testing
 - Prefer `export/import` over `require()`
 
 ## Testing
 
-- Use Bun's built-in test runner: `bun test`
+- Use Vitest test runner: `pnpm test`
 - Test files should be in `tests/` directory
 - Use `.test.ts` suffix for test files
 - **NEVER comment out or disable tests to make things "work"** - always fix the underlying issue properly
@@ -157,6 +157,6 @@ All workflows run on pushes to `main` and pull requests targeting `main`. The pa
 
 ## Notes
 
-- This project uses Bun as the runtime and package manager
-- TypeScript configuration is optimized for Bun's bundler
-- When migrating Jest tests, convert them to Bun test format
+- This project uses pnpm as the package manager
+- TypeScript configuration with esbuild for bundling
+- Tests use Vitest with globals enabled for minimal migration effort

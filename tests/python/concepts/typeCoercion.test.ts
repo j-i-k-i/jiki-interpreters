@@ -1,4 +1,4 @@
-import { describe, test, expect, beforeEach } from "bun:test";
+import { describe, test, expect, beforeEach } from "vitest";
 import { interpret } from "../../../src/python/interpreter";
 import { changeLanguage } from "../../../src/python/translator";
 

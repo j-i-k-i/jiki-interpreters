@@ -1,4 +1,4 @@
-import { expect } from "bun:test";
+import { expect } from "vitest";
 import { DescriptionContext } from "../../../src/shared/frames";
 import { Location } from "@jikiscript/location";
 import { Span } from "@jikiscript/location";

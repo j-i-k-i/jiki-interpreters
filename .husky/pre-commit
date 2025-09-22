@@ -13,7 +13,7 @@ fi
 
 # Run type check
 echo "🔍 Type checking..."
-bun run typecheck
+pnpm run typecheck
 if [ $? -ne 0 ]; then
     echo "❌ Type check failed. Commit aborted."
     exit 1
@@ -21,7 +21,7 @@ fi
 
 # Run tests
 echo "🧪 Running tests..."
-bun test
+pnpm test
 if [ $? -ne 0 ]; then
     echo "❌ Tests failed. Commit aborted."
     exit 1

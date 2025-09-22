@@ -19,7 +19,7 @@
     "emitDeclarationOnly": true,
     "outDir": "dist",
     "baseUrl": ".",
-    "types": ["bun-types", "@types/bun"],
+    "types": ["@types/node"],
     "paths": {
       "@jikiscript/*": ["src/jikiscript/*"],
       "@javascript/*": ["src/javascript/*"],
