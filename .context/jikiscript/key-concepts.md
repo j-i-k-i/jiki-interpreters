@@ -6,9 +6,19 @@
 
 Wrapper objects around primitives providing enhanced error messages, educational descriptions, and better UI integration for student learning.
 
+#### Performance Features
+
+- **`immutableJikiObject` field**: Provides a point-in-time immutable copy of the object for frame generation. This avoids expensive deep cloning during execution while maintaining correct state snapshots.
+- **Lazy cloning**: Objects are only cloned when their state actually changes, reducing unnecessary memory allocation.
+
 ### Frames
 
 Capture execution state snapshots enabling timeline scrubbing. Contains execution location, variable states, descriptions, and result values.
+
+#### Performance Features
+
+- **Lazy description generation**: Frames include a `generateDescription()` function instead of pre-computed `description` strings. This defers expensive string generation until needed by the UI.
+- **Test augmentation**: In test environments, frames are augmented with `variables` and `description` fields for backward compatibility, controlled by `NODE_ENV=test` and `RUNNING_BENCHMARKS` environment variables.
 
 ### EvaluationResults
 

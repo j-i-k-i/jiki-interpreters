@@ -33,6 +33,11 @@ Evaluates the AST and generates execution frames.
 
 Modular executor architecture with dedicated modules for each AST node type. Main executor coordinates specialized executor functions with consistent interfaces.
 
+**Performance Optimizations:**
+
+- **Lazy description generation**: Frames include a `generateDescription()` function instead of pre-computed descriptions, deferring expensive string generation until needed
+- **Test-only augmentation**: In test environments (`NODE_ENV=test`), frames are augmented with `variables` and `description` fields for backward compatibility
+
 ### 4. Describers (`src/python/describers/`)
 
 Generate human-readable descriptions for all Python execution steps including literals, arithmetic, logical operations, and control flow.
