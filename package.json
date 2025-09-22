@@ -5,8 +5,8 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc && esbuild src/index.ts --bundle --outdir=dist --format=esm --platform=browser",
-    "dev": "esbuild src/index.ts --bundle --outdir=dist --format=esm --platform=browser --watch",
+    "build": "tsc",
+    "dev": "tsc --watch",
     "test": "vitest",
     "test:watch": "vitest --watch",
     "clean": "rm -rf dist",
