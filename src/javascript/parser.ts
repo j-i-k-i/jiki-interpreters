@@ -9,6 +9,7 @@ import {
   AssignmentExpression,
   UpdateExpression,
   TemplateLiteralExpression,
+  ArrayExpression,
 } from "./expression";
 import { Location, Span } from "../shared/location";
 import { Scanner } from "./scanner";
@@ -424,6 +425,10 @@ export class Parser {
       return new GroupingExpression(expr, Location.between(lparen, rparen));
     }
 
+    if (this.match("LEFT_BRACKET")) {
+      return this.parseArray();
+    }
+
     this.error("MissingExpression", this.peek().location);
   }
 
@@ -531,6 +536,37 @@ export class Parser {
     const endToken = this.previous();
 
     return new TemplateLiteralExpression(parts, Location.between(startToken, endToken));
+  }
+
+  private parseArray(): Expression {
+    const leftBracket = this.previous();
+    const elements: Expression[] = [];
+
+    // Handle empty array
+    if (this.check("RIGHT_BRACKET")) {
+      this.advance();
+      return new ArrayExpression(elements, Location.between(leftBracket, this.previous()));
+    }
+
+    // Check for leading comma (e.g., [,])
+    if (this.check("COMMA")) {
+      this.error("TrailingCommaInArray", this.peek().location);
+    }
+
+    // Parse array elements
+    do {
+      // Check for trailing comma before closing bracket
+      if (this.check("RIGHT_BRACKET")) {
+        this.error("TrailingCommaInArray", this.previous().location);
+      }
+
+      elements.push(this.assignment());
+    } while (this.match("COMMA"));
+
+    this.consume("RIGHT_BRACKET", "MissingRightBracketInArray");
+    const rightBracket = this.previous();
+
+    return new ArrayExpression(elements, Location.between(leftBracket, rightBracket));
   }
 
   private error(type: SyntaxErrorType, location: Location, context?: any): never {

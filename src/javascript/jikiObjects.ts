@@ -97,6 +97,28 @@ export class JSUndefined extends JikiObject {
   }
 }
 
+export class JSList extends JikiObject {
+  constructor(public readonly _elements: JikiObject[]) {
+    super("list");
+  }
+
+  public get value(): JikiObject[] {
+    return this._elements;
+  }
+
+  public toString(): string {
+    if (this._elements.length === 0) {
+      return "[]";
+    }
+    return `[ ${this._elements.map(elem => elem.toString()).join(", ")} ]`;
+  }
+
+  public clone(): JSList {
+    // Deep clone - recursively clone all elements
+    return new JSList(this._elements.map(elem => elem.clone()));
+  }
+}
+
 // Helper function to create JSObjects from JavaScript values
 export function createJSObject(value: any): JikiObject {
   if (value === null) {
@@ -109,6 +131,8 @@ export function createJSObject(value: any): JikiObject {
     return new JSString(value);
   } else if (typeof value === "boolean") {
     return new JSBoolean(value);
+  } else if (Array.isArray(value)) {
+    return new JSList(value.map(elem => createJSObject(elem)));
   } else {
     throw new Error(`Cannot create JSObject for value: ${value}`);
   }
@@ -116,7 +140,9 @@ export function createJSObject(value: any): JikiObject {
 
 // Helper function to unwrap JSObjects to JavaScript values
 export function unwrapJSObject(obj: JikiObject | any): any {
-  if (obj instanceof JikiObject) {
+  if (obj instanceof JSList) {
+    return obj.value.map(elem => unwrapJSObject(elem));
+  } else if (obj instanceof JikiObject) {
     return obj.value;
   }
   return obj;

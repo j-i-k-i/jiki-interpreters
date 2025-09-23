@@ -23,7 +23,7 @@ Supports single/two-character tokens, literals, keywords, and identifiers.
 
 Builds an Abstract Syntax Tree (AST) from tokens using recursive descent parsing.
 
-**AST Nodes**: Literals, binary/unary expressions, grouping, identifiers, assignments, expression statements, variable declarations, block statements, if statements, for statements, while statements.
+**AST Nodes**: Literals, binary/unary expressions, grouping, identifiers, assignments, expression statements, variable declarations, block statements, if statements, for statements, while statements, template literals, arrays.
 
 Standard operator precedence from grouping through assignment.
 
@@ -48,16 +48,22 @@ Nested environment chain supporting lexical scoping, variable declaration, acces
 
 ### 6. JikiObjects (`src/javascript/jikiObjects.ts`)
 
-Wrapper objects extending shared `JikiObject` base class. Supports JSNumber, JSString, JSBoolean, JSNull, JSUndefined with consistent cross-interpreter compatibility.
+Wrapper objects extending shared `JikiObject` base class. Supports JSNumber, JSString, JSBoolean, JSNull, JSUndefined, and JSList with consistent cross-interpreter compatibility.
 
 **Key features:**
 
 - All objects implement `clone()` method (required by base class)
 - Primitive types return `self` from `clone()` since they're immutable
+- JSList implements deep cloning for proper immutability in frames
 - Evaluation results include `immutableJikiObject` field for consistency with JikiScript
 - Describers use `immutableJikiObject || jikiObject` pattern for accessing values
 
-**Note on immutableJikiObject**: JavaScript currently only implements primitive types (number, string, boolean, null, undefined) which are inherently immutable. The infrastructure for `immutableJikiObject` is in place for future mutable collections (arrays, objects). When added, they should implement proper cloning behavior.
+**Collections:**
+
+- **JSList**: Represents JavaScript arrays, called "lists" in user-facing messages for consistency
+  - Stores array of JikiObjects
+  - Implements deep cloning via `clone()` method
+  - Formatted as `[ elem1, elem2, ... ]` or `[]` for empty
 
 ### 7. Language Features System (`src/javascript/interfaces.ts`)
 
