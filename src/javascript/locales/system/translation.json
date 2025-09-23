@@ -11,6 +11,7 @@
       "MissingRightBraceAfterBlock": "MissingRightBraceAfterBlock",
       "MissingRightBraceInTemplateLiteral": "MissingRightBraceInTemplateLiteral",
       "MissingRightBracketInArray": "MissingRightBracketInArray",
+      "MissingRightBracketInMemberAccess": "MissingRightBracketInMemberAccess",
       "MissingRightParenthesisAfterExpression": "MissingRightParenthesisAfterExpression",
       "MissingRightParenthesisAfterIfCondition": "MissingRightParenthesisAfterIfCondition",
       "MissingSemicolon": "MissingSemicolon",
@@ -29,7 +30,9 @@
       "UnsupportedOperation": "UnsupportedOperation",
       "VariableNotDeclared": "VariableNotDeclared: name: {{name}}",
       "ShadowingDisabled": "ShadowingDisabled: name: {{name}}",
-      "TruthinessDisabled": "TruthinessDisabled: value: {{value}}"
+      "TruthinessDisabled": "TruthinessDisabled: value: {{value}}",
+      "IndexOutOfRange": "IndexOutOfRange: index: {{index}}: length: {{length}}",
+      "TypeError": "TypeError: {{message}}"
     }
   }
 }

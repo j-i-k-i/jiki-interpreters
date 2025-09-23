@@ -1,5 +1,6 @@
 import { test, expect, describe } from "vitest";
 import { interpret } from "../../src/javascript/interpreter";
+import { changeLanguage } from "../../src/javascript/translator";
 
 // Type for frames augmented in test environment
 interface TestFrame {
@@ -7,6 +8,7 @@ interface TestFrame {
   result?: any;
   variables?: Record<string, any>;
   description?: string;
+  error?: { type: string; message?: string };
 }
 
 describe("JavaScript Arrays", () => {
@@ -183,6 +185,183 @@ describe("JavaScript Arrays", () => {
 
       // But their values should be the same
       expect(jikiObject?.toString()).toBe(immutableJikiObject?.toString());
+    });
+  });
+
+  describe("Array index access", () => {
+    test("access first element", () => {
+      const code = `
+        let arr = [10, 20, 30];
+        let first = arr[0];
+      `;
+      const result = interpret(code);
+
+      expect(result.success).toBe(true);
+      expect(result.error).toBe(null);
+      expect(result.frames.length).toBe(2);
+
+      const frame = result.frames[1] as TestFrame;
+      expect(frame.status).toBe("SUCCESS");
+      expect(frame.result?.jikiObject.toString()).toBe("10");
+      expect(frame.variables?.["first"].toString()).toBe("10");
+    });
+
+    test("access middle element", () => {
+      const code = `
+        let arr = [10, 20, 30];
+        let middle = arr[1];
+      `;
+      const result = interpret(code);
+
+      expect(result.success).toBe(true);
+      expect(result.frames.length).toBe(2);
+
+      const frame = result.frames[1] as TestFrame;
+      expect(frame.status).toBe("SUCCESS");
+      expect(frame.result?.jikiObject.toString()).toBe("20");
+      expect(frame.variables?.["middle"].toString()).toBe("20");
+    });
+
+    test("access last element", () => {
+      const code = `
+        let arr = [10, 20, 30];
+        let last = arr[2];
+      `;
+      const result = interpret(code);
+
+      expect(result.success).toBe(true);
+      expect(result.frames.length).toBe(2);
+
+      const frame = result.frames[1] as TestFrame;
+      expect(frame.status).toBe("SUCCESS");
+      expect(frame.result?.jikiObject.toString()).toBe("30");
+      expect(frame.variables?.["last"].toString()).toBe("30");
+    });
+
+    test("access with variable index", () => {
+      const code = `
+        let arr = [10, 20, 30];
+        let i = 1;
+        let value = arr[i];
+      `;
+      const result = interpret(code);
+
+      expect(result.success).toBe(true);
+      expect(result.frames.length).toBe(3);
+
+      const frame = result.frames[2] as TestFrame;
+      expect(frame.status).toBe("SUCCESS");
+      expect(frame.result?.jikiObject.toString()).toBe("20");
+      expect(frame.variables?.["value"].toString()).toBe("20");
+    });
+
+    test("access with expression index", () => {
+      const code = `
+        let arr = [10, 20, 30, 40];
+        let value = arr[1 + 1];
+      `;
+      const result = interpret(code);
+
+      expect(result.success).toBe(true);
+      expect(result.frames.length).toBe(2);
+
+      const frame = result.frames[1] as TestFrame;
+      expect(frame.status).toBe("SUCCESS");
+      expect(frame.result?.jikiObject.toString()).toBe("30");
+      expect(frame.variables?.["value"].toString()).toBe("30");
+    });
+  });
+
+  describe("Array index access errors", () => {
+    test("index out of bounds - too high", async () => {
+      await changeLanguage("system");
+      const code = `
+        let arr = [10, 20, 30];
+        let value = arr[3];
+      `;
+      const result = interpret(code);
+
+      expect(result.success).toBe(false); // Runtime errors make success false
+      expect(result.frames.length).toBe(2);
+
+      const frame = result.frames[1] as TestFrame;
+      expect(frame.status).toBe("ERROR");
+      expect(frame.error?.type).toBe("IndexOutOfRange");
+    });
+
+    test("index out of bounds - negative", async () => {
+      await changeLanguage("system");
+      const code = `
+        let arr = [10, 20, 30];
+        let value = arr[-1];
+      `;
+      const result = interpret(code);
+
+      expect(result.success).toBe(false); // Runtime errors make success false
+      expect(result.frames.length).toBe(2);
+
+      const frame = result.frames[1] as TestFrame;
+      expect(frame.status).toBe("ERROR");
+      expect(frame.error?.type).toBe("IndexOutOfRange");
+    });
+
+    test("non-numeric index", async () => {
+      await changeLanguage("system");
+      const code = `
+        let arr = [10, 20, 30];
+        let value = arr["hello"];
+      `;
+      const result = interpret(code);
+
+      expect(result.success).toBe(false); // Runtime errors make success false
+      expect(result.frames.length).toBe(2);
+
+      const frame = result.frames[1] as TestFrame;
+      expect(frame.status).toBe("ERROR");
+      expect(frame.error?.type).toBe("TypeError");
+    });
+
+    test("non-integer index", async () => {
+      await changeLanguage("system");
+      const code = `
+        let arr = [10, 20, 30];
+        let value = arr[1.5];
+      `;
+      const result = interpret(code);
+
+      expect(result.success).toBe(false); // Runtime errors make success false
+      expect(result.frames.length).toBe(2);
+
+      const frame = result.frames[1] as TestFrame;
+      expect(frame.status).toBe("ERROR");
+      expect(frame.error?.type).toBe("TypeError");
+    });
+
+    test("accessing non-array", async () => {
+      await changeLanguage("system");
+      const code = `
+        let notArray = 42;
+        let value = notArray[0];
+      `;
+      const result = interpret(code);
+
+      expect(result.success).toBe(false); // Runtime errors make success false
+      expect(result.frames.length).toBe(2);
+
+      const frame = result.frames[1] as TestFrame;
+      expect(frame.status).toBe("ERROR");
+      expect(frame.error?.type).toBe("TypeError");
+    });
+  });
+
+  describe("Array index access descriptions", () => {
+    test("description for array index access", () => {
+      const code = `let arr = [10, 20, 30]; let value = arr[1];`;
+      const result = interpret(code);
+
+      const frame = result.frames[1] as TestFrame;
+      expect(frame.description).toContain("Accessed element at index 1");
+      expect(frame.description).toContain("got 20");
     });
   });
 });

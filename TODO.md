@@ -16,6 +16,7 @@ Your job is to work through this file. Find the next jobs that is not crossed of
 10. Switch to a feature branch.
 11. Commit to git
 12. Push to remote repository
+13. Make a PR.
 
 Important:
 
@@ -54,7 +55,7 @@ For everything in here, base your work in the JikiScript interpreter.
 - [x] Add template literals.
 - [x] Add null and undefined.
 - [x] Add List. Ensure to look at JikiScript's implementation including clone(). For this task, only add the creation and logging of lists. Not index access.
-- [ ] Add list index reading. Look at JikiScript implementation for guidance.
+- [x] Add list index reading. Look at JikiScript implementation for guidance.
 - [ ] Add list element writing. Look at JikiScript implementation for guidance. Follow JS rules for how this should work.
 - [ ] Ensure nested list work. Look at JikiScript implementation for guidance. Follow JS rules for how this should work.
 

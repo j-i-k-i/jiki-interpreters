@@ -4,6 +4,7 @@ import {
   EvaluationResultGroupingExpression,
   EvaluationResultUnaryExpression,
   EvaluationResultArrayExpression,
+  EvaluationResultMemberExpression,
 } from "../evaluation-result";
 import type { EvaluationResultTemplateLiteralExpression } from "../executor/executeTemplateLiteralExpression";
 import {
@@ -13,6 +14,7 @@ import {
   UnaryExpression,
   TemplateLiteralExpression,
   ArrayExpression,
+  MemberExpression,
 } from "../expression";
 import { DescriptionContext } from "../../shared/frames";
 import { describeBinaryExpression } from "./describeBinaryExpression";
@@ -20,6 +22,7 @@ import { describeGroupingExpression } from "./describeGroupingExpression";
 import { describeUnaryExpression } from "./describeUnaryExpression";
 import { describeTemplateLiteralExpression } from "./describeTemplateLiteralExpression";
 import { describeArrayExpression } from "./describeArrayExpression";
+import { describeMemberExpression } from "./describeMemberExpression";
 
 export function describeExpression(
   expression: Expression,
@@ -40,6 +43,9 @@ export function describeExpression(
   }
   if (expression instanceof ArrayExpression) {
     return [describeArrayExpression(expression, result as EvaluationResultArrayExpression)];
+  }
+  if (expression instanceof MemberExpression) {
+    return [describeMemberExpression(expression, result as EvaluationResultMemberExpression)];
   }
 
   return [];
