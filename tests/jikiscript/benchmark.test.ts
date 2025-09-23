@@ -32,8 +32,8 @@ describe("JikiScript performance benchmarks", () => {
     expect(result.frames.length).toBeGreaterThan(10);
 
     // Performance assertion - should complete within threshold
-    // CI: ~4.17ms, Local: ~2.48ms (with 15% margin for variance)
-    const maxTime = isCI ? 4.6 : 2.85;
+    // CI: ~4.17ms × 1.5 = 6.3ms, Local: ~2.48ms (with margin)
+    const maxTime = isCI ? 6.3 : 2.85;
     expect(executionTime).toBeLessThan(maxTime);
   });
 
@@ -63,8 +63,8 @@ describe("JikiScript performance benchmarks", () => {
     expect(result.frames.length).toBeGreaterThan(1000);
 
     // Performance assertion - should complete within threshold
-    // CI: ~38ms, Local: ~12.11ms (with 10% margin)
-    const maxTime = isCI ? 42 : 13.32;
+    // CI: ~38ms × 1.5 = 57ms, Local: ~12.11ms (with margin)
+    const maxTime = isCI ? 57 : 13.32;
     expect(executionTime).toBeLessThan(maxTime);
   });
 
@@ -93,8 +93,8 @@ describe("JikiScript performance benchmarks", () => {
     expect(result.frames.length).toBeGreaterThan(10000);
 
     // Performance assertion - should complete within threshold
-    // CI: ~169ms, Local: ~62ms (with margin)
-    const maxTime = isCI ? 186 : 78;
+    // CI: ~237ms × 1.5 = 356ms, Local: ~62ms (with margin)
+    const maxTime = isCI ? 356 : 78;
     expect(executionTime).toBeLessThan(maxTime);
   });
 
@@ -142,8 +142,8 @@ Average time per frame: ${(executionTime / frameCount).toFixed(4)}ms
     expect(frameCount).toBeLessThan(105000); // But not too much more
 
     // Performance assertion - should complete within threshold
-    // CI: ~692ms, Local: ~340ms (with margin)
-    const maxTime = isCI ? 761 : 1037;
+    // CI: ~996ms × 1.5 = 1494ms, Local: ~340ms + 10% = 374ms
+    const maxTime = isCI ? 1494 : 374;
     expect(executionTime).toBeLessThan(maxTime);
   });
 
