@@ -5,7 +5,7 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
-  workflow_dispatch:  # Allow manual triggering
+  workflow_dispatch: # Allow manual triggering
 
 jobs:
   benchmarks:
@@ -32,7 +32,7 @@ jobs:
       - name: Comment PR with benchmark results
         if: github.event_name == 'pull_request'
         uses: actions/github-script@v6
-        continue-on-error: true  # Don't fail the workflow if commenting fails
+        continue-on-error: true # Don't fail the workflow if commenting fails
         with:
           script: |
             const fs = require('fs');
