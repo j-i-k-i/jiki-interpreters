@@ -5,7 +5,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "build": "tsc && cp -r dist/src/* dist/ && rm -rf dist/src dist/tests",
+    "build": "rm -rf dist && tsc && esbuild src/index.ts --bundle --outfile=dist/index.js --format=esm --platform=browser --external:i18next",
     "dev": "tsc --watch",
     "test": "vitest",
     "test:watch": "vitest --watch",
@@ -37,6 +37,7 @@
     "@types/lodash": "^4.17.20",
     "@types/lodash.clonedeep": "^4.5.9",
     "@types/node": "^24.5.2",
+    "esbuild": "^0.25.10",
     "husky": "^9.1.7",
     "marked": "^16.2.1",
     "prettier": "^3.6.2",
