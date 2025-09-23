@@ -57,14 +57,8 @@ export function executeAssignmentExpression(
     }
 
     // Extend array if necessary (JavaScript behavior)
-    while (index >= array.value.length) {
-      array.value.push(new JSUndefined());
-    }
-
-    // Store the old value for the result
-    const oldValue = array.value[index];
-
-    // Set the new value
+    // Just set the element at the index - JavaScript will handle sparse arrays
+    // No need to fill with undefined values
     array.value[index] = valueResult.jikiObject;
 
     return {
