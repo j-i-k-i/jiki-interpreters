@@ -24,6 +24,7 @@
       "@jikiscript/*": ["src/jikiscript/*"],
       "@javascript/*": ["src/javascript/*"],
       "@python/*": ["src/python/*"],
+      "@shared/*": ["src/shared/*"],
       "@utils/*": ["src/utils/*"]
     }
   },

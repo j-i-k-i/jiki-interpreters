@@ -16,5 +16,6 @@ export function executeIdentifierExpression(
     type: "IdentifierExpression",
     name: expression.name.lexeme,
     jikiObject: value,
+    immutableJikiObject: value.clone(),
   };
 }

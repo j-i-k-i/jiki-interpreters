@@ -48,6 +48,7 @@ export function executeInstantiationExpression(
     return {
       type: "InstantiationExpression",
       jikiObject: object,
+      immutableJikiObject: object?.clone(),
       className,
       args: args,
     };

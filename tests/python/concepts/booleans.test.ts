@@ -1,4 +1,5 @@
 import { interpret } from "@python/interpreter";
+import type { TestAugmentedFrame } from "@shared/frames";
 import { PyBoolean } from "@python/jikiObjects";
 
 describe("boolean concepts", () => {
@@ -10,7 +11,7 @@ describe("boolean concepts", () => {
       expect(frames[0].status).toBe("SUCCESS");
       expect(frames[0].result?.jikiObject).toBeInstanceOf(PyBoolean);
       expect(frames[0].result?.jikiObject.value).toBe(true);
-      expect(frames[0].description).toContain("True");
+      expect((frames[0] as TestAugmentedFrame).description).toContain("True");
     });
 
     test("False literal", () => {
@@ -20,7 +21,7 @@ describe("boolean concepts", () => {
       expect(frames[0].status).toBe("SUCCESS");
       expect(frames[0].result?.jikiObject).toBeInstanceOf(PyBoolean);
       expect(frames[0].result?.jikiObject.value).toBe(false);
-      expect(frames[0].description).toContain("False");
+      expect((frames[0] as TestAugmentedFrame).description).toContain("False");
     });
   });
 

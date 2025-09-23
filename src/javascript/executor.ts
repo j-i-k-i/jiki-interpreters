@@ -258,22 +258,21 @@ export class Executor {
       error,
       time: this.time,
       timelineTime: Math.round(this.time * 100),
-      description: "",
+      generateDescription: () =>
+        describeFrame(frame, {
+          functionDescriptions: {}, // JavaScript doesn't have external functions yet
+        }),
       context: context,
-      variables: {},
     };
 
-    // Clone current variables
-    if (process.env.NODE_ENV === "test") {
-      frame.variables = cloneDeep(this.getVariables());
-    } else {
-      frame.variables = this.getVariables();
+    // In testing mode (but not benchmarks), augment frame with test-only fields
+    if (process.env.NODE_ENV === "test" && process.env.RUNNING_BENCHMARKS !== "true") {
+      (frame as any).variables = cloneDeep(this.getVariables());
+      // Generate description immediately for testing
+      (frame as any).description = describeFrame(frame, {
+        functionDescriptions: {}, // JavaScript doesn't have external functions yet
+      });
     }
-
-    // Generate description
-    frame.description = describeFrame(frame, {
-      functionDescriptions: {}, // JavaScript doesn't have external functions yet
-    });
 
     this.frames.push(frame);
     this.time += this.timePerFrame;

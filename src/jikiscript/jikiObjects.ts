@@ -25,6 +25,9 @@ export abstract class JikiObject extends BaseJikiObject {
 
   // JikiScript-specific method
   public abstract toArg(): any;
+
+  // Clone method for creating immutable copies
+  public abstract clone(): JikiObject;
 }
 
 export class Method {
@@ -205,6 +208,15 @@ export class Instance extends JikiObject {
   public setField(name: string, value: JikiObject): void {
     this.fields[name] = value;
   }
+  public clone(): Instance {
+    // Create a new instance of the same class
+    const clonedInstance = new Instance(this.jikiClass);
+    // Deep clone all fields
+    for (const [name, value] of Object.entries(this.fields)) {
+      clonedInstance.fields[name] = value.clone();
+    }
+    return clonedInstance;
+  }
 }
 
 export abstract class Primitive extends JikiObject {
@@ -233,6 +245,10 @@ export class Number extends Literal {
   public toArg(): Number {
     return new Number(this.value);
   }
+  public clone(): Number {
+    // Numbers are immutable, so we can just return this
+    return this;
+  }
 }
 
 export class JikiString extends Literal {
@@ -242,6 +258,10 @@ export class JikiString extends Literal {
   public toArg(): JikiString {
     return new JikiString(this.value);
   }
+  public clone(): JikiString {
+    // Strings are immutable, so we can just return this
+    return this;
+  }
 }
 
 export class Boolean extends Literal {
@@ -250,6 +270,10 @@ export class Boolean extends Literal {
   }
   public toArg(): Boolean {
     return new Boolean(this.value);
+  }
+  public clone(): Boolean {
+    // Booleans are immutable, so we can just return this
+    return this;
   }
 }
 export const True = new Boolean(true);
@@ -267,6 +291,10 @@ export class List extends Primitive {
       return "[]";
     }
     return `[ ${this.value.map((item: JikiObject) => item.toString()).join(", ")} ]`;
+  }
+  public clone(): List {
+    // Deep clone - recursively clone all elements
+    return new List(this.value.map((item: JikiObject) => item.clone()));
   }
 }
 
@@ -286,6 +314,10 @@ export class Dictionary extends Primitive {
     );
 
     return JSON.stringify(stringified, null, 1).replace(/\n\s*/g, " ");
+  }
+  public clone(): Dictionary {
+    // Deep clone - recursively clone all values
+    return new Dictionary(new Map([...this.value.entries()].map(([key, value]) => [key, value.clone()])));
   }
 }
 

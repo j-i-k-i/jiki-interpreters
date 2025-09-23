@@ -1,6 +1,6 @@
 import { describe, expect, test } from "vitest";
-import { parse } from "../../../src/javascript/parser";
-import { interpret } from "../../../src/javascript/interpreter";
+import { parse } from "@javascript/parser";
+import { interpret } from "@javascript/interpreter";
 
 describe("negation syntax errors", () => {
   describe("missing operand", () => {

@@ -7,8 +7,9 @@
   "scripts": {
     "build": "rm -rf dist && tsc && cp -r dist/src/* dist/ && rm -rf dist/src dist/tests && esbuild src/index.ts --bundle --outfile=dist/index.js --format=esm --platform=browser --external:i18next",
     "dev": "tsc --watch",
-    "test": "vitest",
-    "test:watch": "vitest --watch",
+    "test": "vitest --exclude '**/benchmark*.test.ts'",
+    "test:watch": "vitest --watch --exclude '**/benchmark*.test.ts'",
+    "test:benchmark": "vitest tests/jikiscript/benchmark.test.ts --run",
     "clean": "rm -rf dist",
     "typecheck": "tsc --noEmit",
     "format": "prettier --write .",

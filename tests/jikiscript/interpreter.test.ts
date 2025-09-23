@@ -2,6 +2,7 @@ import { test, expect, describe } from "vitest";
 import { interpret, evaluateFunction, EvaluationContext } from "@jikiscript/interpreter";
 import type { ExecutionContext } from "@jikiscript/executor";
 import { Number, unwrapJikiObject } from "@jikiscript/jikiObjects";
+import type { TestAugmentedFrame } from "@shared/frames";
 
 describe("statements", () => {
   describe("set expression", () => {
@@ -9,7 +10,7 @@ describe("statements", () => {
       const { frames, error } = interpret("set x to 1");
       expect(frames).toBeArrayOfSize(1);
       expect(frames[0].status).toBe("SUCCESS");
-      expect(unwrapJikiObject(frames[0].variables)).toMatchObject({ x: 1 });
+      expect(unwrapJikiObject((frames[0] as TestAugmentedFrame).variables)).toMatchObject({ x: 1 });
     });
 
     describe("unary", () => {
@@ -17,7 +18,7 @@ describe("statements", () => {
         const { frames } = interpret("set x to !true");
         expect(frames).toBeArrayOfSize(1);
         expect(frames[0].status).toBe("SUCCESS");
-        expect(unwrapJikiObject(frames[0].variables)).toMatchObject({
+        expect(unwrapJikiObject((frames[0] as TestAugmentedFrame).variables)).toMatchObject({
           x: false,
         });
       });
@@ -26,7 +27,7 @@ describe("statements", () => {
         const { frames } = interpret("set x to -3");
         expect(frames).toBeArrayOfSize(1);
         expect(frames[0].status).toBe("SUCCESS");
-        expect(unwrapJikiObject(frames[0].variables)).toMatchObject({ x: -3 });
+        expect(unwrapJikiObject((frames[0] as TestAugmentedFrame).variables)).toMatchObject({ x: -3 });
       });
     });
 
@@ -36,35 +37,35 @@ describe("statements", () => {
           const { frames } = interpret("set x to 2 + 3");
           expect(frames).toBeArrayOfSize(1);
           expect(frames[0].status).toBe("SUCCESS");
-          expect(unwrapJikiObject(frames[0].variables)).toMatchObject({ x: 5 });
+          expect(unwrapJikiObject((frames[0] as TestAugmentedFrame).variables)).toMatchObject({ x: 5 });
         });
 
         test("minus", () => {
           const { frames } = interpret("set x to 7 - 6");
           expect(frames).toBeArrayOfSize(1);
           expect(frames[0].status).toBe("SUCCESS");
-          expect(unwrapJikiObject(frames[0].variables)).toMatchObject({ x: 1 });
+          expect(unwrapJikiObject((frames[0] as TestAugmentedFrame).variables)).toMatchObject({ x: 1 });
         });
 
         test("division", () => {
           const { frames } = interpret("set x to 20 / 5");
           expect(frames).toBeArrayOfSize(1);
           expect(frames[0].status).toBe("SUCCESS");
-          expect(unwrapJikiObject(frames[0].variables)).toMatchObject({ x: 4 });
+          expect(unwrapJikiObject((frames[0] as TestAugmentedFrame).variables)).toMatchObject({ x: 4 });
         });
 
         test("multiplication", () => {
           const { frames } = interpret("set x to 4 * 2");
           expect(frames).toBeArrayOfSize(1);
           expect(frames[0].status).toBe("SUCCESS");
-          expect(unwrapJikiObject(frames[0].variables)).toMatchObject({ x: 8 });
+          expect(unwrapJikiObject((frames[0] as TestAugmentedFrame).variables)).toMatchObject({ x: 8 });
         });
 
         test("remainder", () => {
           const { frames } = interpret("set x to 4 % 3");
           expect(frames).toBeArrayOfSize(1);
           expect(frames[0].status).toBe("SUCCESS");
-          expect(unwrapJikiObject(frames[0].variables)).toMatchObject({ x: 1 });
+          expect(unwrapJikiObject((frames[0] as TestAugmentedFrame).variables)).toMatchObject({ x: 1 });
         });
       });
 
@@ -73,7 +74,7 @@ describe("statements", () => {
           const { frames, error } = interpret("set x to (2 is 2)");
           expect(frames).toBeArrayOfSize(1);
           expect(frames[0].status).toBe("SUCCESS");
-          expect(unwrapJikiObject(frames[0].variables)).toMatchObject({
+          expect(unwrapJikiObject((frames[0] as TestAugmentedFrame).variables)).toMatchObject({
             x: true,
           });
         });
@@ -82,7 +83,7 @@ describe("statements", () => {
           const { frames } = interpret("set x to 2 equals 2");
           expect(frames).toBeArrayOfSize(1);
           expect(frames[0].status).toBe("SUCCESS");
-          expect(unwrapJikiObject(frames[0].variables)).toMatchObject({
+          expect(unwrapJikiObject((frames[0] as TestAugmentedFrame).variables)).toMatchObject({
             x: true,
           });
         });
@@ -91,7 +92,7 @@ describe("statements", () => {
           const { frames } = interpret('set x to (2 is "2")');
           expect(frames).toBeArrayOfSize(1);
           expect(frames[0].status).toBe("SUCCESS");
-          expect(unwrapJikiObject(frames[0].variables)).toMatchObject({
+          expect(unwrapJikiObject((frames[0] as TestAugmentedFrame).variables)).toMatchObject({
             x: false,
           });
         });
@@ -100,7 +101,7 @@ describe("statements", () => {
           const { frames } = interpret('set x to 2 equals "2"');
           expect(frames).toBeArrayOfSize(1);
           expect(frames[0].status).toBe("SUCCESS");
-          expect(unwrapJikiObject(frames[0].variables)).toMatchObject({
+          expect(unwrapJikiObject((frames[0] as TestAugmentedFrame).variables)).toMatchObject({
             x: false,
           });
         });
@@ -110,7 +111,7 @@ describe("statements", () => {
           const { frames } = interpret('set x to 2 != "2"');
           expect(frames).toBeArrayOfSize(1);
           expect(frames[0].status).toBe("SUCCESS");
-          expect(unwrapJikiObject(frames[0].variables)).toMatchObject({
+          expect(unwrapJikiObject((frames[0] as TestAugmentedFrame).variables)).toMatchObject({
             x: false,
           });
         });
@@ -121,7 +122,7 @@ describe("statements", () => {
           const { frames } = interpret("set x to true and false");
           expect(frames).toBeArrayOfSize(1);
           expect(frames[0].status).toBe("SUCCESS");
-          expect(unwrapJikiObject(frames[0].variables)).toMatchObject({
+          expect(unwrapJikiObject((frames[0] as TestAugmentedFrame).variables)).toMatchObject({
             x: false,
           });
         });
@@ -130,7 +131,7 @@ describe("statements", () => {
           const { frames } = interpret("set x to true or false");
           expect(frames).toBeArrayOfSize(1);
           expect(frames[0].status).toBe("SUCCESS");
-          expect(unwrapJikiObject(frames[0].variables)).toMatchObject({
+          expect(unwrapJikiObject((frames[0] as TestAugmentedFrame).variables)).toMatchObject({
             x: true,
           });
         });
@@ -155,7 +156,7 @@ describe("statements", () => {
           const { frames } = interpret('set x to "sw" + "eet" ');
           expect(frames).toBeArrayOfSize(1);
           expect(frames[0].status).toBe("SUCCESS");
-          expect(unwrapJikiObject(frames[0].variables)).toMatchObject({
+          expect(unwrapJikiObject((frames[0] as TestAugmentedFrame).variables)).toMatchObject({
             x: "sweet",
           });
         });
@@ -170,9 +171,9 @@ describe("statements", () => {
         `);
         expect(frames).toBeArrayOfSize(2);
         expect(frames[0].status).toBe("SUCCESS");
-        expect(unwrapJikiObject(frames[0].variables)).toMatchObject({ x: 2 });
+        expect(unwrapJikiObject((frames[0] as TestAugmentedFrame).variables)).toMatchObject({ x: 2 });
         expect(frames[1].status).toBe("SUCCESS");
-        expect(unwrapJikiObject(frames[1].variables)).toMatchObject({ x: 3 });
+        expect(unwrapJikiObject((frames[1] as TestAugmentedFrame).variables)).toMatchObject({ x: 3 });
       });
     });
   });
@@ -182,7 +183,7 @@ describe("statements", () => {
       const { frames } = interpret("set x to 2");
       expect(frames).toBeArrayOfSize(1);
       expect(frames[0].status).toBe("SUCCESS");
-      expect(unwrapJikiObject(frames[0].variables)).toMatchObject({ x: 2 });
+      expect(unwrapJikiObject((frames[0] as TestAugmentedFrame).variables)).toMatchObject({ x: 2 });
     });
 
     test("errors if declared twice", () => {
@@ -202,9 +203,9 @@ describe("statements", () => {
       `);
       expect(frames).toBeArrayOfSize(2);
       expect(frames[0].status).toBe("SUCCESS");
-      expect(unwrapJikiObject(frames[0].variables)).toMatchObject({ x: 2 });
+      expect(unwrapJikiObject((frames[0] as TestAugmentedFrame).variables)).toMatchObject({ x: 2 });
       expect(frames[1].status).toBe("SUCCESS");
-      expect(unwrapJikiObject(frames[1].variables)).toMatchObject({
+      expect(unwrapJikiObject((frames[1] as TestAugmentedFrame).variables)).toMatchObject({
         x: 2,
         y: 3,
       });
@@ -218,8 +219,8 @@ describe("statements", () => {
         change pos to 20
       `);
       expect(frames).toBeArrayOfSize(2);
-      expect(unwrapJikiObject(frames[0].variables)).toMatchObject({ pos: 10 });
-      expect(unwrapJikiObject(frames[1].variables)).toMatchObject({ pos: 20 });
+      expect(unwrapJikiObject((frames[0] as TestAugmentedFrame).variables)).toMatchObject({ pos: 10 });
+      expect(unwrapJikiObject((frames[1] as TestAugmentedFrame).variables)).toMatchObject({ pos: 20 });
     });
 
     test("errors if not declared", () => {
@@ -241,7 +242,7 @@ describe("statements", () => {
         end
       `);
       expect(frames).toBeArrayOfSize(11);
-      expect(unwrapJikiObject(frames[10].variables)).toMatchObject({ pos: 60 });
+      expect(unwrapJikiObject((frames[10] as TestAugmentedFrame).variables)).toMatchObject({ pos: 60 });
     });
 
     test("declared variable is persisted after repeat", () => {
@@ -253,7 +254,7 @@ describe("statements", () => {
         change pos to pos + 10
       `);
       expect(frames).toBeArrayOfSize(12);
-      expect(unwrapJikiObject(frames[11].variables)).toMatchObject({ pos: 70 });
+      expect(unwrapJikiObject((frames[11] as TestAugmentedFrame).variables)).toMatchObject({ pos: 70 });
     });
 
     test("declared variable is persisted after if", () => {
@@ -265,10 +266,10 @@ describe("statements", () => {
         change pos to pos + 5
       `);
       expect(frames).toBeArrayOfSize(4);
-      expect(unwrapJikiObject(frames[0].variables)).toMatchObject({ pos: 10 });
-      expect(unwrapJikiObject(frames[1].variables)).toMatchObject({ pos: 10 });
-      // expect(unwrapJikiObject(frames[2].variables)).toMatchObject({ pos: 20 })
-      expect(unwrapJikiObject(frames[3].variables)).toMatchObject({ pos: 25 });
+      expect(unwrapJikiObject((frames[0] as TestAugmentedFrame).variables)).toMatchObject({ pos: 10 });
+      expect(unwrapJikiObject((frames[1] as TestAugmentedFrame).variables)).toMatchObject({ pos: 10 });
+      // expect(unwrapJikiObject((frames[2] as TestAugmentedFrame).variables)).toMatchObject({ pos: 20 })
+      expect(unwrapJikiObject((frames[3] as TestAugmentedFrame).variables)).toMatchObject({ pos: 25 });
     });
   });
 
@@ -282,11 +283,11 @@ describe("statements", () => {
       `);
       expect(frames).toBeArrayOfSize(3);
       expect(frames[0].status).toBe("SUCCESS");
-      expect(unwrapJikiObject(frames[0].variables)).toMatchObject({ x: 0 });
+      expect(unwrapJikiObject((frames[0] as TestAugmentedFrame).variables)).toMatchObject({ x: 0 });
       expect(frames[1].status).toBe("SUCCESS");
-      expect(unwrapJikiObject(frames[1].variables)).toMatchObject({ x: 0 });
+      expect(unwrapJikiObject((frames[1] as TestAugmentedFrame).variables)).toMatchObject({ x: 0 });
       expect(frames[2].status).toBe("SUCCESS");
-      expect(unwrapJikiObject(frames[2].variables)).toMatchObject({ x: 1 });
+      expect(unwrapJikiObject((frames[2] as TestAugmentedFrame).variables)).toMatchObject({ x: 1 });
     });
 
     test("multiple times", () => {
@@ -299,19 +300,19 @@ describe("statements", () => {
 
       expect(frames).toBeArrayOfSize(7);
       expect(frames[0].status).toBe("SUCCESS");
-      expect(unwrapJikiObject(frames[0].variables)).toMatchObject({ x: 0 });
+      expect(unwrapJikiObject((frames[0] as TestAugmentedFrame).variables)).toMatchObject({ x: 0 });
       expect(frames[1].status).toBe("SUCCESS");
-      expect(unwrapJikiObject(frames[1].variables)).toMatchObject({ x: 0 });
+      expect(unwrapJikiObject((frames[1] as TestAugmentedFrame).variables)).toMatchObject({ x: 0 });
       expect(frames[2].status).toBe("SUCCESS");
-      expect(unwrapJikiObject(frames[2].variables)).toMatchObject({ x: 1 });
+      expect(unwrapJikiObject((frames[2] as TestAugmentedFrame).variables)).toMatchObject({ x: 1 });
       expect(frames[3].status).toBe("SUCCESS");
-      expect(unwrapJikiObject(frames[3].variables)).toMatchObject({ x: 1 });
+      expect(unwrapJikiObject((frames[3] as TestAugmentedFrame).variables)).toMatchObject({ x: 1 });
       expect(frames[4].status).toBe("SUCCESS");
-      expect(unwrapJikiObject(frames[4].variables)).toMatchObject({ x: 2 });
+      expect(unwrapJikiObject((frames[4] as TestAugmentedFrame).variables)).toMatchObject({ x: 2 });
       expect(frames[5].status).toBe("SUCCESS");
-      expect(unwrapJikiObject(frames[5].variables)).toMatchObject({ x: 2 });
+      expect(unwrapJikiObject((frames[5] as TestAugmentedFrame).variables)).toMatchObject({ x: 2 });
       expect(frames[6].status).toBe("SUCCESS");
-      expect(unwrapJikiObject(frames[6].variables)).toMatchObject({ x: 3 });
+      expect(unwrapJikiObject((frames[6] as TestAugmentedFrame).variables)).toMatchObject({ x: 3 });
     });
   });
 
@@ -325,9 +326,9 @@ describe("statements", () => {
       `);
       expect(frames).toBeArrayOfSize(2);
       expect(frames[0].status).toBe("SUCCESS");
-      expect(unwrapJikiObject(frames[0].variables)).toMatchObject({ x: 1 });
+      expect(unwrapJikiObject((frames[0] as TestAugmentedFrame).variables)).toMatchObject({ x: 1 });
       expect(frames[1].status).toBe("SUCCESS");
-      expect(unwrapJikiObject(frames[1].variables)).toMatchObject({
+      expect(unwrapJikiObject((frames[1] as TestAugmentedFrame).variables)).toMatchObject({
         x: 1,
         y: 2,
       });
@@ -344,9 +345,9 @@ describe("statements", () => {
       `);
       expect(frames).toBeArrayOfSize(2);
       expect(frames[0].status).toBe("SUCCESS");
-      expect(unwrapJikiObject(frames[0].variables)).toMatchObject({ x: 1 });
+      expect(unwrapJikiObject((frames[0] as TestAugmentedFrame).variables)).toMatchObject({ x: 1 });
       expect(frames[1].status).toBe("SUCCESS");
-      expect(unwrapJikiObject(frames[1].variables)).toMatchObject({ y: 2 });
+      expect(unwrapJikiObject((frames[1] as TestAugmentedFrame).variables)).toMatchObject({ y: 2 });
     });
   });
 });
@@ -360,7 +361,7 @@ describe("frames", () => {
       expect(frames[0].status).toBe("SUCCESS");
       expect(frames[0].code).toBe("log 125");
       expect(frames[0].error).toBeNil();
-      expect(unwrapJikiObject(frames[0].variables)).toBeEmpty();
+      expect(unwrapJikiObject((frames[0] as TestAugmentedFrame).variables)).toBeEmpty();
     });
 
     test("call", () => {
@@ -380,7 +381,7 @@ describe("frames", () => {
       expect(frames[0].status).toBe("SUCCESS");
       expect(frames[0].code).toBe("echo(1)");
       expect(frames[0].error).toBeNil();
-      expect(unwrapJikiObject(frames[0].variables)).toBeEmpty();
+      expect(unwrapJikiObject((frames[0] as TestAugmentedFrame).variables)).toBeEmpty();
     });
 
     test("variable", () => {
@@ -390,7 +391,7 @@ describe("frames", () => {
       expect(frames[0].status).toBe("SUCCESS");
       expect(frames[0].code).toBe("set x to 1");
       expect(frames[0].error).toBeNil();
-      expect(unwrapJikiObject(frames[0].variables)).toMatchObject({ x: 1 });
+      expect(unwrapJikiObject((frames[0] as TestAugmentedFrame).variables)).toMatchObject({ x: 1 });
     });
   });
 

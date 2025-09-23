@@ -33,6 +33,11 @@ Evaluates the AST and generates execution frames.
 
 Modular executor architecture with dedicated modules for each AST node type. Main executor coordinates specialized executor functions with consistent interfaces.
 
+**Performance Optimizations:**
+
+- **Lazy description generation**: Frames include a `generateDescription()` function instead of pre-computed descriptions, deferring expensive string generation until needed
+- **Test-only augmentation**: In test environments (`NODE_ENV=test`), frames are augmented with `variables` and `description` fields for backward compatibility
+
 ### 4. Describers (`src/javascript/describers/`)
 
 Generate human-readable descriptions for all execution steps including arithmetic operations, variable declarations, and control flow.
@@ -44,6 +49,15 @@ Nested environment chain supporting lexical scoping, variable declaration, acces
 ### 6. JikiObjects (`src/javascript/jikiObjects.ts`)
 
 Wrapper objects extending shared `JikiObject` base class. Supports JSNumber, JSString, JSBoolean, JSNull, JSUndefined with consistent cross-interpreter compatibility.
+
+**Key features:**
+
+- All objects implement `clone()` method (required by base class)
+- Primitive types return `self` from `clone()` since they're immutable
+- Evaluation results include `immutableJikiObject` field for consistency with JikiScript
+- Describers use `immutableJikiObject || jikiObject` pattern for accessing values
+
+**Note on immutableJikiObject**: JavaScript currently only implements primitive types (number, string, boolean, null, undefined) which are inherently immutable. The infrastructure for `immutableJikiObject` is in place for future mutable collections (arrays, objects). When added, they should implement proper cloning behavior.
 
 ### 7. Language Features System (`src/javascript/interfaces.ts`)
 

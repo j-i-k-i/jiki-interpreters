@@ -1,4 +1,5 @@
 import { interpret } from "@jikiscript/interpreter";
+import type { TestAugmentedFrame } from "@shared/frames";
 import { parse } from "@jikiscript/parser";
 import * as Jiki from "@jikiscript/jikiObjects";
 import { ChangeElementStatement, LogStatement, SetVariableStatement } from "@jikiscript/statement";
@@ -297,7 +298,7 @@ describe("execute", () => {
     `);
       expect(frames).toBeArrayOfSize(1);
       expect(frames[0].status).toBe("SUCCESS");
-      expect(unwrapJikiObject(frames[0].variables)).toMatchObject({
+      expect(unwrapJikiObject((frames[0] as TestAugmentedFrame).variables)).toMatchObject({
         scores: [7, 3, 10],
       });
     });
@@ -310,7 +311,7 @@ describe("execute", () => {
     `);
       expect(frames).toBeArrayOfSize(2);
       expect(frames[1].status).toBe("SUCCESS");
-      expect(unwrapJikiObject(frames[1].variables)).toMatchObject({
+      expect(unwrapJikiObject((frames[1] as TestAugmentedFrame).variables)).toMatchObject({
         scores: [7, "foo", 10],
       });
     });
@@ -327,7 +328,7 @@ describe("execute", () => {
     `);
       expect(frames).toBeArrayOfSize(4);
       expect(frames[3].status).toBe("SUCCESS");
-      expect(unwrapJikiObject(frames[3].variables)).toMatchObject({
+      expect(unwrapJikiObject((frames[3] as TestAugmentedFrame).variables)).toMatchObject({
         scores: [7, true, 10],
       });
     });
@@ -340,7 +341,7 @@ describe("execute", () => {
     `);
       expect(frames).toBeArrayOfSize(4);
       expect(frames[3].status).toBe("SUCCESS");
-      expect(unwrapJikiObject(frames[3].variables)).toMatchObject({
+      expect(unwrapJikiObject((frames[3] as TestAugmentedFrame).variables)).toMatchObject({
         scores: [7, true, 10],
       });
     });
@@ -354,11 +355,11 @@ describe("execute", () => {
     `);
       expect(frames).toBeArrayOfSize(2);
       expect(frames[0].status).toBe("SUCCESS");
-      expect(unwrapJikiObject(frames[0].variables)).toMatchObject({
+      expect(unwrapJikiObject((frames[0] as TestAugmentedFrame).variables)).toMatchObject({
         scores: [7, 3, 10],
       });
       expect(frames[1].status).toBe("SUCCESS");
-      expect(unwrapJikiObject(frames[1].variables)).toMatchObject({
+      expect(unwrapJikiObject((frames[1] as TestAugmentedFrame).variables)).toMatchObject({
         scores: [7, 3, 10],
         latest: 3,
       });
@@ -373,11 +374,11 @@ describe("execute", () => {
     `);
       expect(frames).toBeArrayOfSize(3);
       expect(frames[0].status).toBe("SUCCESS");
-      expect(unwrapJikiObject(frames[0].variables)).toMatchObject({
+      expect(unwrapJikiObject((frames[0] as TestAugmentedFrame).variables)).toMatchObject({
         scores: [7, 3, 10],
       });
       expect(frames[2].status).toBe("SUCCESS");
-      expect(unwrapJikiObject(frames[2].variables)).toMatchObject({
+      expect(unwrapJikiObject((frames[2] as TestAugmentedFrame).variables)).toMatchObject({
         scores: [7, 3, 10],
         latest: 3,
       });
@@ -390,14 +391,14 @@ describe("execute", () => {
     `);
       expect(frames).toBeArrayOfSize(2);
       expect(frames[0].status).toBe("SUCCESS");
-      expect(unwrapJikiObject(frames[0].variables)).toMatchObject({
+      expect(unwrapJikiObject((frames[0] as TestAugmentedFrame).variables)).toMatchObject({
         scoreMinMax: [
           ["a", "b"],
           ["c", "d"],
         ],
       });
       expect(frames[1].status).toBe("SUCCESS");
-      expect(unwrapJikiObject(frames[1].variables)).toMatchObject({
+      expect(unwrapJikiObject((frames[1] as TestAugmentedFrame).variables)).toMatchObject({
         scoreMinMax: [
           ["a", "b"],
           ["c", "d"],

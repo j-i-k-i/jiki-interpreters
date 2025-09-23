@@ -13,6 +13,7 @@ export function executeUnaryExpression(executor: Executor, expression: UnaryExpr
     type: "UnaryExpression",
     right: rightResult,
     jikiObject: result,
+    immutableJikiObject: result.clone(),
   } as any;
 }
 

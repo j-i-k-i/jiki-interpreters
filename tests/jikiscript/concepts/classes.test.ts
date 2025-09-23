@@ -1,5 +1,6 @@
 import { parse } from "@jikiscript/parser";
 import { EvaluationContext, interpret } from "@jikiscript/interpreter";
+import type { TestAugmentedFrame } from "@shared/frames";
 import {
   ChangePropertyStatement,
   ClassStatement,
@@ -190,7 +191,7 @@ describe("execute", () => {
     expect(error).toBeNull();
     expect(frames).toBeArrayOfSize(1);
     expect(frames[0].status).toBe("SUCCESS");
-    expect(frames[0].variables.foo).toBeInstanceOf(Jiki.Instance);
+    expect((frames[0] as TestAugmentedFrame).variables.foo).toBeInstanceOf(Jiki.Instance);
   });
 
   describe("constructor", () => {
@@ -206,7 +207,7 @@ describe("execute", () => {
         expect(error).toBeNull();
         expect(frames).toBeArrayOfSize(1);
         expect(frames[0].status).toBe("SUCCESS");
-        expect(frames[0].variables.foo).toBeInstanceOf(Jiki.Instance);
+        expect((frames[0] as TestAugmentedFrame).variables.foo).toBeInstanceOf(Jiki.Instance);
       });
     });
     describe("naked - sets property", () => {
@@ -225,7 +226,7 @@ describe("execute", () => {
         expect(error).toBeNull();
         expect(frames).toBeArrayOfSize(3);
         expect(frames.at(-1)?.status).toBe("SUCCESS");
-        expect(Jiki.unwrapJikiObject(frames.at(-1)?.variables["outer_baz"])).toBe(10);
+        expect(Jiki.unwrapJikiObject((frames.at(-1) as TestAugmentedFrame)?.variables["outer_baz"])).toBe(10);
       });
     });
   });
@@ -243,7 +244,7 @@ describe("execute", () => {
       expect(error).toBeNull();
       expect(frames).toBeArrayOfSize(3);
       expect(frames.at(-1)?.status).toBe("SUCCESS");
-      expect(Jiki.unwrapJikiObject(frames.at(-1)?.variables["outer_baz"])).toBe(10);
+      expect(Jiki.unwrapJikiObject((frames.at(-1) as TestAugmentedFrame)?.variables["outer_baz"])).toBe(10);
     });
     test("with this", () => {
       const { error, frames } = interpret(`
@@ -265,7 +266,7 @@ describe("execute", () => {
       expect(error).toBeNull();
       expect(frames).toBeArrayOfSize(4);
       expect(frames.at(-1)?.status).toBe("SUCCESS");
-      expect(Jiki.unwrapJikiObject(frames.at(-1)?.variables["outer_baz"])).toBe(10);
+      expect(Jiki.unwrapJikiObject((frames.at(-1) as TestAugmentedFrame)?.variables["outer_baz"])).toBe(10);
     });
   });
   test.skip("Complex methods", () => {
@@ -292,7 +293,7 @@ describe("execute", () => {
     expect(error).toBeNull();
     expect(frames).toBeArrayOfSize(6);
     expect(frames.at(-1)?.status).toBe("SUCCESS");
-    expect(Jiki.unwrapJikiObject(frames.at(-1)?.variables["outer_baz"])).toBe(20);
+    expect(Jiki.unwrapJikiObject((frames.at(-1) as TestAugmentedFrame)?.variables["outer_baz"])).toBe(20);
   });
   test("Another example", () => {
     const { error, frames } = interpret(`

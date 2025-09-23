@@ -25,5 +25,6 @@ function executeCondition(executor: Executor, condition: Expression): Evaluation
     type: "IfStatement",
     condition: result,
     jikiObject: result.jikiObject,
+    immutableJikiObject: result.jikiObject.clone(),
   };
 }

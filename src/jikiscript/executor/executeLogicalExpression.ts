@@ -21,6 +21,7 @@ export function executeLogicalExpression(
     const jikiObject = new Jiki.Boolean(leftOr.jikiObject.value || rightOr?.jikiObject.value);
     return {
       jikiObject,
+      immutableJikiObject: jikiObject.clone(),
       type: "LogicalExpression",
       left: leftOr,
       right: rightOr,
@@ -42,6 +43,7 @@ export function executeLogicalExpression(
 
   return {
     jikiObject: jikiObject,
+    immutableJikiObject: jikiObject.clone(),
     type: "LogicalExpression",
     left: leftAnd,
     right: rightAnd,

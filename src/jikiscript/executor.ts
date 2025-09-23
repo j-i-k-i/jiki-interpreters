@@ -84,7 +84,7 @@ import cloneDeep from "lodash.clonedeep";
 import type { CallableCustomFunction, InterpretResult } from "./interpreter";
 import type { LanguageFeatures, Meta } from "./interpreter";
 
-import type { Frame, FrameExecutionStatus } from "../shared/frames";
+import type { Frame, FrameExecutionStatus, TestAugmentedFrame } from "../shared/frames";
 import { describeFrame } from "./frameDescribers";
 import { executeFunctionCallExpression } from "./executor/executeFunctionCallExpression";
 import { executeIfStatement } from "./executor/executeIfStatement";
@@ -861,6 +861,7 @@ export class Executor {
       expression: `${expression.obj.location.toCode(this.sourceCode)}[${key.jikiObject}]`,
       field: key,
       jikiObject: value,
+      immutableJikiObject: value.clone(),
     };
   }
 
@@ -883,6 +884,7 @@ export class Executor {
       expression: `${expression.obj.location.toCode(this.sourceCode)}[${idx.jikiObject}]`,
       field: idx,
       jikiObject: value,
+      immutableJikiObject: value.clone(),
     };
   }
 
@@ -907,6 +909,7 @@ export class Executor {
       expression: `${expression.obj.location.toCode(this.sourceCode)}[${idx.jikiObject}]`,
       field: idx,
       jikiObject: value,
+      immutableJikiObject: value.clone(),
     };
   }
 
@@ -1202,16 +1205,21 @@ export class Executor {
       time: this.time,
       // Multiple the time by 100 and floor it to get an integer
       timelineTime: Math.round(this.time * 100),
-      description: "",
+      generateDescription: () =>
+        describeFrame(frame, {
+          functionDescriptions: this.externalFunctionDescriptions,
+        }),
       context: context,
-      variables: {},
     };
-    if (process.env.NODE_ENV == "test") {
-      frame.variables = cloneDeep(this.environment.variables());
+    // In testing mode (but not benchmarks), augment frame with test-only fields
+    if (process.env.NODE_ENV == "test" && process.env.RUNNING_BENCHMARKS !== "true") {
+      (frame as TestAugmentedFrame).variables = cloneDeep(this.environment.variables());
+      // Generate description immediately for testing
+      (frame as TestAugmentedFrame).description = describeFrame(frame, {
+        functionDescriptions: this.externalFunctionDescriptions,
+      });
     }
-    frame.description = describeFrame(frame, {
-      functionDescriptions: this.externalFunctionDescriptions,
-    });
+
     this.frames.push(frame);
 
     this.time += this.timePerFrame;

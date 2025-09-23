@@ -7,7 +7,8 @@ import { describeExpression } from "./describeSteps";
 export function describeLogStatement(frame: FrameWithResult, context: DescriptionContext): Description {
   const logStatement = frame.context as LogStatement;
   const frameResult = frame.result as EvaluationResultLogStatement;
-  const value = formatJikiObject(frameResult.jikiObject);
+  // Use immutableJikiObject if available, otherwise fall back to jikiObject
+  const value = formatJikiObject(frameResult.immutableJikiObject);
 
   const result = `<p> This logged <code>${value}</code>.</p>`;
   let steps = describeExpression(logStatement.expression, frameResult.expression, context);

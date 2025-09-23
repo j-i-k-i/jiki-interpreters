@@ -19,5 +19,6 @@ export function executeVariableLookupExpression(
     type: "VariableLookupExpression",
     name: expression.name.lexeme,
     jikiObject: value,
+    immutableJikiObject: value.clone(),
   };
 }

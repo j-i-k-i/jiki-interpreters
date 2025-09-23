@@ -14,6 +14,11 @@ export class JSNumber extends JikiObject {
   public toString(): string {
     return this._value.toString();
   }
+
+  public clone(): JSNumber {
+    // Numbers are immutable, so return self
+    return this;
+  }
 }
 
 export class JSString extends JikiObject {
@@ -27,6 +32,11 @@ export class JSString extends JikiObject {
 
   public toString(): string {
     return this._value;
+  }
+
+  public clone(): JSString {
+    // Strings are immutable, so return self
+    return this;
   }
 }
 
@@ -42,6 +52,11 @@ export class JSBoolean extends JikiObject {
   public toString(): string {
     return this._value.toString();
   }
+
+  public clone(): JSBoolean {
+    // Booleans are immutable, so return self
+    return this;
+  }
 }
 
 export class JSNull extends JikiObject {
@@ -56,6 +71,11 @@ export class JSNull extends JikiObject {
   public toString(): string {
     return "null";
   }
+
+  public clone(): JSNull {
+    // Null is immutable, so return self
+    return this;
+  }
 }
 
 export class JSUndefined extends JikiObject {
@@ -69,6 +89,11 @@ export class JSUndefined extends JikiObject {
 
   public toString(): string {
     return "undefined";
+  }
+
+  public clone(): JSUndefined {
+    // Undefined is immutable, so return self
+    return this;
   }
 }
 

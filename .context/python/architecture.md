@@ -33,6 +33,11 @@ Evaluates the AST and generates execution frames.
 
 Modular executor architecture with dedicated modules for each AST node type. Main executor coordinates specialized executor functions with consistent interfaces.
 
+**Performance Optimizations:**
+
+- **Lazy description generation**: Frames include a `generateDescription()` function instead of pre-computed descriptions, deferring expensive string generation until needed
+- **Test-only augmentation**: In test environments (`NODE_ENV=test`), frames are augmented with `variables` and `description` fields for backward compatibility
+
 ### 4. Describers (`src/python/describers/`)
 
 Generate human-readable descriptions for all Python execution steps including literals, arithmetic, logical operations, and control flow.
@@ -44,6 +49,15 @@ Python-specific scoping with LEGB rule (Local, Enclosing, Global, Built-in) and 
 ### 6. JikiObjects (`src/python/jikiObjects.ts`)
 
 Wrapper objects extending shared `JikiObject` base class. Supports PyNumber, PyString, PyBoolean, PyNone with Python-specific features like int/float distinction and truthiness rules.
+
+**Key features:**
+
+- All objects implement `clone()` method (required by base class)
+- Primitive types return `self` from `clone()` since they're immutable
+- Evaluation results include `immutableJikiObject` field for consistency with JikiScript
+- Python-specific features: `isInteger()` for numbers, `repr()` for strings, True/False formatting
+
+**Note on immutableJikiObject**: Python currently only implements primitive types (number, string, boolean, None) which are inherently immutable. The infrastructure for `immutableJikiObject` is in place for future mutable collections (lists, dictionaries, sets). When added, they should implement proper cloning behavior.
 
 ### 7. Frame System
 

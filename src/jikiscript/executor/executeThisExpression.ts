@@ -10,5 +10,6 @@ export function executeThisExpression(executor: Executor, expression: ThisExpres
   return {
     type: "ThisExpression",
     jikiObject: executor.contextualThis,
+    immutableJikiObject: executor.contextualThis?.clone(),
   };
 }

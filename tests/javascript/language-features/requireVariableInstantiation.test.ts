@@ -1,4 +1,5 @@
 import { describe, test, expect } from "vitest";
+import type { TestAugmentedFrame } from "@shared/frames";
 import { interpret } from "@javascript/interpreter";
 import { parse } from "@javascript/parser";
 
@@ -188,11 +189,11 @@ describe("requireVariableInstantiation language feature", () => {
 
       const frame = result.frames[0];
       expect(frame).toBeDefined();
-      expect(frame.description).toBeDefined();
-      expect(typeof frame.description).toBe("string");
-      expect(frame.description).toContain("Declared variable");
-      expect(frame.description).toContain("<code>x</code>");
-      expect(frame.description).toContain("undefined");
+      expect((frame as TestAugmentedFrame).description).toBeDefined();
+      expect(typeof (frame as TestAugmentedFrame).description).toBe("string");
+      expect((frame as TestAugmentedFrame).description).toContain("Declared variable");
+      expect((frame as TestAugmentedFrame).description).toContain("<code>x</code>");
+      expect((frame as TestAugmentedFrame).description).toContain("undefined");
     });
 
     test("should have correct description for initialized variable", () => {
@@ -202,9 +203,9 @@ describe("requireVariableInstantiation language feature", () => {
       const result = interpret(code, languageFeatures);
       const frame = result.frames[0];
 
-      expect(frame.description).toContain("Declared variable");
-      expect(frame.description).toContain("<code>x</code>");
-      expect(frame.description).toContain("42");
+      expect((frame as TestAugmentedFrame).description).toContain("Declared variable");
+      expect((frame as TestAugmentedFrame).description).toContain("<code>x</code>");
+      expect((frame as TestAugmentedFrame).description).toContain("42");
     });
   });
 });

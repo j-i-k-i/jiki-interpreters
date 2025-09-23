@@ -1,5 +1,5 @@
 import { interpret } from "@javascript/interpreter";
-
+import type { TestAugmentedFrame } from "@shared/frames";
 describe("if statement concept", () => {
   describe("parser", () => {
     test("parses if statement correctly", () => {
@@ -32,7 +32,7 @@ describe("if statement concept", () => {
 
       // Check final variable value
       const finalFrame = frames[frames.length - 1];
-      expect(finalFrame.variables.x.value).toBe(5);
+      expect((finalFrame as TestAugmentedFrame).variables.x.value).toBe(5);
     });
 
     test("skips then branch when condition is false", () => {
@@ -42,7 +42,7 @@ describe("if statement concept", () => {
 
       // Check variable unchanged
       const finalFrame = frames[frames.length - 1];
-      expect(finalFrame.variables.x.value).toBe(1);
+      expect((finalFrame as TestAugmentedFrame).variables.x.value).toBe(1);
     });
 
     test("executes else branch when condition is false", () => {
@@ -52,7 +52,7 @@ describe("if statement concept", () => {
 
       // Check variable value from else branch
       const finalFrame = frames[frames.length - 1];
-      expect(finalFrame.variables.x.value).toBe(10);
+      expect((finalFrame as TestAugmentedFrame).variables.x.value).toBe(10);
     });
 
     test("works with boolean conditions", () => {
@@ -61,7 +61,7 @@ describe("if statement concept", () => {
       expect(frames).toBeArrayOfSize(3); // var decl + if condition + assignment
 
       const finalFrame = frames[frames.length - 1];
-      expect(finalFrame.variables.x.value).toBe(100);
+      expect((finalFrame as TestAugmentedFrame).variables.x.value).toBe(100);
     });
 
     test("works with logical operators", () => {
@@ -71,7 +71,7 @@ describe("if statement concept", () => {
 
       // result variable should exist in the last frame (inside the block)
       const finalFrame = frames[frames.length - 1];
-      expect(finalFrame.variables.result).toBeTruthy();
+      expect((finalFrame as TestAugmentedFrame).variables.result).toBeTruthy();
     });
 
     test("simple nested if statements work correctly", () => {
@@ -79,7 +79,7 @@ describe("if statement concept", () => {
       expect(error).toBeNull();
 
       const finalFrame = frames[frames.length - 1];
-      expect(finalFrame.variables.x.value).toBe(5);
+      expect((finalFrame as TestAugmentedFrame).variables.x.value).toBe(5);
     });
   });
 
@@ -94,8 +94,8 @@ describe("if statement concept", () => {
 
       // blockVar should exist in the declaration frame (inside the block)
       const finalFrame = frames[frames.length - 1];
-      expect(finalFrame.variables.blockVar).toBeTruthy();
-      expect(finalFrame.variables.blockVar.value).toBe(42);
+      expect((finalFrame as TestAugmentedFrame).variables.blockVar).toBeTruthy();
+      expect((finalFrame as TestAugmentedFrame).variables.blockVar.value).toBe(42);
     });
 
     test("variables from outer scope accessible in if block", () => {
@@ -108,7 +108,7 @@ describe("if statement concept", () => {
       expect(error).toBeNull();
 
       const finalFrame = frames[frames.length - 1];
-      expect(finalFrame.variables.outerVar.value).toBe(20);
+      expect((finalFrame as TestAugmentedFrame).variables.outerVar.value).toBe(20);
     });
   });
 
@@ -116,17 +116,19 @@ describe("if statement concept", () => {
     test("if statement has meaningful description", () => {
       const { frames, error } = interpret("if (true) { let x = 5; }");
       expect(error).toBeNull();
-      expect(frames[0].description).toBeTruthy();
-      expect(frames[0].description).toContain("condition");
-      expect(frames[0].description).toContain("true");
+      const desc = frames[0].generateDescription();
+      expect(desc).toBeTruthy();
+      expect(desc).toContain("condition");
+      expect(desc).toContain("true");
     });
 
     test("if-else statement describes both branches", () => {
       const { frames, error } = interpret("if (false) { let x = 5; } else { let y = 10; }");
       expect(error).toBeNull();
-      expect(frames[0].description).toBeTruthy();
-      expect(frames[0].description).toContain("false");
-      expect(frames[0].description).toContain("else");
+      const desc = frames[0].generateDescription();
+      expect(desc).toBeTruthy();
+      expect(desc).toContain("false");
+      expect(desc).toContain("else");
     });
   });
 
@@ -143,7 +145,7 @@ describe("if statement concept", () => {
         }
       `);
       expect(error).toBeNull();
-      expect(frames[frames.length - 1].variables.result.value).toBe(2);
+      expect((frames[frames.length - 1] as TestAugmentedFrame).variables.result.value).toBe(2);
     });
 
     test("executes else branch when if and else if conditions are false", () => {
@@ -158,7 +160,7 @@ describe("if statement concept", () => {
         }
       `);
       expect(error).toBeNull();
-      expect(frames[frames.length - 1].variables.result.value).toBe(3);
+      expect((frames[frames.length - 1] as TestAugmentedFrame).variables.result.value).toBe(3);
     });
 
     test("supports multiple else if branches", () => {
@@ -177,7 +179,7 @@ describe("if statement concept", () => {
         }
       `);
       expect(error).toBeNull();
-      expect(frames[frames.length - 1].variables.result.value).toBe(3);
+      expect((frames[frames.length - 1] as TestAugmentedFrame).variables.result.value).toBe(3);
     });
 
     test("else if without final else works correctly", () => {
@@ -190,7 +192,7 @@ describe("if statement concept", () => {
         }
       `);
       expect(error).toBeNull();
-      expect(frames[frames.length - 1].variables.result.value).toBe(2);
+      expect((frames[frames.length - 1] as TestAugmentedFrame).variables.result.value).toBe(2);
     });
 
     test("skips all branches when no condition is true and no else", () => {
@@ -203,7 +205,7 @@ describe("if statement concept", () => {
         }
       `);
       expect(error).toBeNull();
-      expect(frames[frames.length - 1].variables.result.value).toBe(0);
+      expect((frames[frames.length - 1] as TestAugmentedFrame).variables.result.value).toBe(0);
     });
 
     test("else if with complex conditions", () => {
@@ -220,7 +222,7 @@ describe("if statement concept", () => {
         }
       `);
       expect(error).toBeNull();
-      expect(frames[frames.length - 1].variables.result.value).toBe(2);
+      expect((frames[frames.length - 1] as TestAugmentedFrame).variables.result.value).toBe(2);
     });
 
     test("variables declared in else if blocks are scoped correctly", () => {
@@ -236,10 +238,10 @@ describe("if statement concept", () => {
       expect(error).toBeNull();
 
       const finalFrame = frames[frames.length - 1];
-      expect(finalFrame.variables.blockVar1).toBeUndefined();
-      expect(finalFrame.variables.blockVar2).toBeTruthy();
-      expect(finalFrame.variables.blockVar2.value).toBe(2);
-      expect(finalFrame.variables.blockVar3).toBeUndefined();
+      expect((finalFrame as TestAugmentedFrame).variables.blockVar1).toBeUndefined();
+      expect((finalFrame as TestAugmentedFrame).variables.blockVar2).toBeTruthy();
+      expect((finalFrame as TestAugmentedFrame).variables.blockVar2.value).toBe(2);
+      expect((finalFrame as TestAugmentedFrame).variables.blockVar3).toBeUndefined();
     });
 
     test("else if with single statements (no blocks)", () => {
@@ -250,7 +252,7 @@ describe("if statement concept", () => {
         else result = 3;
       `);
       expect(error).toBeNull();
-      expect(frames[frames.length - 1].variables.result.value).toBe(2);
+      expect((frames[frames.length - 1] as TestAugmentedFrame).variables.result.value).toBe(2);
     });
 
     test("else if chain evaluates conditions in order", () => {
@@ -268,7 +270,7 @@ describe("if statement concept", () => {
         }
       `);
       expect(error).toBeNull();
-      expect(frames[frames.length - 1].variables.result.value).toBe(3);
+      expect((frames[frames.length - 1] as TestAugmentedFrame).variables.result.value).toBe(3);
     });
   });
 });

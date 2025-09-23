@@ -8,12 +8,14 @@ export function executeFunctionLookupExpression(
   expression: FunctionLookupExpression
 ): EvaluationResultFunctionLookupExpression {
   const value = executor.lookupFunction(expression.name);
+  const jikiObject = new Jiki.Boolean(true);
   return {
     type: "FunctionLookupExpression",
     name: expression.name.lexeme,
     function: value,
     // This is needed so that the null guard doesn't
     // blow up upstream
-    jikiObject: new Jiki.Boolean(true),
+    jikiObject: jikiObject,
+    immutableJikiObject: jikiObject.clone(),
   };
 }

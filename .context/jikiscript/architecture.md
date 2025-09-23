@@ -38,6 +38,12 @@ Source Code → Scanner → Parser → Executor → Frames/UI
 
 Uses modular architecture with specialized executors for each AST node type. Main Executor delegates to individual executor modules using visitor pattern. Includes Environment for scoping, ExecutionContext for runtime state, and Frame Generation.
 
+#### Performance Optimizations
+
+**Lazy Description Generation**: Frames include a `generateDescription()` function instead of pre-computed descriptions. This defers the expensive string generation until actually needed by the UI, resulting in ~9x performance improvement for large programs.
+
+**Immutable Object Cloning**: JikiObjects support an `immutableJikiObject` field that provides a point-in-time immutable copy for frame generation. This avoids expensive deep cloning of objects during execution while maintaining correct state snapshots.
+
 ### 4. Support Systems
 
 **AST Components**: Expressions (values/computations) and Statements (actions/control flow). Each type has dedicated executor and describer.

@@ -1,4 +1,5 @@
 import { interpret } from "@jikiscript/interpreter";
+import type { TestAugmentedFrame } from "@shared/frames";
 import { parse } from "@jikiscript/parser";
 import * as Jiki from "@jikiscript/jikiObjects";
 import { ChangeElementStatement, LogStatement, SetVariableStatement } from "@jikiscript/statement";
@@ -64,7 +65,7 @@ describe("strings", () => {
       const { frames } = interpret('set x to "hello there"');
       expect(frames).toBeArrayOfSize(1);
       expect(frames[0].status).toBe("SUCCESS");
-      expect(frames[0].variables["x"].value).toBe("hello there");
+      expect((frames[0] as TestAugmentedFrame).variables["x"].value).toBe("hello there");
     });
 
     test("log", () => {

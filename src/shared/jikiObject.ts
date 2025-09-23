@@ -6,4 +6,5 @@ export abstract class JikiObject {
 
   public abstract toString(): string;
   public abstract get value(): any;
+  public abstract clone(): JikiObject;
 }

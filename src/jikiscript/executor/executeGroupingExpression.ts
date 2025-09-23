@@ -11,6 +11,7 @@ export function executeGroupingExpression(
   return {
     type: "GroupingExpression",
     jikiObject: inner.jikiObject,
+    immutableJikiObject: inner.jikiObject?.clone(),
     inner,
   };
 }

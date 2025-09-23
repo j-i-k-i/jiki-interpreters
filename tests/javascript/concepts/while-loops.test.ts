@@ -1,5 +1,5 @@
 import { interpret } from "@javascript/interpreter";
-
+import type { TestAugmentedFrame } from "@shared/frames";
 describe("JavaScript while loops", () => {
   describe("basic while loop", () => {
     test("simple counting loop", () => {
@@ -13,8 +13,8 @@ describe("JavaScript while loops", () => {
       `;
       const { frames, error } = interpret(code);
       expect(error).toBeNull();
-      expect(frames[frames.length - 1].variables.i.value).toBe(5);
-      expect(frames[frames.length - 1].variables.sum.value).toBe(10); // 0+1+2+3+4
+      expect((frames[frames.length - 1] as TestAugmentedFrame).variables.i.value).toBe(5);
+      expect((frames[frames.length - 1] as TestAugmentedFrame).variables.sum.value).toBe(10); // 0+1+2+3+4
     });
 
     test("while loop that doesn't execute", () => {
@@ -26,7 +26,7 @@ describe("JavaScript while loops", () => {
       `;
       const { frames, error } = interpret(code);
       expect(error).toBeNull();
-      expect(frames[frames.length - 1].variables.count.value).toBe(0);
+      expect((frames[frames.length - 1] as TestAugmentedFrame).variables.count.value).toBe(0);
     });
 
     test("while loop with complex condition", () => {
@@ -42,9 +42,9 @@ describe("JavaScript while loops", () => {
       `;
       const { frames, error } = interpret(code);
       expect(error).toBeNull();
-      expect(frames[frames.length - 1].variables.iterations.value).toBe(5);
-      expect(frames[frames.length - 1].variables.x.value).toBe(0);
-      expect(frames[frames.length - 1].variables.y.value).toBe(0);
+      expect((frames[frames.length - 1] as TestAugmentedFrame).variables.iterations.value).toBe(5);
+      expect((frames[frames.length - 1] as TestAugmentedFrame).variables.x.value).toBe(0);
+      expect((frames[frames.length - 1] as TestAugmentedFrame).variables.y.value).toBe(0);
     });
 
     test("while loop with variable update in condition", () => {
@@ -58,8 +58,8 @@ describe("JavaScript while loops", () => {
       `;
       const { frames, error } = interpret(code);
       expect(error).toBeNull();
-      expect(frames[frames.length - 1].variables.result.value).toBe(120); // 5!
-      expect(frames[frames.length - 1].variables.n.value).toBe(0);
+      expect((frames[frames.length - 1] as TestAugmentedFrame).variables.result.value).toBe(120); // 5!
+      expect((frames[frames.length - 1] as TestAugmentedFrame).variables.n.value).toBe(0);
     });
   });
 
@@ -79,7 +79,7 @@ describe("JavaScript while loops", () => {
       `;
       const { frames, error } = interpret(code);
       expect(error).toBeNull();
-      expect(frames[frames.length - 1].variables.total.value).toBe(6); // 3 * 2
+      expect((frames[frames.length - 1] as TestAugmentedFrame).variables.total.value).toBe(6); // 3 * 2
     });
 
     test("nested loops with interdependent conditions", () => {
@@ -98,7 +98,7 @@ describe("JavaScript while loops", () => {
       `;
       const { frames, error } = interpret(code);
       expect(error).toBeNull();
-      expect(frames[frames.length - 1].variables.count.value).toBe(15); // 5+4+3+2+1
+      expect((frames[frames.length - 1] as TestAugmentedFrame).variables.count.value).toBe(15); // 5+4+3+2+1
     });
   });
 
@@ -115,8 +115,8 @@ describe("JavaScript while loops", () => {
       `;
       const { frames, error } = interpret(code);
       expect(error).toBeNull();
-      expect(frames[frames.length - 1].variables.outer.value).toBe(50); // 10 + 20 + 20
-      expect(frames[frames.length - 1].variables.inner).toBeUndefined();
+      expect((frames[frames.length - 1] as TestAugmentedFrame).variables.outer.value).toBe(50); // 10 + 20 + 20
+      expect((frames[frames.length - 1] as TestAugmentedFrame).variables.inner).toBeUndefined();
     });
   });
 

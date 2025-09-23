@@ -1,4 +1,5 @@
 import { interpret } from "@javascript/interpreter";
+import type { TestAugmentedFrame } from "@shared/frames";
 import { JSNumber, JSString, JSBoolean } from "@javascript/jikiObjects";
 
 describe("variables interpreter", () => {
@@ -9,9 +10,9 @@ describe("variables interpreter", () => {
         expect(error).toBeNull();
         expect(frames).toBeArrayOfSize(1);
         expect(frames[0].status).toBe("SUCCESS");
-        expect(frames[0].variables).toHaveProperty("x");
-        expect(frames[0].variables.x).toBeInstanceOf(JSNumber);
-        expect(frames[0].variables.x.value).toBe(42);
+        expect((frames[0] as TestAugmentedFrame).variables).toHaveProperty("x");
+        expect((frames[0] as TestAugmentedFrame).variables.x).toBeInstanceOf(JSNumber);
+        expect((frames[0] as TestAugmentedFrame).variables.x.value).toBe(42);
       });
 
       test("declaring string variable", () => {
@@ -19,9 +20,9 @@ describe("variables interpreter", () => {
         expect(error).toBeNull();
         expect(frames).toBeArrayOfSize(1);
         expect(frames[0].status).toBe("SUCCESS");
-        expect(frames[0].variables).toHaveProperty("message");
-        expect(frames[0].variables.message).toBeInstanceOf(JSString);
-        expect(frames[0].variables.message.value).toBe("hello");
+        expect((frames[0] as TestAugmentedFrame).variables).toHaveProperty("message");
+        expect((frames[0] as TestAugmentedFrame).variables.message).toBeInstanceOf(JSString);
+        expect((frames[0] as TestAugmentedFrame).variables.message.value).toBe("hello");
       });
 
       test("declaring boolean variable", () => {
@@ -29,9 +30,9 @@ describe("variables interpreter", () => {
         expect(error).toBeNull();
         expect(frames).toBeArrayOfSize(1);
         expect(frames[0].status).toBe("SUCCESS");
-        expect(frames[0].variables).toHaveProperty("flag");
-        expect(frames[0].variables.flag).toBeInstanceOf(JSBoolean);
-        expect(frames[0].variables.flag.value).toBe(true);
+        expect((frames[0] as TestAugmentedFrame).variables).toHaveProperty("flag");
+        expect((frames[0] as TestAugmentedFrame).variables.flag).toBeInstanceOf(JSBoolean);
+        expect((frames[0] as TestAugmentedFrame).variables.flag.value).toBe(true);
       });
 
       test("declaring variable with expression", () => {
@@ -39,8 +40,8 @@ describe("variables interpreter", () => {
         expect(error).toBeNull();
         expect(frames).toBeArrayOfSize(1);
         expect(frames[0].status).toBe("SUCCESS");
-        expect(frames[0].variables).toHaveProperty("result");
-        expect(frames[0].variables.result.value).toBe(8);
+        expect((frames[0] as TestAugmentedFrame).variables).toHaveProperty("result");
+        expect((frames[0] as TestAugmentedFrame).variables.result.value).toBe(8);
       });
     });
 
@@ -52,8 +53,8 @@ describe("variables interpreter", () => {
 
         // First frame: declaration
         expect(frames[0].status).toBe("SUCCESS");
-        expect(frames[0].variables).toHaveProperty("x");
-        expect(frames[0].variables.x.value).toBe(10);
+        expect((frames[0] as TestAugmentedFrame).variables).toHaveProperty("x");
+        expect((frames[0] as TestAugmentedFrame).variables.x.value).toBe(10);
 
         // Second frame: access
         expect(frames[1].status).toBe("SUCCESS");
@@ -66,12 +67,12 @@ describe("variables interpreter", () => {
         expect(frames).toBeArrayOfSize(2);
 
         // First frame: declare a
-        expect(frames[0].variables.a.value).toBe(5);
+        expect((frames[0] as TestAugmentedFrame).variables.a.value).toBe(5);
 
         // Second frame: declare b using a
-        expect(frames[1].variables).toHaveProperty("a");
-        expect(frames[1].variables).toHaveProperty("b");
-        expect(frames[1].variables.b.value).toBe(8);
+        expect((frames[1] as TestAugmentedFrame).variables).toHaveProperty("a");
+        expect((frames[1] as TestAugmentedFrame).variables).toHaveProperty("b");
+        expect((frames[1] as TestAugmentedFrame).variables.b.value).toBe(8);
       });
 
       test("complex variable operations", () => {
@@ -80,9 +81,9 @@ describe("variables interpreter", () => {
         expect(frames).toBeArrayOfSize(3);
 
         // Final frame should have all variables
-        expect(frames[2].variables.x.value).toBe(2);
-        expect(frames[2].variables.y.value).toBe(3);
-        expect(frames[2].variables.z.value).toBe(7);
+        expect((frames[2] as TestAugmentedFrame).variables.x.value).toBe(2);
+        expect((frames[2] as TestAugmentedFrame).variables.y.value).toBe(3);
+        expect((frames[2] as TestAugmentedFrame).variables.z.value).toBe(7);
       });
     });
 

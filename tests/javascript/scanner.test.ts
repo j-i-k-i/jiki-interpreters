@@ -1,7 +1,7 @@
 import { scan } from "@javascript/scanner";
 import { type TokenType } from "@javascript/token";
-import { interpret } from "../../src/javascript/interpreter";
-import { changeLanguage } from "../../src/javascript/translator";
+import { interpret } from "@javascript/interpreter";
+import { changeLanguage } from "@javascript/translator";
 
 describe("single-character", () => {
   test.each([

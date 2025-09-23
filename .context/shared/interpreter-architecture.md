@@ -52,11 +52,22 @@ interface Frame {
   error?: RuntimeError; // Error details (if failed)
   time: number; // Execution time (simulated)
   timelineTime: number; // Frame sequence number (time * 100)
-  description: string; // Human-readable explanation
+  generateDescription: () => string; // Lazy description generation (performance)
   context?: any; // AST node for debugging
-  variables: Record<string, JikiObject>; // Variables after execution
+  // Note: variables and description fields are added only in test environments
 }
 ```
+
+#### Performance Optimizations
+
+**Lazy Description Generation**: Frames use `generateDescription()` function instead of pre-computed `description` string. This defers expensive string generation until needed by the UI, resulting in ~9x performance improvement.
+
+**Test Augmentation**: In test environments (`NODE_ENV=test` and `RUNNING_BENCHMARKS !== "true"`), frames are augmented with:
+
+- `variables`: Snapshot of current variables
+- `description`: Pre-computed description string
+
+This maintains backward compatibility with existing tests while optimizing production performance.
 
 ### 4. Location Tracking (MANDATORY)
 
@@ -84,6 +95,28 @@ Runtime errors MUST use system message format for consistency:
 ### 1. JikiObject Base Class (`src/shared/jikiObject.ts`)
 
 All language-specific objects MUST extend the shared `JikiObject` base class. All interpreters use a single standardized `jikiObject` field in their EvaluationResult types for consistency.
+
+**Required methods (MANDATORY for all implementations):**
+
+- `toString(): string` - String representation of the object
+- `get value(): any` - Raw underlying value
+- `clone(): JikiObject` - Create a copy (immutable objects can return `self`)
+
+#### Performance Feature: Immutable Object Cloning
+
+The `immutableJikiObject` field in evaluation results provides a point-in-time immutable copy for frame generation. This optimization:
+
+- Avoids expensive deep cloning during execution
+- Maintains correct state snapshots for each frame
+- Only clones objects when their state actually changes
+- Significantly reduces memory allocation and GC pressure
+
+**Implementation pattern:**
+
+- Primitive types (numbers, strings, booleans, null/none): `clone()` returns `self`
+- Mutable collections (lists, dictionaries, arrays): `clone()` creates actual copy
+- Evaluation results: Include `immutableJikiObject: result.clone()` field
+- Describers: Access via `result.immutableJikiObject || result.jikiObject`
 
 ### 2. Frame System (`src/shared/frames.ts`)
 

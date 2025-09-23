@@ -27,4 +27,12 @@ if [ $? -ne 0 ]; then
     exit 1
 fi
 
+# Run benchmark tests
+echo "⚡ Running benchmark tests..."
+pnpm test:benchmark
+if [ $? -ne 0 ]; then
+    echo "❌ Benchmark tests failed. Commit aborted."
+    exit 1
+fi
+
 echo "✅ All checks passed!"

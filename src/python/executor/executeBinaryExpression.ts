@@ -22,6 +22,7 @@ export function executeBinaryExpression(executor: Executor, expression: BinaryEx
     left: leftResult,
     right: rightResult,
     jikiObject: result,
+    immutableJikiObject: result.clone(),
   } as any;
 }
 
@@ -114,6 +115,7 @@ function handleLogicalOperation(
         left: leftResult,
         right: null,
         jikiObject: leftObject,
+        immutableJikiObject: leftObject.clone(),
       } as any;
     }
 
@@ -136,6 +138,7 @@ function handleLogicalOperation(
       left: leftResult,
       right: rightResult,
       jikiObject: rightObject,
+      immutableJikiObject: rightObject.clone(),
     } as any;
   } else {
     // OR
@@ -147,6 +150,7 @@ function handleLogicalOperation(
         left: leftResult,
         right: null,
         jikiObject: leftObject,
+        immutableJikiObject: leftObject.clone(),
       } as any;
     }
 
@@ -169,6 +173,7 @@ function handleLogicalOperation(
       left: leftResult,
       right: rightResult,
       jikiObject: rightObject,
+      immutableJikiObject: rightObject.clone(),
     } as any;
   }
 }

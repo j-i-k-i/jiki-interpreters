@@ -1,8 +1,9 @@
 import { describe, expect, test } from "vitest";
-import { parse } from "../../../src/javascript/parser";
-import { interpret } from "../../../src/javascript/interpreter";
-import type { UnaryExpression } from "../../../src/javascript/expression";
-import type { ExpressionStatement } from "../../../src/javascript/statement";
+import type { TestAugmentedFrame } from "@shared/frames";
+import { parse } from "@javascript/parser";
+import { interpret } from "@javascript/interpreter";
+import type { UnaryExpression } from "@javascript/expression";
+import type { ExpressionStatement } from "@javascript/statement";
 
 describe("negation concept", () => {
   describe("arithmetic negation", () => {
@@ -227,19 +228,19 @@ describe("negation concept", () => {
   describe("educational descriptions", () => {
     test("arithmetic negation has description", () => {
       const { frames } = interpret("-5;");
-      expect(frames[0].description).toBeDefined();
+      expect((frames[0] as TestAugmentedFrame).description).toBeDefined();
     });
 
     test("logical negation has description", () => {
       const { frames } = interpret("!true;");
-      expect(frames[0].description).toBeDefined();
-      expect(frames[0].description).toContain("!");
+      expect((frames[0] as TestAugmentedFrame).description).toBeDefined();
+      expect((frames[0] as TestAugmentedFrame).description).toContain("!");
     });
 
     test("negation of expression shows steps", () => {
       const { frames } = interpret("!(true && false);");
-      expect(frames[0].description).toBeDefined();
-      expect(frames[0].description).toContain("!");
+      expect((frames[0] as TestAugmentedFrame).description).toBeDefined();
+      expect((frames[0] as TestAugmentedFrame).description).toContain("!");
     });
   });
 });

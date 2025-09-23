@@ -3,6 +3,7 @@ import { EvaluationContext, interpret } from "@jikiscript/interpreter";
 import { FunctionCallStatement, FunctionStatement, LogStatement, ReturnStatement } from "@jikiscript/statement";
 import { last } from "lodash";
 import { unwrapJikiObject } from "@jikiscript/jikiObjects";
+import type { TestAugmentedFrame } from "@shared/frames";
 import { FunctionCallExpression, GetElementExpression, LiteralExpression } from "@jikiscript/expression";
 import * as Jiki from "@jikiscript/jikiObjects";
 
@@ -64,11 +65,11 @@ describe("interpret", () => {
       `);
       // Inside the function
       const finalFunctionFrame = frames[frames.length - 3];
-      expect(unwrapJikiObject(finalFunctionFrame.variables)["list"]).toEqual([2, 3, 4]);
+      expect(unwrapJikiObject((finalFunctionFrame as TestAugmentedFrame).variables)["list"]).toEqual([2, 3, 4]);
 
       // After the function
       const lastFrame = frames[frames.length - 1];
-      expect(unwrapJikiObject(lastFrame.variables)["original"]).toEqual([1, 2, 3]);
+      expect(unwrapJikiObject((lastFrame as TestAugmentedFrame).variables)["original"]).toEqual([1, 2, 3]);
     });
     test("dictionaries", () => {
       const { frames, error } = interpret(`
@@ -83,11 +84,15 @@ describe("interpret", () => {
       `);
       // Inside the function
       const finalFunctionFrame = frames[frames.length - 3];
-      expect(unwrapJikiObject(finalFunctionFrame.variables)["dict"]).toMatchObject({ a: 2, b: 3, c: 4 });
+      expect(unwrapJikiObject((finalFunctionFrame as TestAugmentedFrame).variables)["dict"]).toMatchObject({
+        a: 2,
+        b: 3,
+        c: 4,
+      });
 
       // After the function
       const lastFrame = frames[frames.length - 1];
-      expect(unwrapJikiObject(lastFrame.variables)["original"]).toMatchObject({
+      expect(unwrapJikiObject((lastFrame as TestAugmentedFrame).variables)["original"]).toMatchObject({
         a: 1,
         b: 2,
         c: 3,
@@ -140,7 +145,7 @@ describe("interpret", () => {
       // Last line
       const lastFrame = frames[frames.length - 1];
       expect(lastFrame.status).toBe("SUCCESS");
-      expect(Jiki.unwrapJikiObject(lastFrame.variables)["original"].value).toBe(6);
+      expect(Jiki.unwrapJikiObject((lastFrame as TestAugmentedFrame).variables)["original"].value).toBe(6);
     });
   });
 });

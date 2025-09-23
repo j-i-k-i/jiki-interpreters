@@ -97,9 +97,11 @@ export function executeFunctionCallExpression(
     executor.popCallStack();
   }
 
+  const jikiObject = value as JikiObject;
   return {
     type: "FunctionCallExpression",
-    jikiObject: value as JikiObject,
+    jikiObject: jikiObject,
+    immutableJikiObject: jikiObject?.clone(),
     callee,
     args,
   };

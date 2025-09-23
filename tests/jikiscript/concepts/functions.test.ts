@@ -1,4 +1,5 @@
 import { parse } from "@jikiscript/parser";
+import type { TestAugmentedFrame } from "@shared/frames";
 import { interpret } from "@jikiscript/interpreter";
 import { FunctionStatement, ReturnStatement } from "@jikiscript/statement";
 import { unwrapJikiObject } from "@jikiscript/jikiObjects";
@@ -66,9 +67,9 @@ describe("interpret", () => {
         `);
       expect(frames).toBeArrayOfSize(2);
       expect(frames[0].status).toBe("SUCCESS");
-      expect(unwrapJikiObject(frames[0].variables)).toBeEmpty();
+      expect(unwrapJikiObject((frames[0] as TestAugmentedFrame).variables)).toBeEmpty();
       expect(frames[1].status).toBe("SUCCESS");
-      expect(unwrapJikiObject(frames[1].variables)).toMatchObject({ x: 1 });
+      expect(unwrapJikiObject((frames[1] as TestAugmentedFrame).variables)).toMatchObject({ x: 1 });
     });
   });
 
@@ -81,9 +82,9 @@ describe("interpret", () => {
       `);
     expect(frames).toBeArrayOfSize(2);
     expect(frames[0].status).toBe("SUCCESS");
-    expect(unwrapJikiObject(frames[0].variables)).toMatchObject({ x: 2 });
+    expect(unwrapJikiObject((frames[0] as TestAugmentedFrame).variables)).toMatchObject({ x: 2 });
     expect(frames[1].status).toBe("SUCCESS");
-    expect(unwrapJikiObject(frames[1].variables)).toMatchObject({ x: 3 });
+    expect(unwrapJikiObject((frames[1] as TestAugmentedFrame).variables)).toMatchObject({ x: 3 });
   });
 
   test("return pops loop and function", () => {
@@ -98,6 +99,6 @@ describe("interpret", () => {
       `);
     expect(frames).toBeArrayOfSize(4);
     expect(frames[3].status).toBe("SUCCESS");
-    expect(unwrapJikiObject(frames[3].variables)).toMatchObject({ res: 1 });
+    expect(unwrapJikiObject((frames[3] as TestAugmentedFrame).variables)).toMatchObject({ res: 1 });
   });
 });

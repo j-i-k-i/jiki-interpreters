@@ -1,5 +1,5 @@
 import { interpret } from "@javascript/interpreter";
-
+import type { TestAugmentedFrame } from "@shared/frames";
 describe("JavaScript increment and decrement operators", () => {
   describe("prefix increment", () => {
     test("increments variable and returns new value", () => {
@@ -9,8 +9,8 @@ describe("JavaScript increment and decrement operators", () => {
       `;
       const { frames, error } = interpret(code);
       expect(error).toBeNull();
-      expect(frames[frames.length - 1].variables.x.value).toBe(6);
-      expect(frames[frames.length - 1].variables.y.value).toBe(6);
+      expect((frames[frames.length - 1] as TestAugmentedFrame).variables.x.value).toBe(6);
+      expect((frames[frames.length - 1] as TestAugmentedFrame).variables.y.value).toBe(6);
     });
 
     test("works with zero", () => {
@@ -20,8 +20,8 @@ describe("JavaScript increment and decrement operators", () => {
       `;
       const { frames, error } = interpret(code);
       expect(error).toBeNull();
-      expect(frames[frames.length - 1].variables.x.value).toBe(1);
-      expect(frames[frames.length - 1].variables.y.value).toBe(1);
+      expect((frames[frames.length - 1] as TestAugmentedFrame).variables.x.value).toBe(1);
+      expect((frames[frames.length - 1] as TestAugmentedFrame).variables.y.value).toBe(1);
     });
 
     test("works with negative numbers", () => {
@@ -31,8 +31,8 @@ describe("JavaScript increment and decrement operators", () => {
       `;
       const { frames, error } = interpret(code);
       expect(error).toBeNull();
-      expect(frames[frames.length - 1].variables.x.value).toBe(-4);
-      expect(frames[frames.length - 1].variables.y.value).toBe(-4);
+      expect((frames[frames.length - 1] as TestAugmentedFrame).variables.x.value).toBe(-4);
+      expect((frames[frames.length - 1] as TestAugmentedFrame).variables.y.value).toBe(-4);
     });
   });
 
@@ -44,8 +44,8 @@ describe("JavaScript increment and decrement operators", () => {
       `;
       const { frames, error } = interpret(code);
       expect(error).toBeNull();
-      expect(frames[frames.length - 1].variables.x.value).toBe(6);
-      expect(frames[frames.length - 1].variables.y.value).toBe(5);
+      expect((frames[frames.length - 1] as TestAugmentedFrame).variables.x.value).toBe(6);
+      expect((frames[frames.length - 1] as TestAugmentedFrame).variables.y.value).toBe(5);
     });
 
     test("multiple postfix increments", () => {
@@ -57,7 +57,7 @@ describe("JavaScript increment and decrement operators", () => {
       `;
       const { frames, error } = interpret(code);
       expect(error).toBeNull();
-      expect(frames[frames.length - 1].variables.x.value).toBe(3);
+      expect((frames[frames.length - 1] as TestAugmentedFrame).variables.x.value).toBe(3);
     });
   });
 
@@ -69,8 +69,8 @@ describe("JavaScript increment and decrement operators", () => {
       `;
       const { frames, error } = interpret(code);
       expect(error).toBeNull();
-      expect(frames[frames.length - 1].variables.x.value).toBe(4);
-      expect(frames[frames.length - 1].variables.y.value).toBe(4);
+      expect((frames[frames.length - 1] as TestAugmentedFrame).variables.x.value).toBe(4);
+      expect((frames[frames.length - 1] as TestAugmentedFrame).variables.y.value).toBe(4);
     });
 
     test("works with zero", () => {
@@ -80,8 +80,8 @@ describe("JavaScript increment and decrement operators", () => {
       `;
       const { frames, error } = interpret(code);
       expect(error).toBeNull();
-      expect(frames[frames.length - 1].variables.x.value).toBe(-1);
-      expect(frames[frames.length - 1].variables.y.value).toBe(-1);
+      expect((frames[frames.length - 1] as TestAugmentedFrame).variables.x.value).toBe(-1);
+      expect((frames[frames.length - 1] as TestAugmentedFrame).variables.y.value).toBe(-1);
     });
   });
 
@@ -93,8 +93,8 @@ describe("JavaScript increment and decrement operators", () => {
       `;
       const { frames, error } = interpret(code);
       expect(error).toBeNull();
-      expect(frames[frames.length - 1].variables.x.value).toBe(4);
-      expect(frames[frames.length - 1].variables.y.value).toBe(5);
+      expect((frames[frames.length - 1] as TestAugmentedFrame).variables.x.value).toBe(4);
+      expect((frames[frames.length - 1] as TestAugmentedFrame).variables.y.value).toBe(5);
     });
   });
 
@@ -106,8 +106,8 @@ describe("JavaScript increment and decrement operators", () => {
       `;
       const { frames, error } = interpret(code);
       expect(error).toBeNull();
-      expect(frames[frames.length - 1].variables.x.value).toBe(6);
-      expect(frames[frames.length - 1].variables.y.value).toBe(12);
+      expect((frames[frames.length - 1] as TestAugmentedFrame).variables.x.value).toBe(6);
+      expect((frames[frames.length - 1] as TestAugmentedFrame).variables.y.value).toBe(12);
     });
 
     test("postfix in arithmetic expression", () => {
@@ -117,8 +117,8 @@ describe("JavaScript increment and decrement operators", () => {
       `;
       const { frames, error } = interpret(code);
       expect(error).toBeNull();
-      expect(frames[frames.length - 1].variables.x.value).toBe(6);
-      expect(frames[frames.length - 1].variables.y.value).toBe(10);
+      expect((frames[frames.length - 1] as TestAugmentedFrame).variables.x.value).toBe(6);
+      expect((frames[frames.length - 1] as TestAugmentedFrame).variables.y.value).toBe(10);
     });
 
     test("mix of operations", () => {
@@ -129,9 +129,9 @@ describe("JavaScript increment and decrement operators", () => {
       `;
       const { frames, error } = interpret(code);
       expect(error).toBeNull();
-      expect(frames[frames.length - 1].variables.a.value).toBe(11);
-      expect(frames[frames.length - 1].variables.b.value).toBe(4);
-      expect(frames[frames.length - 1].variables.c.value).toBe(16); // 11 + 5
+      expect((frames[frames.length - 1] as TestAugmentedFrame).variables.a.value).toBe(11);
+      expect((frames[frames.length - 1] as TestAugmentedFrame).variables.b.value).toBe(4);
+      expect((frames[frames.length - 1] as TestAugmentedFrame).variables.c.value).toBe(16); // 11 + 5
     });
   });
 

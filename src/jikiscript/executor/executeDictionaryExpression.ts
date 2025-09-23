@@ -13,8 +13,10 @@ export function executeDictionaryExpression(
     const evalRes = executor.evaluate(value);
     records.set(key, evalRes.jikiObject);
   }
+  const jikiObject = new Jiki.Dictionary(records);
   return {
     type: "DictionaryExpression",
-    jikiObject: new Jiki.Dictionary(records),
+    jikiObject: jikiObject,
+    immutableJikiObject: jikiObject.clone(),
   };
 }

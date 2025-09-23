@@ -1,4 +1,8 @@
-import { EvaluationResult, EvaluationResultChangeElementStatement } from "../evaluation-result";
+import {
+  EvaluationResult,
+  EvaluationResultChangeElementStatement,
+  EvaluationResultExpression,
+} from "../evaluation-result";
 import { VariableLookupExpression } from "../expression";
 import { Description, DescriptionContext, FrameWithResult } from "../../shared/frames";
 import { codeTag, formatJikiObject } from "../helpers";
@@ -27,7 +31,8 @@ function describeChangeElementStatementList(
   const ordinaledIndex = addOrdinalSuffix(idx);
 
   const oldValue = formatJikiObject(frameResult.oldValue);
-  const value = formatJikiObject(frameResult.value.jikiObject);
+  const valueResult = frameResult.value as EvaluationResultExpression;
+  const value = formatJikiObject(valueResult.immutableJikiObject);
   const valueCodeTag = codeTag(value, frameContext.value.location);
 
   let dictDescription = "the list";
@@ -72,8 +77,10 @@ function describeChangeElementStatementDictionary(
     boxStep = `<li>Jiki found the ${variableCodeTag} box.</li>`;
   }
 
-  const key = frameResult.field.jikiObject;
-  const value = formatJikiObject(frameResult.value.jikiObject);
+  const fieldResult = frameResult.field as EvaluationResultExpression;
+  const key = fieldResult.immutableJikiObject;
+  const valueResult = frameResult.value as EvaluationResultExpression;
+  const value = formatJikiObject(valueResult.immutableJikiObject);
   const keyCodeTag = key ? codeTag(key, frameContext.field.location) : "unknown";
   const valueCodeTag = codeTag(value, frameContext.value.location);
 

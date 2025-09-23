@@ -1,5 +1,5 @@
 import { describe, test, expect } from "vitest";
-import { interpret } from "../../../src/javascript/interpreter";
+import { interpret } from "@javascript/interpreter";
 
 describe("JavaScript Type Coercion", () => {
   describe("with allowTypeCoercion disabled (default)", () => {

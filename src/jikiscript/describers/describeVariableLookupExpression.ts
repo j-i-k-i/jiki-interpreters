@@ -9,7 +9,7 @@ export function describeVariableLookupExpression(
   context: DescriptionContext
 ) {
   const name = result.name;
-  const value = formatJikiObject(result.jikiObject);
+  const value = formatJikiObject(result.immutableJikiObject);
   return [
     `<li>Jiki got the box called ${codeTag(name, expression.location)} off the shelves and took ${codeTag(
       value,

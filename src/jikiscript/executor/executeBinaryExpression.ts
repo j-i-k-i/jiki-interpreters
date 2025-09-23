@@ -16,11 +16,13 @@ export function executeBinaryExpression(
   guardLists(executor, expression, leftResult, rightResult);
   guardObjects(executor, expression, leftResult, rightResult);
 
+  const jikiObject = handleExpression(executor, expression, leftResult, rightResult);
   const result: EvaluationResult = {
     type: "BinaryExpression",
     left: leftResult,
     right: rightResult,
-    jikiObject: handleExpression(executor, expression, leftResult, rightResult),
+    jikiObject: jikiObject,
+    immutableJikiObject: jikiObject.clone(),
   };
   return result;
 }

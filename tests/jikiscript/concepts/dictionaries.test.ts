@@ -1,4 +1,5 @@
 import { interpret } from "@jikiscript/interpreter";
+import type { TestAugmentedFrame } from "@shared/frames";
 import { ChangeElementStatement, LogStatement, SetVariableStatement } from "@jikiscript/statement";
 import {
   GetElementExpression,
@@ -211,9 +212,10 @@ describe("execute", () => {
   describe("init", () => {
     test("empty", () => {
       const { frames } = interpret(`set movie to {}`);
-      expect(frames).toBeArrayOfSize(1);
-      expect(frames[0].status).toBe("SUCCESS");
-      expect(unwrapJikiObject(frames[0].variables)).toMatchObject({ movie: {} });
+      const testFrames = frames as TestAugmentedFrame[];
+      expect(testFrames).toBeArrayOfSize(1);
+      expect(testFrames[0].status).toBe("SUCCESS");
+      expect(unwrapJikiObject(testFrames[0].variables)).toMatchObject({ movie: {} });
     });
 
     test("single element", () => {
@@ -221,7 +223,7 @@ describe("execute", () => {
       expect(frames).toBeArrayOfSize(1);
       expect(frames[0].status).toBe("SUCCESS");
 
-      expect(unwrapJikiObject(frames[0].variables)).toMatchObject({
+      expect(unwrapJikiObject((frames[0] as TestAugmentedFrame).variables)).toMatchObject({
         movie: { title: "Jurassic Park" },
       });
     });
@@ -235,11 +237,11 @@ describe("execute", () => {
       `);
       expect(frames).toBeArrayOfSize(2);
       expect(frames[0].status).toBe("SUCCESS");
-      expect(unwrapJikiObject(frames[0].variables)).toMatchObject({
+      expect(unwrapJikiObject((frames[0] as TestAugmentedFrame).variables)).toMatchObject({
         movie: { title: "The Matrix" },
       });
       expect(frames[1].status).toBe("SUCCESS");
-      expect(unwrapJikiObject(frames[1].variables)).toMatchObject({
+      expect(unwrapJikiObject((frames[1] as TestAugmentedFrame).variables)).toMatchObject({
         movie: { title: "The Matrix" },
         title: "The Matrix",
       });
@@ -252,11 +254,11 @@ describe("execute", () => {
       `);
       expect(frames).toBeArrayOfSize(2);
       expect(frames[0].status).toBe("SUCCESS");
-      expect(unwrapJikiObject(frames[0].variables)).toMatchObject({
+      expect(unwrapJikiObject((frames[0] as TestAugmentedFrame).variables)).toMatchObject({
         movie: { director: { name: "Peter Jackson" } },
       });
       expect(frames[1].status).toBe("SUCCESS");
-      expect(unwrapJikiObject(frames[1].variables)).toMatchObject({
+      expect(unwrapJikiObject((frames[1] as TestAugmentedFrame).variables)).toMatchObject({
         movie: { director: { name: "Peter Jackson" } },
         name: "Peter Jackson",
       });
@@ -271,11 +273,11 @@ describe("execute", () => {
       `);
       expect(frames).toBeArrayOfSize(2);
       expect(frames[0].status).toBe("SUCCESS");
-      expect(unwrapJikiObject(frames[0].variables)).toMatchObject({
+      expect(unwrapJikiObject((frames[0] as TestAugmentedFrame).variables)).toMatchObject({
         movie: { title: "The Matrix" },
       });
       expect(frames[1].status).toBe("SUCCESS");
-      expect(unwrapJikiObject(frames[1].variables)).toMatchObject({
+      expect(unwrapJikiObject((frames[1] as TestAugmentedFrame).variables)).toMatchObject({
         movie: { title: "Gladiator" },
       });
     });
@@ -287,11 +289,11 @@ describe("execute", () => {
         `);
       expect(frames).toBeArrayOfSize(2);
       expect(frames[0].status).toBe("SUCCESS");
-      expect(unwrapJikiObject(frames[0].variables)).toMatchObject({
+      expect(unwrapJikiObject((frames[0] as TestAugmentedFrame).variables)).toMatchObject({
         movie: { director: { name: "Peter Jackson" } },
       });
       expect(frames[1].status).toBe("SUCCESS");
-      expect(unwrapJikiObject(frames[1].variables)).toMatchObject({
+      expect(unwrapJikiObject((frames[1] as TestAugmentedFrame).variables)).toMatchObject({
         movie: { director: { name: "James Cameron" } },
       });
     });
@@ -303,11 +305,11 @@ describe("execute", () => {
         `);
       expect(frames).toBeArrayOfSize(2);
       expect(frames[0].status).toBe("SUCCESS");
-      expect(unwrapJikiObject(frames[0].variables)).toMatchObject({
+      expect(unwrapJikiObject((frames[0] as TestAugmentedFrame).variables)).toMatchObject({
         movie: { director: { name: "Peter Jackson" } },
       });
       expect(frames[1].status).toBe("SUCCESS");
-      expect(unwrapJikiObject(frames[1].variables)).toMatchObject({
+      expect(unwrapJikiObject((frames[1] as TestAugmentedFrame).variables)).toMatchObject({
         movie: { director: { name: "Peter Jackson", skill: 10 } },
       });
     });
