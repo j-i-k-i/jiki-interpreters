@@ -1,4 +1,8 @@
-import { EvaluationResult, EvaluationResultChangeElementStatement, EvaluationResultExpression } from "../evaluation-result";
+import {
+  EvaluationResult,
+  EvaluationResultChangeElementStatement,
+  EvaluationResultExpression,
+} from "../evaluation-result";
 import { VariableLookupExpression } from "../expression";
 import { Description, DescriptionContext, FrameWithResult } from "../../shared/frames";
 import { codeTag, formatJikiObject } from "../helpers";
