@@ -50,7 +50,14 @@ Python-specific scoping with LEGB rule (Local, Enclosing, Global, Built-in) and 
 
 Wrapper objects extending shared `JikiObject` base class. Supports PyNumber, PyString, PyBoolean, PyNone with Python-specific features like int/float distinction and truthiness rules.
 
-**Note on immutableJikiObject**: Python currently only implements primitive types (number, string, boolean, None) which are inherently immutable. The `immutableJikiObject` optimization is not needed here as these objects cannot change state. When mutable collections (lists, dictionaries, sets) are added in the future, they should implement the `immutableJikiObject` pattern for performance.
+**Key features:**
+
+- All objects implement `clone()` method (required by base class)
+- Primitive types return `self` from `clone()` since they're immutable
+- Evaluation results include `immutableJikiObject` field for consistency with JikiScript
+- Python-specific features: `isInteger()` for numbers, `repr()` for strings, True/False formatting
+
+**Note on immutableJikiObject**: Python currently only implements primitive types (number, string, boolean, None) which are inherently immutable. The infrastructure for `immutableJikiObject` is in place for future mutable collections (lists, dictionaries, sets). When added, they should implement proper cloning behavior.
 
 ### 7. Frame System
 

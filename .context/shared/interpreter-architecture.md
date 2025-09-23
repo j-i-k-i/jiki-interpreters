@@ -96,14 +96,27 @@ Runtime errors MUST use system message format for consistency:
 
 All language-specific objects MUST extend the shared `JikiObject` base class. All interpreters use a single standardized `jikiObject` field in their EvaluationResult types for consistency.
 
+**Required methods (MANDATORY for all implementations):**
+
+- `toString(): string` - String representation of the object
+- `get value(): any` - Raw underlying value
+- `clone(): JikiObject` - Create a copy (immutable objects can return `self`)
+
 #### Performance Feature: Immutable Object Cloning
 
-JikiObjects support an `immutableJikiObject` field that provides a point-in-time immutable copy for frame generation. This optimization:
+The `immutableJikiObject` field in evaluation results provides a point-in-time immutable copy for frame generation. This optimization:
 
 - Avoids expensive deep cloning during execution
 - Maintains correct state snapshots for each frame
 - Only clones objects when their state actually changes
 - Significantly reduces memory allocation and GC pressure
+
+**Implementation pattern:**
+
+- Primitive types (numbers, strings, booleans, null/none): `clone()` returns `self`
+- Mutable collections (lists, dictionaries, arrays): `clone()` creates actual copy
+- Evaluation results: Include `immutableJikiObject: result.clone()` field
+- Describers: Access via `result.immutableJikiObject || result.jikiObject`
 
 ### 2. Frame System (`src/shared/frames.ts`)
 

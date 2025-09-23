@@ -6,10 +6,17 @@
 
 Wrapper objects around primitives providing enhanced error messages, educational descriptions, and better UI integration for student learning.
 
+All JikiScript objects implement:
+
+- `toString()`: String representation
+- `value`: Access to underlying primitive value
+- `clone()`: Creates a copy (primitives return self, collections create new instance)
+
 #### Performance Features
 
-- **`immutableJikiObject` field**: Provides a point-in-time immutable copy of the object for frame generation. This avoids expensive deep cloning during execution while maintaining correct state snapshots.
+- **`immutableJikiObject` in evaluation results**: Provides a point-in-time immutable copy of the object for frame generation. This avoids expensive deep cloning during execution while maintaining correct state snapshots.
 - **Lazy cloning**: Objects are only cloned when their state actually changes, reducing unnecessary memory allocation.
+- **Smart clone behavior**: Immutable primitives (Number, String, Boolean, Null) return `self` from `clone()`, while mutable collections (List, Dictionary) create actual copies.
 
 ### Frames
 
