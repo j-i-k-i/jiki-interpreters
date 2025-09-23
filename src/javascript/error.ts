@@ -11,6 +11,7 @@ export type SyntaxErrorType =
   | "MissingRightBraceAfterBlock"
   | "MissingRightBraceInTemplateLiteral"
   | "MissingRightBracketInArray"
+  | "MissingRightBracketInMemberAccess"
   | "MissingRightParenthesisAfterExpression"
   | "MissingRightParenthesisAfterIfCondition"
   | "MissingSemicolon"

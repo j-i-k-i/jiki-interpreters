@@ -10,6 +10,7 @@ import {
   UpdateExpression,
   TemplateLiteralExpression,
   ArrayExpression,
+  MemberExpression,
 } from "./expression";
 import { Location, Span } from "../shared/location";
 import { Scanner } from "./scanner";
@@ -371,6 +372,15 @@ export class Parser {
 
   private postfix(): Expression {
     let expr = this.primary();
+
+    // Handle chained member access (array indexing and future property access)
+    // This allows expressions like arr[0][1] or obj.prop[0]
+    while (this.match("LEFT_BRACKET")) {
+      const property = this.assignment();
+      this.consume("RIGHT_BRACKET", "MissingRightBracketInMemberAccess");
+      const rightBracket = this.previous();
+      expr = new MemberExpression(expr, property, true, Location.between(expr, rightBracket));
+    }
 
     // Handle postfix increment/decrement
     while (this.match("INCREMENT", "DECREMENT")) {

@@ -12,6 +12,7 @@ import {
   UpdateExpression,
   TemplateLiteralExpression,
   ArrayExpression,
+  MemberExpression,
 } from "./expression";
 import { Location } from "../shared/location";
 import type { Statement } from "./statement";
@@ -46,6 +47,7 @@ import { executeForStatement } from "./executor/executeForStatement";
 import { executeWhileStatement } from "./executor/executeWhileStatement";
 import { executeTemplateLiteralExpression } from "./executor/executeTemplateLiteralExpression";
 import { executeArrayExpression } from "./executor/executeArrayExpression";
+import { executeMemberExpression } from "./executor/executeMemberExpression";
 
 export type RuntimeErrorType =
   | "InvalidBinaryExpression"
@@ -56,7 +58,9 @@ export type RuntimeErrorType =
   | "ComparisonRequiresNumber"
   | "TruthinessDisabled"
   | "TypeCoercionNotAllowed"
-  | "StrictEqualityRequired";
+  | "StrictEqualityRequired"
+  | "IndexOutOfRange"
+  | "TypeError";
 
 export class RuntimeError extends Error {
   public category: string = "RuntimeError";
@@ -203,6 +207,10 @@ export class Executor {
 
     if (expression instanceof ArrayExpression) {
       return executeArrayExpression(this, expression);
+    }
+
+    if (expression instanceof MemberExpression) {
+      return executeMemberExpression(this, expression);
     }
 
     throw new RuntimeError(

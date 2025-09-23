@@ -2,6 +2,85 @@
 
 This document tracks the historical development and changes specific to the JavaScript interpreter.
 
+## List (Array) Index Reading Implementation (January 2025)
+
+### Changes Made
+
+Added support for array index reading (member access) without chaining:
+
+**Features Added**:
+
+- Array element access with bracket notation `arr[index]`
+- Comprehensive bounds checking
+- Type validation for indices (must be integer numbers)
+- Proper error handling for runtime errors
+
+**Implementation Details**:
+
+1. **Expression Class** (`src/javascript/expression.ts`):
+   - Added `MemberExpression` class for array indexing
+   - Supports computed property access (bracket notation)
+   - Future-ready for dot notation with `computed` flag
+
+2. **Parser Updates** (`src/javascript/parser.ts`):
+   - Modified `postfix()` method to handle `LEFT_BRACKET` after expressions
+   - Parses array index access without chaining (single level only for now)
+   - Proper error recovery with `MissingRightBracketInMemberAccess`
+
+3. **Executor Module** (`src/javascript/executor/executeMemberExpression.ts`):
+   - Validates object is array (JSList)
+   - Validates property is number (JSNumber)
+   - Checks for negative indices
+   - Checks for out of bounds access
+   - Validates indices are integers (not floats)
+   - Returns element with proper cloning for immutability
+
+4. **Evaluation Result** (`src/javascript/evaluation-result.ts`):
+   - Added `EvaluationResultMemberExpression` type
+   - Includes object and property evaluation results
+
+5. **Describers** (`src/javascript/describers/describeMemberExpression.ts`):
+   - Describes array access operations
+   - Shows accessed index and resulting value
+
+6. **Error Handling**:
+   - `IndexOutOfRange`: For negative or out-of-bounds indices
+   - `TypeError`: For non-numeric indices or non-array objects
+   - All errors follow RuntimeError pattern for proper frame generation
+
+**Tests**: Comprehensive test coverage in `tests/javascript/arrays.test.ts`
+
+- Valid access cases (first, middle, last elements)
+- Variable and expression indices
+- Out of bounds errors (negative and too high)
+- Non-numeric index errors (strings, floats)
+- Non-array access errors
+
+**Chaining Support Added**:
+
+- Full support for chained array access (e.g., `arr[0][1]`, `matrix[i][j]`)
+- Parser uses while loop to handle multiple consecutive bracket operations
+- Works with nested arrays of any depth
+- Supports variable and expression indices in chains
+
+**Tests Added for Chaining**:
+
+- 2D and 3D array access
+- Variable indices in chains
+- Expression indices in chains
+- Error handling in chains (out of bounds, non-array access)
+- Mixed data types in nested arrays
+
+**Known Limitations**:
+
+- Only bracket notation, no dot notation yet
+- Array modification not implemented
+
+**Next Steps**:
+
+- Implement array element assignment
+- Add dot notation for object property access
+
 ## Template Literals Implementation (January 2025)
 
 ### Changes Made

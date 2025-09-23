@@ -78,3 +78,11 @@ export type EvaluationResultArrayExpression = {
   jikiObject: JikiObject;
   immutableJikiObject?: JikiObject;
 };
+
+export type EvaluationResultMemberExpression = {
+  type: "MemberExpression";
+  object: EvaluationResultExpression;
+  property: EvaluationResultExpression;
+  jikiObject: JikiObject;
+  immutableJikiObject?: JikiObject;
+};

@@ -120,3 +120,17 @@ export class ArrayExpression extends Expression {
     return this.elements;
   }
 }
+
+export class MemberExpression extends Expression {
+  constructor(
+    public object: Expression,
+    public property: Expression,
+    public computed: boolean, // true for arr[0], false for obj.prop (future)
+    public location: Location
+  ) {
+    super("MemberExpression");
+  }
+  public children() {
+    return [this.object, this.property];
+  }
+}

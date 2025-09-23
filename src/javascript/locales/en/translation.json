@@ -11,6 +11,7 @@
       "MissingRightBraceAfterBlock": "Missing closing brace '}' after block statement.",
       "MissingRightBraceInTemplateLiteral": "Missing closing brace '}' in template literal interpolation.",
       "MissingRightBracketInArray": "Missing closing bracket ']' to close the list.",
+      "MissingRightBracketInMemberAccess": "Missing closing bracket ']' after array index.",
       "MissingRightParenthesisAfterExpression": "Missing closing parenthesis ')' after expression.",
       "MissingRightParenthesisAfterIfCondition": "Missing closing parenthesis ')' after if condition.",
       "MissingSemicolon": "Missing semicolon ';' at end of statement.",
@@ -29,7 +30,9 @@
       "UnsupportedOperation": "This operation is not supported.",
       "VariableNotDeclared": "The variable '{{name}}' has not been declared.",
       "ShadowingDisabled": "Variable shadowing is disabled. The variable '{{name}}' is already declared in an outer scope.",
-      "TruthinessDisabled": "Only boolean values are allowed in conditions, but got '{{value}}'."
+      "TruthinessDisabled": "Only boolean values are allowed in conditions, but got '{{value}}'.",
+      "IndexOutOfRange": "Index {{index}} is out of range. Array has {{length}} elements.",
+      "TypeError": "{{message}}"
     }
   }
 }
