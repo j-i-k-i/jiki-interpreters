@@ -72,13 +72,16 @@ export class IdentifierExpression extends Expression {
 
 export class AssignmentExpression extends Expression {
   constructor(
-    public name: Token,
+    public target: Token | MemberExpression,
     public value: Expression,
     public location: Location
   ) {
     super("AssignmentExpression");
   }
   public children() {
+    if (this.target instanceof MemberExpression) {
+      return [this.target, this.value];
+    }
     return [this.value];
   }
 }

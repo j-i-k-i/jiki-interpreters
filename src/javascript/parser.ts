@@ -272,6 +272,10 @@ export class Parser {
         return new AssignmentExpression(expr.name, value, Location.between(expr, value));
       }
 
+      if (expr instanceof MemberExpression) {
+        return new AssignmentExpression(expr, value, Location.between(expr, value));
+      }
+
       this.error("InvalidAssignmentTargetExpression", expr.location);
     }
 

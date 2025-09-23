@@ -110,7 +110,15 @@ export class JSList extends JikiObject {
     if (this._elements.length === 0) {
       return "[]";
     }
-    return `[ ${this._elements.map(elem => elem.toString()).join(", ")} ]`;
+    return `[ ${this._elements
+      .map(elem => {
+        // Add quotes around strings for consistency with JikiScript
+        if (elem instanceof JSString) {
+          return JSON.stringify(elem.value);
+        }
+        return elem.toString();
+      })
+      .join(", ")} ]`;
   }
 
   public clone(): JSList {
