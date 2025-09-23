@@ -72,3 +72,9 @@ export type EvaluationResultIfStatement = {
   jikiObject: JikiObject;
   immutableJikiObject?: JikiObject;
 };
+
+export type EvaluationResultArrayExpression = {
+  type: "ArrayExpression";
+  jikiObject: JikiObject;
+  immutableJikiObject?: JikiObject;
+};

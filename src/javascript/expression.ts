@@ -108,3 +108,15 @@ export class TemplateLiteralExpression extends Expression {
     return this.parts.filter((part): part is Expression => typeof part !== "string");
   }
 }
+
+export class ArrayExpression extends Expression {
+  constructor(
+    public elements: Expression[],
+    public location: Location
+  ) {
+    super("ArrayExpression");
+  }
+  public children() {
+    return this.elements;
+  }
+}
