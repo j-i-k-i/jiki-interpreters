@@ -51,13 +51,13 @@ For everything in here, base your work in the JikiScript interpreter.
 - [x] Add a while loop. Look at the for loop implementation.
 - [x] Add triple equals. Add a language feature for `enforceStrictEquality` which raises a custom error that we can use to tell the student that they need to use `===` not `==` if this is true. Set its default to `true`.
 - [x] Add template literals.
-- [ ] Add null and undefined.
-- [ ] Add List. Ensure to look at JikiScript's implementation including clone(). For this task, only add the creation and reading of lists. Not index access.
+- [x] Add null and undefined.
+- [ ] Add List. Ensure to look at JikiScript's implementation including clone(). For this task, only add the creation and logging of lists. Not index access.
 - [ ] Add list index reading. Look at JikiScript implementation for guidance.
 - [ ] Add list element writing. Look at JikiScript implementation for guidance. Follow JS rules for how this should work.
 - [ ] Ensure nested list work. Look at JikiScript implementation for guidance. Follow JS rules for how this should work.
 
-- [ ] Add object (call it a Dictionary internally as object is too broad and already overloaded). For this task, only add the creation and reading of objects. Not index access
+- [ ] Add object (call it a Dictionary internally as object is too broad and already overloaded). For this task, only add the creation and logging of objects. Not index access
 - [ ] Add object element reading. Look at JikiScript implementation for guidance. Follow JS rules for how this should work.
 - [ ] Add object element writing. Look at JikiScript implementation for guidance. Follow JS Rules for how this should work.
 - [ ] Ensure nested objects and lists work. Look at JikiScript implementation for guidance.
