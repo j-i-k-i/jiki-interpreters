@@ -1,6 +1,9 @@
 import { interpret } from "@jikiscript/interpreter";
 
 describe("JikiScript performance benchmarks", () => {
+  // CI environments are typically slower, so we need different thresholds
+  const isCI = process.env.CI === "true";
+
   beforeEach(() => {
     // Set benchmarking mode - skips variable cloning and inline description generation
     process.env.RUNNING_BENCHMARKS = "true";
@@ -29,7 +32,8 @@ describe("JikiScript performance benchmarks", () => {
     expect(result.frames.length).toBeGreaterThan(10);
 
     // Performance assertion - should complete within threshold
-    const maxTime = 2.73; // 2.48ms actual + 10% margin
+    // CI: ~4.17ms, Local: ~2.48ms (with 15% margin for variance)
+    const maxTime = isCI ? 4.6 : 2.85;
     expect(executionTime).toBeLessThan(maxTime);
   });
 
@@ -59,7 +63,8 @@ describe("JikiScript performance benchmarks", () => {
     expect(result.frames.length).toBeGreaterThan(1000);
 
     // Performance assertion - should complete within threshold
-    const maxTime = 13.32; // 12.11ms actual + 10% margin
+    // CI: ~38ms, Local: ~12.11ms (with 10% margin)
+    const maxTime = isCI ? 42 : 13.32;
     expect(executionTime).toBeLessThan(maxTime);
   });
 
@@ -88,7 +93,8 @@ describe("JikiScript performance benchmarks", () => {
     expect(result.frames.length).toBeGreaterThan(10000);
 
     // Performance assertion - should complete within threshold
-    const maxTime = 78; // ~71ms actual + 10% margin
+    // CI: ~169ms, Local: ~62ms (with margin)
+    const maxTime = isCI ? 186 : 78;
     expect(executionTime).toBeLessThan(maxTime);
   });
 
@@ -136,7 +142,8 @@ Average time per frame: ${(executionTime / frameCount).toFixed(4)}ms
     expect(frameCount).toBeLessThan(105000); // But not too much more
 
     // Performance assertion - should complete within threshold
-    const maxTime = 1037; // ~943ms actual + 10% margin
+    // CI: ~692ms, Local: ~340ms (with margin)
+    const maxTime = isCI ? 761 : 1037;
     expect(executionTime).toBeLessThan(maxTime);
   });
 
@@ -181,7 +188,8 @@ Frames per ms: ${(frameCount / executionTime).toFixed(2)}
     expect(frameCount).toBeGreaterThan(1000000);
 
     // Performance assertion - should complete within threshold
-    const maxTime = 8650.57; // 7864.15ms actual + 10% margin
+    // This test is usually skipped, but include thresholds for when it runs
+    const maxTime = isCI ? 15000 : 8650.57;
     expect(executionTime).toBeLessThan(maxTime);
   });
 });

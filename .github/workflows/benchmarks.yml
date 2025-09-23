@@ -29,20 +29,6 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Run benchmarks
-        run: pnpm test:benchmark:ci
-
-      - name: Comment PR with benchmark results
-        if: github.event_name == 'pull_request'
-        uses: actions/github-script@v6
-        continue-on-error: true # Don't fail the workflow if commenting fails
-        with:
-          script: |
-            const fs = require('fs');
-            const output = fs.readFileSync('./benchmark-output.txt', 'utf8');
-            const body = `## Benchmark Results\n\n\`\`\`\n${output}\n\`\`\``;
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: body
-            });
+        run: pnpm test:benchmark
+        env:
+          CI: true
