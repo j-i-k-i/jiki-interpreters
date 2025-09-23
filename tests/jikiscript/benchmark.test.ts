@@ -27,6 +27,10 @@ describe("JikiScript performance benchmarks", () => {
     console.log(`10 frames: ${executionTime.toFixed(2)}ms`);
     expect(result.error).toBeNull();
     expect(result.frames.length).toBeGreaterThan(10);
+
+    // Performance assertion - should complete within threshold
+    const maxTime = 2.73; // 2.48ms actual + 10% margin
+    expect(executionTime).toBeLessThan(maxTime);
   });
 
   test("1,000 frames - list operations", () => {
@@ -53,6 +57,10 @@ describe("JikiScript performance benchmarks", () => {
     console.log(`~1,000 frames: ${executionTime.toFixed(2)}ms (${result.frames.length} frames)`);
     expect(result.error).toBeNull();
     expect(result.frames.length).toBeGreaterThan(1000);
+
+    // Performance assertion - should complete within threshold
+    const maxTime = 13.32; // 12.11ms actual + 10% margin
+    expect(executionTime).toBeLessThan(maxTime);
   });
 
   test("10,000 frames - arithmetic operations", () => {
@@ -78,6 +86,10 @@ describe("JikiScript performance benchmarks", () => {
     console.log(`10,000 frames: ${executionTime.toFixed(2)}ms`);
     expect(result.error).toBeNull();
     expect(result.frames.length).toBeGreaterThan(10000);
+
+    // Performance assertion - should complete within threshold
+    const maxTime = 78; // ~71ms actual + 10% margin
+    expect(executionTime).toBeLessThan(maxTime);
   });
 
   test("100,000 frames - complex expressions", () => {
@@ -123,17 +135,12 @@ Average time per frame: ${(executionTime / frameCount).toFixed(4)}ms
     expect(frameCount).toBeGreaterThan(95000); // Should be around 100k
     expect(frameCount).toBeLessThan(105000); // But not too much more
 
-    // Performance assertion - should complete in reasonable time
-    // Adjust this threshold based on your performance requirements
-    expect(executionTime).toBeLessThan(30000); // 30 seconds max
-
-    // Log a warning if it's slow
-    if (executionTime > 10000) {
-      console.warn(`⚠️ Performance warning: Execution took ${(executionTime / 1000).toFixed(2)} seconds`);
-    }
+    // Performance assertion - should complete within threshold
+    const maxTime = 1037; // ~943ms actual + 10% margin
+    expect(executionTime).toBeLessThan(maxTime);
   });
 
-  test("1,000,000 frames - modulo and comparisons", { timeout: 60000 }, () => {
+  test.skip("1,000,000 frames - modulo and comparisons", { timeout: 60000 }, () => {
     // This is a stress test - skip by default
     const code = `
       set counter to 0
@@ -172,5 +179,9 @@ Frames per ms: ${(frameCount / executionTime).toFixed(2)}
 
     expect(result.error).toBeNull();
     expect(frameCount).toBeGreaterThan(1000000);
+
+    // Performance assertion - should complete within threshold
+    const maxTime = 8650.57; // 7864.15ms actual + 10% margin
+    expect(executionTime).toBeLessThan(maxTime);
   });
 });
