@@ -364,4 +364,125 @@ describe("JavaScript Arrays", () => {
       expect(frame.description).toContain("got 20");
     });
   });
+
+  describe("Chained array access", () => {
+    test("access nested array - 2D array", () => {
+      const code = `
+        let matrix = [[1, 2], [3, 4]];
+        let value = matrix[0][1];
+      `;
+      const result = interpret(code);
+
+      expect(result.success).toBe(true);
+      expect(result.error).toBe(null);
+      expect(result.frames.length).toBe(2);
+
+      const frame = result.frames[1] as TestFrame;
+      expect(frame.status).toBe("SUCCESS");
+      expect(frame.result?.jikiObject.toString()).toBe("2");
+      expect(frame.variables?.["value"].toString()).toBe("2");
+    });
+
+    test("access deeply nested array - 3D array", () => {
+      const code = `
+        let cube = [[[1, 2], [3, 4]], [[5, 6], [7, 8]]];
+        let value = cube[1][0][1];
+      `;
+      const result = interpret(code);
+
+      expect(result.success).toBe(true);
+      expect(result.frames.length).toBe(2);
+
+      const frame = result.frames[1] as TestFrame;
+      expect(frame.status).toBe("SUCCESS");
+      expect(frame.result?.jikiObject.toString()).toBe("6");
+      expect(frame.variables?.["value"].toString()).toBe("6");
+    });
+
+    test("chained access with variable indices", () => {
+      const code = `
+        let matrix = [[10, 20], [30, 40]];
+        let i = 1;
+        let j = 0;
+        let value = matrix[i][j];
+      `;
+      const result = interpret(code);
+
+      expect(result.success).toBe(true);
+      expect(result.frames.length).toBe(4);
+
+      const frame = result.frames[3] as TestFrame;
+      expect(frame.status).toBe("SUCCESS");
+      expect(frame.result?.jikiObject.toString()).toBe("30");
+      expect(frame.variables?.["value"].toString()).toBe("30");
+    });
+
+    test("chained access with expression indices", () => {
+      const code = `
+        let matrix = [[1, 2, 3], [4, 5, 6], [7, 8, 9]];
+        let value = matrix[1 + 0][2 - 1];
+      `;
+      const result = interpret(code);
+
+      expect(result.success).toBe(true);
+      expect(result.frames.length).toBe(2);
+
+      const frame = result.frames[1] as TestFrame;
+      expect(frame.status).toBe("SUCCESS");
+      expect(frame.result?.jikiObject.toString()).toBe("5");
+      expect(frame.variables?.["value"].toString()).toBe("5");
+    });
+
+    test("error in chained access - inner array out of bounds", async () => {
+      await changeLanguage("system");
+      const code = `
+        let matrix = [[1, 2], [3, 4]];
+        let value = matrix[0][5];
+      `;
+      const result = interpret(code);
+
+      expect(result.success).toBe(false);
+      expect(result.frames.length).toBe(2);
+
+      const frame = result.frames[1] as TestFrame;
+      expect(frame.status).toBe("ERROR");
+      expect(frame.error?.type).toBe("IndexOutOfRange");
+    });
+
+    test("error in chained access - non-array in chain", async () => {
+      await changeLanguage("system");
+      const code = `
+        let matrix = [[1, 2], [3, 4]];
+        let value = matrix[0][1][0];
+      `;
+      const result = interpret(code);
+
+      expect(result.success).toBe(false);
+      expect(result.frames.length).toBe(2);
+
+      const frame = result.frames[1] as TestFrame;
+      expect(frame.status).toBe("ERROR");
+      expect(frame.error?.type).toBe("TypeError");
+    });
+
+    test("chained access with mixed data types", () => {
+      const code = `
+        let data = [["a", "b"], [true, false], [10, 20]];
+        let str = data[0][1];
+        let bool = data[1][0];
+        let num = data[2][1];
+      `;
+      const result = interpret(code);
+
+      expect(result.success).toBe(true);
+      expect(result.frames.length).toBe(4);
+
+      const frame1 = result.frames[1] as TestFrame;
+      const frame2 = result.frames[2] as TestFrame;
+      const frame3 = result.frames[3] as TestFrame;
+      expect(frame1.variables?.["str"].toString()).toBe("b");
+      expect(frame2.variables?.["bool"].toString()).toBe("true");
+      expect(frame3.variables?.["num"].toString()).toBe("20");
+    });
+  });
 });

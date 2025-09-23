@@ -373,8 +373,9 @@ export class Parser {
   private postfix(): Expression {
     let expr = this.primary();
 
-    // Handle member access (array indexing for now, no chaining yet)
-    if (this.match("LEFT_BRACKET")) {
+    // Handle chained member access (array indexing and future property access)
+    // This allows expressions like arr[0][1] or obj.prop[0]
+    while (this.match("LEFT_BRACKET")) {
       const property = this.assignment();
       this.consume("RIGHT_BRACKET", "MissingRightBracketInMemberAccess");
       const rightBracket = this.previous();

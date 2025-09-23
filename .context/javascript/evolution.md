@@ -56,15 +56,28 @@ Added support for array index reading (member access) without chaining:
 - Non-numeric index errors (strings, floats)
 - Non-array access errors
 
+**Chaining Support Added**:
+
+- Full support for chained array access (e.g., `arr[0][1]`, `matrix[i][j]`)
+- Parser uses while loop to handle multiple consecutive bracket operations
+- Works with nested arrays of any depth
+- Supports variable and expression indices in chains
+
+**Tests Added for Chaining**:
+
+- 2D and 3D array access
+- Variable indices in chains
+- Expression indices in chains
+- Error handling in chains (out of bounds, non-array access)
+- Mixed data types in nested arrays
+
 **Known Limitations**:
 
-- No chaining support yet (e.g., `arr[0][1]` not supported)
 - Only bracket notation, no dot notation yet
 - Array modification not implemented
 
 **Next Steps**:
 
-- Add chaining support following JikiScript's GetElementExpression pattern
 - Implement array element assignment
 - Add dot notation for object property access
 
