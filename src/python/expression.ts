@@ -69,3 +69,15 @@ export class IdentifierExpression extends Expression {
     return [];
   }
 }
+
+export class ListExpression extends Expression {
+  constructor(
+    public elements: Expression[],
+    public location: Location
+  ) {
+    super("ListExpression");
+  }
+  public children() {
+    return this.elements;
+  }
+}

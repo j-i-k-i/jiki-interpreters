@@ -55,11 +55,11 @@ describe("Python - Unimplemented Tokens", () => {
 
   describe("Unimplemented Operators", () => {
     const unimplementedOperators = [
-      { code: "1, 2", token: ",", type: "COMMA" },
+      // { code: "1, 2", token: ",", type: "COMMA" }, - Already implemented for lists
       { code: "obj.prop", token: ".", type: "DOT" },
       // { code: "5 % 2", token: "%", type: "PERCENT" }, - Already implemented
       { code: "5;", token: ";", type: "SEMICOLON" },
-      { code: "[1, 2]", token: "[", type: "LEFT_BRACKET" },
+      // { code: "[1, 2]", token: "[", type: "LEFT_BRACKET" }, - Already implemented for lists
     ];
 
     unimplementedOperators.forEach(({ code, token, type }) => {

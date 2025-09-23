@@ -94,6 +94,49 @@ export class PyNone extends JikiObject {
   }
 }
 
+export class PyList extends JikiObject {
+  constructor(public readonly _elements: JikiObject[]) {
+    super("list");
+  }
+
+  public get value(): JikiObject[] {
+    return this._elements;
+  }
+
+  public toString(): string {
+    if (this._elements.length === 0) {
+      return "[]";
+    }
+
+    // Handle sparse arrays - map over indices to show undefined for missing elements
+    const elements: string[] = [];
+    for (let i = 0; i < this._elements.length; i++) {
+      const elem = this._elements[i];
+      if (elem === undefined) {
+        elements.push("undefined");
+      } else if (elem instanceof PyString) {
+        // Python uses single quotes for string representation in lists
+        elements.push(`'${elem.value}'`);
+      } else {
+        elements.push(elem.toString());
+      }
+    }
+
+    return `[${elements.join(", ")}]`;
+  }
+
+  public clone(): PyList {
+    // Deep clone - handle sparse arrays correctly
+    const clonedElements: JikiObject[] = [];
+    for (let i = 0; i < this._elements.length; i++) {
+      if (i in this._elements) {
+        clonedElements[i] = this._elements[i].clone();
+      }
+    }
+    return new PyList(clonedElements);
+  }
+}
+
 // Helper function to create PyObjects from Python values
 export function createPyObject(value: any): JikiObject {
   if (typeof value === "number") {
@@ -104,6 +147,8 @@ export function createPyObject(value: any): JikiObject {
     return new PyBoolean(value);
   } else if (value === null || value === undefined) {
     return new PyNone();
+  } else if (Array.isArray(value)) {
+    return new PyList(value.map(elem => createPyObject(elem)));
   } else {
     throw new Error(`Cannot create PyObject for value: ${value}`);
   }
@@ -111,7 +156,9 @@ export function createPyObject(value: any): JikiObject {
 
 // Helper function to unwrap PyObjects to JavaScript values
 export function unwrapPyObject(obj: JikiObject | any): any {
-  if (obj instanceof JikiObject) {
+  if (obj instanceof PyList) {
+    return obj.value.map(elem => unwrapPyObject(elem));
+  } else if (obj instanceof JikiObject) {
     return obj.value;
   }
   return obj;

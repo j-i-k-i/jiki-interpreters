@@ -14,16 +14,18 @@ This document outlines the features and functions included in the educational Py
 - Control flow (if, elif, else)
 - Indentation-based blocks
 - Truthiness (configurable via language feature flag)
+- Type coercion control (configurable via language feature flag)
 - Comments
+- Lists (creation and logging only, not index access yet)
 
 ### TODO
 
 - for loops
 - while loops
 - f-strings
-- Lists
+- List index reading
+- List element writing
 - Dictionaries (called Dictionary internally)
-- Type coercion control (language feature flag)
 
 ## Built-in Functions
 
