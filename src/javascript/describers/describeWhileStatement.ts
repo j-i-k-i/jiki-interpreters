@@ -7,7 +7,7 @@ export function describeWhileStatement(frame: FrameWithResult, context: Descript
   const statement = frame.context as WhileStatement;
   const conditionResult = frame.result;
 
-  const conditionValue = Boolean(unwrapJSObject(conditionResult.jikiObject));
+  const conditionValue = Boolean(unwrapJSObject(conditionResult.immutableJikiObject!));
 
   let result: string;
   let steps: string[] = [];
