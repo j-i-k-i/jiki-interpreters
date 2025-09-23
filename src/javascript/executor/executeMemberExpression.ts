@@ -2,7 +2,7 @@ import type { Executor } from "../executor";
 import { RuntimeError } from "../executor";
 import type { MemberExpression } from "../expression";
 import type { EvaluationResultMemberExpression } from "../evaluation-result";
-import { JSList, JSNumber, type JikiObject } from "../jikiObjects";
+import { JSList, JSNumber, JSUndefined, type JikiObject } from "../jikiObjects";
 
 export function executeMemberExpression(
   executor: Executor,
@@ -46,14 +46,15 @@ export function executeMemberExpression(
     );
   }
 
-  // Check bounds
+  // Check bounds - in JavaScript, reading out of bounds returns undefined
   if (index >= array.length) {
-    throw new RuntimeError(
-      `IndexOutOfRange: index: ${index}: length: ${array.length}`,
-      expression.location,
-      "IndexOutOfRange",
-      { index: index, length: array.length }
-    );
+    return {
+      type: "MemberExpression",
+      object: objectResult,
+      property: propertyResult,
+      jikiObject: new JSUndefined(),
+      immutableJikiObject: new JSUndefined(),
+    };
   }
 
   // Check for non-integer indices

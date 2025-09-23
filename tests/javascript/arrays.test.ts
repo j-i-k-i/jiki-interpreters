@@ -65,8 +65,8 @@ describe("JavaScript Arrays", () => {
 
       const frame = result.frames[0] as TestFrame;
       expect(frame.status).toBe("SUCCESS");
-      expect(frame.result?.jikiObject.toString()).toBe(`[ 42, hello, true, null ]`);
-      expect(frame.variables?.["arr"].toString()).toBe(`[ 42, hello, true, null ]`);
+      expect(frame.result?.jikiObject.toString()).toBe(`[ 42, "hello", true, null ]`);
+      expect(frame.variables?.["arr"].toString()).toBe(`[ 42, "hello", true, null ]`);
     });
 
     test("array with expressions", () => {
@@ -274,19 +274,18 @@ describe("JavaScript Arrays", () => {
 
   describe("Array index access errors", () => {
     test("index out of bounds - too high", async () => {
-      await changeLanguage("system");
       const code = `
         let arr = [10, 20, 30];
         let value = arr[3];
       `;
       const result = interpret(code);
 
-      expect(result.success).toBe(false); // Runtime errors make success false
+      expect(result.success).toBe(true); // No error, returns undefined
       expect(result.frames.length).toBe(2);
 
       const frame = result.frames[1] as TestFrame;
-      expect(frame.status).toBe("ERROR");
-      expect(frame.error?.type).toBe("IndexOutOfRange");
+      expect(frame.status).toBe("SUCCESS");
+      expect(frame.variables?.["value"].toString()).toBe("undefined");
     });
 
     test("index out of bounds - negative", async () => {
@@ -434,19 +433,18 @@ describe("JavaScript Arrays", () => {
     });
 
     test("error in chained access - inner array out of bounds", async () => {
-      await changeLanguage("system");
       const code = `
         let matrix = [[1, 2], [3, 4]];
         let value = matrix[0][5];
       `;
       const result = interpret(code);
 
-      expect(result.success).toBe(false);
+      expect(result.success).toBe(true); // No error, returns undefined
       expect(result.frames.length).toBe(2);
 
       const frame = result.frames[1] as TestFrame;
-      expect(frame.status).toBe("ERROR");
-      expect(frame.error?.type).toBe("IndexOutOfRange");
+      expect(frame.status).toBe("SUCCESS");
+      expect(frame.variables?.["value"].toString()).toBe("undefined");
     });
 
     test("error in chained access - non-array in chain", async () => {

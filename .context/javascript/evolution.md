@@ -1,3 +1,23 @@
+# JavaScript Interpreter Evolution
+
+## 2025-09-23: Array Element Assignment
+
+- **Added**: Full support for array element assignment (e.g., `arr[0] = value`)
+- **Parser Changes**:
+  - Modified `AssignmentExpression` to accept `MemberExpression` as target
+  - Supports chained assignments like `arr[0][1] = value`
+- **Executor Changes**:
+  - Extended `executeAssignmentExpression` to handle member expression targets
+  - Validates target is an array and index is a valid integer
+  - Automatically extends arrays when assigning beyond current length (JS semantics)
+  - Fills gaps with `undefined` when extending
+- **Error Handling**:
+  - TypeError for non-array targets or non-numeric indices
+  - IndexOutOfRange for negative indices
+  - Proper error frames for runtime errors
+- **Reading Behavior**: Out-of-bounds reads return `undefined` (JS semantics)
+- **Test Coverage**: Comprehensive tests for basic assignment, chaining, extension, and error cases
+
 # JavaScript Interpreter Evolution History
 
 This document tracks the historical development and changes specific to the JavaScript interpreter.

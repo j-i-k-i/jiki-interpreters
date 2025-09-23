@@ -110,12 +110,32 @@ export class JSList extends JikiObject {
     if (this._elements.length === 0) {
       return "[]";
     }
-    return `[ ${this._elements.map(elem => elem.toString()).join(", ")} ]`;
+
+    // Handle sparse arrays - map over indices to show undefined for missing elements
+    const elements: string[] = [];
+    for (let i = 0; i < this._elements.length; i++) {
+      const elem = this._elements[i];
+      if (elem === undefined) {
+        elements.push("undefined");
+      } else if (elem instanceof JSString) {
+        elements.push(JSON.stringify(elem.value));
+      } else {
+        elements.push(elem.toString());
+      }
+    }
+
+    return `[ ${elements.join(", ")} ]`;
   }
 
   public clone(): JSList {
-    // Deep clone - recursively clone all elements
-    return new JSList(this._elements.map(elem => elem.clone()));
+    // Deep clone - handle sparse arrays correctly
+    const clonedElements: JikiObject[] = [];
+    for (let i = 0; i < this._elements.length; i++) {
+      if (i in this._elements) {
+        clonedElements[i] = this._elements[i].clone();
+      }
+    }
+    return new JSList(clonedElements);
   }
 }
 
