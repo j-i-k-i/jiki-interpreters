@@ -1,4 +1,6 @@
-import type { JikiObject } from "./jikiObject";
+// The interpreter times are in microseconds
+// The timeline times are in milliseconds
+export const TIME_SCALE_FACTOR = 1000;
 
 /**
  * Shared frame execution status used by all interpreters
@@ -22,11 +24,11 @@ export type Frame = {
   /** Error information if the frame failed */
   error?: any;
 
-  /** Execution time (can be simulated) */
+  /** Execution time (in microseconds) */
   time: number;
 
-  /** Position in the timeline */
-  timelineTime: number;
+  /** Execution time converted to milliseconds for animations */
+  timeInMs: number;
 
   /** Human-readable description of what happened (lazy evaluation) */
   generateDescription: () => string;

@@ -3,3 +3,6 @@
 export * as jikiscript from "./jikiscript/index.js";
 export * as javascript from "./javascript/index.js";
 export * as python from "./python/index.js";
+
+// Export shared types and constants
+export { TIME_SCALE_FACTOR, type Frame } from "./shared/frames.js";

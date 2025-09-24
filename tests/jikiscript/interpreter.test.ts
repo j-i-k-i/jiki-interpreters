@@ -458,8 +458,8 @@ describe("timing", () => {
       );
       expect(frames).toBeArrayOfSize(2);
       expect(frames[0].time).toBe(0);
-      expect(frames[1].time).toBeCloseTo(0.01);
-      expect(frames[1].timelineTime).toBe(1);
+      expect(frames[1].time).toBeCloseTo(1);
+      expect(frames[1].timeInMs).toBe(0); // 1 microsecond rounds to 0ms
     });
   });
 
@@ -478,17 +478,17 @@ describe("timing", () => {
       const { frames } = interpret(
         `
           log 1
-          advanceTime(20)
+          advanceTime(5000)
           log 2
         `,
         context
       );
       expect(frames).toBeArrayOfSize(3);
       expect(frames[0].time).toBe(0);
-      expect(frames[1].time).toBeCloseTo(20.01);
-      expect(frames[1].timelineTime).toBe(2001);
-      expect(frames[2].time).toBeCloseTo(20.02);
-      expect(frames[2].timelineTime).toBe(2002);
+      expect(frames[1].time).toBeCloseTo(5001);
+      expect(frames[1].timeInMs).toBe(5); // 5001 microseconds rounds to 5ms
+      expect(frames[2].time).toBeCloseTo(5002);
+      expect(frames[2].timeInMs).toBe(5); // 5002 microseconds rounds to 5ms
     });
 
     test("from user code is not possible", () => {
