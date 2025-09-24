@@ -85,8 +85,8 @@ For everything in here, base your work in the JikiScript interpreter.
 - [x] Add a language feature flag for allowTypeCoercion. Look at the JavaScript implementation. When it's true, the normal semantics for Python with `5 + true` should give the same results as Python. However, if it's off, we should raise a TypeCoercionNotAllowed (or something similar) RunTime error on the frame. It should be off by default. Add a dedicated test file that tests this feature flag, and test it in as many different scnearios are appropraite. Both in terms of the normal behaviour (e.g. `5 + true` is differnet to `true + 5`) and in the disallowed case (in which case both of those should result in errors).
 
 - [x] Add List. Ensure to look at JikiScript and Javascript's implementation including clone(). For this task, only add the creation and logging of lists. Not index access.
-- [ ] Add list index reading. Look at JikiScript implementation for guidance.
-- [ ] Add list element writing. Look at JikiScript implementation for guidance. Follow JS rules for how this should work.
+- [x] Add list index reading. Look at JikiScript implementation for guidance. (Read the previous commit for context)
+- [ ] Add list element writing. Look at JikiScript implementation for guidance. Follow Python rules for how this should work.
 - [ ] Ensure nested list work. Look at JikiScript implementation for guidance. Follow JS rules for how this should work.
 
 - [ ] Add a for loop. Look at the JavaScript implementation.

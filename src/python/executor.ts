@@ -8,6 +8,7 @@ import {
   GroupingExpression,
   IdentifierExpression,
   ListExpression,
+  SubscriptExpression,
 } from "./expression";
 import { Location } from "../shared/location";
 import type { Statement } from "./statement";
@@ -29,6 +30,7 @@ import { executeAssignmentStatement } from "./executor/executeAssignmentStatemen
 import { executeIfStatement } from "./executor/executeIfStatement";
 import { executeBlockStatement } from "./executor/executeBlockStatement";
 import { executeListExpression } from "./executor/executeListExpression";
+import { executeSubscriptExpression } from "./executor/executeSubscriptExpression";
 
 export type RuntimeErrorType =
   | "InvalidBinaryExpression"
@@ -37,7 +39,8 @@ export type RuntimeErrorType =
   | "UnsupportedOperation"
   | "TypeError"
   | "TruthinessDisabled"
-  | "TypeCoercionNotAllowed";
+  | "TypeCoercionNotAllowed"
+  | "IndexError";
 
 export class RuntimeError extends Error {
   public category: string = "RuntimeError";
@@ -167,6 +170,10 @@ export class Executor {
       return executeListExpression(this, expression);
     }
 
+    if (expression instanceof SubscriptExpression) {
+      return executeSubscriptExpression(this, expression);
+    }
+
     throw new RuntimeError(`Unknown expression type: ${expression.type}`, expression.location, "UnsupportedOperation");
   }
 
@@ -244,7 +251,19 @@ export class Executor {
             const resultValue = result.jikiObject.toString();
             return `Applying 'not' operator to ${operandValue}, result: ${resultValue}`;
           }
+          if (expr?.type === "SubscriptExpression") {
+            const objectValue = expr.object?.jikiObject?.toString() || "list";
+            const indexValue = expr.index?.jikiObject?.toString() || "index";
+            const resultValue = result.jikiObject.toString();
+            return `Accessing ${objectValue}[${indexValue}], result: ${resultValue}`;
+          }
           return `Evaluating expression: ${result.jikiObject.toString()}`;
+
+        case "SubscriptExpression":
+          const objectVal = (result as any).object?.jikiObject?.toString() || "list";
+          const indexVal = (result as any).index?.jikiObject?.toString() || "index";
+          const resultVal = result.jikiObject.toString();
+          return `Accessing ${objectVal}[${indexVal}], result: ${resultVal}`;
 
         default:
           return `Evaluating: ${result.jikiObject.toString()}`;

@@ -29,6 +29,10 @@ export class PyNumber extends JikiObject {
   public getTypeName(): string {
     return this.isInteger() ? "int" : "float";
   }
+
+  public pythonTypeName(): string {
+    return this.getTypeName();
+  }
 }
 
 export class PyString extends JikiObject {
@@ -53,6 +57,10 @@ export class PyString extends JikiObject {
   public repr(): string {
     return `"${this._value}"`;
   }
+
+  public pythonTypeName(): string {
+    return "str";
+  }
 }
 
 export class PyBoolean extends JikiObject {
@@ -73,6 +81,10 @@ export class PyBoolean extends JikiObject {
     // Booleans are immutable, so return self
     return this;
   }
+
+  public pythonTypeName(): string {
+    return "bool";
+  }
 }
 
 export class PyNone extends JikiObject {
@@ -91,6 +103,10 @@ export class PyNone extends JikiObject {
   public clone(): PyNone {
     // None is immutable, so return self
     return this;
+  }
+
+  public pythonTypeName(): string {
+    return "NoneType";
   }
 }
 
@@ -134,6 +150,10 @@ export class PyList extends JikiObject {
       }
     }
     return new PyList(clonedElements);
+  }
+
+  public pythonTypeName(): string {
+    return "list";
   }
 }
 

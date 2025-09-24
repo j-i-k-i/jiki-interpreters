@@ -7,6 +7,7 @@ import {
   GroupingExpression,
   IdentifierExpression,
   ListExpression,
+  SubscriptExpression,
 } from "./expression";
 import { Location } from "../shared/location";
 import { Scanner } from "./scanner";
@@ -191,7 +192,21 @@ export class Parser {
       return new UnaryExpression(operator, right, Location.between(operator, right));
     }
 
-    return this.primary();
+    return this.postfix();
+  }
+
+  private postfix(): Expression {
+    let expr = this.primary();
+
+    // Handle subscript access (list[index])
+    // This allows chaining like list[0][1] for nested lists
+    while (this.match("LEFT_BRACKET")) {
+      const index = this.expression();
+      const rightBracket = this.consume("RIGHT_BRACKET", "Expect ']' after subscript index.");
+      expr = new SubscriptExpression(expr, index, Location.between(expr, rightBracket));
+    }
+
+    return expr;
   }
 
   private primary(): Expression {

@@ -57,3 +57,11 @@ export type EvaluationResultAssignmentStatement = {
   jikiObject: JikiObject;
   immutableJikiObject?: JikiObject;
 };
+
+export type EvaluationResultSubscriptExpression = {
+  type: "SubscriptExpression";
+  object: EvaluationResultExpression;
+  index: EvaluationResultExpression;
+  jikiObject: JikiObject;
+  immutableJikiObject?: JikiObject;
+};
