@@ -62,7 +62,7 @@ For everything in here, base your work in the JikiScript interpreter.
 - [x] Add object (call it a Dictionary internally as object is too broad and already overloaded). For this task, only add the creation and logging of objects. Not index access
 - [x] Add object element reading. Look at JikiScript implementation for guidance. Follow JS rules for how this should work.
 - [x] Add object element writing. Look at JikiScript implementation for guidance. Follow JS Rules for how this should work.
-- [ ] Ensure nested objects and lists work. Look at JikiScript implementation for guidance.
+- [x] Ensure nested objects and lists work. Check for complex patterns like x[0].something[1]['foo'][5] = 'bar'. etc Look at JikiScript implementation for guidance.
 
 - [ ] Don't allow statements that don't actually do anything. For example, a statement that is just a variable. Or a grouping expression that doesn't have assignmennt. Add a TOOD that you will need to modify this for calling functions (which should just be allowed by themselves) later. Look at how this works in JikiScript as there is a specific type for it. You may need to update lots of tests where this is the case. For now you can just add a `let foo = "bar"` for these to make them easy to find later.
 

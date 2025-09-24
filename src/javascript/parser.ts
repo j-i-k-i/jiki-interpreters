@@ -574,6 +574,11 @@ export class Parser {
     const leftBracket = this.previous();
     const elements: Expression[] = [];
 
+    // Skip EOL tokens after opening bracket
+    while (this.check("EOL")) {
+      this.advance();
+    }
+
     // Handle empty array
     if (this.check("RIGHT_BRACKET")) {
       this.advance();
@@ -587,6 +592,11 @@ export class Parser {
 
     // Parse array elements
     do {
+      // Skip EOL tokens before element
+      while (this.check("EOL")) {
+        this.advance();
+      }
+
       // Check for trailing comma before closing bracket
       if (this.check("RIGHT_BRACKET")) {
         this.error("TrailingCommaInArray", this.previous().location);
@@ -594,6 +604,11 @@ export class Parser {
 
       elements.push(this.assignment());
     } while (this.match("COMMA"));
+
+    // Skip EOL tokens before closing bracket
+    while (this.check("EOL")) {
+      this.advance();
+    }
 
     this.consume("RIGHT_BRACKET", "MissingRightBracketInArray");
     const rightBracket = this.previous();

@@ -1,5 +1,20 @@
 # JavaScript Interpreter Evolution
 
+## 2025-09-24: Nested Objects and Lists Support
+
+- **Added**: Full support for complex nested structures and multiline syntax
+- **Parser Changes**:
+  - Fixed `parseArray()` to skip EOL tokens after opening bracket, before elements, and before closing bracket
+  - Mirrors the EOL handling in `parseDictionary()` for consistency
+  - Enables multiline array literals and nested structures
+- **Features**:
+  - Complex nested patterns like `x[0].something[0]['foo'][5] = 'bar'`
+  - Multiline arrays and objects work correctly
+  - Deep nesting of arrays and objects
+  - Mixed bracket and dot notation in nested structures
+  - Dynamic property creation in nested structures
+- **Test Coverage**: Comprehensive tests for nested patterns, deep nesting, multiline syntax, and real-world JSON-like structures
+
 ## 2025-09-24: Object Property Writing
 
 - **Added**: Support for object property assignment via dot notation and bracket notation
