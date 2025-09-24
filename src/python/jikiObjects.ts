@@ -111,42 +111,57 @@ export class PyNone extends JikiObject {
 }
 
 export class PyList extends JikiObject {
-  constructor(public readonly _elements: JikiObject[]) {
+  private readonly elements: JikiObject[];
+
+  constructor(elements: JikiObject[]) {
     super("list");
+    this.elements = elements;
+  }
+
+  public get length(): number {
+    return this.elements.length;
+  }
+
+  public getElement(index: number): JikiObject | undefined {
+    return this.elements[index];
+  }
+
+  public setElement(index: number, value: JikiObject): void {
+    this.elements[index] = value;
   }
 
   public get value(): JikiObject[] {
-    return this._elements;
+    return this.elements;
   }
 
   public toString(): string {
-    if (this._elements.length === 0) {
+    if (this.elements.length === 0) {
       return "[]";
     }
 
     // Handle sparse arrays - map over indices to show undefined for missing elements
-    const elements: string[] = [];
-    for (let i = 0; i < this._elements.length; i++) {
-      const elem = this._elements[i];
+    const elementStrings: string[] = [];
+    for (let i = 0; i < this.elements.length; i++) {
+      const elem = this.elements[i];
       if (elem === undefined) {
-        elements.push("undefined");
+        elementStrings.push("undefined");
       } else if (elem instanceof PyString) {
         // Python uses single quotes for string representation in lists
-        elements.push(`'${elem.value}'`);
+        elementStrings.push(`'${elem.value}'`);
       } else {
-        elements.push(elem.toString());
+        elementStrings.push(elem.toString());
       }
     }
 
-    return `[${elements.join(", ")}]`;
+    return `[${elementStrings.join(", ")}]`;
   }
 
   public clone(): PyList {
     // Deep clone - handle sparse arrays correctly
     const clonedElements: JikiObject[] = [];
-    for (let i = 0; i < this._elements.length; i++) {
-      if (i in this._elements) {
-        clonedElements[i] = this._elements[i].clone();
+    for (let i = 0; i < this.elements.length; i++) {
+      if (i in this.elements) {
+        clonedElements[i] = this.elements[i].clone();
       }
     }
     return new PyList(clonedElements);

@@ -37,7 +37,7 @@ export function executeAssignmentExpression(
       }
 
       // Set the property in the dictionary
-      object._value.set(key, valueResult.jikiObject);
+      object.setProperty(key, valueResult.jikiObject);
 
       return {
         type: "AssignmentExpression",
@@ -77,14 +77,14 @@ export function executeAssignmentExpression(
         // For now, we'll throw an error to match our educational goals
         executor.error("IndexOutOfRange", memberExpr.property.location, {
           index: index,
-          length: array.value.length,
+          length: array.length,
         });
       }
 
       // Extend array if necessary (JavaScript behavior)
       // Just set the element at the index - JavaScript will handle sparse arrays
       // No need to fill with undefined values
-      array.value[index] = valueResult.jikiObject;
+      array.setElement(index, valueResult.jikiObject);
 
       return {
         type: "AssignmentExpression",

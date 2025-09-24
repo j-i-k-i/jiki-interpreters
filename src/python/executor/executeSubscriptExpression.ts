@@ -2,7 +2,7 @@ import type { Executor } from "../executor";
 import { RuntimeError } from "../executor";
 import type { SubscriptExpression } from "../expression";
 import type { EvaluationResultSubscriptExpression } from "../evaluation-result";
-import { PyList, PyNumber, type JikiObject } from "../jikiObjects";
+import { PyList, PyNumber, PyNone, type JikiObject } from "../jikiObjects";
 
 export function executeSubscriptExpression(
   executor: Executor,
@@ -49,7 +49,7 @@ export function executeSubscriptExpression(
   }
 
   let actualIndex = index.value;
-  const listLength = object.value.length;
+  const listLength = object.length;
 
   // Handle negative indexing (Python feature)
   if (actualIndex < 0) {
@@ -64,13 +64,13 @@ export function executeSubscriptExpression(
   }
 
   // Get the element
-  const element = object.value[actualIndex];
+  const element = object.getElement(actualIndex);
 
   return {
     type: "SubscriptExpression",
     object: objectResult,
     index: indexResult,
-    jikiObject: element,
-    immutableJikiObject: element.clone(),
+    jikiObject: element || new PyNone(),
+    immutableJikiObject: element ? element.clone() : new PyNone(),
   };
 }

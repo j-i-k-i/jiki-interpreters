@@ -279,45 +279,79 @@ export class Boolean extends Literal {
 export const True = new Boolean(true);
 export const False = new Boolean(false);
 
-export class List extends Primitive {
-  constructor(value: JikiObject[]) {
-    super("list", value);
+export class List extends JikiObject {
+  private readonly elements: JikiObject[];
+
+  constructor(elements: JikiObject[]) {
+    super("list");
+    this.elements = elements;
+  }
+
+  public get length(): number {
+    return this.elements.length;
+  }
+
+  public getElement(index: number): JikiObject | undefined {
+    return this.elements[index];
+  }
+
+  public setElement(index: number, value: JikiObject): void {
+    this.elements[index] = value;
+  }
+
+  public get value(): JikiObject[] {
+    return this.elements;
   }
   public toArg(): List {
-    return new List(this.value.map((item: JikiObject) => item.toArg()));
+    return new List(this.elements.map((item: JikiObject) => item.toArg()));
   }
   public toString() {
-    if (this.value.length === 0) {
+    if (this.elements.length === 0) {
       return "[]";
     }
-    return `[ ${this.value.map((item: JikiObject) => item.toString()).join(", ")} ]`;
+    return `[ ${this.elements.map((item: JikiObject) => item.toString()).join(", ")} ]`;
   }
   public clone(): List {
     // Deep clone - recursively clone all elements
-    return new List(this.value.map((item: JikiObject) => item.clone()));
+    return new List(this.elements.map((item: JikiObject) => item.clone()));
   }
 }
 
-export class Dictionary extends Primitive {
-  constructor(value: Map<string, JikiObject>) {
-    super("dictionary", value);
+export class Dictionary extends JikiObject {
+  private readonly map: Map<string, JikiObject>;
+
+  constructor(map: Map<string, JikiObject>) {
+    super("dictionary");
+    this.map = map;
+  }
+
+  public getProperty(key: string): JikiObject | undefined {
+    return this.map.get(key);
+  }
+
+  public setProperty(key: string, value: JikiObject): void {
+    this.map.set(key, value);
+  }
+
+  public get value(): Map<string, JikiObject> {
+    return this.map;
   }
   public toArg(): Dictionary {
-    return new Dictionary(new Map([...this.value.entries()].map(([key, value]) => [key, value.toArg()])));
+    return new Dictionary(new Map([...this.map.entries()].map(([key, value]) => [key, value.toArg()])));
   }
   public toString() {
-    if (this.value.size === 0) {
+    if (this.map.size === 0) {
       return "{}";
     }
     const stringified = Object.fromEntries(
-      [...this.value.entries()].map(([key, value]) => [key, unwrapJikiObject(value)])
+      [...this.map.entries()].map(([key, value]) => [key, unwrapJikiObject(value)])
     );
 
     return JSON.stringify(stringified, null, 1).replace(/\n\s*/g, " ");
   }
   public clone(): Dictionary {
     // Deep clone - recursively clone all values
-    return new Dictionary(new Map([...this.value.entries()].map(([key, value]) => [key, value.clone()])));
+    return new Dictionary(new Map([...this.map.entries()].map(([key, value]) => [key, value.clone()])));
   }
 }
 

@@ -31,7 +31,7 @@ export function executeMemberExpression(
     }
 
     // Get the value from the dictionary
-    const value = object._value.get(key);
+    const value = object.getProperty(key);
 
     return {
       type: "MemberExpression",
@@ -56,20 +56,19 @@ export function executeMemberExpression(
     }
 
     const index = property.value;
-    const array = object.value; // This is JikiObject[]
 
     // Check for negative indices (JavaScript doesn't support them natively)
     if (index < 0) {
       throw new RuntimeError(
-        `IndexOutOfRange: index: ${index}: length: ${array.length}`,
+        `IndexOutOfRange: index: ${index}: length: ${object.length}`,
         expression.location,
         "IndexOutOfRange",
-        { index: index, length: array.length }
+        { index: index, length: object.length }
       );
     }
 
     // Check bounds - in JavaScript, reading out of bounds returns undefined
-    if (index >= array.length) {
+    if (index >= object.length) {
       return {
         type: "MemberExpression",
         object: objectResult,
@@ -87,14 +86,14 @@ export function executeMemberExpression(
     }
 
     // Get the element
-    const element = array[index];
+    const element = object.getElement(index);
 
     return {
       type: "MemberExpression",
       object: objectResult,
       property: propertyResult,
-      jikiObject: element,
-      immutableJikiObject: element.clone(),
+      jikiObject: element || new JSUndefined(),
+      immutableJikiObject: element ? element.clone() : new JSUndefined(),
     };
   }
 

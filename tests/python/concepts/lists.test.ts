@@ -173,7 +173,8 @@ matrix`;
 
       // Should be different instances
       expect(cloned).not.toBe(original);
-      expect(cloned._elements).not.toBe(original._elements);
+      // Internal storage is now private, just check they are different objects
+      expect(cloned.value).not.toBe(original.value);
 
       // But should have equal values
       expect(cloned.toString()).toBe(original.toString());
