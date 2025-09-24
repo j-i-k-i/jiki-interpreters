@@ -2,7 +2,8 @@ import type { Executor } from "../executor";
 import { RuntimeError } from "../executor";
 import type { MemberExpression } from "../expression";
 import type { EvaluationResultMemberExpression } from "../evaluation-result";
-import { JSList, JSNumber, JSString, JSUndefined, JSDictionary, type JikiObject } from "../jikiObjects";
+import { JSList, JSNumber, JSString, JSUndefined, JSDictionary, JSFunction, type JikiObject } from "../jikiObjects";
+import { hasArrayProperty, hasArrayMethod, getArrayProperty, getArrayMethod } from "../stdlib/arrays";
 
 export function executeMemberExpression(
   executor: Executor,
@@ -44,7 +45,62 @@ export function executeMemberExpression(
 
   // For arrays (lists)
   if (object instanceof JSList) {
-    // Evaluate the property (index)
+    // Check if this is a non-computed access (property/method access)
+    if (!expression.computed) {
+      // For dot notation, property should be a literal with the property name
+      const propertyResult = executor.evaluate(expression.property);
+      const property = propertyResult.jikiObject;
+
+      // Get the property name
+      let propertyName: string;
+      if (property instanceof JSString) {
+        propertyName = property.value;
+      } else {
+        // This shouldn't happen with our parser, but just in case
+        propertyName = property.toString();
+      }
+
+      // Check if it's a property
+      if (hasArrayProperty(propertyName)) {
+        const prop = getArrayProperty(propertyName)!;
+        const value = prop.get(executor.getExecutionContext(), object);
+
+        return {
+          type: "MemberExpression",
+          object: objectResult,
+          property: propertyResult,
+          jikiObject: value,
+          immutableJikiObject: value.clone(),
+        };
+      }
+
+      // Check if it's a method
+      if (hasArrayMethod(propertyName)) {
+        const method = getArrayMethod(propertyName)!;
+        // Return a JSFunction that can be called
+        const jsFunc = new JSFunction(
+          method.name,
+          method.arity,
+          (ctx, _thisObj, args) => method.call(ctx, object, args),
+          method.description
+        );
+
+        return {
+          type: "MemberExpression",
+          object: objectResult,
+          property: propertyResult,
+          jikiObject: jsFunc,
+          immutableJikiObject: jsFunc.clone(),
+        };
+      }
+
+      // Unknown property/method
+      throw new RuntimeError(`PropertyNotFound: property: ${propertyName}`, expression.location, "PropertyNotFound", {
+        property: propertyName,
+      });
+    }
+
+    // For computed access (bracket notation) - array indexing
     const propertyResult = executor.evaluate(expression.property);
     const property = propertyResult.jikiObject;
 

@@ -37,7 +37,8 @@
       "ShadowingDisabled": "Variable shadowing is disabled. The variable '{{name}}' is already declared in an outer scope.",
       "TruthinessDisabled": "Only boolean values are allowed in conditions, but got '{{value}}'.",
       "IndexOutOfRange": "Index {{index}} is out of range. Array has {{length}} elements.",
-      "TypeError": "{{message}}"
+      "TypeError": "{{message}}",
+      "PropertyNotFound": "Property '{{property}}' does not exist on arrays."
     }
   }
 }

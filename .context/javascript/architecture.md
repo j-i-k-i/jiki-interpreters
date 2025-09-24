@@ -46,9 +46,9 @@ Generate human-readable descriptions for all execution steps including arithmeti
 
 Nested environment chain supporting lexical scoping, variable declaration, access, updates, and scope isolation with automatic block cleanup.
 
-### 6. JikiObjects (`src/javascript/jikiObjects.ts`)
+### 6. JikiObjects (`src/javascript/jsObjects/`)
 
-Wrapper objects extending shared `JikiObject` base class. Supports JSNumber, JSString, JSBoolean, JSNull, JSUndefined, and JSList with consistent cross-interpreter compatibility.
+Wrapper objects extending shared `JikiObject` base class. Each type is now in its own file under `jsObjects/` directory. Supports JSNumber, JSString, JSBoolean, JSNull, JSUndefined, JSList, JSDictionary, and JSFunction with consistent cross-interpreter compatibility.
 
 **Key features:**
 
@@ -64,8 +64,23 @@ Wrapper objects extending shared `JikiObject` base class. Supports JSNumber, JSS
   - Stores array of JikiObjects
   - Implements deep cloning via `clone()` method
   - Formatted as `[ elem1, elem2, ... ]` or `[]` for empty
+  - Supports property access via stdlib (e.g., `.length`)
+  - Prepared for method support (e.g., `.at()` when CallExpression is implemented)
 
-### 7. Language Features System (`src/javascript/interfaces.ts`)
+### 7. Standard Library (`src/javascript/stdlib/`)
+
+Provides built-in properties and methods for JavaScript types:
+
+**Arrays (`src/javascript/stdlib/arrays.ts`)**:
+
+- Properties:
+  - `length`: Returns the number of elements in the array
+- Methods (prepared, pending CallExpression implementation):
+  - `at(index)`: Returns element at index (supports negative indices)
+
+The stdlib system uses an ExecutionContext pattern for future extensibility and consistency with JikiScript patterns.
+
+### 8. Language Features System (`src/javascript/interfaces.ts`)
 
 Configurable language features:
 
@@ -75,7 +90,7 @@ Configurable language features:
 - `allowTypeCoercion`: Controls whether type coercion is allowed in operations (default: false)
 - `oneStatementPerLine`: Controls whether multiple statements are allowed on a single line (default: false)
 
-### 8. Frame System
+### 9. Frame System
 
 Uses unified frame system with JavaScript-specific extensions for educational descriptions.
 
