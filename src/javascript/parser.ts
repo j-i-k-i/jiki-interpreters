@@ -378,13 +378,26 @@ export class Parser {
   private postfix(): Expression {
     let expr = this.primary();
 
-    // Handle chained member access (array indexing and future property access)
-    // This allows expressions like arr[0][1] or obj.prop[0]
-    while (this.match("LEFT_BRACKET")) {
-      const property = this.assignment();
-      this.consume("RIGHT_BRACKET", "MissingRightBracketInMemberAccess");
-      const rightBracket = this.previous();
-      expr = new MemberExpression(expr, property, true, Location.between(expr, rightBracket));
+    // Handle chained member access (array indexing and property access)
+    // This allows expressions like arr[0][1] or obj.prop.nested or obj["key"]
+    while (true) {
+      if (this.match("LEFT_BRACKET")) {
+        // Bracket notation: obj["prop"] or arr[0]
+        const property = this.assignment();
+        this.consume("RIGHT_BRACKET", "MissingRightBracketInMemberAccess");
+        const rightBracket = this.previous();
+        expr = new MemberExpression(expr, property, true, Location.between(expr, rightBracket));
+      } else if (this.match("DOT")) {
+        // Dot notation: obj.prop
+        const propertyToken = this.advance();
+        if (propertyToken.type !== "IDENTIFIER") {
+          this.error("InvalidDictionaryKey", propertyToken.location);
+        }
+        const property = new LiteralExpression(propertyToken.lexeme, propertyToken.location);
+        expr = new MemberExpression(expr, property, false, Location.between(expr, propertyToken));
+      } else {
+        break;
+      }
     }
 
     // Handle postfix increment/decrement
@@ -592,6 +605,11 @@ export class Parser {
     const leftBrace = this.previous();
     const elements = new Map<string, Expression>();
 
+    // Skip EOL tokens after opening brace
+    while (this.check("EOL")) {
+      this.advance();
+    }
+
     // Handle empty object
     if (this.check("RIGHT_BRACE")) {
       this.advance();
@@ -605,6 +623,11 @@ export class Parser {
 
     // Parse object properties
     do {
+      // Skip EOL tokens before property
+      while (this.check("EOL")) {
+        this.advance();
+      }
+
       // Check for trailing comma before closing brace
       if (this.check("RIGHT_BRACE")) {
         this.error("TrailingCommaInDictionary", this.previous().location);
@@ -632,6 +655,11 @@ export class Parser {
 
       elements.set(key, value);
     } while (this.match("COMMA"));
+
+    // Skip EOL tokens before closing brace
+    while (this.check("EOL")) {
+      this.advance();
+    }
 
     this.consume("RIGHT_BRACE", "MissingRightBraceInDictionary");
     const rightBrace = this.previous();

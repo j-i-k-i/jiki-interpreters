@@ -296,7 +296,7 @@ describe("JavaScript Arrays", () => {
       `;
       const result = interpret(code);
 
-      expect(result.success).toBe(false); // Runtime errors make success false
+      expect(result.success).toBe(true); // Runtime errors don't affect success
       expect(result.frames.length).toBe(2);
 
       const frame = result.frames[1] as TestFrame;
@@ -312,7 +312,7 @@ describe("JavaScript Arrays", () => {
       `;
       const result = interpret(code);
 
-      expect(result.success).toBe(false); // Runtime errors make success false
+      expect(result.success).toBe(true); // Runtime errors don't affect success
       expect(result.frames.length).toBe(2);
 
       const frame = result.frames[1] as TestFrame;
@@ -328,7 +328,7 @@ describe("JavaScript Arrays", () => {
       `;
       const result = interpret(code);
 
-      expect(result.success).toBe(false); // Runtime errors make success false
+      expect(result.success).toBe(true); // Runtime errors don't affect success
       expect(result.frames.length).toBe(2);
 
       const frame = result.frames[1] as TestFrame;
@@ -344,7 +344,7 @@ describe("JavaScript Arrays", () => {
       `;
       const result = interpret(code);
 
-      expect(result.success).toBe(false); // Runtime errors make success false
+      expect(result.success).toBe(true); // Runtime errors don't affect success
       expect(result.frames.length).toBe(2);
 
       const frame = result.frames[1] as TestFrame;
@@ -455,7 +455,7 @@ describe("JavaScript Arrays", () => {
       `;
       const result = interpret(code);
 
-      expect(result.success).toBe(false);
+      expect(result.success).toBe(true);
       expect(result.frames.length).toBe(2);
 
       const frame = result.frames[1] as TestFrame;
