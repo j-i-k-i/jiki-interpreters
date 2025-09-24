@@ -167,11 +167,11 @@ export class Interpreter {
     this.languageFeatures = {
       includeList: undefined,
       excludeList: undefined,
-      timePerFrame: 0.01,
+      timePerFrame: 1,
       repeatDelay: 0,
       maxRepeatUntilGameOverIterations: 100,
       maxTotalLoopIterations: 10000,
-      maxTotalExecutionTime: 10000, // 10 seconds
+      maxTotalExecutionTime: 10000000, // 10 seconds (in microseconds)
       allowGlobals: false,
       customFunctionDefinitionMode: false,
       addSuccessFrames: true,

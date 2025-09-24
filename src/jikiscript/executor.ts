@@ -84,7 +84,7 @@ import cloneDeep from "lodash.clonedeep";
 import type { CallableCustomFunction, InterpretResult } from "./interpreter";
 import type { LanguageFeatures, Meta } from "./interpreter";
 
-import type { Frame, FrameExecutionStatus, TestAugmentedFrame } from "../shared/frames";
+import { TIME_SCALE_FACTOR, type Frame, type FrameExecutionStatus, type TestAugmentedFrame } from "../shared/frames";
 import { describeFrame } from "./frameDescribers";
 import { executeFunctionCallExpression } from "./executor/executeFunctionCallExpression";
 import { executeIfStatement } from "./executor/executeIfStatement";
@@ -1202,9 +1202,10 @@ export class Executor {
       status,
       result,
       error,
+      // The interpeter time is in microseconds.
+      // The timeInMs is in milliseconds for animations.
       time: this.time,
-      // Multiple the time by 100 and floor it to get an integer
-      timelineTime: Math.round(this.time * 100),
+      timeInMs: Math.round(this.time / TIME_SCALE_FACTOR),
       generateDescription: () =>
         describeFrame(frame, {
           functionDescriptions: this.externalFunctionDescriptions,

@@ -51,7 +51,7 @@ interface Frame {
   result?: EvaluationResult; // Computation result (if success)
   error?: RuntimeError; // Error details (if failed)
   time: number; // Execution time (simulated)
-  timelineTime: number; // Frame sequence number (time * 100)
+  timeInMs: number; // Time in milliseconds (time / 1000)
   generateDescription: () => string; // Lazy description generation (performance)
   context?: any; // AST node for debugging
   // Note: variables and description fields are added only in test environments

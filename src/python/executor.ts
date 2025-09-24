@@ -13,7 +13,7 @@ import type { Statement } from "./statement";
 import { ExpressionStatement, AssignmentStatement, PrintStatement, IfStatement, BlockStatement } from "./statement";
 import type { EvaluationResult } from "./evaluation-result";
 import { createPyObject, type JikiObject } from "./jikiObjects";
-import type { Frame, FrameExecutionStatus, TestAugmentedFrame } from "../shared/frames";
+import { TIME_SCALE_FACTOR, type Frame, type FrameExecutionStatus, type TestAugmentedFrame } from "../shared/frames";
 import type { LanguageFeatures } from "./interfaces";
 import cloneDeep from "lodash.clonedeep";
 
@@ -61,7 +61,7 @@ export class Executor {
   private frames: Frame[] = [];
   private location: Location | null = null;
   private time: number = 0;
-  private timePerFrame: number = 0.01;
+  private timePerFrame: number = 1;
   public environment: Environment;
   public languageFeatures: LanguageFeatures;
 
@@ -194,7 +194,7 @@ export class Executor {
       result: result || undefined,
       error,
       time: this.time,
-      timelineTime: Math.round(this.time * 100),
+      timeInMs: Math.round(this.time / TIME_SCALE_FACTOR),
       generateDescription: () => this.generateDescription(frame),
       context: context,
     };

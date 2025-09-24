@@ -118,7 +118,7 @@ describe("JikiScript performance benchmarks", () => {
     const result = interpret(code, {
       languageFeatures: {
         maxTotalLoopIterations: 1000000, // 1 million iterations allowed
-        maxTotalExecutionTime: 60000, // 60 seconds allowed
+        maxTotalExecutionTime: 60000000, // 60 seconds allowed (in microseconds)
       },
     });
     const endTime = performance.now();
@@ -168,7 +168,7 @@ Average time per frame: ${(executionTime / frameCount).toFixed(4)}ms
     const result = interpret(code, {
       languageFeatures: {
         maxTotalLoopIterations: 10000000, // 10 million iterations allowed
-        maxTotalExecutionTime: 300000, // 5 minutes allowed
+        maxTotalExecutionTime: 300000000, // 5 minutes allowed (in microseconds)
       },
     });
     const endTime = performance.now();

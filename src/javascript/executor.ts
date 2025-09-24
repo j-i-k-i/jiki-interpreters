@@ -27,7 +27,7 @@ import {
 import type { EvaluationResult } from "./evaluation-result";
 import { createJSObject, type JikiObject } from "./jikiObjects";
 import { translate } from "./translator";
-import type { Frame, FrameExecutionStatus } from "../shared/frames";
+import { TIME_SCALE_FACTOR, type Frame, type FrameExecutionStatus } from "../shared/frames";
 import { describeFrame } from "./frameDescribers";
 import cloneDeep from "lodash.clonedeep";
 
@@ -87,7 +87,7 @@ export class Executor {
   private frames: Frame[] = [];
   private location: Location | null = null;
   private time: number = 0;
-  private timePerFrame: number = 0.01;
+  private timePerFrame: number = 1;
   public environment: Environment;
   public languageFeatures: LanguageFeatures;
 
@@ -271,7 +271,7 @@ export class Executor {
       result: result || undefined,
       error,
       time: this.time,
-      timelineTime: Math.round(this.time * 100),
+      timeInMs: Math.round(this.time / TIME_SCALE_FACTOR),
       generateDescription: () =>
         describeFrame(frame, {
           functionDescriptions: {}, // JavaScript doesn't have external functions yet
