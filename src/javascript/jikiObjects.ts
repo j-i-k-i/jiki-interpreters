@@ -139,6 +139,40 @@ export class JSList extends JikiObject {
   }
 }
 
+export class JSDictionary extends JikiObject {
+  constructor(public readonly _value: Map<string, JikiObject>) {
+    super("dictionary");
+  }
+
+  public get value(): Map<string, JikiObject> {
+    return this._value;
+  }
+
+  public toString(): string {
+    if (this._value.size === 0) {
+      return "{}";
+    }
+
+    const entries: string[] = [];
+    for (const [key, value] of this._value.entries()) {
+      const keyStr = /^[a-zA-Z_$][a-zA-Z0-9_$]*$/.test(key) ? key : JSON.stringify(key);
+      const valueStr = value instanceof JSString ? JSON.stringify(value.value) : value.toString();
+      entries.push(`${keyStr}: ${valueStr}`);
+    }
+
+    return `{ ${entries.join(", ")} }`;
+  }
+
+  public clone(): JSDictionary {
+    // Deep clone - recursively clone all values
+    const clonedMap = new Map<string, JikiObject>();
+    for (const [key, value] of this._value.entries()) {
+      clonedMap.set(key, value.clone());
+    }
+    return new JSDictionary(clonedMap);
+  }
+}
+
 // Helper function to create JSObjects from JavaScript values
 export function createJSObject(value: any): JikiObject {
   if (value === null) {
@@ -153,6 +187,12 @@ export function createJSObject(value: any): JikiObject {
     return new JSBoolean(value);
   } else if (Array.isArray(value)) {
     return new JSList(value.map(elem => createJSObject(elem)));
+  } else if (typeof value === "object" && value !== null) {
+    const map = new Map<string, JikiObject>();
+    for (const [key, val] of Object.entries(value)) {
+      map.set(key, createJSObject(val));
+    }
+    return new JSDictionary(map);
   } else {
     throw new Error(`Cannot create JSObject for value: ${value}`);
   }
@@ -162,6 +202,12 @@ export function createJSObject(value: any): JikiObject {
 export function unwrapJSObject(obj: JikiObject | any): any {
   if (obj instanceof JSList) {
     return obj.value.map(elem => unwrapJSObject(elem));
+  } else if (obj instanceof JSDictionary) {
+    const result: any = {};
+    for (const [key, val] of obj.value.entries()) {
+      result[key] = unwrapJSObject(val);
+    }
+    return result;
   } else if (obj instanceof JikiObject) {
     return obj.value;
   }

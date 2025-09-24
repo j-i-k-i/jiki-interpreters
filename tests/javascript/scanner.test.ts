@@ -11,7 +11,7 @@ describe("single-character", () => {
     ["}", "RIGHT_BRACE"],
     // ["]", "RIGHT_BRACKET"], // Unimplemented
     [")", "RIGHT_PAREN"],
-    // [":", "COLON"], // Unimplemented
+    [":", "COLON"],
     // [",", "COMMA"], // Unimplemented
     ["-", "MINUS"],
     ["+", "PLUS"],
@@ -552,7 +552,6 @@ describe("JavaScript - Unimplemented Tokens", () => {
     const unimplementedOperators = [
       { code: "5 & 3", token: "&", type: "AMPERSAND" },
       { code: "5 ^ 3", token: "^", type: "CARET" },
-      { code: "obj: 1", token: ":", type: "COLON" },
       { code: "obj.prop", token: ".", type: "DOT" },
       { code: "5 % 2", token: "%", type: "PERCENT" },
       { code: "5 | 3", token: "|", type: "PIPE" },
