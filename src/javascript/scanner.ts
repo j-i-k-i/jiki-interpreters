@@ -574,7 +574,6 @@ export class Scanner {
       // Operators and syntax
       "AMPERSAND",
       "CARET",
-      "COLON",
       "DOT",
       "PERCENT",
       "PIPE",

@@ -85,26 +85,31 @@ JavaScript-specific extensions are handled through `frameDescribers.ts` which pr
 
 - Arithmetic operations (+, -, \*, /, %)
 - Unary operations (-, !)
-- Comparison operators (<, >, <=, >=, ==, !=)
+- Comparison operators (<, >, <=, >=, ==, !=, ===, !==)
 - Logical operators (&&, ||)
 - Grouping expressions (parentheses)
 - Literals (numbers, strings, booleans, null, undefined)
+- Template literals with interpolation
 - Comments (single-line and multi-line)
 - Variable declarations with `let` keyword
-- Variable access via identifier expressions
+- Variable access and assignment
 - Block statements with lexical scoping
 - Environment-based variable scoping with scope isolation
 - Runtime errors for undefined variable references
+- If/else statements with conditional execution
+- For loops and while loops
+- Arrays (lists) with creation and index access
+- Objects (dictionaries) with literal syntax { key: value }
+- Member access for arrays (index notation)
 
 ### Planned Features
 
 - Additional variable declaration types (const, var)
-- Variable assignment operations
-- Control flow (if, else, switch)
-- Variable shadowing with language feature flags
-- Loops (for, while, do-while)
+- Object property access (dot notation and bracket notation)
+- Object property assignment
+- Switch statements
+- Do-while loops
 - Functions and arrow functions
-- Objects and arrays
 - Classes and prototypes
 - Async/await
 - Modules (import/export)

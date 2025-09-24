@@ -137,3 +137,15 @@ export class MemberExpression extends Expression {
     return [this.object, this.property];
   }
 }
+
+export class DictionaryExpression extends Expression {
+  constructor(
+    public elements: Map<string, Expression>,
+    public location: Location
+  ) {
+    super("DictionaryExpression");
+  }
+  public children() {
+    return Array.from(this.elements.values());
+  }
+}

@@ -13,6 +13,7 @@ import {
   TemplateLiteralExpression,
   ArrayExpression,
   MemberExpression,
+  DictionaryExpression,
 } from "./expression";
 import { Location } from "../shared/location";
 import type { Statement } from "./statement";
@@ -48,6 +49,7 @@ import { executeWhileStatement } from "./executor/executeWhileStatement";
 import { executeTemplateLiteralExpression } from "./executor/executeTemplateLiteralExpression";
 import { executeArrayExpression } from "./executor/executeArrayExpression";
 import { executeMemberExpression } from "./executor/executeMemberExpression";
+import { executeDictionaryExpression } from "./executor/executeDictionaryExpression";
 
 export type RuntimeErrorType =
   | "InvalidBinaryExpression"
@@ -211,6 +213,10 @@ export class Executor {
 
     if (expression instanceof MemberExpression) {
       return executeMemberExpression(this, expression);
+    }
+
+    if (expression instanceof DictionaryExpression) {
+      return executeDictionaryExpression(this, expression);
     }
 
     throw new RuntimeError(

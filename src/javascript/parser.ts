@@ -11,6 +11,7 @@ import {
   TemplateLiteralExpression,
   ArrayExpression,
   MemberExpression,
+  DictionaryExpression,
 } from "./expression";
 import { Location, Span } from "../shared/location";
 import { Scanner } from "./scanner";
@@ -443,6 +444,10 @@ export class Parser {
       return this.parseArray();
     }
 
+    if (this.match("LEFT_BRACE")) {
+      return this.parseDictionary();
+    }
+
     this.error("MissingExpression", this.peek().location);
   }
 
@@ -581,6 +586,57 @@ export class Parser {
     const rightBracket = this.previous();
 
     return new ArrayExpression(elements, Location.between(leftBracket, rightBracket));
+  }
+
+  private parseDictionary(): Expression {
+    const leftBrace = this.previous();
+    const elements = new Map<string, Expression>();
+
+    // Handle empty object
+    if (this.check("RIGHT_BRACE")) {
+      this.advance();
+      return new DictionaryExpression(elements, Location.between(leftBrace, this.previous()));
+    }
+
+    // Check for leading comma
+    if (this.check("COMMA")) {
+      this.error("TrailingCommaInDictionary", this.peek().location);
+    }
+
+    // Parse object properties
+    do {
+      // Check for trailing comma before closing brace
+      if (this.check("RIGHT_BRACE")) {
+        this.error("TrailingCommaInDictionary", this.previous().location);
+      }
+
+      // Parse key - can be identifier, string, or number (in JavaScript)
+      let key: string;
+      if (this.match("IDENTIFIER")) {
+        key = this.previous().lexeme;
+      } else if (this.match("STRING")) {
+        key = this.previous().literal as string;
+      } else if (this.match("NUMBER")) {
+        key = String(this.previous().literal);
+      } else {
+        this.error("InvalidDictionaryKey", this.peek().location);
+        key = ""; // This won't be reached but TypeScript needs it
+      }
+
+      this.consume("COLON", "MissingColonInDictionary");
+      const value = this.assignment();
+
+      if (elements.has(key)) {
+        this.error("DuplicateDictionaryKey", this.previous().location, { key });
+      }
+
+      elements.set(key, value);
+    } while (this.match("COMMA"));
+
+    this.consume("RIGHT_BRACE", "MissingRightBraceInDictionary");
+    const rightBrace = this.previous();
+
+    return new DictionaryExpression(elements, Location.between(leftBrace, rightBrace));
   }
 
   private error(type: SyntaxErrorType, location: Location, context?: any): never {
