@@ -86,8 +86,8 @@ For everything in here, base your work in the JikiScript interpreter.
 
 - [x] Add List. Ensure to look at JikiScript and Javascript's implementation including clone(). For this task, only add the creation and logging of lists. Not index access.
 - [x] Add list index reading. Look at JikiScript implementation for guidance. (Read the previous commit for context)
-- [ ] Add list element writing. Look at JikiScript implementation for guidance. Follow Python rules for how this should work.
-- [ ] Ensure nested list work. Look at JikiScript implementation for guidance. Follow JS rules for how this should work.
+- [x] Add list element writing. Look at JikiScript implementation for guidance. Follow Python rules for how this should work.
+- [ ] Ensure nested list work. Look at JikiScript implementation for guidance. Follow Python rules for how this should work.
 
 - [ ] Add a for loop. Look at the JavaScript implementation.
 - [ ] Add a while loop. Look at the JavaScript implementation.

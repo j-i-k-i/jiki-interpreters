@@ -62,9 +62,38 @@ export class Parser {
         return this.ifStatement();
       }
 
-      // Check for assignment statement (IDENTIFIER = expression)
-      if (this.check("IDENTIFIER") && this.checkNext("EQUAL")) {
-        return this.assignmentStatement();
+      // Check for assignment statement (IDENTIFIER = expression or subscript = expression)
+      // We need to parse the left side first to determine if it's an assignment
+      if (this.check("IDENTIFIER")) {
+        // Save current position
+        const savedPosition = this.current;
+
+        // Try to parse the left side
+        const left = this.postfix();
+
+        // Check if it's followed by an assignment
+        if (this.check("EQUAL")) {
+          this.advance(); // consume the EQUAL
+          const value = this.expression();
+
+          // Python doesn't require semicolons, but consume newline if present
+          if (this.check("NEWLINE")) {
+            this.advance();
+          }
+
+          // Create assignment based on left side type
+          if (left instanceof IdentifierExpression) {
+            return new AssignmentStatement(left.name, value, Location.between(left, value));
+          } else if (left instanceof SubscriptExpression) {
+            return new AssignmentStatement(left, value, Location.between(left, value));
+          } else {
+            // Reset and fall through to expression statement
+            this.current = savedPosition;
+          }
+        } else {
+          // Reset position - it's not an assignment
+          this.current = savedPosition;
+        }
       }
 
       return this.expressionStatement();
@@ -74,17 +103,10 @@ export class Parser {
     }
   }
 
+  // No longer needed as assignment is handled in statement() method
+  // Keep for potential future use or remove
   private assignmentStatement(): Statement {
-    const name = this.consume("IDENTIFIER", "Expect variable name.");
-    this.consume("EQUAL", "Expect '=' after variable name.");
-    const value = this.expression();
-
-    // Python doesn't require semicolons, but consume newline if present
-    if (this.check("NEWLINE")) {
-      this.advance();
-    }
-
-    return new AssignmentStatement(name, value, Location.between(name, value));
+    throw new Error("assignmentStatement should not be called directly");
   }
 
   private expressionStatement(): Statement {

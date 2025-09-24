@@ -16,14 +16,13 @@ This document outlines the features and functions included in the educational Py
 - Truthiness (configurable via language feature flag)
 - Type coercion control (configurable via language feature flag)
 - Comments
-- Lists (creation, logging, and index access with negative indexing support)
+- Lists (creation, logging, index access with negative indexing, and element assignment)
 
 ### TODO
 
 - for loops
 - while loops
 - f-strings
-- List element writing
 - Dictionaries (called Dictionary internally)
 
 ## Built-in Functions

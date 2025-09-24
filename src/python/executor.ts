@@ -241,6 +241,14 @@ export class Executor {
           return "Executing block statement";
 
         case "AssignmentStatement":
+          // Check if it's a subscript assignment
+          if ((result as any).target) {
+            const target = (result as any).target;
+            if (target.type === "SubscriptExpression") {
+              const indexValue = (result as any).index?.jikiObject?.toString() || "index";
+              return `Assignment to list element at index ${indexValue}: ${result.jikiObject.toString()}`;
+            }
+          }
           return `Assignment: ${(result as any).name} = ${result.jikiObject.toString()}`;
 
         case "ExpressionStatement":
