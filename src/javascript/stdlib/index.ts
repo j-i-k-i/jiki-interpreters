@@ -4,13 +4,11 @@ import type { ExecutionContext } from "../executor";
 
 // General types for properties and methods
 export type Property = {
-  name: string;
   get: (ctx: ExecutionContext, obj: JikiObject) => JikiObject;
   description: string;
 };
 
 export type Method = {
-  name: string;
   arity: number | [number, number]; // exact or [min, max]
   call: (ctx: ExecutionContext, obj: JikiObject, args: JikiObject[]) => JikiObject;
   description: string;
@@ -37,4 +35,17 @@ export function getStdlibType(obj: JikiObject): string | null {
   // Future: if (obj.type === "string") return "string";
   // Future: if (obj.type === "number") return "number";
   return null;
+}
+
+// Internal error class for stdlib functions
+// This gets caught and converted to a RuntimeError with proper location
+export class StdlibError extends Error {
+  constructor(
+    public errorType: string,
+    message: string,
+    public context?: any
+  ) {
+    super(message);
+    this.name = "StdlibError";
+  }
 }

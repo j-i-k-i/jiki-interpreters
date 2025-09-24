@@ -68,7 +68,8 @@ export type RuntimeErrorType =
   | "StrictEqualityRequired"
   | "IndexOutOfRange"
   | "TypeError"
-  | "PropertyNotFound";
+  | "PropertyNotFound"
+  | "ArgumentError";
 
 export class RuntimeError extends Error {
   public category: string = "RuntimeError";

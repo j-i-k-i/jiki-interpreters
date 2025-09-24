@@ -38,7 +38,8 @@
       "TruthinessDisabled": "Only boolean values are allowed in conditions, but got '{{value}}'.",
       "IndexOutOfRange": "Index {{index}} is out of range. Array has {{length}} elements.",
       "TypeError": "{{message}}",
-      "PropertyNotFound": "Property '{{property}}' does not exist on arrays."
+      "PropertyNotFound": "Property '{{property}}' does not exist on arrays.",
+      "ArgumentError": "{{message}}"
     }
   }
 }

@@ -3,21 +3,33 @@ import { RuntimeError } from "../executor";
 import type { MemberExpression } from "../expression";
 import type { EvaluationResultMemberExpression } from "../evaluation-result";
 import { JSArray, JSNumber, JSString, JSUndefined, JSDictionary, JSFunction, type JikiObject } from "../jikiObjects";
-import { stdlib, getStdlibType, type Property, type Method } from "../stdlib";
+import { stdlib, getStdlibType, StdlibError, type Property, type Method } from "../stdlib";
 
 // Generic function to use a property from stdlib
-function useProperty(obj: JikiObject, propertyName: string, executor: Executor): JikiObject | null {
+function useProperty(obj: JikiObject, propertyName: string, executor: Executor, location: any): JikiObject | null {
   const stdlibType = getStdlibType(obj);
   if (!stdlibType) return null;
 
   const property = stdlib[stdlibType]?.properties?.[propertyName];
   if (!property) return null;
 
-  return property.get(executor.getExecutionContext(), obj);
+  try {
+    return property.get(executor.getExecutionContext(), obj);
+  } catch (error) {
+    if (error instanceof StdlibError) {
+      throw new RuntimeError(
+        `${error.errorType}: message: ${error.message}`,
+        location,
+        error.errorType as any,
+        error.context
+      );
+    }
+    throw error;
+  }
 }
 
 // Generic function to use a method from stdlib
-function useMethod(obj: JikiObject, methodName: string, executor: Executor): JSFunction | null {
+function useMethod(obj: JikiObject, methodName: string, executor: Executor, location: any): JSFunction | null {
   const stdlibType = getStdlibType(obj);
   if (!stdlibType) return null;
 
@@ -25,10 +37,25 @@ function useMethod(obj: JikiObject, methodName: string, executor: Executor): JSF
   if (!method) return null;
 
   // Return a JSFunction that can be called
+  // The error handling will happen when the function is actually called
   return new JSFunction(
-    method.name,
+    methodName,
     method.arity,
-    (ctx, _thisObj, args) => method.call(ctx, obj, args),
+    (ctx, _thisObj, args) => {
+      try {
+        return method.call(ctx, obj, args);
+      } catch (error) {
+        if (error instanceof StdlibError) {
+          throw new RuntimeError(
+            `${error.errorType}: message: ${error.message}`,
+            location,
+            error.errorType as any,
+            error.context
+          );
+        }
+        throw error;
+      }
+    },
     method.description
   );
 }
@@ -43,7 +70,7 @@ function resolveStdlibMember(
   propertyResult: any
 ): EvaluationResultMemberExpression {
   // Check if it's a property
-  const propertyValue = useProperty(object, propertyName, executor);
+  const propertyValue = useProperty(object, propertyName, executor, expression.location);
   if (propertyValue) {
     return {
       type: "MemberExpression",
@@ -55,7 +82,7 @@ function resolveStdlibMember(
   }
 
   // Check if it's a method
-  const methodValue = useMethod(object, propertyName, executor);
+  const methodValue = useMethod(object, propertyName, executor, expression.location);
   if (methodValue) {
     return {
       type: "MemberExpression",
