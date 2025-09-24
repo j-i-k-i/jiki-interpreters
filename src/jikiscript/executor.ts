@@ -452,8 +452,8 @@ export class Executor {
       const value = this.evaluate(statement.value);
 
       // Do the update
-      const oldValue = Jiki.unwrapJikiObject(dictionary.jikiObject.value.get(field.jikiObject.value));
-      dictionary.jikiObject.value.set(field.jikiObject.value, value.jikiObject);
+      const oldValue = Jiki.unwrapJikiObject(dictionary.jikiObject.getProperty(field.jikiObject.value));
+      dictionary.jikiObject.setProperty(field.jikiObject.value, value.jikiObject);
 
       return {
         type: "ChangeElementStatement",
@@ -485,8 +485,8 @@ export class Executor {
       const value = this.evaluate(statement.value);
 
       // Do the update
-      const oldValue = Jiki.unwrapJikiObject(list.jikiObject.value[index.jikiObject.value - 1]);
-      list.jikiObject.value[index.jikiObject.value - 1] = value.jikiObject;
+      const oldValue = Jiki.unwrapJikiObject(list.jikiObject.getElement(index.jikiObject.value - 1));
+      list.jikiObject.setElement(index.jikiObject.value - 1, value.jikiObject);
 
       return {
         type: "ChangeElementStatement",
@@ -853,7 +853,10 @@ export class Executor {
     this.verifyString(key.jikiObject, expression.field);
     this.guardMissingDictionaryKey(obj.jikiObject, key.jikiObject, expression.location);
 
-    const value = obj.jikiObject.value.get(key.jikiObject.value);
+    const value = obj.jikiObject.getProperty(key.jikiObject.value);
+    if (!value) {
+      throw new Error(`Dictionary key not found: ${key.jikiObject.value}`);
+    }
 
     return {
       type: "GetElementExpression",
@@ -876,7 +879,10 @@ export class Executor {
 
     this.guardOutofBoundsIndex(obj.jikiObject, idx.jikiObject, expression.field.location, "get");
 
-    const value = obj.jikiObject.value[idx.jikiObject.value - 1]; // 0-index
+    const value = obj.jikiObject.getElement(idx.jikiObject.value - 1); // 0-index
+    if (!value) {
+      throw new Error(`List element not found at index: ${idx.jikiObject.value}`);
+    }
 
     return {
       type: "GetElementExpression",
@@ -933,7 +939,7 @@ export class Executor {
     list: EvaluationResultListExpression
   ): EvaluationResultSetElementExpression {
     const value = this.evaluate(expression.value);
-    list.jikiObject.value[expression.field.literal] = value.jikiObject;
+    list.jikiObject.setElement(expression.field.literal, value.jikiObject);
 
     return {
       type: "SetElementExpression",
@@ -949,7 +955,7 @@ export class Executor {
     dict: EvaluationResultDictionaryExpression
   ): EvaluationResultSetElementExpression {
     const value = this.evaluate(expression.value);
-    dict.jikiObject.value[expression.field.literal] = value.jikiObject;
+    dict.jikiObject.setProperty(expression.field.literal, value.jikiObject);
 
     return {
       type: "SetElementExpression",
@@ -1108,7 +1114,8 @@ export class Executor {
     if (idx.value == 0) {
       this.error("RangeErrorArrayIndexIsZeroBased", location);
     }
-    if (idx.value <= obj.value.length) {
+    const length = obj instanceof Jiki.List ? obj.length : obj.value.length;
+    if (idx.value <= length) {
       return;
     }
 

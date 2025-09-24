@@ -54,7 +54,7 @@ export function executeAssignmentStatement(executor: Executor, statement: Assign
     }
 
     let actualIndex = index.value;
-    const listLength = object.value.length;
+    const listLength = object.length;
 
     // Handle negative indexing (Python feature)
     if (actualIndex < 0) {
@@ -69,7 +69,7 @@ export function executeAssignmentStatement(executor: Executor, statement: Assign
     }
 
     // Set the element
-    object.value[actualIndex] = value.jikiObject;
+    object.setElement(actualIndex, value.jikiObject);
 
     return {
       type: "AssignmentStatement",
