@@ -23,7 +23,7 @@ Supports Python tokens including single/multi-character operators, literals, key
 
 Builds an Abstract Syntax Tree (AST) from tokens using recursive descent parsing.
 
-**AST Nodes**: Literals, binary/unary expressions, grouping, identifiers, list expressions, expression/assignment statements, if/elif/else statements, indented block statements.
+**AST Nodes**: Literals, binary/unary expressions, grouping, identifiers, list expressions, subscript expressions, expression/assignment statements, if/elif/else statements, indented block statements.
 
 Python-specific operator precedence from grouping through logical OR, including power operator.
 
@@ -60,7 +60,7 @@ Wrapper objects extending shared `JikiObject` base class. Supports PyNumber, PyS
 
 **Collection Types:**
 
-- **PyList**: Mutable ordered collection with deep cloning support. Handles heterogeneous types and nested lists. String representation uses Python format (single quotes for strings). Currently supports creation and logging only (index access coming soon).
+- **PyList**: Mutable ordered collection with deep cloning support. Handles heterogeneous types and nested lists. String representation uses Python format (single quotes for strings). Supports creation, logging, and index access (including negative indices).
 
 ### 7. Frame System
 

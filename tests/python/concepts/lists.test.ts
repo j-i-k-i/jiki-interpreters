@@ -232,6 +232,140 @@ matrix`;
     });
   });
 
+  describe("list index access", () => {
+    test("accesses first element", () => {
+      const code = `my_list = [10, 20, 30]
+my_list[0]`;
+      const { frames, error } = interpret(code);
+      expect(error).toBeNull();
+      const lastFrame = frames[frames.length - 1] as TestAugmentedFrame;
+      expect(lastFrame.result?.jikiObject).toBeInstanceOf(PyNumber);
+      expect((lastFrame.result?.jikiObject as PyNumber).value).toBe(10);
+    });
+
+    test("accesses middle element", () => {
+      const code = `my_list = [10, 20, 30]
+my_list[1]`;
+      const { frames, error } = interpret(code);
+      expect(error).toBeNull();
+      const lastFrame = frames[frames.length - 1] as TestAugmentedFrame;
+      expect(lastFrame.result?.jikiObject).toBeInstanceOf(PyNumber);
+      expect((lastFrame.result?.jikiObject as PyNumber).value).toBe(20);
+    });
+
+    test("accesses last element", () => {
+      const code = `my_list = [10, 20, 30]
+my_list[2]`;
+      const { frames, error } = interpret(code);
+      expect(error).toBeNull();
+      const lastFrame = frames[frames.length - 1] as TestAugmentedFrame;
+      expect(lastFrame.result?.jikiObject).toBeInstanceOf(PyNumber);
+      expect((lastFrame.result?.jikiObject as PyNumber).value).toBe(30);
+    });
+
+    test("accesses element with negative index", () => {
+      const code = `my_list = [10, 20, 30]
+my_list[-1]`;
+      const { frames, error } = interpret(code);
+      expect(error).toBeNull();
+      const lastFrame = frames[frames.length - 1] as TestAugmentedFrame;
+      expect(lastFrame.result?.jikiObject).toBeInstanceOf(PyNumber);
+      expect((lastFrame.result?.jikiObject as PyNumber).value).toBe(30);
+    });
+
+    test("accesses element with negative index -2", () => {
+      const code = `my_list = [10, 20, 30]
+my_list[-2]`;
+      const { frames, error } = interpret(code);
+      expect(error).toBeNull();
+      const lastFrame = frames[frames.length - 1] as TestAugmentedFrame;
+      expect(lastFrame.result?.jikiObject).toBeInstanceOf(PyNumber);
+      expect((lastFrame.result?.jikiObject as PyNumber).value).toBe(20);
+    });
+
+    test("accesses element with expression as index", () => {
+      const code = `my_list = [10, 20, 30, 40, 50]
+i = 2
+my_list[i + 1]`;
+      const { frames, error } = interpret(code);
+      expect(error).toBeNull();
+      const lastFrame = frames[frames.length - 1] as TestAugmentedFrame;
+      expect(lastFrame.result?.jikiObject).toBeInstanceOf(PyNumber);
+      expect((lastFrame.result?.jikiObject as PyNumber).value).toBe(40);
+    });
+
+    test("accesses nested lists", () => {
+      const code = `matrix = [[1, 2, 3], [4, 5, 6], [7, 8, 9]]
+matrix[1][2]`;
+      const { frames, error } = interpret(code);
+      expect(error).toBeNull();
+      const lastFrame = frames[frames.length - 1] as TestAugmentedFrame;
+      expect(lastFrame.result?.jikiObject).toBeInstanceOf(PyNumber);
+      expect((lastFrame.result?.jikiObject as PyNumber).value).toBe(6);
+    });
+
+    test("accesses string element from list", () => {
+      const code = `words = ['hello', 'world', 'test']
+words[1]`;
+      const { frames, error } = interpret(code);
+      expect(error).toBeNull();
+      const lastFrame = frames[frames.length - 1] as TestAugmentedFrame;
+      expect(lastFrame.result?.jikiObject).toBeInstanceOf(PyString);
+      expect((lastFrame.result?.jikiObject as PyString).value).toBe("world");
+    });
+
+    test("handles index out of range error", () => {
+      const code = `my_list = [10, 20, 30]
+my_list[5]`;
+      const { frames, error } = interpret(code);
+      expect(error).toBeNull();
+      const lastFrame = frames[frames.length - 1] as TestAugmentedFrame;
+      expect(lastFrame.status).toBe("ERROR");
+      expect(lastFrame.error?.type).toBe("IndexError");
+    });
+
+    test("handles negative index out of range error", () => {
+      const code = `my_list = [10, 20, 30]
+my_list[-5]`;
+      const { frames, error } = interpret(code);
+      expect(error).toBeNull();
+      const lastFrame = frames[frames.length - 1] as TestAugmentedFrame;
+      expect(lastFrame.status).toBe("ERROR");
+      expect(lastFrame.error?.type).toBe("IndexError");
+    });
+
+    test("handles non-integer index error", () => {
+      const code = `my_list = [10, 20, 30]
+my_list[1.5]`;
+      const { frames, error } = interpret(code);
+      expect(error).toBeNull();
+      const lastFrame = frames[frames.length - 1] as TestAugmentedFrame;
+      expect(lastFrame.status).toBe("ERROR");
+      expect(lastFrame.error?.type).toBe("TypeError");
+      expect(lastFrame.error?.message).toContain("must be integers, not float");
+    });
+
+    test("handles string index error", () => {
+      const code = `my_list = [10, 20, 30]
+my_list['hello']`;
+      const { frames, error } = interpret(code);
+      expect(error).toBeNull();
+      const lastFrame = frames[frames.length - 1] as TestAugmentedFrame;
+      expect(lastFrame.status).toBe("ERROR");
+      expect(lastFrame.error?.type).toBe("TypeError");
+      expect(lastFrame.error?.message).toContain("must be integers, not str");
+    });
+
+    test("direct list literal access", () => {
+      const code = `[100, 200, 300][1]`;
+      const { frames, error } = interpret(code);
+      expect(error).toBeNull();
+      const lastFrame = frames[frames.length - 1] as TestAugmentedFrame;
+      expect(lastFrame.result?.jikiObject).toBeInstanceOf(PyNumber);
+      expect((lastFrame.result?.jikiObject as PyNumber).value).toBe(200);
+    });
+  });
+
   describe("frame generation", () => {
     test("generates correct frames for list creation", () => {
       const { frames, error } = interpret("[1, 2, 3]");

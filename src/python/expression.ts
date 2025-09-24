@@ -81,3 +81,16 @@ export class ListExpression extends Expression {
     return this.elements;
   }
 }
+
+export class SubscriptExpression extends Expression {
+  constructor(
+    public object: Expression,
+    public index: Expression,
+    public location: Location
+  ) {
+    super("SubscriptExpression");
+  }
+  public children() {
+    return [this.object, this.index];
+  }
+}
