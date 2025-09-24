@@ -6,6 +6,7 @@ import {
   UnaryExpression,
   GroupingExpression,
   IdentifierExpression,
+  ListExpression,
 } from "./expression";
 import { Location } from "../shared/location";
 import { Scanner } from "./scanner";
@@ -220,6 +221,10 @@ export class Parser {
       return new GroupingExpression(expr, Location.between(expr, expr));
     }
 
+    if (this.match("LEFT_BRACKET")) {
+      return this.listExpression();
+    }
+
     throw this.error(this.peek(), "Expect expression.");
   }
 
@@ -334,6 +339,22 @@ export class Parser {
     const endToken = this.previous();
 
     return new BlockStatement(statements, Location.between(startToken, endToken));
+  }
+
+  private listExpression(): Expression {
+    const leftBracket = this.previous();
+    const elements: Expression[] = [];
+
+    // Handle empty list
+    if (!this.check("RIGHT_BRACKET")) {
+      do {
+        elements.push(this.expression());
+      } while (this.match("COMMA"));
+    }
+
+    const rightBracket = this.consume("RIGHT_BRACKET", "Expect ']' after list elements.");
+
+    return new ListExpression(elements, Location.between(leftBracket, rightBracket));
   }
 
   private synchronize(): void {

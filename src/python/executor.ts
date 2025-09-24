@@ -7,6 +7,7 @@ import {
   UnaryExpression,
   GroupingExpression,
   IdentifierExpression,
+  ListExpression,
 } from "./expression";
 import { Location } from "../shared/location";
 import type { Statement } from "./statement";
@@ -27,6 +28,7 @@ import { executeIdentifierExpression } from "./executor/executeIdentifierExpress
 import { executeAssignmentStatement } from "./executor/executeAssignmentStatement";
 import { executeIfStatement } from "./executor/executeIfStatement";
 import { executeBlockStatement } from "./executor/executeBlockStatement";
+import { executeListExpression } from "./executor/executeListExpression";
 
 export type RuntimeErrorType =
   | "InvalidBinaryExpression"
@@ -159,6 +161,10 @@ export class Executor {
 
     if (expression instanceof IdentifierExpression) {
       return executeIdentifierExpression(this, expression);
+    }
+
+    if (expression instanceof ListExpression) {
+      return executeListExpression(this, expression);
     }
 
     throw new RuntimeError(`Unknown expression type: ${expression.type}`, expression.location, "UnsupportedOperation");

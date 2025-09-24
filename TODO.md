@@ -83,8 +83,14 @@ For everything in here, base your work in the JikiScript interpreter.
 - [x] Add a language feature for truthiness in binary expressions. See the JavaScript one for an example. If enabled then truthiness should behave as normal in Python. If not, then only booleans (or functions/variables returning booleans etc) are allowed to be compared. If you compare non-booleans, a runtime error of TruthinessDisabled (or similar) should be added to the frame etc. Look how runtime errors work in JikiScript and the errors info in context. Note: Already implemented for NOT operator, needs to be added for binary expressions (and, or).
 - [x] Add integer division if both numbers are integers. Are there any pitfalls we need to consider for numbers as JS stores all numbers as floats?
 - [x] Add a language feature flag for allowTypeCoercion. Look at the JavaScript implementation. When it's true, the normal semantics for Python with `5 + true` should give the same results as Python. However, if it's off, we should raise a TypeCoercionNotAllowed (or something similar) RunTime error on the frame. It should be off by default. Add a dedicated test file that tests this feature flag, and test it in as many different scnearios are appropraite. Both in terms of the normal behaviour (e.g. `5 + true` is differnet to `true + 5`) and in the disallowed case (in which case both of those should result in errors).
+
+- [x] Add List. Ensure to look at JikiScript and Javascript's implementation including clone(). For this task, only add the creation and logging of lists. Not index access.
+- [ ] Add list index reading. Look at JikiScript implementation for guidance.
+- [ ] Add list element writing. Look at JikiScript implementation for guidance. Follow JS rules for how this should work.
+- [ ] Ensure nested list work. Look at JikiScript implementation for guidance. Follow JS rules for how this should work.
+
 - [ ] Add a for loop. Look at the JavaScript implementation.
 - [ ] Add a while loop. Look at the JavaScript implementation.
 - [ ] Add fstrings
-- [ ] Don't allow statements that don't actually do anything. For example, a statement that is just a variable. Or a grouping expression that doesn't have assignmennt. Add a TOOD that you will need to modify this for calling functions (which should just be allowed by themselves) later. Look at how this works in JikiScript as there is a specific type for it.
+- [ ] Don't allow statements that don't actually do anything. For example, a statement that is just a variable. Or a grouping expression that doesn't have assignment. Add a TOOD that you will need to modify this for calling functions (which should just be allowed by themselves) later. Look at how this works in JikiScript as there is a specific type for it.
 - [ ] Implement the next Python built-in function from [.context/python/features-and-functions.md](.context/python/features-and-functions.md). Only mark this as complete when all functions in the "Including" list are done. Ensure to move each function from TODO to Implemented in the context document when finished. Remember to confirm the plan with the human before implementing each function.

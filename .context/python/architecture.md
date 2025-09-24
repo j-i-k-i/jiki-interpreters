@@ -23,7 +23,7 @@ Supports Python tokens including single/multi-character operators, literals, key
 
 Builds an Abstract Syntax Tree (AST) from tokens using recursive descent parsing.
 
-**AST Nodes**: Literals, binary/unary expressions, grouping, identifiers, expression/assignment statements, if/elif/else statements, indented block statements.
+**AST Nodes**: Literals, binary/unary expressions, grouping, identifiers, list expressions, expression/assignment statements, if/elif/else statements, indented block statements.
 
 Python-specific operator precedence from grouping through logical OR, including power operator.
 
@@ -48,16 +48,19 @@ Python-specific scoping with LEGB rule (Local, Enclosing, Global, Built-in) and 
 
 ### 6. JikiObjects (`src/python/jikiObjects.ts`)
 
-Wrapper objects extending shared `JikiObject` base class. Supports PyNumber, PyString, PyBoolean, PyNone with Python-specific features like int/float distinction and truthiness rules.
+Wrapper objects extending shared `JikiObject` base class. Supports PyNumber, PyString, PyBoolean, PyNone, and PyList with Python-specific features like int/float distinction and truthiness rules.
 
 **Key features:**
 
 - All objects implement `clone()` method (required by base class)
 - Primitive types return `self` from `clone()` since they're immutable
+- PyList implements deep cloning for mutable collection behavior
 - Evaluation results include `immutableJikiObject` field for consistency with JikiScript
 - Python-specific features: `isInteger()` for numbers, `repr()` for strings, True/False formatting
 
-**Note on immutableJikiObject**: Python currently only implements primitive types (number, string, boolean, None) which are inherently immutable. The infrastructure for `immutableJikiObject` is in place for future mutable collections (lists, dictionaries, sets). When added, they should implement proper cloning behavior.
+**Collection Types:**
+
+- **PyList**: Mutable ordered collection with deep cloning support. Handles heterogeneous types and nested lists. String representation uses Python format (single quotes for strings). Currently supports creation and logging only (index access coming soon).
 
 ### 7. Frame System
 

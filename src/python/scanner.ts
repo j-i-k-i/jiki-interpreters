@@ -213,12 +213,12 @@ export class Scanner {
       "WITH",
       "YIELD",
       // Operators
-      "COMMA",
+      // "COMMA", - Already implemented for list literals
       "DOT",
       // "PERCENT", - Already implemented as binary operator
       "SEMICOLON",
-      "LEFT_BRACKET",
-      "RIGHT_BRACKET",
+      // "LEFT_BRACKET", - Already implemented for list literals
+      // "RIGHT_BRACKET", - Already implemented for list literals
     ];
 
     if (unimplementedTokens.includes(type)) {

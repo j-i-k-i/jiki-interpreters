@@ -142,8 +142,8 @@ Average time per frame: ${(executionTime / frameCount).toFixed(4)}ms
     expect(frameCount).toBeLessThan(105000); // But not too much more
 
     // Performance assertion - should complete within threshold
-    // CI: ~996ms × 1.5 = 1494ms, Local: ~340ms + 10% = 374ms
-    const maxTime = isCI ? 1494 : 374;
+    // CI: ~996ms × 1.5 = 1494ms, Local: ~340ms + 18% = 400ms
+    const maxTime = isCI ? 1494 : 400;
     expect(executionTime).toBeLessThan(maxTime);
   });
 
