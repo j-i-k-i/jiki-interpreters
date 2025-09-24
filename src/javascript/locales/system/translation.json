@@ -37,7 +37,8 @@
       "ShadowingDisabled": "ShadowingDisabled: name: {{name}}",
       "TruthinessDisabled": "TruthinessDisabled: value: {{value}}",
       "IndexOutOfRange": "IndexOutOfRange: index: {{index}}: length: {{length}}",
-      "TypeError": "TypeError: {{message}}"
+      "TypeError": "TypeError: {{message}}",
+      "PropertyNotFound": "PropertyNotFound: property: {{property}}"
     }
   }
 }

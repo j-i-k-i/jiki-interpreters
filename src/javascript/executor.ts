@@ -51,6 +51,11 @@ import { executeArrayExpression } from "./executor/executeArrayExpression";
 import { executeMemberExpression } from "./executor/executeMemberExpression";
 import { executeDictionaryExpression } from "./executor/executeDictionaryExpression";
 
+// Simple execution context for JavaScript stdlib
+export type ExecutionContext = {
+  // Will be expanded as needed
+};
+
 export type RuntimeErrorType =
   | "InvalidBinaryExpression"
   | "InvalidUnaryExpression"
@@ -62,7 +67,8 @@ export type RuntimeErrorType =
   | "TypeCoercionNotAllowed"
   | "StrictEqualityRequired"
   | "IndexOutOfRange"
-  | "TypeError";
+  | "TypeError"
+  | "PropertyNotFound";
 
 export class RuntimeError extends Error {
   public category: string = "RuntimeError";
@@ -319,5 +325,10 @@ export class Executor {
   public error(type: RuntimeErrorType, location: Location, context?: any): never {
     const message = translate(`error.runtime.${type}`, context);
     throw new RuntimeError(message, location, type, context);
+  }
+
+  // Get execution context for stdlib functions
+  public getExecutionContext(): ExecutionContext {
+    return {};
   }
 }

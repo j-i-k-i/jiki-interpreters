@@ -63,6 +63,7 @@ For everything in here, base your work in the JikiScript interpreter.
 - [x] Add object element reading. Look at JikiScript implementation for guidance. Follow JS rules for how this should work.
 - [x] Add object element writing. Look at JikiScript implementation for guidance. Follow JS Rules for how this should work.
 - [x] Ensure nested objects and lists work. Check for complex patterns like x[0].something[1]['foo'][5] = 'bar'. etc Look at JikiScript implementation for guidance.
+- [x] Add properties and methods. Split the different JSTypes into their own files. Add a length property and at methods to Arrays. Note that this isn't a matter of adding these onto the JSArray, but on actually having a stdlib for Arrays that have these methods. So `[].length` should be parsed as a property expression (or whatever the correct name is), then the receiver (`[]` in this case) should have it's type asserted (array) and we should check the properties. If `length` didn't exist, we whould raise a custom error. Otherwise if it does, we should call the `length` code. In this case, that proxies to JSArray.Length, but that shouldn't be direct. We should have a mapping of `length: (executionCtx, obj) => { obj.length }` or something in the stdlib, and that properties method should be called with the current Execution Context (see Jikiscript for this) and the value returned. This is quite complex so be sure to take the time to understand this fully.
 
 - [ ] Don't allow statements that don't actually do anything. For example, a statement that is just a variable. Or a grouping expression that doesn't have assignmennt. Add a TOOD that you will need to modify this for calling functions (which should just be allowed by themselves) later. Look at how this works in JikiScript as there is a specific type for it. You may need to update lots of tests where this is the case. For now you can just add a `let foo = "bar"` for these to make them easy to find later.
 
@@ -87,7 +88,7 @@ For everything in here, base your work in the JikiScript interpreter.
 - [x] Add List. Ensure to look at JikiScript and Javascript's implementation including clone(). For this task, only add the creation and logging of lists. Not index access.
 - [x] Add list index reading. Look at JikiScript implementation for guidance. (Read the previous commit for context)
 - [x] Add list element writing. Look at JikiScript implementation for guidance. Follow Python rules for how this should work.
-- [ ] Ensure nested list work. Look at JikiScript implementation for guidance. Follow Python rules for how this should work.
+- [x] Ensure nested list work. Look at JikiScript implementation for guidance. Follow Python rules for how this should work.
 
 - [ ] Add a for loop. Look at the JavaScript implementation.
 - [ ] Add a while loop. Look at the JavaScript implementation.
