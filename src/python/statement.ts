@@ -1,4 +1,5 @@
 import type { Expression } from "./expression";
+import { SubscriptExpression } from "./expression";
 import type { Token } from "./token";
 import { Location } from "../shared/location";
 
@@ -34,14 +35,26 @@ export class PrintStatement extends Statement {
 
 export class AssignmentStatement extends Statement {
   constructor(
-    public name: Token,
+    public target: Token | SubscriptExpression,
     public initializer: Expression,
     public location: Location
   ) {
     super("AssignmentStatement");
   }
   public children() {
+    if (this.target instanceof SubscriptExpression) {
+      return [this.target, this.initializer];
+    }
     return [this.initializer];
+  }
+
+  // Helper to get name for backwards compatibility
+  public get name(): Token {
+    if (!(this.target instanceof SubscriptExpression)) {
+      return this.target as Token;
+    }
+    // For subscript, return a dummy token (shouldn't be used in this case)
+    throw new Error("Cannot get name from subscript assignment");
   }
 }
 

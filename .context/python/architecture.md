@@ -60,7 +60,7 @@ Wrapper objects extending shared `JikiObject` base class. Supports PyNumber, PyS
 
 **Collection Types:**
 
-- **PyList**: Mutable ordered collection with deep cloning support. Handles heterogeneous types and nested lists. String representation uses Python format (single quotes for strings). Supports creation, logging, and index access (including negative indices).
+- **PyList**: Mutable ordered collection with deep cloning support. Handles heterogeneous types and nested lists. String representation uses Python format (single quotes for strings). Supports creation, logging, index access (including negative indices), and element assignment.
 
 ### 7. Frame System
 

@@ -366,6 +366,190 @@ my_list['hello']`;
     });
   });
 
+  describe("list element assignment", () => {
+    test("assigns to first element", () => {
+      const code = `my_list = [10, 20, 30]
+my_list[0] = 99`;
+      const { frames, error } = interpret(code);
+      expect(error).toBeNull();
+
+      // Check that assignment succeeded
+      const lastFrame = frames[frames.length - 1] as TestAugmentedFrame;
+      expect(lastFrame.status).toBe("SUCCESS");
+
+      // Verify the list was modified
+      const my_list = lastFrame.variables?.["my_list"] as PyList;
+      expect(my_list.value[0]).toBeInstanceOf(PyNumber);
+      expect((my_list.value[0] as PyNumber).value).toBe(99);
+      expect(my_list.toString()).toBe("[99, 20, 30]");
+    });
+
+    test("assigns to middle element", () => {
+      const code = `my_list = [1, 2, 3, 4, 5]
+my_list[2] = 100`;
+      const { frames, error } = interpret(code);
+      expect(error).toBeNull();
+
+      const lastFrame = frames[frames.length - 1] as TestAugmentedFrame;
+      expect(lastFrame.status).toBe("SUCCESS");
+
+      const my_list = lastFrame.variables?.["my_list"] as PyList;
+      expect((my_list.value[2] as PyNumber).value).toBe(100);
+      expect(my_list.toString()).toBe("[1, 2, 100, 4, 5]");
+    });
+
+    test("assigns to last element", () => {
+      const code = `my_list = [10, 20, 30]
+my_list[2] = 99`;
+      const { frames, error } = interpret(code);
+      expect(error).toBeNull();
+
+      const lastFrame = frames[frames.length - 1] as TestAugmentedFrame;
+      const my_list = lastFrame.variables?.["my_list"] as PyList;
+      expect((my_list.value[2] as PyNumber).value).toBe(99);
+      expect(my_list.toString()).toBe("[10, 20, 99]");
+    });
+
+    test("assigns using negative index", () => {
+      const code = `my_list = [10, 20, 30]
+my_list[-1] = 99`;
+      const { frames, error } = interpret(code);
+      expect(error).toBeNull();
+
+      const lastFrame = frames[frames.length - 1] as TestAugmentedFrame;
+      const my_list = lastFrame.variables?.["my_list"] as PyList;
+      expect((my_list.value[2] as PyNumber).value).toBe(99);
+      expect(my_list.toString()).toBe("[10, 20, 99]");
+    });
+
+    test("assigns using negative index -2", () => {
+      const code = `my_list = [10, 20, 30]
+my_list[-2] = 99`;
+      const { frames, error } = interpret(code);
+      expect(error).toBeNull();
+
+      const lastFrame = frames[frames.length - 1] as TestAugmentedFrame;
+      const my_list = lastFrame.variables?.["my_list"] as PyList;
+      expect((my_list.value[1] as PyNumber).value).toBe(99);
+      expect(my_list.toString()).toBe("[10, 99, 30]");
+    });
+
+    test("assigns using expression as index", () => {
+      const code = `my_list = [10, 20, 30, 40, 50]
+i = 1
+my_list[i + 1] = 99`;
+      const { frames, error } = interpret(code);
+      expect(error).toBeNull();
+
+      const lastFrame = frames[frames.length - 1] as TestAugmentedFrame;
+      const my_list = lastFrame.variables?.["my_list"] as PyList;
+      expect((my_list.value[2] as PyNumber).value).toBe(99);
+      expect(my_list.toString()).toBe("[10, 20, 99, 40, 50]");
+    });
+
+    test("assigns different types", () => {
+      const code = `my_list = [1, 2, 3]
+my_list[0] = 'hello'
+my_list[1] = True
+my_list[2] = None`;
+      const { frames, error } = interpret(code);
+      expect(error).toBeNull();
+
+      const lastFrame = frames[frames.length - 1] as TestAugmentedFrame;
+      const my_list = lastFrame.variables?.["my_list"] as PyList;
+      expect(my_list.value[0]).toBeInstanceOf(PyString);
+      expect((my_list.value[0] as PyString).value).toBe("hello");
+      expect(my_list.value[1]).toBeInstanceOf(PyBoolean);
+      expect((my_list.value[1] as PyBoolean).value).toBe(true);
+      expect(my_list.value[2]).toBeInstanceOf(PyNone);
+      expect(my_list.toString()).toBe("['hello', True, None]");
+    });
+
+    test("assigns to nested lists", () => {
+      const code = `matrix = [[1, 2], [3, 4]]
+matrix[0][1] = 99`;
+      const { frames, error } = interpret(code);
+      expect(error).toBeNull();
+
+      const lastFrame = frames[frames.length - 1] as TestAugmentedFrame;
+      const matrix = lastFrame.variables?.["matrix"] as PyList;
+      const row0 = matrix.value[0] as PyList;
+      expect((row0.value[1] as PyNumber).value).toBe(99);
+      expect(matrix.toString()).toBe("[[1, 99], [3, 4]]");
+    });
+
+    test("handles index out of range error (positive)", () => {
+      const code = `my_list = [10, 20, 30]
+my_list[5] = 99`;
+      const { frames, error } = interpret(code);
+      expect(error).toBeNull();
+
+      const lastFrame = frames[frames.length - 1] as TestAugmentedFrame;
+      expect(lastFrame.status).toBe("ERROR");
+      expect(lastFrame.error?.type).toBe("IndexError");
+    });
+
+    test("handles index out of range error (negative)", () => {
+      const code = `my_list = [10, 20, 30]
+my_list[-5] = 99`;
+      const { frames, error } = interpret(code);
+      expect(error).toBeNull();
+
+      const lastFrame = frames[frames.length - 1] as TestAugmentedFrame;
+      expect(lastFrame.status).toBe("ERROR");
+      expect(lastFrame.error?.type).toBe("IndexError");
+    });
+
+    test("handles non-integer index error", () => {
+      const code = `my_list = [10, 20, 30]
+my_list[1.5] = 99`;
+      const { frames, error } = interpret(code);
+      expect(error).toBeNull();
+
+      const lastFrame = frames[frames.length - 1] as TestAugmentedFrame;
+      expect(lastFrame.status).toBe("ERROR");
+      expect(lastFrame.error?.type).toBe("TypeError");
+      expect(lastFrame.error?.message).toContain("must be integers, not float");
+    });
+
+    test("handles string index error", () => {
+      const code = `my_list = [10, 20, 30]
+my_list['hello'] = 99`;
+      const { frames, error } = interpret(code);
+      expect(error).toBeNull();
+
+      const lastFrame = frames[frames.length - 1] as TestAugmentedFrame;
+      expect(lastFrame.status).toBe("ERROR");
+      expect(lastFrame.error?.type).toBe("TypeError");
+      expect(lastFrame.error?.message).toContain("must be integers, not str");
+    });
+
+    test("handles assignment to non-list", () => {
+      const code = `not_a_list = 42
+not_a_list[0] = 99`;
+      const { frames, error } = interpret(code);
+      expect(error).toBeNull();
+
+      const lastFrame = frames[frames.length - 1] as TestAugmentedFrame;
+      expect(lastFrame.status).toBe("ERROR");
+      expect(lastFrame.error?.type).toBe("TypeError");
+      expect(lastFrame.error?.message).toContain("does not support item assignment");
+    });
+
+    test("multiple assignments in sequence", () => {
+      const code = `my_list = [1, 2, 3, 4, 5]
+my_list[0] = 10
+my_list[2] = 30
+my_list[4] = 50`;
+      const { frames, error } = interpret(code);
+      expect(error).toBeNull();
+
+      const lastFrame = frames[frames.length - 1] as TestAugmentedFrame;
+      const my_list = lastFrame.variables?.["my_list"] as PyList;
+      expect(my_list.toString()).toBe("[10, 2, 30, 4, 50]");
+    });
+  });
+
   describe("frame generation", () => {
     test("generates correct frames for list creation", () => {
       const { frames, error } = interpret("[1, 2, 3]");
