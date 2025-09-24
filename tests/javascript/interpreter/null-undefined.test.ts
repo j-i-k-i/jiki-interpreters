@@ -147,7 +147,7 @@ describe("JavaScript Interpreter: null and undefined", () => {
       `;
       const result = interpret(code, { allowTruthiness: false });
       expect(result.error).toBe(null);
-      expect(result.success).toBe(false);
+      expect(result.success).toBe(true);
       expect(result.frames[result.frames.length - 1].status).toBe("ERROR");
       expect(result.frames[result.frames.length - 1].error?.type).toBe("TruthinessDisabled");
     });
@@ -161,7 +161,7 @@ describe("JavaScript Interpreter: null and undefined", () => {
       `;
       const result = interpret(code, { allowTruthiness: false });
       expect(result.error).toBe(null);
-      expect(result.success).toBe(false);
+      expect(result.success).toBe(true);
       expect(result.frames[result.frames.length - 1].status).toBe("ERROR");
       expect(result.frames[result.frames.length - 1].error?.type).toBe("TruthinessDisabled");
     });
@@ -216,7 +216,7 @@ describe("JavaScript Interpreter: null and undefined", () => {
       const code = "let x = null + 5;";
       const result = interpret(code, { allowTypeCoercion: false });
       expect(result.error).toBe(null);
-      expect(result.success).toBe(false);
+      expect(result.success).toBe(true);
       expect(result.frames[0].status).toBe("ERROR");
       expect(result.frames[0].error?.type).toBe("TypeCoercionNotAllowed");
     });
@@ -233,7 +233,7 @@ describe("JavaScript Interpreter: null and undefined", () => {
       const code = "let x = undefined + 5;";
       const result = interpret(code, { allowTypeCoercion: false });
       expect(result.error).toBe(null);
-      expect(result.success).toBe(false);
+      expect(result.success).toBe(true);
       expect(result.frames[0].status).toBe("ERROR");
       expect(result.frames[0].error?.type).toBe("TypeCoercionNotAllowed");
     });

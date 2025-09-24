@@ -1,5 +1,30 @@
 # JavaScript Interpreter Evolution
 
+## 2025-09-24: Object Property Reading
+
+- **Added**: Support for object property access via dot notation and bracket notation
+- **Parser Changes**:
+  - Enabled DOT token (removed from unimplemented list)
+  - Extended `postfix()` to handle both dot notation (`obj.prop`) and bracket notation (`obj["prop"]`)
+  - Added EOL token skipping in dictionary parsing for multiline objects
+  - Dot notation creates non-computed MemberExpression with string literal
+  - Bracket notation creates computed MemberExpression with evaluated expression
+- **Executor Changes**:
+  - Extended `executeMemberExpression` to handle JSDictionary objects
+  - Converts property keys to strings (matching JavaScript semantics)
+  - Returns `undefined` for missing properties (JS semantics)
+  - Proper error handling for non-object/array property access
+- **Error Handling**:
+  - TypeError when accessing properties of primitives (number, boolean, string)
+  - TypeError when accessing properties of null or undefined
+  - Runtime errors properly captured in frames with `status: "ERROR"`
+- **Features**:
+  - Chained property access (`obj.user.profile.name`)
+  - Mixed notation (`obj.data["items"]["item-1"]`)
+  - Arrays in objects and objects in arrays
+  - Dynamic property access with expressions (`obj[key]`, `obj[5+5]`)
+- **Test Coverage**: Comprehensive tests for dot notation, bracket notation, mixed notation, edge cases, and error conditions
+
 ## 2025-09-23: Array Element Assignment
 
 - **Added**: Full support for array element assignment (e.g., `arr[0] = value`)

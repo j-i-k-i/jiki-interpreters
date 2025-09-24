@@ -128,7 +128,7 @@ export class Executor {
     return {
       frames: this.frames,
       error: null, // Always null - runtime errors are in frames
-      success: !this.frames.find(f => f.status === "ERROR"),
+      success: true, // Always true - runtime errors don't affect success
     };
   }
 

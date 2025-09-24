@@ -60,7 +60,7 @@ For everything in here, base your work in the JikiScript interpreter.
 - [x] Ensure nested list work. Look at JikiScript implementation for guidance. Follow JS rules for how this should work.
 
 - [x] Add object (call it a Dictionary internally as object is too broad and already overloaded). For this task, only add the creation and logging of objects. Not index access
-- [ ] Add object element reading. Look at JikiScript implementation for guidance. Follow JS rules for how this should work.
+- [x] Add object element reading. Look at JikiScript implementation for guidance. Follow JS rules for how this should work.
 - [ ] Add object element writing. Look at JikiScript implementation for guidance. Follow JS Rules for how this should work.
 - [ ] Ensure nested objects and lists work. Look at JikiScript implementation for guidance.
 
