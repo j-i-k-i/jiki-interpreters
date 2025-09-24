@@ -1,5 +1,29 @@
 # JavaScript Interpreter Evolution
 
+## 2025-09-24: Object Property Writing
+
+- **Added**: Support for object property assignment via dot notation and bracket notation
+- **Executor Changes**:
+  - Extended `executeAssignmentExpression` to handle JSDictionary objects alongside arrays
+  - Property keys are converted to strings matching JavaScript semantics
+  - Support for both computed (bracket) and non-computed (dot) notation
+  - Creates new properties if they don't exist
+  - Overwrites existing properties with new values
+- **Features**:
+  - Dot notation assignment (`obj.name = "value"`)
+  - Bracket notation with strings (`obj["name"] = "value"`)
+  - Bracket notation with numbers (`obj[42] = "value"`)
+  - Bracket notation with variables (`obj[key] = "value"`)
+  - Bracket notation with expressions (`obj[prefix + "_id"] = value`)
+  - Nested property assignment (`obj.user.profile.name = "new"`)
+  - Mixed arrays and objects (`obj.list[0] = value`, `arr[0].prop = value`)
+  - Property type changes when overwriting
+- **Error Handling**:
+  - TypeError when trying to set properties on primitives (number, boolean, string)
+  - TypeError when trying to set properties on null or undefined
+  - Maintains consistent error reporting with array assignment
+- **Test Coverage**: Comprehensive tests for all assignment patterns, property creation, overwriting, and error cases
+
 ## 2025-09-24: Object Property Reading
 
 - **Added**: Support for object property access via dot notation and bracket notation
