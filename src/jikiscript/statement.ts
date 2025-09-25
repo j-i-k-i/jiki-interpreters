@@ -1,15 +1,7 @@
-import {
-  EvaluationResult,
-  EvaluationResultChangeVariableStatement,
-  EvaluationResultReturnStatement,
-  EvaluationResultSetVariableStatement,
-} from "./evaluation-result";
 import type { FunctionCallExpression, Expression, MethodCallExpression } from "./expression";
-import { VariableLookupExpression } from "./expression";
 import type { SomethingWithLocation } from "./interpreter";
 import type { Location } from "./location";
 import type { Token } from "./token";
-import { formatJikiObject } from "./helpers";
 
 export abstract class Statement implements SomethingWithLocation {
   constructor(public type: String) {}

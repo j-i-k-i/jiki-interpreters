@@ -1,9 +1,7 @@
 import { LogicError } from "../error";
 import type { EvaluationResultGetterExpression } from "../evaluation-result";
-import { EvaluationResult, EvaluationResultMethodCallExpression } from "../evaluation-result";
 import type { Executor } from "../executor";
 import type { AccessorExpression } from "../expression";
-import { MethodCallExpression } from "../expression";
 import * as Jiki from "../jikiObjects";
 
 export function executeGetterExpression(
@@ -11,9 +9,6 @@ export function executeGetterExpression(
   expression: AccessorExpression
 ): EvaluationResultGetterExpression {
   const object = executor.evaluate(expression.object);
-  if (!(object.jikiObject instanceof Jiki.Instance)) {
-    executor.error("AccessorUsedOnNonInstanceObject", expression.location);
-  }
   if (!(object.jikiObject instanceof Jiki.Instance)) {
     executor.error("AccessorUsedOnNonInstanceObject", expression.location);
   }
@@ -53,91 +48,3 @@ export function executeGetterExpression(
     object,
   };
 }
-/*
-  let ce
-
-  // The catch here always rethrows the error.
-  try {
-    ce = executor.evaluate(expression.callee)
-  } catch (e: Error) {
-    throwMissingMethodError(executor, expression, e)
-  }
-  const callee = ce as EvaluationResultMethodLookupExpression
-
-  if (!isCallable(callee.method)) {
-    executor.error('NonCallableTargetInvocationAttempt', expression.location, { callee })
-  }
-
-  const args: EvaluationResult[] = []
-  for (const arg of expression.args) {
-    args.push(executor.evaluate(arg))
-  }
-
-  const arity = callee.method.arity
-  const [minArity, maxArity] = isNumber(arity) ? [arity, arity] : arity
-
-  if (args.length < minArity || args.length > maxArity) {
-    if (minArity !== maxArity) {
-      executor.error(
-        'InvalidNumberOfArgumentsWithOptionalParameters',
-        expression.callee.location,
-        {
-          name: expression.callee.name.lexeme,
-          minArity,
-          maxArity,
-          numberOfArgs: args.length,
-        }
-      )
-    }
-
-    if (args.length < minArity) {
-      executor.error('RangeErrorTooFewArgumentsForFunctionCall', expression.callee.location, {
-        name: expression.callee.name.lexeme,
-        arity: maxArity,
-        numberOfArgs: args.length,
-        args,
-      })
-    } else {
-      executor.error('RangeErrorTooManyArgumentsForFunctionCall', expression.callee.location, {
-        name: expression.callee.name.lexeme,
-        arity: maxArity,
-        numberOfArgs: args.length,
-        args,
-      })
-    }
-  }
-
-  const fnName = callee.name
-  let value: JikiObject
-
-  try {
-    // Log it's usage for testing checks
-    const argResults = args.map((arg) => cloneDeep(arg.jikiObject))
-    executor.addMethodCallToLog(fnName, argResults)
-    executor.addMethodToCallStack(fnName, expression)
-
-    value = callee.method.call(
-      executor.getExecutionContext(),
-      args.map((arg) => cloneDeep(arg.jikiObject))
-    )
-    value = wrapJSToJikiObject(value)
-
-    executor.popCallStack()
-  } catch (e) {
-    if (e instanceof MethodCallTypeMismatchError) {
-      executor.error('MethodCallTypeMismatch', expression.location, e.context)
-    } else if (e instanceof LogicError) {
-      executor.error('LogicErrorInExecution', expression.location, { message: e.message })
-    } else {
-      throw e
-    }
-  }
-
-  return {
-    type: 'MethodCallExpression',
-    jikiObject: value,
-    callee,
-    args,
-  }
-}
-*/

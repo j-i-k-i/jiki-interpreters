@@ -10,7 +10,7 @@ import type { ExecutionContext, ExternalFunction } from "./executor";
 import type { Frame } from "../shared/frames";
 import type { Arity } from "./functions";
 import * as Jiki from "./jikiObjects";
-import { StdlibFunctions, StdlibFunctionsForLibrary } from "./stdlib";
+import { StdlibFunctionsForLibrary } from "./stdlib";
 
 export interface FrameContext {
   result: any;
@@ -187,7 +187,9 @@ export class Interpreter {
 
   private parseCustomFunctions(customFunctions: CustomFunction[]): CallableCustomFunction[] {
     // This is wildly deeply recursive so be careful!
-    if (customFunctions.length === 0) {return [];}
+    if (customFunctions.length === 0) {
+      return [];
+    }
 
     customFunctions = customFunctions.reduce((acc, fn) => {
       if (!acc.some(existingFn => existingFn.name === fn.name)) {
@@ -260,10 +262,11 @@ export class Interpreter {
       false
     ).parse(callingCode);
 
-    if (callingStatements.length !== 1)
-      {this.error("RuntimeErrorCouldNotEvaluateFunctionCall", Location.unknown, {
+    if (callingStatements.length !== 1) {
+      this.error("RuntimeErrorCouldNotEvaluateFunctionCall", Location.unknown, {
         callingStatements,
-      });}
+      });
+    }
 
     const executor = new Executor(
       this.sourceCode,
@@ -293,10 +296,11 @@ export class Interpreter {
       false
     ).parse(expression);
 
-    if (callingStatements.length !== 1)
-      {this.error("RuntimeErrorCouldNotEvaluateFunctionCall", Location.unknown, {
+    if (callingStatements.length !== 1) {
+      this.error("RuntimeErrorCouldNotEvaluateFunctionCall", Location.unknown, {
         callingStatements,
-      });}
+      });
+    }
 
     const executor = new Executor(
       this.sourceCode,
