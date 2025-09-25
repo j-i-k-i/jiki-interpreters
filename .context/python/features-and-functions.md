@@ -11,7 +11,7 @@ This document outlines the features and functions included in the educational Py
 - Arithmetic operators (+, -, \*, /, //, %, \*\*)
 - Comparison operators (<, <=, >, >=, ==, !=)
 - Logical operators (and, or, not)
-- Control flow (if, elif, else)
+- Control flow (if, elif, else, for-in loops, break, continue)
 - Indentation-based blocks
 - Truthiness (configurable via language feature flag)
 - Type coercion control (configurable via language feature flag)
@@ -20,7 +20,6 @@ This document outlines the features and functions included in the educational Py
 
 ### TODO
 
-- for loops
 - while loops
 - f-strings
 - Dictionaries (called Dictionary internally)

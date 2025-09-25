@@ -18,6 +18,9 @@ import {
   PrintStatement,
   IfStatement,
   BlockStatement,
+  ForInStatement,
+  BreakStatement,
+  ContinueStatement,
 } from "./statement";
 import { type Token, type TokenType } from "./token";
 
@@ -60,6 +63,21 @@ export class Parser {
       // Check for if statement
       if (this.match("IF")) {
         return this.ifStatement();
+      }
+
+      // Check for for statement
+      if (this.match("FOR")) {
+        return this.forInStatement();
+      }
+
+      // Check for break statement
+      if (this.match("BREAK")) {
+        return this.breakStatement();
+      }
+
+      // Check for continue statement
+      if (this.match("CONTINUE")) {
+        return this.continueStatement();
       }
 
       // Check for assignment statement (IDENTIFIER = expression or subscript = expression)
@@ -343,6 +361,57 @@ export class Parser {
 
     const endToken = elseBranch || thenBranch;
     return new IfStatement(condition, thenBranch, elseBranch, Location.between(ifToken, endToken));
+  }
+
+  private forInStatement(): Statement {
+    const forToken = this.previous();
+
+    // Parse the variable name
+    const variable = this.consume("IDENTIFIER", "Expect variable name after 'for'.");
+
+    // Parse 'in' keyword
+    this.consume("IN", "Expect 'in' after variable name.");
+
+    // Parse the iterable expression
+    const iterable = this.expression();
+
+    // Parse the colon
+    this.consume("COLON", "Expect ':' after for iterable.");
+
+    // Consume the newline after the colon
+    if (this.check("NEWLINE")) {
+      this.advance();
+    }
+
+    // Parse the block body
+    const bodyBlock = this.block();
+
+    // Extract statements from BlockStatement
+    const body = bodyBlock instanceof BlockStatement ? bodyBlock.statements : [bodyBlock];
+
+    return new ForInStatement(variable, iterable, body, Location.between(forToken, bodyBlock));
+  }
+
+  private breakStatement(): Statement {
+    const breakToken = this.previous();
+
+    // Python doesn't require semicolons, but consume newline if present
+    if (this.check("NEWLINE")) {
+      this.advance();
+    }
+
+    return new BreakStatement(breakToken, breakToken.location);
+  }
+
+  private continueStatement(): Statement {
+    const continueToken = this.previous();
+
+    // Python doesn't require semicolons, but consume newline if present
+    if (this.check("NEWLINE")) {
+      this.advance();
+    }
+
+    return new ContinueStatement(continueToken, continueToken.location);
   }
 
   private block(): Statement {

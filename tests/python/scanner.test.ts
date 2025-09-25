@@ -15,18 +15,18 @@ describe("Python - Unimplemented Tokens", () => {
       { token: "assert", type: "ASSERT" },
       { token: "async", type: "ASYNC" },
       { token: "await", type: "AWAIT" },
-      { token: "break", type: "BREAK" },
+      // { token: "break", type: "BREAK" }, - Implemented for for loops
       { token: "class", type: "CLASS" },
-      { token: "continue", type: "CONTINUE" },
+      // { token: "continue", type: "CONTINUE" }, - Implemented for for loops
       { token: "def", type: "DEF" },
       { token: "del", type: "DEL" },
       { token: "except", type: "EXCEPT" },
       { token: "finally", type: "FINALLY" },
-      { token: "for", type: "FOR" },
+      // { token: "for", type: "FOR" }, - Implemented for for-in loops
       { token: "from", type: "FROM" },
       { token: "global", type: "GLOBAL" },
       { token: "import", type: "IMPORT" },
-      { token: "in", type: "IN" },
+      // { token: "in", type: "IN" }, - Implemented for for-in loops
       { token: "is", type: "IS" },
       { token: "lambda", type: "LAMBDA" },
       { token: "nonlocal", type: "NONLOCAL" },
@@ -87,12 +87,13 @@ describe("Python - Unimplemented Tokens", () => {
       expect(result.error?.context.tokenType).toBe("CLASS");
     });
 
-    it("should error on for loop", () => {
-      const result = interpret("for i in range(10):\n    print(i)");
-      expect(result.error).toBeDefined();
-      expect(result.error?.type).toBe("UnimplementedToken");
-      expect(result.error?.context.tokenType).toBe("FOR");
-    });
+    // Commented out - for loops are now implemented
+    // it("should error on for loop", () => {
+    //   const result = interpret("for i in range(10):\n    print(i)");
+    //   expect(result.error).toBeDefined();
+    //   expect(result.error?.type).toBe("UnimplementedToken");
+    //   expect(result.error?.context.tokenType).toBe("FOR");
+    // });
 
     it("should error on while loop", () => {
       const result = interpret("while True:\n    pass");
@@ -126,11 +127,12 @@ describe("Python - Unimplemented Tokens", () => {
       expect(result.error?.context.tokenType).toBe("IS");
     });
 
-    it("should error on 'in' operator", () => {
-      const result = interpret("a in b");
-      expect(result.error).toBeDefined();
-      expect(result.error?.type).toBe("UnimplementedToken");
-      expect(result.error?.context.tokenType).toBe("IN");
-    });
+    // Commented out - 'in' is now implemented for for-in loops
+    // it("should error on 'in' operator", () => {
+    //   const result = interpret("a in b");
+    //   expect(result.error).toBeDefined();
+    //   expect(result.error?.type).toBe("UnimplementedToken");
+    //   expect(result.error?.context.tokenType).toBe("IN");
+    // });
   });
 });
