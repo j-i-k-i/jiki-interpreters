@@ -57,7 +57,7 @@ export function isEqualityOperator(operator: string): boolean {
   return ["EQUALITY", "INEQUALITY", "GREATER", "LESS", "GREATER_EQUAL", "LESS_EQUAL"].includes(operator);
 }
 
-function ordinal_suffix_of(i: number) {
+function ordinalSuffixOf(i: number) {
   let j = i % 10,
     k = i % 100;
   if (j === 1 && k !== 11) {

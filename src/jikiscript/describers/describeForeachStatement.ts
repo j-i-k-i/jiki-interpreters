@@ -1,6 +1,6 @@
 import type { EvaluationResultForeachStatement } from "../evaluation-result";
 import type { Description, DescriptionContext, FrameWithResult } from "../../shared/frames";
-import { codeTag, formatJikiObject } from "../helpers";
+import { codeTag } from "../helpers";
 import * as Jiki from "../jikiObjects";
 import type { ForeachStatement } from "../statement";
 import { addOrdinalSuffix } from "./helpers";

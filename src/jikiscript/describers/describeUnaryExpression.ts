@@ -1,13 +1,12 @@
-import type {
-  EvaluationResultUnaryExpression} from "../evaluation-result";
+import type { EvaluationResultUnaryExpression } from "../evaluation-result";
 import {
   EvaluationResultFullyEvaluatedLogicalExpression,
-  EvaluationResultLogicalExpression
+  EvaluationResultLogicalExpression,
 } from "../evaluation-result";
 import type { UnaryExpression } from "../expression";
 import { LogicalExpression } from "../expression";
 import type { DescriptionContext } from "../../shared/frames";
-import { codeTag, formatJikiObject } from "../helpers";
+import { codeTag } from "../helpers";
 import { describeExpression } from "./describeSteps";
 import type * as Jiki from "../jikiObjects";
 
