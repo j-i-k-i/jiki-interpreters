@@ -55,7 +55,7 @@ export class Environment {
     }
 
     if (this.enclosing?.get(name)) {
-      this.enclosing?.updateVariable(name, value);
+      this.enclosing.updateVariable(name, value);
       return;
     }
   }

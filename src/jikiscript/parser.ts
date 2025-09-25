@@ -78,9 +78,7 @@ export class Parser {
 
     while (!this.isAtEnd()) {
       const statement = this.declarationStatement();
-      if (statement) {
-        statements.push(statement);
-      }
+      statements.push(statement);
     }
 
     if (this.shouldWrapTopLevelStatements) {
