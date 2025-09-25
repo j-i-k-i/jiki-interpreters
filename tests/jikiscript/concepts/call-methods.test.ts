@@ -1,6 +1,5 @@
 import { parse } from "@jikiscript/parser";
-import type { EvaluationContext} from "@jikiscript/interpreter";
-import { interpret } from "@jikiscript/interpreter";
+import { EvaluationContext, interpret } from "@jikiscript/interpreter";
 import { LogStatement, MethodCallStatement } from "@jikiscript/statement";
 import { last } from "lodash";
 import * as Jiki from "@jikiscript/jikiObjects";
@@ -11,7 +10,7 @@ import {
   GetElementExpression,
   VariableLookupExpression,
 } from "@jikiscript/expression";
-import type { ExecutionContext } from "@jikiscript/executor";
+import { ExecutionContext } from "@jikiscript/executor";
 
 describe("parse", () => {
   describe("expression", () => {
@@ -131,7 +130,7 @@ describe("execute", () => {
       "",
       "public",
       function (_: ExecutionContext, object: Jiki.Instance, idx: Jiki.JikiObject) {
-        if (!(idx instanceof Jiki.Number)) {return;}
+        if (!(idx instanceof Jiki.Number)) return;
         return new Jiki.String(object.getUnwrappedField("name")[idx.value - 1]);
       }
     );

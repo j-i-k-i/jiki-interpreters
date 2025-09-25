@@ -125,32 +125,32 @@ describe("boolean concepts", () => {
   });
 
   describe("comparison operations", () => {
-    test("equality - True === True", () => {
-      const { frames, error } = interpret("True === True");
+    test("equality - True == True", () => {
+      const { frames, error } = interpret("True == True");
       expect(error).toBeNull();
       expect(frames).toBeArrayOfSize(1);
       expect(frames[0].status).toBe("SUCCESS");
       expect(frames[0].result?.jikiObject.value).toBe(true);
     });
 
-    test("equality - True === False", () => {
-      const { frames, error } = interpret("True === False");
+    test("equality - True == False", () => {
+      const { frames, error } = interpret("True == False");
       expect(error).toBeNull();
       expect(frames).toBeArrayOfSize(1);
       expect(frames[0].status).toBe("SUCCESS");
       expect(frames[0].result?.jikiObject.value).toBe(false);
     });
 
-    test("inequality - True !== False", () => {
-      const { frames, error } = interpret("True !== False");
+    test("inequality - True != False", () => {
+      const { frames, error } = interpret("True != False");
       expect(error).toBeNull();
       expect(frames).toBeArrayOfSize(1);
       expect(frames[0].status).toBe("SUCCESS");
       expect(frames[0].result?.jikiObject.value).toBe(true);
     });
 
-    test("inequality - True !== True", () => {
-      const { frames, error } = interpret("True !== True");
+    test("inequality - True != True", () => {
+      const { frames, error } = interpret("True != True");
       expect(error).toBeNull();
       expect(frames).toBeArrayOfSize(1);
       expect(frames[0].status).toBe("SUCCESS");

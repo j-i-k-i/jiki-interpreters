@@ -1,7 +1,7 @@
 import { interpret } from "@python/interpreter";
 import type { TestAugmentedFrame } from "@shared/frames";
-import type { RuntimeErrorType } from "@python/executor";
-import type { Frame } from "@shared/frames";
+import { RuntimeErrorType } from "@python/executor";
+import { Frame } from "@shared/frames";
 
 function expectFrameToBeError(frame: Frame, code: string, type: RuntimeErrorType) {
   expect(frame.code.trim()).toBe(code.trim());

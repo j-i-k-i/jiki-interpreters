@@ -128,58 +128,58 @@ describe("binary comaprisons", () => {
   });
 
   test("equal", () => {
-    const { frames } = interpret("log 5 === 3", {});
+    const { frames } = interpret("log 5 == 3", {});
     const actual = describeFrame(frames[0]);
     assertHTML(actual, `<p>This logged <code>false</code>.</p>`, [
-      `<li>Jiki evaluated <code>5 === 3</code> and determined it was <code>false</code>.</li>`,
+      `<li>Jiki evaluated <code>5 == 3</code> and determined it was <code>false</code>.</li>`,
       `<li>Jiki wrote <code>false</code> here for you!</li>`,
     ]);
   });
 
   test("not equal", () => {
-    const { frames } = interpret("log 5 !== 3", {});
+    const { frames } = interpret("log 5 != 3", {});
     const actual = describeFrame(frames[0]);
     assertHTML(actual, `<p>This logged <code>true</code>.</p>`, [
-      `<li>Jiki evaluated <code>5 !== 3</code> and determined it was <code>true</code>.</li>`,
+      `<li>Jiki evaluated <code>5 != 3</code> and determined it was <code>true</code>.</li>`,
       `<li>Jiki wrote <code>true</code> here for you!</li>`,
     ]);
   });
   test("equal with bools", () => {
-    const { frames } = interpret("log true === false", {});
+    const { frames } = interpret("log true == false", {});
     const actual = describeFrame(frames[0]);
     assertHTML(actual, `<p>This logged <code>false</code>.</p>`, [
-      `<li>Jiki evaluated <code>true === false</code> and determined it was <code>false</code>.</li>`,
+      `<li>Jiki evaluated <code>true == false</code> and determined it was <code>false</code>.</li>`,
       `<li>Jiki wrote <code>false</code> here for you!</li>`,
     ]);
   });
   test("equal with funcs", () => {
     const context = { externalFunctions: [getTrueFunction, getFalseFunction] };
-    const { frames } = interpret("log get_true() === get_false()", context);
+    const { frames } = interpret("log get_true() == get_false()", context);
     const actual = describeFrame(frames[0]);
     assertHTML(actual, `<p>This logged <code>false</code>.</p>`, [
       `<li>Jiki used the<code>get_true()</code>function, which returned<code>true</code>.</li>`,
       `<li>Jiki used the<code>get_false()</code>function, which returned<code>false</code>.</li>`,
-      `<li>Jiki evaluated <code>true === false</code> and determined it was <code>false</code>.</li>`,
+      `<li>Jiki evaluated <code>true == false</code> and determined it was <code>false</code>.</li>`,
       `<li>Jiki wrote <code>false</code> here for you!</li>`,
     ]);
   });
   test("func vs bool", () => {
     const context = { externalFunctions: [getTrueFunction, getFalseFunction] };
-    const { frames } = interpret("log get_true() === true", context);
+    const { frames } = interpret("log get_true() == true", context);
     const actual = describeFrame(frames[0]);
     assertHTML(actual, `<p>This logged <code>true</code>.</p>`, [
       `<li>Jiki used the<code>get_true()</code>function, which returned<code>true</code>.</li>`,
-      `<li>Jiki evaluated <code>true === true</code> and determined it was <code>true</code>.</li>`,
+      `<li>Jiki evaluated <code>true == true</code> and determined it was <code>true</code>.</li>`,
       `<li>Jiki wrote <code>true</code> here for you!</li>`,
     ]);
   });
   test("bool vs func", () => {
     const context = { externalFunctions: [getTrueFunction, getFalseFunction] };
-    const { frames } = interpret("log true === get_false()", context);
+    const { frames } = interpret("log true == get_false()", context);
     const actual = describeFrame(frames[0]);
     assertHTML(actual, `<p>This logged <code>false</code>.</p>`, [
       `<li>Jiki used the<code>get_false()</code>function, which returned<code>false</code>.</li>`,
-      `<li>Jiki evaluated <code>true === false</code> and determined it was <code>false</code>.</li>`,
+      `<li>Jiki evaluated <code>true == false</code> and determined it was <code>false</code>.</li>`,
       `<li>Jiki wrote <code>false</code> here for you!</li>`,
     ]);
   });
@@ -259,13 +259,13 @@ describe("logical expression", () => {
 
     test("complex statement with comparisons", () => {
       const context = { externalFunctions: [getTrueFunction, getFalseFunction] };
-      const { frames } = interpret("log get_true() is true and get_false() !== true", context);
+      const { frames } = interpret("log get_true() is true and get_false() != true", context);
       const actual = describeFrame(frames[0]);
       assertHTML(actual, `<p>This logged <code>true</code>.</p>`, [
         `<li>Jiki used the <code>get_true()</code> function, which returned <code>true</code>.</li>`,
         `<li>Jiki evaluated<code>true is true</code>and determined it was<code>true</code>.</li>`,
         `<li>Jiki used the <code>get_false()</code> function, which returned <code>false</code>.</li>`,
-        `<li>Jiki evaluated<code>false !== true</code>and determined it was<code>true</code>.</li>`,
+        `<li>Jiki evaluated<code>false != true</code>and determined it was<code>true</code>.</li>`,
         `<li>Jiki evaluated <code>true and true</code> and determined the result was<code>true</code>.</li>`,
         `<li>Jiki wrote <code>true</code> here for you!</li>`,
       ]);
@@ -274,13 +274,13 @@ describe("logical expression", () => {
   describe("chained", () => {
     test("complex statement with and comparisons", () => {
       const context = { externalFunctions: [getTrueFunction, getFalseFunction] };
-      const { frames } = interpret("log get_true() and true and get_false() !== true", context);
+      const { frames } = interpret("log get_true() and true and get_false() != true", context);
       const actual = describeFrame(frames[0]);
       assertHTML(actual, `<p>This logged <code>true</code>.</p>`, [
         `<li>Jiki used the <code>get_true()</code> function, which returned <code>true</code>.</li>`,
         `<li>Jiki evaluated<code>true and true</code>and determined the result was<code>true</code>.</li>`,
         `<li>Jiki used the <code>get_false()</code> function, which returned <code>false</code>.</li>`,
-        `<li>Jiki evaluated<code>false !== true</code>and determined it was<code>true</code>.</li>`,
+        `<li>Jiki evaluated<code>false != true</code>and determined it was<code>true</code>.</li>`,
         `<li>Jiki evaluated <code>true and true</code> and determined the result was<code>true</code>.</li>`,
         `<li>Jiki wrote <code>true</code> here for you!</li>`,
       ]);
@@ -289,13 +289,13 @@ describe("logical expression", () => {
   describe("chained", () => {
     test("complex statement with and/or comparisons", () => {
       const context = { externalFunctions: [getTrueFunction, getFalseFunction] };
-      const { frames } = interpret("log get_true() and (false or get_false() !== true)", context);
+      const { frames } = interpret("log get_true() and (false or get_false() != true)", context);
       const actual = describeFrame(frames[0]);
       assertHTML(actual, `<p>This logged <code>true</code>.</p>`, [
         `<li>Jiki used the <code>get_true()</code> function, which returned <code>true</code>.</li>`,
         `<li>Jiki saw the left side of the<code>or</code>was<code>false</code>and so decided to evaluate the right side.</li>`,
         `<li>Jiki used the <code>get_false()</code> function, which returned <code>false</code>.</li>`,
-        `<li>Jiki evaluated<code>false !== true</code>and determined it was<code>true</code>.</li>`,
+        `<li>Jiki evaluated<code>false != true</code>and determined it was<code>true</code>.</li>`,
         `<li>Jiki evaluated<code>false or true</code>and determined the result was<code>true</code>.</li>`,
         `<li>Jiki evaluated <code>true and true</code> and determined the result was<code>true</code>.</li>`,
         `<li>Jiki wrote <code>true</code> here for you!</li>`,
@@ -315,10 +315,10 @@ describe("unary", () => {
       ]);
     });
     test("expression", () => {
-      const { frames } = interpret("log not (true === false)");
+      const { frames } = interpret("log not (true == false)");
       const actual = describeFrame(frames[0]);
       assertHTML(actual, `<p>This logged <code>true</code>.</p>`, [
-        `<li>Jiki evaluated<code>true === false</code>and determined it was<code>false</code>.</li>`,
+        `<li>Jiki evaluated<code>true == false</code>and determined it was<code>false</code>.</li>`,
         `<li>Jiki evaluated that<code>not false</code>is<code>true</code>.</li>`,
         `<li>Jiki wrote<code>true</code>here for you!</li>`,
       ]);

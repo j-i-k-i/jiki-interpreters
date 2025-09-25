@@ -1,6 +1,6 @@
 import { interpret } from "@jikiscript/interpreter";
 import type { ExecutionContext } from "@jikiscript/executor";
-import type { Primitive } from "@jikiscript/jikiObjects";
+import { Primitive } from "@jikiscript/jikiObjects";
 
 describe("execution context", () => {
   describe("externalFunctions", () => {

@@ -1,7 +1,7 @@
 import { interpret } from "@javascript/interpreter";
 import type { TestAugmentedFrame } from "@shared/frames";
-import type { RuntimeErrorType } from "@javascript/executor";
-import type { Frame } from "@shared/frames";
+import { RuntimeErrorType } from "@javascript/executor";
+import { Frame } from "@shared/frames";
 import { changeLanguage } from "@javascript/translator";
 
 function expectFrameToBeError(frame: Frame, code: string, type: RuntimeErrorType) {
@@ -16,22 +16,22 @@ describe("JavaScript strict equality feature", () => {
   describe("enforceStrictEquality: true (default)", () => {
     const features = { enforceStrictEquality: true };
 
-    test("using === throws StrictEqualityRequired error", () => {
+    test("using == throws StrictEqualityRequired error", () => {
       changeLanguage("system");
-      const code = `let result = 5 === "5";`;
+      const code = `let result = 5 == "5";`;
       const { frames, error } = interpret(code, features);
       expect(error).toBeNull();
       expectFrameToBeError(frames[0], code, "StrictEqualityRequired");
-      expect(frames[0].error!.message).toBe("StrictEqualityRequired: operator: ===");
+      expect(frames[0].error!.message).toBe("StrictEqualityRequired: operator: ==");
     });
 
-    test("using !== throws StrictEqualityRequired error", () => {
+    test("using != throws StrictEqualityRequired error", () => {
       changeLanguage("system");
-      const code = `let result = 5 !== "5";`;
+      const code = `let result = 5 != "5";`;
       const { frames, error } = interpret(code, features);
       expect(error).toBeNull();
       expectFrameToBeError(frames[0], code, "StrictEqualityRequired");
-      expect(frames[0].error!.message).toBe("StrictEqualityRequired: operator: !==");
+      expect(frames[0].error!.message).toBe("StrictEqualityRequired: operator: !=");
     });
 
     test("using === works correctly with same types", () => {
@@ -114,16 +114,16 @@ describe("JavaScript strict equality feature", () => {
   describe("enforceStrictEquality: false", () => {
     const features = { enforceStrictEquality: false };
 
-    test("using === works with type coercion", () => {
-      const code = `let result = 5 === "5";`;
+    test("using == works with type coercion", () => {
+      const code = `let result = 5 == "5";`;
       const { frames, error } = interpret(code, features);
       expect(error).toBeNull();
       expect(frames[0].status).toBe("SUCCESS");
       expect((frames[0] as TestAugmentedFrame).variables.result.value).toBe(true);
     });
 
-    test("using !== works with type coercion", () => {
-      const code = `let result = 5 !== "6";`;
+    test("using != works with type coercion", () => {
+      const code = `let result = 5 != "6";`;
       const { frames, error } = interpret(code, features);
       expect(error).toBeNull();
       expect(frames[0].status).toBe("SUCCESS");
@@ -148,11 +148,11 @@ describe("JavaScript strict equality feature", () => {
 
     test("loose equality with type coercion examples", () => {
       const code = `
-        let a = 0 === false;
-        let b = "" === false;
-        let c = null === undefined;
-        let d = "5" === 5;
-        let e = true === 1;
+        let a = 0 == false;
+        let b = "" == false;
+        let c = null == undefined;
+        let d = "5" == 5;
+        let e = true == 1;
       `;
       const { frames, error } = interpret(code, features);
       expect(error).toBeNull();
@@ -166,9 +166,9 @@ describe("JavaScript strict equality feature", () => {
 
     test("both loose and strict equality in same code", () => {
       const code = `
-        let loose = 5 === "5";
+        let loose = 5 == "5";
         let strict = 5 === "5";
-        let looseNot = 5 !== "5";
+        let looseNot = 5 != "5";
         let strictNot = 5 !== "5";
       `;
       const { frames, error } = interpret(code, features);
@@ -236,7 +236,7 @@ describe("JavaScript strict equality feature", () => {
   describe("default behavior", () => {
     test("default enforces strict equality (enforceStrictEquality: true)", () => {
       changeLanguage("system");
-      const code = `let result = 5 === "5";`;
+      const code = `let result = 5 == "5";`;
       const { frames, error } = interpret(code); // No features specified, should use default
       expect(error).toBeNull();
       expectFrameToBeError(frames[0], code, "StrictEqualityRequired");

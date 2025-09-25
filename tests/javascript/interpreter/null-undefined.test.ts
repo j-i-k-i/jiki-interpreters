@@ -50,11 +50,11 @@ describe("JavaScript Interpreter: null and undefined", () => {
       expect((lastFrame as any).variables.strictEqual.value).toBe(false);
     });
 
-    test("null === undefined with strict equality enforcement disabled", () => {
+    test("null == undefined with strict equality enforcement disabled", () => {
       const code = `
         let a = null;
         let b = undefined;
-        let looseEqual = a === b;
+        let looseEqual = a == b;
       `;
       const result = interpret(code, { enforceStrictEquality: false });
       expect(result.error).toBe(null);

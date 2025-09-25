@@ -1,7 +1,6 @@
 import { parse } from "@jikiscript/parser";
 import type { TestAugmentedFrame } from "@shared/frames";
-import type { EvaluationContext} from "@jikiscript/interpreter";
-import { interpret } from "@jikiscript/interpreter";
+import { EvaluationContext, interpret } from "@jikiscript/interpreter";
 import {
   ChangeElementStatement,
   ChangePropertyStatement,
@@ -17,7 +16,7 @@ import {
   VariableLookupExpression,
   AccessorExpression,
 } from "@jikiscript/expression";
-import type { ExecutionContext } from "@jikiscript/executor";
+import { ExecutionContext } from "@jikiscript/executor";
 
 describe("parse", () => {
   test("basic", () => {

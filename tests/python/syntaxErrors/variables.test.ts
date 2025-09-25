@@ -1,5 +1,5 @@
 import { interpret } from "@python/interpreter";
-import type { SyntaxError } from "@python/error";
+import { SyntaxError } from "@python/error";
 
 describe("variables syntax errors", () => {
   describe("undefined variable access", () => {

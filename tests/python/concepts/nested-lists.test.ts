@@ -1,6 +1,5 @@
 import { interpret } from "@python/interpreter";
-import type { PyList, PyNumber} from "@python/jikiObjects";
-import { PyString, PyBoolean, PyNone } from "@python/jikiObjects";
+import { PyList, PyNumber, PyString, PyBoolean, PyNone } from "@python/jikiObjects";
 import type { TestAugmentedFrame } from "@shared/frames";
 
 describe("Python nested lists - comprehensive", () => {

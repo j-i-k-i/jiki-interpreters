@@ -1,9 +1,7 @@
 import { test, expect, describe } from "vitest";
-import type { EvaluationContext } from "@jikiscript/interpreter";
-import { interpret, evaluateFunction } from "@jikiscript/interpreter";
+import { interpret, evaluateFunction, EvaluationContext } from "@jikiscript/interpreter";
 import type { ExecutionContext } from "@jikiscript/executor";
-import type { Number} from "@jikiscript/jikiObjects";
-import { unwrapJikiObject } from "@jikiscript/jikiObjects";
+import { Number, unwrapJikiObject } from "@jikiscript/jikiObjects";
 import type { TestAugmentedFrame } from "@shared/frames";
 
 describe("statements", () => {
@@ -110,7 +108,7 @@ describe("statements", () => {
 
         // TODO: Decide what syntax we want for this.
         test.skip("inequality", () => {
-          const { frames } = interpret('set x to 2 !== "2"');
+          const { frames } = interpret('set x to 2 != "2"');
           expect(frames).toBeArrayOfSize(1);
           expect(frames[0].status).toBe("SUCCESS");
           expect(unwrapJikiObject((frames[0] as TestAugmentedFrame).variables)).toMatchObject({
@@ -857,7 +855,7 @@ describe("custom functions", () => {
 
     const startsWithCode = `
       function my#starts_with with list, thing do
-        return my#index_of(list) === 1
+        return my#index_of(list) == 1
       end`;
     const startsWithFunction = {
       name: "my#starts_with",

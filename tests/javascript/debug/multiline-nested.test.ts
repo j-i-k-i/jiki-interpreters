@@ -5,7 +5,9 @@ describe("Debug Multiline Nested", () => {
     const code = `let x = [{ something: [{ foo: [0, 1, 2, 3, 4, 5] }] }];`;
     const result = interpret(code);
 
+    console.log("Success:", result.success);
     if (!result.success && result.error) {
+      console.log("Error:", result.error.type, "at line", result.error.location.line);
     }
 
     expect(result.success).toBe(true);
@@ -18,7 +20,10 @@ let x = [
 ];`;
     const result = interpret(code);
 
+    console.log("Success:", result.success);
     if (!result.success && result.error) {
+      console.log("Error:", result.error.type, "at line", result.error.location.line);
+      console.log("Location:", result.error.location);
     }
 
     expect(result.success).toBe(true);

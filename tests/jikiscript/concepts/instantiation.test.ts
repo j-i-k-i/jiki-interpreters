@@ -1,14 +1,12 @@
 import { parse } from "@jikiscript/parser";
 import type { TestAugmentedFrame } from "@shared/frames";
-import type { EvaluationContext} from "@jikiscript/interpreter";
-import { interpret } from "@jikiscript/interpreter";
+import { EvaluationContext, interpret } from "@jikiscript/interpreter";
 import { LogStatement, MethodCallStatement } from "@jikiscript/statement";
 import { last } from "lodash";
 import * as Jiki from "@jikiscript/jikiObjects";
-import type {
-  LiteralExpression} from "@jikiscript/expression";
 import {
   MethodCallExpression,
+  LiteralExpression,
   GetElementExpression,
   VariableLookupExpression,
   InstantiationExpression,
@@ -16,7 +14,7 @@ import {
   LogicalExpression,
   ClassLookupExpression,
 } from "@jikiscript/expression";
-import type { ExecutionContext } from "@jikiscript/executor";
+import { ExecutionContext } from "@jikiscript/executor";
 
 describe("parse", () => {
   test("without arguments", () => {

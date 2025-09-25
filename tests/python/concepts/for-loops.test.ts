@@ -15,18 +15,18 @@ for x in mylist:
       expect(testFrames).toHaveLength(8);
 
       // Check assignment frame
-      assertDescriptionContains(testFrames[0].description, "assigned", "[1, 2, 3]", "mylist");
+      assertDescriptionContains(testFrames[0].description!, "assigned", "[1, 2, 3]", "mylist");
 
       // Check for loop start
-      assertDescriptionContains(testFrames[1].description, "starting", "for loop", "[1, 2, 3]");
+      assertDescriptionContains(testFrames[1].description!, "starting", "for loop", "[1, 2, 3]");
 
       // Check iterations
-      assertDescriptionContains(testFrames[2].description, "1st", "iteration", "x", "1");
-      assertDescriptionContains(testFrames[3].description, "evaluated", "1");
-      assertDescriptionContains(testFrames[4].description, "2nd", "iteration", "x", "2");
-      assertDescriptionContains(testFrames[5].description, "evaluated", "2");
-      assertDescriptionContains(testFrames[6].description, "3rd", "iteration", "x", "3");
-      assertDescriptionContains(testFrames[7].description, "evaluated", "3");
+      assertDescriptionContains(testFrames[2].description!, "1st", "iteration", "x", "1");
+      assertDescriptionContains(testFrames[3].description!, "evaluated", "1");
+      assertDescriptionContains(testFrames[4].description!, "2nd", "iteration", "x", "2");
+      assertDescriptionContains(testFrames[5].description!, "evaluated", "2");
+      assertDescriptionContains(testFrames[6].description!, "3rd", "iteration", "x", "3");
+      assertDescriptionContains(testFrames[7].description!, "evaluated", "3");
     });
 
     test("should iterate over a string", () => {
@@ -36,11 +36,11 @@ for x in mylist:
       expect(error).toBeNull();
       const testFrames = frames as TestAugmentedFrame[];
       expect(testFrames).toHaveLength(5);
-      assertDescriptionContains(testFrames[0].description, "starting", "for loop", "'hi'");
-      assertDescriptionContains(testFrames[1].description, "1st", "iteration", "c", "'h'");
-      assertDescriptionContains(testFrames[2].description, "evaluated", "'h'");
-      assertDescriptionContains(testFrames[3].description, "2nd", "iteration", "c", "'i'");
-      assertDescriptionContains(testFrames[4].description, "evaluated", "'i'");
+      assertDescriptionContains(testFrames[0].description!, "starting", "for loop", "'hi'");
+      assertDescriptionContains(testFrames[1].description!, "1st", "iteration", "c", "'h'");
+      assertDescriptionContains(testFrames[2].description!, "evaluated", "'h'");
+      assertDescriptionContains(testFrames[3].description!, "2nd", "iteration", "c", "'i'");
+      assertDescriptionContains(testFrames[4].description!, "evaluated", "'i'");
     });
 
     test("should handle empty list", () => {
@@ -50,7 +50,7 @@ for x in mylist:
       expect(error).toBeNull();
       const testFrames = frames as TestAugmentedFrame[];
       expect(testFrames).toHaveLength(1);
-      assertDescriptionContains(testFrames[0].description, "starting", "for loop", "[]");
+      assertDescriptionContains(testFrames[0].description!, "starting", "for loop", "[]");
     });
 
     test("should maintain variable after loop", () => {
@@ -61,26 +61,26 @@ x`);
       expect(error).toBeNull();
       const testFrames = frames as TestAugmentedFrame[];
       expect(testFrames).toHaveLength(6);
-      assertDescriptionContains(testFrames[0].description, "starting", "for loop", "[10, 20]");
-      assertDescriptionContains(testFrames[1].description, "1st", "iteration", "x", "10");
-      assertDescriptionContains(testFrames[2].description, "evaluated", "10");
-      assertDescriptionContains(testFrames[3].description, "2nd", "iteration", "x", "20");
-      assertDescriptionContains(testFrames[4].description, "evaluated", "20");
-      assertDescriptionContains(testFrames[5].description, "evaluated", "20");
+      assertDescriptionContains(testFrames[0].description!, "starting", "for loop", "[10, 20]");
+      assertDescriptionContains(testFrames[1].description!, "1st", "iteration", "x", "10");
+      assertDescriptionContains(testFrames[2].description!, "evaluated", "10");
+      assertDescriptionContains(testFrames[3].description!, "2nd", "iteration", "x", "20");
+      assertDescriptionContains(testFrames[4].description!, "evaluated", "20");
+      assertDescriptionContains(testFrames[5].description!, "evaluated", "20");
     });
   });
 
   describe("Break statement", () => {
     test("should break out of loop", () => {
       const { frames, error } = interpret(`for x in [1, 2, 3]:
-    if x === 2:
+    if x == 2:
         break
     x`);
 
       expect(error).toBeNull();
       // Check that break works - only first element should be processed
       const testFrames = frames as TestAugmentedFrame[];
-      const descriptions = testFrames.map(f => f.description);
+      const descriptions = testFrames.map(f => f.description!);
 
       // Find the break frame and check it contains the right text
       const breakFrame = descriptions.find(d => d.includes("break"));
@@ -100,13 +100,13 @@ x`);
   describe("Continue statement", () => {
     test("should continue to next iteration", () => {
       const { frames, error } = interpret(`for x in [1, 2, 3]:
-    if x === 2:
+    if x == 2:
         continue
     x`);
 
       expect(error).toBeNull();
       const testFrames = frames as TestAugmentedFrame[];
-      const descriptions = testFrames.map(f => f.description);
+      const descriptions = testFrames.map(f => f.description!);
 
       // Find the continue frame
       const continueFrame = descriptions.find(d => d.includes("continue"));
@@ -158,7 +158,7 @@ total`);
       expect(error).toBeNull();
       const testFrames = frames as TestAugmentedFrame[];
       const lastFrame = testFrames[testFrames.length - 1];
-      assertDescriptionContains(lastFrame.description, "evaluated", "21");
+      assertDescriptionContains(lastFrame.description!, "evaluated", "21");
     });
   });
 });

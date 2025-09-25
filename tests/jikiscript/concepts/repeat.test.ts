@@ -4,7 +4,7 @@ import { ContinueStatement, ForeachStatement, SetVariableStatement } from "@jiki
 import { Location } from "@jikiscript/location";
 import { FunctionCallExpression, ListExpression, LiteralExpression } from "@jikiscript/expression";
 import { RuntimeError } from "@jikiscript/error";
-import type { Primitive } from "@jikiscript/jikiObjects";
+import { Primitive } from "@jikiscript/jikiObjects";
 
 const generateEchosContext = (echos: any[]) => {
   return {
@@ -57,7 +57,7 @@ describe("execute", () => {
     const { frames } = interpret(
       `
       repeat 5 times indexed by idx do
-        if idx === 3 or idx === 4 do
+        if idx == 3 or idx == 4 do
           continue 
         end
         echo(idx)
@@ -75,7 +75,7 @@ describe("execute", () => {
     const { frames } = interpret(
       `
       repeat 5 times indexed by idx do
-        if idx === 3 or idx === 4 do
+        if idx == 3 or idx == 4 do
           next 
         end
         echo(idx)
@@ -94,7 +94,7 @@ describe("execute", () => {
     const { frames } = interpret(
       `
       repeat 5 times indexed by idx do
-        if idx === 3 do
+        if idx == 3 do
           break 
         end
         echo(idx)

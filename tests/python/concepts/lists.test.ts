@@ -221,7 +221,7 @@ matrix`;
 
   describe("list expressions with boolean operators", () => {
     test("creates list with boolean expressions", () => {
-      const { frames, error } = interpret("[5 > 3, 2 === 2, 1 !== 1]");
+      const { frames, error } = interpret("[5 > 3, 2 == 2, 1 != 1]");
       expect(error).toBeNull();
       const frame = frames[0] as TestAugmentedFrame;
       const list = frame.result?.jikiObject as PyList;

@@ -29,7 +29,7 @@ describe("single-character", () => {
     // ["~", "TILDE"], // Unimplemented
   ])("'%s' token", (source: string, expectedType: string) => {
     const tokens = scan(source);
-    expect(tokens[0].type).toBe(expectedType);
+    expect(tokens[0].type).toBe(expectedType as TokenType);
     expect(tokens[0].lexeme).toBe(source);
     expect(tokens[0].literal).toBeNull;
   });
@@ -41,9 +41,9 @@ describe("two-character operators", () => {
     [">=", "GREATER_EQUAL"],
     ["<", "LESS"],
     ["<=", "LESS_EQUAL"],
-    ["!==", "NOT_EQUAL"],
+    ["!=", "NOT_EQUAL"],
     ["!==", "NOT_STRICT_EQUAL"],
-    ["===", "EQUAL_EQUAL"],
+    ["==", "EQUAL_EQUAL"],
     ["===", "STRICT_EQUAL"],
     ["&&", "LOGICAL_AND"],
     ["||", "LOGICAL_OR"],
@@ -62,7 +62,7 @@ describe("two-character operators", () => {
     // ["=>", "ARROW"], // Unimplemented
   ])("'%s' token", (source: string, expectedType: string) => {
     const tokens = scan(source);
-    expect(tokens[0].type).toBe(expectedType);
+    expect(tokens[0].type).toBe(expectedType as TokenType);
     expect(tokens[0].lexeme).toBe(source);
     expect(tokens[0].literal).toBeNull;
   });
@@ -110,7 +110,7 @@ describe("keyword", () => {
     // ["yield", "YIELD"], // Unimplemented
   ])("'%s' keyword", (source: string, expectedType: string) => {
     const tokens = scan(source);
-    expect(tokens[0].type).toBe(expectedType);
+    expect(tokens[0].type).toBe(expectedType as TokenType);
     expect(tokens[0].lexeme).toBe(source);
     expect(tokens[0].literal).toBeNull;
   });
@@ -329,7 +329,7 @@ describe("number", () => {
 
 describe.skip("function call", () => {
   test("without arguments", () => {
-    const tokens = scan("console.log()");
+    const tokens = scan("console.log();");
     expect(tokens).toBeArrayOfSize(8);
     expect(tokens[0].type).toBe("IDENTIFIER");
     expect(tokens[1].type).toBe("DOT");
@@ -342,7 +342,7 @@ describe.skip("function call", () => {
   });
 
   test("single string argument", () => {
-    const tokens = scan('console.log("hello")');
+    const tokens = scan('console.log("hello");');
     expect(tokens).toBeArrayOfSize(9);
     expect(tokens[0].type).toBe("IDENTIFIER");
     expect(tokens[1].type).toBe("DOT");

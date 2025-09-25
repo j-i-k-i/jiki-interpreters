@@ -1,7 +1,6 @@
-import type { RuntimeErrorType } from "@jikiscript/error";
-import type { Frame } from "../../src/shared/frames";
-import type { EvaluationContext} from "@jikiscript/interpreter";
-import { interpret } from "@jikiscript/interpreter";
+import { RuntimeErrorType } from "@jikiscript/error";
+import { Frame } from "../../src/shared/frames";
+import { EvaluationContext, interpret } from "@jikiscript/interpreter";
 import { Location, Span } from "@jikiscript/location";
 import * as Jiki from "@jikiscript/jikiObjects";
 
@@ -514,9 +513,9 @@ describe("InvalidChangeTargetNotModifiable", () => {
 });
 
 test("TypeErrorCannotCompareListObjects", () => {
-  const code = `log [] === []`;
+  const code = `log [] == []`;
   const { frames } = interpret(code);
-  expectFrameToBeError(frames[0], `log [] === []`, "TypeErrorCannotCompareListObjects");
+  expectFrameToBeError(frames[0], `log [] == []`, "TypeErrorCannotCompareListObjects");
   expect(frames[0].error!.message).toBe("TypeErrorCannotCompareListObjects");
 });
 
@@ -554,10 +553,10 @@ test("TypeErrorCannotCompareObjectInstances", () => {
   const context = { classes: [new Jiki.Class("Thing")] };
   const code = `
   set thing to new Thing()
-  log thing === 5
+  log thing == 5
   `;
   const { frames } = interpret(code, context);
-  expectFrameToBeError(frames[1], `log thing === 5`, "TypeErrorCannotCompareObjectInstances");
+  expectFrameToBeError(frames[1], `log thing == 5`, "TypeErrorCannotCompareObjectInstances");
   expect(frames[1].error!.message).toBe("TypeErrorCannotCompareObjectInstances");
 });
 

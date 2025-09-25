@@ -4,8 +4,7 @@ import type { TestAugmentedFrame } from "@shared/frames";
 import { ContinueStatement, ForeachStatement, SetVariableStatement } from "@jikiscript/statement";
 import { FunctionCallExpression, ListExpression, LiteralExpression } from "@jikiscript/expression";
 import { RuntimeError } from "@jikiscript/error";
-import type { Primitive} from "@jikiscript/jikiObjects";
-import { unwrapJikiObject } from "@jikiscript/jikiObjects";
+import { Primitive, unwrapJikiObject } from "@jikiscript/jikiObjects";
 
 const generateEchosContext = (echos: any[]) => {
   return {
@@ -239,7 +238,7 @@ describe("for each", () => {
       const { frames } = interpret(
         `
         for each num in [1,2,3,4,5] do
-          if num === 3 or num === 4 do
+          if num == 3 or num == 4 do
             continue 
           end
           echo(num)
@@ -257,7 +256,7 @@ describe("for each", () => {
       const { frames } = interpret(
         `
         for each num in [1,2,3,4,5] do
-          if num === 3 or num === 4 do
+          if num == 3 or num == 4 do
             next 
           end
           echo(num)
@@ -275,7 +274,7 @@ describe("for each", () => {
       const { frames } = interpret(
         `
         for each num in [1,2,3,4,5] do
-          if num === 3 do
+          if num == 3 do
             break 
           end
           echo(num)

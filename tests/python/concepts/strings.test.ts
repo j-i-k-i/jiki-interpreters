@@ -98,7 +98,7 @@ describe("string concepts", () => {
 
   describe("string comparison", () => {
     test("string equality - true", () => {
-      const { frames, error } = interpret('"hello" === "hello"');
+      const { frames, error } = interpret('"hello" == "hello"');
       expect(error).toBeNull();
       expect(frames).toBeArrayOfSize(1);
       expect(frames[0].status).toBe("SUCCESS");
@@ -106,7 +106,7 @@ describe("string concepts", () => {
     });
 
     test("string equality - false", () => {
-      const { frames, error } = interpret('"hello" === "world"');
+      const { frames, error } = interpret('"hello" == "world"');
       expect(error).toBeNull();
       expect(frames).toBeArrayOfSize(1);
       expect(frames[0].status).toBe("SUCCESS");
@@ -114,7 +114,7 @@ describe("string concepts", () => {
     });
 
     test("string inequality - true", () => {
-      const { frames, error } = interpret('"hello" !== "world"');
+      const { frames, error } = interpret('"hello" != "world"');
       expect(error).toBeNull();
       expect(frames).toBeArrayOfSize(1);
       expect(frames[0].status).toBe("SUCCESS");
@@ -122,7 +122,7 @@ describe("string concepts", () => {
     });
 
     test("string inequality - false", () => {
-      const { frames, error } = interpret('"hello" !== "hello"');
+      const { frames, error } = interpret('"hello" != "hello"');
       expect(error).toBeNull();
       expect(frames).toBeArrayOfSize(1);
       expect(frames[0].status).toBe("SUCCESS");
@@ -130,7 +130,7 @@ describe("string concepts", () => {
     });
 
     test("case sensitive comparison", () => {
-      const { frames, error } = interpret('"Hello" === "hello"');
+      const { frames, error } = interpret('"Hello" == "hello"');
       expect(error).toBeNull();
       expect(frames).toBeArrayOfSize(1);
       expect(frames[0].status).toBe("SUCCESS");
