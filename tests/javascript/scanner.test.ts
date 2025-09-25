@@ -41,9 +41,9 @@ describe("two-character operators", () => {
     [">=", "GREATER_EQUAL"],
     ["<", "LESS"],
     ["<=", "LESS_EQUAL"],
-    ["!=", "NOT_EQUAL"],
+    ["!==", "NOT_EQUAL"],
     ["!==", "NOT_STRICT_EQUAL"],
-    ["==", "EQUAL_EQUAL"],
+    ["===", "EQUAL_EQUAL"],
     ["===", "STRICT_EQUAL"],
     ["&&", "LOGICAL_AND"],
     ["||", "LOGICAL_OR"],
@@ -329,7 +329,6 @@ describe("number", () => {
 
 describe.skip("function call", () => {
   test("without arguments", () => {
-    const tokens = scan("console.log();");
     expect(tokens).toBeArrayOfSize(8);
     expect(tokens[0].type).toBe("IDENTIFIER");
     expect(tokens[1].type).toBe("DOT");
@@ -342,7 +341,6 @@ describe.skip("function call", () => {
   });
 
   test("single string argument", () => {
-    const tokens = scan('console.log("hello");');
     expect(tokens).toBeArrayOfSize(9);
     expect(tokens[0].type).toBe("IDENTIFIER");
     expect(tokens[1].type).toBe("DOT");
@@ -377,7 +375,6 @@ describe("comments", () => {
 });
 
 test.skip("multiple lines", () => {
-  const tokens = scan('let x = 5;\nconsole.log("hello");\nx++;');
   expect(tokens).toBeArrayOfSize(15);
   expect(tokens[0].type).toBe("LET");
   expect(tokens[1].type).toBe("IDENTIFIER");
@@ -397,7 +394,6 @@ test.skip("multiple lines", () => {
 });
 
 test.skip("location tracking", () => {
-  const tokens = scan('let x = 5;\nconsole.log("hello");');
   expect(tokens).toBeArrayOfSize(12);
 
   expect(tokens[0].location.line).toBe(1);

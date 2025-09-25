@@ -6,7 +6,7 @@ export function errorForMissingDoAfterParameters(
   token: Token,
   parameters: FunctionParameter[]
 ): { errorType: ErrorType; context: {} } {
-  if (token.type == "EOL") {
+  if (token.type === "EOL") {
     return {
       errorType: "MissingDoToStartFunctionBody",
       context: {
@@ -15,8 +15,8 @@ export function errorForMissingDoAfterParameters(
     };
   }
 
-  if (token.type == "IDENTIFIER") {
-    if (parameters.length == 0) {
+  if (token.type === "IDENTIFIER") {
+    if (parameters.length === 0) {
       return {
         errorType: "MissingWithBeforeParametersInFunction",
         context: {},

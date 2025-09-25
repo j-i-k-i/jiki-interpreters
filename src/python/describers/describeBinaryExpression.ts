@@ -56,9 +56,9 @@ function getOperatorName(operator: string): string {
       return "calculated the remainder of";
     case "**":
       return "raised to the power";
-    case "==":
+    case "===":
       return "checked if equal";
-    case "!=":
+    case "!==":
       return "checked if not equal";
     case "<":
       return "checked if less than";

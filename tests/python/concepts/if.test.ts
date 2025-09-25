@@ -149,7 +149,7 @@ if x > y:
   test("handles equality comparison", () => {
     const code = `a = 5
 b = 5
-if a == b:
+if a === b:
     equal = True`;
 
     const { frames, error } = interpret(code);

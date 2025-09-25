@@ -308,19 +308,19 @@ export class Scanner {
 
   private tokenizeSingleLineComment(): void {
     // Consume until the end of the line
-    while (this.peek() != "\n" && !this.isAtEnd()) {
+    while (this.peek() !== "\n" && !this.isAtEnd()) {
       this.advance();
     }
   }
 
   private tokenizeMultiLineComment(): void {
     while (!this.isAtEnd()) {
-      if (this.peek() == "*" && this.peekNext() == "/") {
+      if (this.peek() === "*" && this.peekNext() === "/") {
         this.advance(); // consume *
         this.advance(); // consume /
         return;
       }
-      if (this.peek() == "\n") {
+      if (this.peek() === "\n") {
         this.line++;
         this.lineOffset = this.current + 1;
       }
@@ -331,12 +331,12 @@ export class Scanner {
 
   private tokenizeString(): void {
     // Keep consuming characters until we see another double quote
-    while (this.peek() != '"' && !this.isAtEnd()) {
-      if (this.peek() == "\n") {
+    while (this.peek() !== '"' && !this.isAtEnd()) {
+      if (this.peek() === "\n") {
         this.line++;
         this.lineOffset = this.current + 1;
       }
-      if (this.peek() == "\\") {
+      if (this.peek() === "\\") {
         this.advance(); // consume backslash
         this.advance(); // consume escaped character
       } else {
@@ -361,12 +361,12 @@ export class Scanner {
 
   private tokenizeSingleQuoteString(): void {
     // Keep consuming characters until we see another single quote
-    while (this.peek() != "'" && !this.isAtEnd()) {
-      if (this.peek() == "\n") {
+    while (this.peek() !== "'" && !this.isAtEnd()) {
+      if (this.peek() === "\n") {
         this.line++;
         this.lineOffset = this.current + 1;
       }
-      if (this.peek() == "\\") {
+      if (this.peek() === "\\") {
         this.advance(); // consume backslash
         this.advance(); // consume escaped character
       } else {
@@ -402,10 +402,10 @@ export class Scanner {
   private tokenizeTemplateLiteral(): void {
     this.addToken("BACKTICK");
 
-    while (this.peek() != "`" && !this.isAtEnd()) {
+    while (this.peek() !== "`" && !this.isAtEnd()) {
       this.start = this.current;
 
-      if (this.peek() == "$" && this.peekNext() == "{") {
+      if (this.peek() === "$" && this.peekNext() === "{") {
         if (this.current > this.start) {
           this.addToken("TEMPLATE_LITERAL_TEXT", this.sourceCode.substring(this.start, this.current));
         }
@@ -419,16 +419,16 @@ export class Scanner {
         while (braceCount > 0 && !this.isAtEnd()) {
           this.start = this.current;
           this.scanToken();
-          if (this.tokens[this.tokens.length - 1].type == "LEFT_BRACE") {
+          if (this.tokens[this.tokens.length - 1].type === "LEFT_BRACE") {
             braceCount++;
-          } else if (this.tokens[this.tokens.length - 1].type == "RIGHT_BRACE") {
+          } else if (this.tokens[this.tokens.length - 1].type === "RIGHT_BRACE") {
             braceCount--;
           }
         }
       } else {
         // Collect template literal text
-        while (this.peek() != "$" && this.peek() != "`" && !this.isAtEnd()) {
-          if (this.peek() == "\n") {
+        while (this.peek() !== "$" && this.peek() !== "`" && !this.isAtEnd()) {
+          if (this.peek() === "\n") {
             this.line++;
             this.lineOffset = this.current + 1;
           }
@@ -436,7 +436,7 @@ export class Scanner {
         }
 
         // If we stopped at a $ that's not followed by {, include it in the text
-        if (this.peek() == "$" && this.peekNext() != "{") {
+        if (this.peek() === "$" && this.peekNext() !== "{") {
           this.advance(); // Include the $ in the template text
         }
 
@@ -457,13 +457,13 @@ export class Scanner {
 
   private tokenizeNumber(): void {
     // Handle different number formats
-    if (this.sourceCode[this.start] == "0" && this.current < this.sourceCode.length) {
+    if (this.sourceCode[this.start] === "0" && this.current < this.sourceCode.length) {
       const nextChar = this.peek();
-      if (nextChar == "x" || nextChar == "X") {
+      if (nextChar === "x" || nextChar === "X") {
         this.tokenizeHexNumber(); return;
-      } else if (nextChar == "b" || nextChar == "B") {
+      } else if (nextChar === "b" || nextChar === "B") {
         this.tokenizeBinaryNumber(); return;
-      } else if (nextChar == "o" || nextChar == "O") {
+      } else if (nextChar === "o" || nextChar === "O") {
         this.tokenizeOctalNumber(); return;
       }
     }
@@ -472,15 +472,15 @@ export class Scanner {
     while (this.isDigit(this.peek())) {this.advance();}
 
     // Look for a fractional part
-    if (this.peek() == "." && this.isDigit(this.peekNext())) {
+    if (this.peek() === "." && this.isDigit(this.peekNext())) {
       this.advance(); // consume the .
       while (this.isDigit(this.peek())) {this.advance();}
     }
 
     // Look for scientific notation
-    if (this.peek() == "e" || this.peek() == "E") {
+    if (this.peek() === "e" || this.peek() === "E") {
       this.advance(); // consume e/E
-      if (this.peek() == "+" || this.peek() == "-") {
+      if (this.peek() === "+" || this.peek() === "-") {
         this.advance(); // consume +/-
       }
       while (this.isDigit(this.peek())) {this.advance();}
@@ -500,7 +500,7 @@ export class Scanner {
 
   private tokenizeBinaryNumber(): void {
     this.advance(); // consume b/B
-    while (this.peek() == "0" || this.peek() == "1") {this.advance();}
+    while (this.peek() === "0" || this.peek() === "1") {this.advance();}
 
     const number = this.sourceCode.substring(this.start + 2, this.current); // Skip '0b'
     this.addToken("NUMBER", parseInt(number, 2));
@@ -607,7 +607,7 @@ export class Scanner {
   }
 
   private isAlpha(c: string): boolean {
-    return (c >= "a" && c <= "z") || (c >= "A" && c <= "Z") || c == "_" || c == "$";
+    return (c >= "a" && c <= "z") || (c >= "A" && c <= "Z") || c === "_" || c === "$";
   }
 
   private isDigit(c: string): boolean {
@@ -632,7 +632,7 @@ export class Scanner {
 
   private shouldAddEOLToken(): boolean {
     const prev = this.previouslyAddedToken();
-    return prev != null && prev != "EOL" && prev != "SEMICOLON";
+    return prev !== null && prev !== "EOL" && prev !== "SEMICOLON";
   }
 
   private advance(): string {
@@ -656,7 +656,7 @@ export class Scanner {
 
   private match(expected: string): boolean {
     if (this.isAtEnd()) {return false;}
-    if (this.sourceCode[this.current] != expected) {return false;}
+    if (this.sourceCode[this.current] !== expected) {return false;}
 
     this.current++;
     return true;

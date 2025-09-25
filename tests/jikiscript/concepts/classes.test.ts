@@ -262,7 +262,6 @@ describe("execute", () => {
         set foo to new Foobar()
         set outer_baz to foo.do_it()
       `);
-      console.log(frames.at(-1));
       expect(error).toBeNull();
       expect(frames).toBeArrayOfSize(4);
       expect(frames.at(-1)?.status).toBe("SUCCESS");

@@ -31,8 +31,8 @@ describe("one, two or three characters", () => {
     [">=", "GREATER_EQUAL"],
     ["<", "LESS"],
     ["<=", "LESS_EQUAL"],
-    ["!=", "INEQUALITY"],
-    ["==", "EQUALITY"],
+    ["!==", "INEQUALITY"],
+    ["===", "EQUALITY"],
   ])("'%s' token", (source: string, expectedType: string) => {
     const tokens = scan(source);
     expect(tokens[0].type).toBe(expectedType);

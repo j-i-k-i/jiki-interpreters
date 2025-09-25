@@ -5,9 +5,7 @@ describe("Debug Simple Nested", () => {
     const code = `let x = [{ a: 1 }];`;
     const result = interpret(code);
 
-    console.log("Success:", result.success);
     if (!result.success && result.error) {
-      console.log("Error:", result.error.type, result.error.message);
     }
 
     expect(result.success).toBe(true);
@@ -17,9 +15,7 @@ describe("Debug Simple Nested", () => {
     const code = `let x = [{ something: [1, 2] }];`;
     const result = interpret(code);
 
-    console.log("Success:", result.success);
     if (!result.success && result.error) {
-      console.log("Error:", result.error.type, result.error.message);
     }
 
     expect(result.success).toBe(true);

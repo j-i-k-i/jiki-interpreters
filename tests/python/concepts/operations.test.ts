@@ -121,7 +121,7 @@ describe("operation concepts", () => {
     });
 
     test("equal", () => {
-      const { frames, error } = interpret("5 == 5");
+      const { frames, error } = interpret("5 === 5");
       expect(error).toBeNull();
       expect(frames).toBeArrayOfSize(1);
       expect(frames[0].status).toBe("SUCCESS");
@@ -129,7 +129,7 @@ describe("operation concepts", () => {
     });
 
     test("not equal", () => {
-      const { frames, error } = interpret("5 != 3");
+      const { frames, error } = interpret("5 !== 3");
       expect(error).toBeNull();
       expect(frames).toBeArrayOfSize(1);
       expect(frames[0].status).toBe("SUCCESS");
@@ -217,7 +217,7 @@ describe("operation concepts", () => {
     });
 
     test("complex mixed expression", () => {
-      const { frames, error } = interpret("(5 + 3) == 8 and True");
+      const { frames, error } = interpret("(5 + 3) === 8 and True");
       expect(error).toBeNull();
       expect(frames).toBeArrayOfSize(1);
       expect(frames[0].status).toBe("SUCCESS");

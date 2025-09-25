@@ -239,7 +239,7 @@ describe("for each", () => {
       const { frames } = interpret(
         `
         for each num in [1,2,3,4,5] do
-          if num == 3 or num == 4 do
+          if num === 3 or num === 4 do
             continue 
           end
           echo(num)
@@ -257,7 +257,7 @@ describe("for each", () => {
       const { frames } = interpret(
         `
         for each num in [1,2,3,4,5] do
-          if num == 3 or num == 4 do
+          if num === 3 or num === 4 do
             next 
           end
           echo(num)
@@ -275,7 +275,7 @@ describe("for each", () => {
       const { frames } = interpret(
         `
         for each num in [1,2,3,4,5] do
-          if num == 3 do
+          if num === 3 do
             break 
           end
           echo(num)

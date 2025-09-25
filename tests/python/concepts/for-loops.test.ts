@@ -73,7 +73,7 @@ x`);
   describe("Break statement", () => {
     test("should break out of loop", () => {
       const { frames, error } = interpret(`for x in [1, 2, 3]:
-    if x == 2:
+    if x === 2:
         break
     x`);
 
@@ -100,7 +100,7 @@ x`);
   describe("Continue statement", () => {
     test("should continue to next iteration", () => {
       const { frames, error } = interpret(`for x in [1, 2, 3]:
-    if x == 2:
+    if x === 2:
         continue
     x`);
 

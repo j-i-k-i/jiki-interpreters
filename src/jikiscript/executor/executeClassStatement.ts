@@ -9,7 +9,7 @@ export function executeClassStatement(executor: Executor, statement: ClassStatem
   const klass = new Jiki.Class(statement.name.lexeme);
 
   statement.body.forEach(stmt => {
-    if (statement.type == "ConstructorStatement") {
+    if (statement.type === "ConstructorStatement") {
       executeConstructorStatement(executor, klass, stmt as ConstructorStatement);
     }
   });
@@ -17,11 +17,11 @@ export function executeClassStatement(executor: Executor, statement: ClassStatem
   executor.addClass(klass);
 
   statement.body.forEach(stmt => {
-    if (stmt.type == "ConstructorStatement") {
+    if (stmt.type === "ConstructorStatement") {
       executeConstructorStatement(executor, klass, stmt as ConstructorStatement);
-    } else if (stmt.type == "MethodStatement") {
+    } else if (stmt.type === "MethodStatement") {
       executeMethodStatement(executor, klass, stmt as MethodStatement);
-    } else if (stmt.type == "PropertyStatement") {
+    } else if (stmt.type === "PropertyStatement") {
       executePropertyStatement(executor, klass, stmt as PropertyStatement);
     }
   });
@@ -34,12 +34,12 @@ function executeConstructorStatement(executor: Executor, klass: Jiki.Class, stmt
 
 function executeMethodStatement(executor: Executor, klass: Jiki.Class, stmt: MethodStatement) {
   const fn = new UserDefinedMethod(stmt);
-  const visibility = stmt.accessModifier.type == "PUBLIC" ? "public" : "private";
+  const visibility = stmt.accessModifier.type === "PUBLIC" ? "public" : "private";
   klass.addMethod(stmt.name.lexeme, null, visibility, fn);
 }
 
 function executePropertyStatement(executor: Executor, klass: Jiki.Class, stmt: PropertyStatement): void {
-  const visibility = stmt.accessModifier.type == "PUBLIC" ? "public" : "private";
+  const visibility = stmt.accessModifier.type === "PUBLIC" ? "public" : "private";
   klass.addProperty(stmt.name.lexeme);
   klass.addGetter(stmt.name.lexeme, visibility);
   klass.addSetter(stmt.name.lexeme, visibility);

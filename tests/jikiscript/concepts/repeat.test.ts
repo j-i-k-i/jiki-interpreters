@@ -57,7 +57,7 @@ describe("execute", () => {
     const { frames } = interpret(
       `
       repeat 5 times indexed by idx do
-        if idx == 3 or idx == 4 do
+        if idx === 3 or idx === 4 do
           continue 
         end
         echo(idx)
@@ -75,7 +75,7 @@ describe("execute", () => {
     const { frames } = interpret(
       `
       repeat 5 times indexed by idx do
-        if idx == 3 or idx == 4 do
+        if idx === 3 or idx === 4 do
           next 
         end
         echo(idx)
@@ -94,7 +94,7 @@ describe("execute", () => {
     const { frames } = interpret(
       `
       repeat 5 times indexed by idx do
-        if idx == 3 do
+        if idx === 3 do
           break 
         end
         echo(idx)

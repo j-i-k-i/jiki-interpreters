@@ -173,7 +173,7 @@ export class Scanner {
 
   private match(expected: string): boolean {
     if (this.isAtEnd()) {return false;}
-    if (this.sourceCode.charAt(this.current) != expected) {return false;}
+    if (this.sourceCode.charAt(this.current) !== expected) {return false;}
 
     this.current++;
     return true;
@@ -343,12 +343,12 @@ export class Scanner {
 
   private tokenizeComment(): void {
     // A comment goes until the end of the line
-    while (this.peek() != "\n" && !this.isAtEnd()) {this.advance();}
+    while (this.peek() !== "\n" && !this.isAtEnd()) {this.advance();}
   }
 
   private tokenizeString(): void {
-    while (this.peek() != '"' && !this.isAtEnd()) {
-      if (this.peek() == "\n") {
+    while (this.peek() !== '"' && !this.isAtEnd()) {
+      if (this.peek() === "\n") {
         this.line++;
         this.lineOffset = this.current + 1;
       }
@@ -372,8 +372,8 @@ export class Scanner {
   }
 
   private tokenizeSingleQuoteString(): void {
-    while (this.peek() != "'" && !this.isAtEnd()) {
-      if (this.peek() == "\n") {
+    while (this.peek() !== "'" && !this.isAtEnd()) {
+      if (this.peek() === "\n") {
         this.line++;
         this.lineOffset = this.current + 1;
       }
@@ -401,15 +401,15 @@ export class Scanner {
     while (this.isDigit(this.peek())) {this.advance();}
 
     // Look for a fractional part
-    if (this.peek() == "." && this.isDigit(this.peekNext())) {
+    if (this.peek() === "." && this.isDigit(this.peekNext())) {
       this.advance(); // consume the .
       while (this.isDigit(this.peek())) {this.advance();}
     }
 
     // Look for scientific notation
-    if (this.peek() == "e" || this.peek() == "E") {
+    if (this.peek() === "e" || this.peek() === "E") {
       this.advance(); // consume e/E
-      if (this.peek() == "+" || this.peek() == "-") {
+      if (this.peek() === "+" || this.peek() === "-") {
         this.advance(); // consume +/-
       }
       while (this.isDigit(this.peek())) {this.advance();}
@@ -433,7 +433,7 @@ export class Scanner {
   }
 
   private isAlpha(c: string): boolean {
-    return (c >= "a" && c <= "z") || (c >= "A" && c <= "Z") || c == "_";
+    return (c >= "a" && c <= "z") || (c >= "A" && c <= "Z") || c === "_";
   }
 
   private isAlphaNumeric(c: string): boolean {

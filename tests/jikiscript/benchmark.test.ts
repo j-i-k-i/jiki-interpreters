@@ -21,7 +21,6 @@ describe("JikiScript performance benchmarks", () => {
     // In CI, check if at least 3 out of 4 tests passed
     if (isCI && performanceResults.length === 4) {
       const passedCount = performanceResults.filter(r => r.passed).length;
-      console.log(`\nCI Performance Summary: ${passedCount}/4 tests passed performance thresholds`);
 
       if (passedCount < 3) {
         throw new Error(`CI performance check failed: Only ${passedCount}/4 tests passed (minimum 3 required)`);
@@ -42,7 +41,6 @@ describe("JikiScript performance benchmarks", () => {
     const endTime = performance.now();
     const executionTime = endTime - startTime;
 
-    console.log(`10 frames: ${executionTime.toFixed(2)}ms`);
     expect(result.error).toBeNull();
     expect(result.frames.length).toBeGreaterThan(10);
 
@@ -82,7 +80,6 @@ describe("JikiScript performance benchmarks", () => {
     const endTime = performance.now();
     const executionTime = endTime - startTime;
 
-    console.log(`~1,000 frames: ${executionTime.toFixed(2)}ms (${result.frames.length} frames)`);
     expect(result.error).toBeNull();
     expect(result.frames.length).toBeGreaterThan(1000);
 
@@ -121,7 +118,6 @@ describe("JikiScript performance benchmarks", () => {
     const endTime = performance.now();
     const executionTime = endTime - startTime;
 
-    console.log(`10,000 frames: ${executionTime.toFixed(2)}ms`);
     expect(result.error).toBeNull();
     expect(result.frames.length).toBeGreaterThan(10000);
 
@@ -169,7 +165,6 @@ describe("JikiScript performance benchmarks", () => {
     const frameCount = result.frames.length;
     const framesPerMs = frameCount / executionTime;
 
-    console.log(`
 Benchmark Results:
 ==================
 Total frames generated: ${frameCount}
@@ -227,7 +222,6 @@ Average time per frame: ${(executionTime / frameCount).toFixed(4)}ms
     const executionTime = endTime - startTime;
     const frameCount = result.frames.length;
 
-    console.log(`
 1M Frames Benchmark:
 ====================
 Total frames: ${frameCount}

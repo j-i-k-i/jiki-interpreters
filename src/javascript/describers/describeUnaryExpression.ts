@@ -10,10 +10,10 @@ export function describeUnaryExpression(
   result: EvaluationResultUnaryExpression,
   context: DescriptionContext
 ) {
-  if (expression.operator.type == "NOT") {
+  if (expression.operator.type === "NOT") {
     return describeNotExpression(expression, result, context);
   }
-  if (expression.operator.type == "MINUS") {
+  if (expression.operator.type === "MINUS") {
     return describeMinusExpression(expression, result, context);
   }
   return [];
@@ -42,7 +42,7 @@ function describeMinusExpression(
   context: DescriptionContext
 ) {
   // If this is a negative number, there's no steps to show.
-  if (expression.operand.type == "LiteralExpression") {
+  if (expression.operand.type === "LiteralExpression") {
     return [];
   }
   const resNum = result.operand.immutableJikiObject as JS.JSNumber;

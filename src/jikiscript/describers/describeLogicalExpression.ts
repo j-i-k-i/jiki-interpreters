@@ -37,7 +37,7 @@ function describeFullExpression(
   result: EvaluationResultFullyEvaluatedLogicalExpression,
   context: DescriptionContext
 ) {
-  if (result.right == null) {
+  if (result.right === null) {
     return [];
   }
   let inBetweenSteps: string[] = [];

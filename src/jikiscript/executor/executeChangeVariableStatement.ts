@@ -20,7 +20,7 @@ export function executeChangeVariableStatement(executor: Executor, statement: Ch
     try {
       value = executor.evaluate(statement.value);
     } catch (e) {
-      if (e instanceof RuntimeError && e.type == "ExpressionEvaluatedToNullValue") {
+      if (e instanceof RuntimeError && e.type === "ExpressionEvaluatedToNullValue") {
         executor.error("StateErrorCannotStoreNullValueFromFunction", statement.value.location);
       } else {
         throw e;

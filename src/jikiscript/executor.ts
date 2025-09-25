@@ -535,7 +535,7 @@ export class Executor {
   private retrieveCounterVariableNameForLoop(
     statement: ForeachStatement | RepeatStatement | RepeatForeverStatement | RepeatUntilGameOverStatement
   ): string | null {
-    if (statement.counter == null) {
+    if (statement.counter === null) {
       return null;
     }
 
@@ -608,7 +608,7 @@ export class Executor {
         // Handle the normal path
         // Because we're using keys that can be strings here,
         // guard in case we need to wrap them as Jiki strings!
-        if (typeof temporaryVariableValue == "string") {
+        if (typeof temporaryVariableValue === "string") {
           temporaryVariableValue = new Jiki.String(temporaryVariableValue);
         }
         const temporaryVariableName = statement.elementName.lexeme;
@@ -703,7 +703,7 @@ export class Executor {
       });
     }
 
-    if (count.value == 0) {
+    if (count.value === 0) {
       this.executeFrame<EvaluationResultRepeatStatement>(statement, () => {
         return {
           type: "RepeatStatement",
@@ -1113,7 +1113,7 @@ export class Executor {
     location: Location,
     getOrChange: "get" | "change"
   ) {
-    if (idx.value == 0) {
+    if (idx.value === 0) {
       this.error("RangeErrorArrayIndexIsZeroBased", location);
     }
     const length = obj instanceof Jiki.List ? obj.length : obj.value.length;
@@ -1203,7 +1203,7 @@ export class Executor {
     error?: RuntimeError,
     context?: Statement | Expression
   ): void {
-    if (location == null) {location = Location.unknown;}
+    if (location === null) {location = Location.unknown;}
 
     const frame: Frame = {
       code: location.toCode(this.sourceCode),
@@ -1222,7 +1222,7 @@ export class Executor {
       context: context,
     };
     // In testing mode (but not benchmarks), augment frame with test-only fields
-    if (process.env.NODE_ENV == "test" && process.env.RUNNING_BENCHMARKS !== "true") {
+    if (process.env.NODE_ENV === "test" && process.env.RUNNING_BENCHMARKS !== "true") {
       (frame as TestAugmentedFrame).variables = cloneDeep(this.environment.variables());
       // Generate description immediately for testing
       (frame as TestAugmentedFrame).description = describeFrame(frame, {
@@ -1245,7 +1245,7 @@ export class Executor {
   public addFunctionToCallStack(name: string, expression: FunctionCallExpression | MethodCallExpression) {
     this.functionCallStack.push(name);
 
-    if (this.functionCallStack.filter(n => n == name).length > 5) {
+    if (this.functionCallStack.filter(n => n === name).length > 5) {
       this.error("StateErrorInfiniteRecursionDetectedInFunction", expression.location);
     }
   }
@@ -1290,7 +1290,7 @@ export class Executor {
     context = Jiki.unwrapJikiObject(context);
 
     let message;
-    if (type == "LogicErrorInExecution") {
+    if (type === "LogicErrorInExecution") {
       message = context.message;
     } else {
       message = translate(`error.runtime.${type}`, context);

@@ -312,7 +312,7 @@ export class Parser {
   }
 
   private isAtEnd(): boolean {
-    return this.peek().type == "EOF";
+    return this.peek().type === "EOF";
   }
 
   private peek(): Token {
@@ -469,7 +469,7 @@ export class Parser {
     this.advance();
 
     while (!this.isAtEnd()) {
-      if (this.previous().type == "NEWLINE") {return;}
+      if (this.previous().type === "NEWLINE") {return;}
 
       switch (this.peek().type) {
         case "CLASS":

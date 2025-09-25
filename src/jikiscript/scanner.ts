@@ -220,7 +220,7 @@ export class Scanner {
     this.addToken("STAR");
   }
   private tokenizeSlash() {
-    if (this.peek() == "/") {
+    if (this.peek() === "/") {
       this.tokenizeComment();
     } else {
       this.addToken("SLASH");
@@ -264,11 +264,11 @@ export class Scanner {
   private tokenizeString(): void {
     // Keep consuming characters until we see another double quote
     // and then stop before we consume it.
-    while (this.peek() != '"' && this.isAnotherCharacter()) {this.advance();}
+    while (this.peek() !== '"' && this.isAnotherCharacter()) {this.advance();}
 
     // If we reach the end of the line, we have an unterminated string
-    if (this.peek() != '"')
-      {if (this.previouslyAddedToken() == "IDENTIFIER")
+    if (this.peek() !== '"')
+      {if (this.previouslyAddedToken() === "IDENTIFIER")
         {this.error("MissingDoubleQuoteToStartStringLiteral", {
           string: this.tokens[this.tokens.length - 1].lexeme,
         });}
@@ -288,11 +288,11 @@ export class Scanner {
   private tokenizeTemplateLiteral(): void {
     this.addToken("BACKTICK");
 
-    while (this.peek() != "`" && this.isAnotherCharacter()) {
+    while (this.peek() !== "`" && this.isAnotherCharacter()) {
       this.start = this.current;
 
-      if (this.peek() != "$" && this.peekNext() != "{" && !this.isAtEnd()) {
-        while (this.peek() != "$" && this.peek() != "`" && this.peekNext() != "{" && !this.isAtEnd()) {this.advance();}
+      if (this.peek() !== "$" && this.peekNext() !== "{" && !this.isAtEnd()) {
+        while (this.peek() !== "$" && this.peek() !== "`" && this.peekNext() !== "{" && !this.isAtEnd()) {this.advance();}
 
         this.addToken("TEMPLATE_LITERAL_TEXT", this.sourceCode.substring(this.start, this.current));
       } else {
@@ -301,7 +301,7 @@ export class Scanner {
         this.addToken("DOLLAR_LEFT_BRACE");
         this.start = this.current;
 
-        while (this.peek() != "}" && !this.isAtEnd()) {
+        while (this.peek() !== "}" && !this.isAtEnd()) {
           this.start = this.current;
           this.scanToken();
         }
@@ -326,7 +326,7 @@ export class Scanner {
    * We then add a token with the value of the number.
    */
   private tokenizeNumber(): void {
-    while (this.isDigit(this.peek()) || this.peek() == ".") {this.advance();}
+    while (this.isDigit(this.peek()) || this.peek() === ".") {this.advance();}
     const number = this.sourceCode.substring(this.start, this.current);
 
     // Guard against numbers starting with 0
@@ -362,10 +362,10 @@ export class Scanner {
   }
 
   private tokenForLexeme(lexeme: string): string | null {
-    if (lexeme == "is") {
+    if (lexeme === "is") {
       return "EQUALITY";
     }
-    if (lexeme == "equals") {
+    if (lexeme === "equals") {
       return "EQUALITY";
     }
 
@@ -411,7 +411,7 @@ export class Scanner {
   }
 
   private isAlpha(c: string): boolean {
-    return (c >= "a" && c <= "z") || (c >= "A" && c <= "Z") || c == "_";
+    return (c >= "a" && c <= "z") || (c >= "A" && c <= "Z") || c === "_";
   }
 
   private isDigit(c: string): boolean {
@@ -419,7 +419,7 @@ export class Scanner {
   }
 
   private isAllowableInIdentifier(c: string): boolean {
-    return this.isAlpha(c) || this.isDigit(c) || c == "#";
+    return this.isAlpha(c) || this.isDigit(c) || c === "#";
   }
 
   private isAtEnd(): boolean {
@@ -428,13 +428,13 @@ export class Scanner {
 
   private isAnotherCharacter(): boolean {
     const next = this.peek();
-    if (next == "\n") {return false;}
-    if (next == "\0") {return false;}
+    if (next === "\n") {return false;}
+    if (next === "\0") {return false;}
     return true;
   }
 
   private shouldAddEOLToken(): boolean {
-    return this.previouslyAddedToken() != null && this.previouslyAddedToken() != "EOL";
+    return this.previouslyAddedToken() !== null && this.previouslyAddedToken() !== "EOL";
   }
 
   private advance(): string {
@@ -458,7 +458,7 @@ export class Scanner {
 
   private match(expected: string): boolean {
     if (this.isAtEnd()) {return false;}
-    if (this.sourceCode[this.current] != expected) {return false;}
+    if (this.sourceCode[this.current] !== expected) {return false;}
 
     this.current++;
     return true;

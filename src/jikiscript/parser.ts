@@ -225,7 +225,7 @@ export class Parser {
           name: name,
         });
 
-        if (parameters.find(p => p.name.lexeme == parameterName.lexeme)) {
+        if (parameters.find(p => p.name.lexeme === parameterName.lexeme)) {
           this.error("DuplicateParameterNameInFunctionDeclaration", this.previous().location, {
             parameter: parameterName.lexeme,
           });
@@ -234,7 +234,7 @@ export class Parser {
         parameters.push(new FunctionParameter(parameterName, null));
       } while (this.match("COMMA"));
     }
-    if (this.peek().type != "DO") {
+    if (this.peek().type !== "DO") {
       const { errorType, context } = errorForMissingDoAfterParameters(this.peek(), parameters);
       this.error(errorType as SyntaxErrorType, this.peek().location, context);
     }
@@ -287,7 +287,7 @@ export class Parser {
       }
     }
 
-    if (this.peek().type == "IDENTIFIER" && this.peek(2).type == "TO") {
+    if (this.peek().type === "IDENTIFIER" && this.peek(2).type === "TO") {
       const errorLocation = Location.between(this.previous(), this.peek());
       this.error("UnexpectedSpaceInIdentifierName", errorLocation, {
         first_half: name.lexeme,
@@ -446,7 +446,7 @@ export class Parser {
     try {
       condition = this.expression();
     } catch (e) {
-      if (e instanceof SyntaxError && e.type == "MissingExpressionInStatement") {
+      if (e instanceof SyntaxError && e.type === "MissingExpressionInStatement") {
         this.error("MissingIfConditionAfterIfKeyword", ifToken.location);
       } else {
         throw e;
@@ -605,7 +605,7 @@ export class Parser {
       try {
         statements.push(this.statement());
       } catch (e) {
-        if (type == "method" && e instanceof SyntaxError && e.type == "UnexpectedVisibilityModifierOutsideClass") {
+        if (type === "method" && e instanceof SyntaxError && e.type === "UnexpectedVisibilityModifierOutsideClass") {
           this.error("UnexpectedVisibilityModifierInsideMethod", e.location!, e.context);
         } else {
           throw e;
@@ -613,7 +613,7 @@ export class Parser {
       }
     }
 
-    if (consumeEnd && (!allowElse || this.peek().type != "ELSE")) {
+    if (consumeEnd && (!allowElse || this.peek().type !== "ELSE")) {
       this.consume("END", "MissingEndAfterBlockStatement", { type });
       this.consumeEndOfLine();
     }
@@ -723,7 +723,7 @@ export class Parser {
     let expr = this.comparison();
 
     const nextToken = this.peek();
-    if (nextToken.type == "EQUALITY" || nextToken.type == "INEQUALITY") {
+    if (nextToken.type === "EQUALITY" || nextToken.type === "INEQUALITY") {
       const operator = this.advance();
       const right = this.comparison();
       expr = new BinaryExpression(expr, operator, right, Location.between(expr, right));
@@ -791,7 +791,7 @@ export class Parser {
     try {
       expr = this.primary();
     } catch (e) {
-      if (e instanceof SyntaxError && e.type == "MissingExpressionInStatement") {
+      if (e instanceof SyntaxError && e.type === "MissingExpressionInStatement") {
         this.error("MissingClassNameInDeclaration", newToken.location);
       }
     }
@@ -974,7 +974,7 @@ export class Parser {
       return new GroupingExpression(expression, Location.between(lparen, rparen));
     }
 
-    if (this.peek().type == "FUNCTION") {
+    if (this.peek().type === "FUNCTION") {
       this.error("InvalidNestedFunctionDeclaration", this.peek().location);
     }
     this.error("MissingExpressionInStatement", this.peek().location);
@@ -984,7 +984,7 @@ export class Parser {
     const openBacktick = this.previous();
     const parts: Expression[] = [];
 
-    while (this.peek().type != "BACKTICK") {
+    while (this.peek().type !== "BACKTICK") {
       if (this.match("DOLLAR_LEFT_BRACE")) {
         const dollarLeftBrace = this.previous();
         const expr = this.expression();
@@ -1019,7 +1019,7 @@ export class Parser {
         try {
           elements.push(this.or());
         } catch (e) {
-          if (!(e instanceof SyntaxError && e.type == "MissingExpressionInStatement")) {
+          if (!(e instanceof SyntaxError && e.type === "MissingExpressionInStatement")) {
             throw e;
           }
           this.error("MissingRightBracketAfterListElements", (prevComma || this.previous()).location);
@@ -1085,7 +1085,7 @@ export class Parser {
         try {
           key = this.consume("STRING", "MissingStringAsKeyInDictionary");
         } catch (e) {
-          if (!(e instanceof SyntaxError && e.type == "MissingExpressionInStatement")) {
+          if (!(e instanceof SyntaxError && e.type === "MissingExpressionInStatement")) {
             throw e;
           }
           this.error("MissingRightBraceAfterDictionaryElements", (prevComma || this.previous()).location);
@@ -1161,7 +1161,7 @@ export class Parser {
 
     // The DO will work, the EOL will fail.
     // Both of these can be handled normally.
-    if (next.type == "EOL" || next.type == "DO") {
+    if (next.type === "EOL" || next.type === "DO") {
       this.consume("DO", "MissingDoToStartIfBody", { type });
       return;
     }
@@ -1190,7 +1190,7 @@ export class Parser {
     const current = this.peek().lexeme;
     let suggestion;
 
-    if (type == "FUNCTION") {
+    if (type === "FUNCTION") {
       suggestion = "Did you mean to start a function on a new line?";
     } else {
       suggestion = "Did you make a typo?";
@@ -1238,31 +1238,31 @@ export class Parser {
   }
 
   private guardEqualsSignForAssignment(name: Token) {
-    if (this.peek().type == "EQUAL") {
+    if (this.peek().type === "EQUAL") {
       this.error("UnexpectedEqualsForAssignmentUseSetInstead", this.peek().location, {
         name: name.lexeme,
       });
     }
   }
   private guardEqualsSignForEquality(token: Token) {
-    if (token.type == "EQUAL") {
+    if (token.type === "EQUAL") {
       this.error("UnexpectedEqualsForEqualityUseIsInstead", token.location);
     }
   }
 
   private guardDoubleEquality() {
     const nextToken = this.peek();
-    if (nextToken.type == "EQUALITY" || nextToken.type == "INEQUALITY") {
+    if (nextToken.type === "EQUALITY" || nextToken.type === "INEQUALITY") {
       this.error("UnexpectedChainedEqualityExpression", nextToken.location);
     }
   }
 
   private isAtEnd(): boolean {
-    return this.peek().type == "EOF";
+    return this.peek().type === "EOF";
   }
 
   private isAtEndOfStatement(): boolean {
-    return this.peek().type == "EOL" || this.isAtEnd();
+    return this.peek().type === "EOL" || this.isAtEnd();
   }
 
   private nextTokenIsKeyword(): Token | false {

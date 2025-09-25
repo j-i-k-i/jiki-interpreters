@@ -20,7 +20,7 @@ function throwMissingFunctionError(executor: Executor, expression: FunctionCallE
   if (!isRuntimeError(e)) {
     throw e;
   }
-  if (e.type != "FunctionNotFoundInScope") {
+  if (e.type !== "FunctionNotFoundInScope") {
     throw e;
   }
 

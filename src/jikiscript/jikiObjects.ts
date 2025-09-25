@@ -122,7 +122,7 @@ export class Class {
     // Reduce the arity by 2 because the first argument is the execution context
     // and the second is the object, both of which are invisible to the user
     let arity: Arity | undefined;
-    if (typeof fn == "function") {
+    if (typeof fn === "function") {
       arity = fn.length - 2;
     } else {
       arity = fn.arity;

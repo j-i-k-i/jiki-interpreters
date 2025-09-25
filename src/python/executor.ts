@@ -225,7 +225,7 @@ export class Executor {
     error?: RuntimeError,
     context?: Statement | Expression
   ): void {
-    if (location == null) {
+    if (location === null) {
       location = Location.unknown;
     }
 

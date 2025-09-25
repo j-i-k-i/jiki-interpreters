@@ -78,11 +78,11 @@ else:
 result = ""
 if x < 0:
     result = "negative"
-elif x == 0:
+elif x === 0:
     result = "zero"
 elif x < 10:
     result = "small"
-    if x == 5:
+    if x === 5:
         result = "five"
         temp = "nested"
         result = result + "-" + temp
@@ -162,19 +162,19 @@ result = 0
 
 if value < 0:
     result = -1
-elif value == 0:
+elif value === 0:
     result = 0
 elif value < 5:
     result = 1
-    if value == 3:
+    if value === 3:
         result = 3
 elif value < 10:
     result = 2
-    if value == 7:
+    if value === 7:
         result = 7
         if True:
             result = 77
-    elif value == 8:
+    elif value === 8:
         result = 8
     else:
         result = 9
@@ -227,7 +227,7 @@ if x > 0:
     count = count + 1
     if x > 3:
         count = count + 10
-        if x == 5:
+        if x === 5:
             count = count + 100
             if True:
                 count = count + 1000
@@ -239,7 +239,7 @@ else:
     count = count - 1
 
 final = 0
-if count == 1111:
+if count === 1111:
     final = 100`;
 
       const { frames, error } = interpret(code);
@@ -266,8 +266,8 @@ elif x > 2:
         result = "x medium, y high"
     elif y > 3:
         result = "both medium"
-        if x == 3:
-            if y == 4:
+        if x === 3:
+            if y === 4:
                 result = "exact match"
             else:
                 result = "x match only"

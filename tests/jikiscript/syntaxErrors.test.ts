@@ -386,10 +386,10 @@ test("InvalidNestedFunctionDeclaration", () => {
 
 describe("chained things", () => {
   test("triple equals", () => {
-    expect(() => parse("1 == 2 == 3")).toThrow("UnexpectedChainedEqualityExpression");
+    expect(() => parse("1 === 2 === 3")).toThrow("UnexpectedChainedEqualityExpression");
   });
   test.skip("triple not equals", () => {
-    expect(() => parse("1 != 2 != 3")).toThrow("UnexpectedChainedEqualityExpression");
+    expect(() => parse("1 !== 2 !== 3")).toThrow("UnexpectedChainedEqualityExpression");
   });
 });
 

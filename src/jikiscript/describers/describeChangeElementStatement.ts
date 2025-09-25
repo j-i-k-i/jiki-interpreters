@@ -39,7 +39,7 @@ function describeChangeElementStatementList(
   let dictDescription = "the list";
   let boxStep: string | undefined;
 
-  if (frameContext.object.type == "VariableLookupExpression") {
+  if (frameContext.object.type === "VariableLookupExpression") {
     const object = frameContext.object as VariableLookupExpression;
     const variableName = object.name.lexeme;
     const variableCodeTag = codeTag(variableName, frameContext.object.location);
@@ -70,7 +70,7 @@ function describeChangeElementStatementDictionary(
   let dictDescription = "the dictionary";
   let boxStep: string | undefined;
 
-  if (frameContext.object.type == "VariableLookupExpression") {
+  if (frameContext.object.type === "VariableLookupExpression") {
     const object = frameContext.object as VariableLookupExpression;
     const variableName = object.name.lexeme;
     const variableCodeTag = codeTag(variableName, frameContext.object.location);
@@ -85,7 +85,7 @@ function describeChangeElementStatementDictionary(
   const keyCodeTag = key ? codeTag(key, frameContext.field.location) : "unknown";
   const valueCodeTag = codeTag(value, frameContext.value.location);
 
-  if (frameResult.oldValue == undefined) {
+  if (frameResult.oldValue === undefined) {
     return describeChangeElementStatementDictionaryAddKey(
       frameContext,
       frameResult,

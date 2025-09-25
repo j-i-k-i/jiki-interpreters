@@ -58,7 +58,7 @@ export class Environment {
     let current: Environment | null = this;
     let vars: any = {};
 
-    while (current != null) {
+    while (current !== null) {
       for (const [key, value] of this.values) {
         if (key in vars) {continue;}
         if (value instanceof Jiki.Class) {continue;}
@@ -77,7 +77,7 @@ export class Environment {
     let current: Environment | null = this;
     let functions: any = {};
 
-    while (current != null) {
+    while (current !== null) {
       for (const [key, value] of this.values) {
         if (key in functions) {continue;}
         if (value instanceof Jiki.Class) {continue;}

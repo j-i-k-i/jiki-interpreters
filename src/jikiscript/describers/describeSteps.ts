@@ -63,7 +63,7 @@ export function describeExpression(
     return describeUnaryExpression(expression, result as EvaluationResultUnaryExpression, context);
   }
   if (expression instanceof AccessorExpression) {
-    if (result.type == "GetterExpression") {
+    if (result.type === "GetterExpression") {
       return describeGetterExpression(expression, result, context);
     } 
       //return describeSetterExpression(expression, result, context)

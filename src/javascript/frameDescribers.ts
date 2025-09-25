@@ -30,7 +30,7 @@ export function describeFrame(frame: JavaScriptFrame, context?: DescriptionConte
   if (!isFrameWithResult(frame)) {
     return defaultMessage;
   }
-  if (context == null) {
+  if (context === null) {
     context = { functionDescriptions: {} };
   }
 
@@ -38,12 +38,12 @@ export function describeFrame(frame: JavaScriptFrame, context?: DescriptionConte
   try {
     description = generateDescription(frame, context);
   } catch (e) {
-    if (process.env.NODE_ENV != "production") {
+    if (process.env.NODE_ENV !== "production") {
       throw e;
     }
     return defaultMessage;
   }
-  if (description == null) {
+  if (description === null) {
     return defaultMessage;
   }
 

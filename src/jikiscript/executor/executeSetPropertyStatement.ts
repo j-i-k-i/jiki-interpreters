@@ -20,7 +20,7 @@ export function executeSetPropertyStatement(executor: Executor, statement: SetPr
         name: statement.property.lexeme,
       });
     }
-    if (executor.contextualThis.getField(statement.property.lexeme) != undefined) {
+    if (executor.contextualThis.getField(statement.property.lexeme) !== undefined) {
       executor.error("PropertyAlreadySetInConstructor", statement.property.location, {
         name: statement.property.lexeme,
       });
@@ -30,7 +30,7 @@ export function executeSetPropertyStatement(executor: Executor, statement: SetPr
     try {
       value = executor.evaluate(statement.value);
     } catch (e) {
-      if (e instanceof RuntimeError && e.type == "ExpressionEvaluatedToNullValue") {
+      if (e instanceof RuntimeError && e.type === "ExpressionEvaluatedToNullValue") {
         executor.error("StateErrorCannotStoreNullValueFromFunction", statement.value.location);
       } else {
         throw e;

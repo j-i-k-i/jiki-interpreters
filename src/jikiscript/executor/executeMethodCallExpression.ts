@@ -25,7 +25,7 @@ export function executeMethodCallExpression(
     });
   }
 
-  if (method.visibility === "private" && expression.object.type != "ThisExpression") {
+  if (method.visibility === "private" && expression.object.type !== "ThisExpression") {
     executor.error("UnexpectedPrivateMethodAccessAttempt", expression.location, {
       name: methodName,
     });

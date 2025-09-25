@@ -43,12 +43,12 @@ describe("function calls", () => {
 describe("single binary expressions", () => {
   test("true vs true", () => {
     const { frames } = interpret(`
-        if true == true do
+        if true === true do
         end
       `);
     const actual = describeFrame(frames[0]);
     assertHTML(actual, `<p>The condition evaluated to<code>true</code>so the code block ran.</p>`, [
-      `<li>Jiki evaluated<code>true == true</code>and determined it was<code>true</code>.</li>`,
+      `<li>Jiki evaluated<code>true === true</code>and determined it was<code>true</code>.</li>`,
       `<li>The result was<code>true</code>so Jiki decided to run the if block.</li>`,
     ]);
   });
@@ -69,12 +69,12 @@ describe("single binary expressions", () => {
   });
   test("strings", () => {
     const { frames } = interpret(`
-        if " " == "" do
+        if " " === "" do
         end
       `);
     const actual = describeFrame(frames[0]);
     assertHTML(actual, `<p>The condition evaluated to<code>false</code> so the code block did not run.</p>`, [
-      `<li>Jiki evaluated <code>" " == ""</code> and determined it was<code>false</code>.</li>`,
+      `<li>Jiki evaluated <code>" " === ""</code> and determined it was<code>false</code>.</li>`,
       `<li>The result was <code>false</code> so Jiki decided to skip the if block.</li>`,
     ]);
   });
