@@ -478,7 +478,7 @@ describe("timing", () => {
       const { frames } = interpret(
         `
           log 1
-          advanceTime(5000)
+          advanceTime(5)
           log 2
         `,
         context

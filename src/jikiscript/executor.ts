@@ -85,6 +85,8 @@ import type { CallableCustomFunction, InterpretResult } from "./interpreter";
 import type { LanguageFeatures, Meta } from "./interpreter";
 
 import { TIME_SCALE_FACTOR, type Frame, type FrameExecutionStatus, type TestAugmentedFrame } from "../shared/frames";
+import { type ExecutionContext as SharedExecutionContext } from "../shared/interfaces";
+import { createBaseExecutionContext } from "../shared/executionContext";
 import { describeFrame } from "./frameDescribers";
 import { executeFunctionCallExpression } from "./executor/executeFunctionCallExpression";
 import { executeIfStatement } from "./executor/executeIfStatement";
@@ -120,10 +122,8 @@ import { executeFunctionLookupExpression } from "./executor/executeFunctionLooku
 import { executeClassLookupExpression } from "./executor/executeClassLookupExpression";
 import { executeChangePropertyStatement } from "./executor/executeChangePropertyStatement";
 
-export type ExecutionContext = {
+export type ExecutionContext = SharedExecutionContext & {
   state: Record<string, any>;
-  getCurrentTime: Function;
-  fastForward: Function;
   evaluate: Function;
   executeBlock: Function;
   updateState: Function;
@@ -143,7 +143,7 @@ export class Executor {
   [key: string]: any; // Allow dynamic method access
   private frames: Frame[] = [];
   private location: Location | null = null;
-  private time: number = 0;
+  public time: number = 0;
   private timePerFrame: number;
   private totalLoopIterations = 0;
   private maxTotalLoopIterations = 0;
@@ -1258,11 +1258,8 @@ export class Executor {
 
   public getExecutionContext(): ExecutionContext {
     return {
+      ...createBaseExecutionContext.call(this),
       state: this.externalState,
-      fastForward: (n: number) => {
-        this.time += n;
-      },
-      getCurrentTime: () => this.time,
       executeBlock: this.executeBlock.bind(this),
       evaluate: this.evaluate.bind(this),
       updateState: this.updateState.bind(this),
