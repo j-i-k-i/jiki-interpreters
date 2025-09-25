@@ -1,8 +1,7 @@
 import type { Executor } from "../executor";
-import type { FunctionCallExpression} from "../expression";
-import { MethodCallExpression } from "../expression";
+import type { FunctionCallExpression } from "../expression";
 import { FunctionCallTypeMismatchError, isRuntimeError, LogicError } from "../error";
-import type { Arity} from "../functions";
+import type { Arity } from "../functions";
 import { isCallable } from "../functions";
 import type {
   EvaluationResult,
@@ -10,9 +9,8 @@ import type {
   EvaluationResultFunctionLookupExpression,
 } from "../evaluation-result";
 import { isNumber } from "../checks";
-import { cloneDeep } from "lodash";
-import type { JikiObject} from "../jikiObjects";
-import { JikiString, unwrapJikiObject, wrapJSToJikiObject } from "../jikiObjects";
+import type { JikiObject } from "../jikiObjects";
+import { unwrapJikiObject } from "../jikiObjects";
 import type { Location } from "../location";
 import { CustomFunctionError } from "../interpreter";
 

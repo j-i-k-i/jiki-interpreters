@@ -4,7 +4,6 @@ import { formatPyObject } from "./helpers";
 import type { AssignmentStatement } from "../statement";
 import { describeExpression } from "./describeSteps";
 import type { FrameWithResult } from "../frameDescribers";
-import { PythonFrame } from "../frameDescribers";
 
 export function describeAssignmentStatement(frame: FrameWithResult, context: DescriptionContext): Description {
   const statement = frame.context as AssignmentStatement;

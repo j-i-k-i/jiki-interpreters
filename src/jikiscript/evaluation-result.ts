@@ -1,7 +1,5 @@
 import type { Callable } from "./functions";
 import type * as JikiTypes from "./jikiObjects";
-import { ChangeElementStatement } from "./statement";
-import type { TokenType } from "./token";
 
 export interface EvaluationResultFunctionCallStatement {
   type: "FunctionCallStatement";

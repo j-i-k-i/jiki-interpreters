@@ -1,6 +1,6 @@
 import type { Executor } from "../executor";
 import type { MethodCallStatement } from "../statement";
-import type { EvaluationResultMethodCallStatement, EvaluationResultMethodCallExpression } from "../evaluation-result";
+import type { EvaluationResultMethodCallStatement } from "../evaluation-result";
 
 export function executeMethodCallStatement(executor: Executor, statement: MethodCallStatement): void {
   executor.executeFrame<EvaluationResultMethodCallStatement>(statement, () => {

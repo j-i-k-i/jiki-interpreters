@@ -6,7 +6,6 @@ import type {
 } from "../evaluation-result";
 import type { Executor } from "../executor";
 import type { InstantiationExpression } from "../expression";
-import { BinaryExpression } from "../expression";
 import * as JikiTypes from "../jikiObjects";
 
 // Add UnsetPropertiesError

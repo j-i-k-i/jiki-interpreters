@@ -1,12 +1,6 @@
-import { marked } from "marked";
 import { deepTrim } from "./describers/helpers";
 import type { Frame, Description, DescriptionContext } from "../shared/frames";
-import { FrameExecutionStatus } from "../shared/frames";
-import type {
-  EvaluationResult,
-  EvaluationResultChangeVariableStatement,
-  EvaluationResultIfStatement,
-} from "./evaluation-result";
+import type { EvaluationResult } from "./evaluation-result";
 import type { Statement } from "./statement";
 import type { Expression } from "./expression";
 import { describeIfStatement } from "./describers/describeIfStatement";

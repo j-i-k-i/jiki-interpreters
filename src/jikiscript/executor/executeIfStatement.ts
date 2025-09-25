@@ -1,7 +1,6 @@
 import type { EvaluationResultIfStatement } from "../evaluation-result";
 import type { Executor } from "../executor";
-import type { Expression} from "../expression";
-import { FunctionCallExpression } from "../expression";
+import type { Expression } from "../expression";
 import type { IfStatement } from "../statement";
 
 export function executeIfStatement(executor: Executor, statement: IfStatement) {
@@ -14,7 +13,9 @@ export function executeIfStatement(executor: Executor, statement: IfStatement) {
     return;
   }
 
-  if (statement.elseBranch === null) {return;}
+  if (statement.elseBranch === null) {
+    return;
+  }
   executor.executeStatement(statement.elseBranch);
 }
 

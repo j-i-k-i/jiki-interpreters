@@ -1,15 +1,10 @@
 import { LogicError } from "../error";
-import type {
-  EvaluationResultGetterExpression} from "../evaluation-result";
-import {
-  EvaluationResult,
-  EvaluationResultMethodCallExpression,
-} from "../evaluation-result";
+import type { EvaluationResultGetterExpression } from "../evaluation-result";
+import { EvaluationResult, EvaluationResultMethodCallExpression } from "../evaluation-result";
 import type { Executor } from "../executor";
-import type { AccessorExpression} from "../expression";
+import type { AccessorExpression } from "../expression";
 import { MethodCallExpression } from "../expression";
 import * as Jiki from "../jikiObjects";
-import { guardArityOnCallExpression } from "./executeFunctionCallExpression";
 
 export function executeGetterExpression(
   executor: Executor,
