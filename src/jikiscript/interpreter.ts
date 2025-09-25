@@ -287,7 +287,7 @@ export class Interpreter {
     };
   }
 
-  public evaluateExpression(expression: string, ...args: any[]): EvaluateFunctionResult {
+  public evaluateExpression(expression: string, ..._args: any[]): EvaluateFunctionResult {
     // Create a new parser with wrapTopLevelStatements set to false
     // and use it to generate the calling statements.
     const callingStatements = new Parser(

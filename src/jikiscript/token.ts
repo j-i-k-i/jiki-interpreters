@@ -1,4 +1,4 @@
-import { Location } from "./location";
+import type { Location } from "./location";
 import type { SomethingWithLocation } from "./interpreter";
 
 const StatementKeywordTokens = [

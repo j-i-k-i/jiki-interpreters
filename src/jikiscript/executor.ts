@@ -563,7 +563,7 @@ export class Executor {
 
     const counterVariableName = this.retrieveCounterVariableNameForLoop(statement);
 
-    if (iterable.jikiObject?.value.length === 0) {
+    if (iterable.jikiObject.value.length === 0) {
       this.executeFrame<EvaluationResultForeachStatement>(statement, () => {
         return {
           type: "ForeachStatement",

@@ -590,7 +590,7 @@ export class Parser {
     const eachToken = this.consume("EACH", "MissingEachAfterForKeyword");
     return this.foreachStatement(forToken, eachToken);
   }
-  private foreachStatement(forToken: Token, eachToken: Token): Statement {
+  private foreachStatement(forToken: Token, _eachToken: Token): Statement {
     const elementName = this.consume("IDENTIFIER", "MissingElementNameAfterForeachKeyword");
     let secondElementName: Token | undefined;
     if (this.match("COMMA")) {
@@ -705,7 +705,7 @@ export class Parser {
     const expr = this.or();
 
     if (this.match("TO")) {
-      const operator = this.previous();
+      this.previous(); // consume the TO operator
       const value = this.or();
 
       if (expr instanceof GetElementExpression) {
