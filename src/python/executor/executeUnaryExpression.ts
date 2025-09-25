@@ -11,7 +11,7 @@ export function executeUnaryExpression(executor: Executor, expression: UnaryExpr
 
   return {
     type: "UnaryExpression",
-    right: rightResult,
+    operand: rightResult,
     jikiObject: result,
     immutableJikiObject: result.clone(),
   } as any;

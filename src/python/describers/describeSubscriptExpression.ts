@@ -1,27 +1,34 @@
-import type { SubscriptExpression } from "../expression";
+import type { Expression, SubscriptExpression } from "../expression";
 import type { EvaluationResultSubscriptExpression } from "../evaluation-result";
 import { PyNumber } from "../jikiObjects";
+import { formatPyObject } from "./helpers";
 
 export function describeSubscriptExpression(
-  expression: SubscriptExpression,
+  expression: Expression,
   result: EvaluationResultSubscriptExpression
 ): string[] {
-  const objectDesc = result.object.jikiObject.toString();
+  const subscriptExpr = expression as SubscriptExpression;
+  const objectDesc = formatPyObject(result.object.immutableJikiObject!);
+  const indexDesc = formatPyObject(result.index.immutableJikiObject!);
+  const elementDesc = formatPyObject(result.immutableJikiObject!);
 
   // Special case for integer indices (most common)
   if (result.index.jikiObject instanceof PyNumber && result.index.jikiObject.isInteger()) {
     const index = result.index.jikiObject.value;
-    const elementDesc = result.jikiObject.toString();
 
     if (index < 0) {
-      return [`Access element at index ${index} (counting from the end) of ${objectDesc} to get ${elementDesc}`];
+      return [
+        `<li>Python accessed element at index <code>${index}</code> (counting from the end) of <code>${objectDesc}</code> to get <code>${elementDesc}</code>.</li>`,
+      ];
     } else {
-      return [`Access element at index ${index} of ${objectDesc} to get ${elementDesc}`];
+      return [
+        `<li>Python accessed element at index <code>${index}</code> of <code>${objectDesc}</code> to get <code>${elementDesc}</code>.</li>`,
+      ];
     }
   }
 
   // General case for expression indices
-  const indexDesc = result.index.jikiObject.toString();
-  const elementDesc = result.jikiObject.toString();
-  return [`Access element at index ${indexDesc} of ${objectDesc} to get ${elementDesc}`];
+  return [
+    `<li>Python accessed element at index <code>${indexDesc}</code> of <code>${objectDesc}</code> to get <code>${elementDesc}</code>.</li>`,
+  ];
 }

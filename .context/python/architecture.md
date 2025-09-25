@@ -38,9 +38,32 @@ Modular executor architecture with dedicated modules for each AST node type. Mai
 - **Lazy description generation**: Frames include a `generateDescription()` function instead of pre-computed descriptions, deferring expensive string generation until needed
 - **Test-only augmentation**: In test environments (`NODE_ENV=test`), frames are augmented with `variables` and `description` fields for backward compatibility
 
-### 4. Describers (`src/python/describers/`)
+### 4. Frame Describers (`src/python/frameDescribers.ts` & `src/python/describers/`)
 
-Generate human-readable descriptions for all Python execution steps including literals, arithmetic, logical operations, and control flow.
+**Modular Description System** (Aligned with JavaScript pattern as of 2025-01)
+
+- **Central Dispatcher**: `frameDescribers.ts` acts as the main dispatch system for frame descriptions
+- **Individual Describers**: Each AST node type has its own describer file in `src/python/describers/`
+- **Description Format**: Returns structured `Description` objects with:
+  - `result`: HTML-formatted summary of what happened
+  - `steps`: Array of HTML-formatted step-by-step explanations
+- **Lazy Generation**: Descriptions are generated on-demand via `generateDescription()` functions
+- **Immutable State**: Always uses `immutableJikiObject` for consistent point-in-time snapshots
+
+**Describer Files**:
+
+- `describeAssignmentStatement.ts` - Variable assignments and list element assignments
+- `describeExpressionStatement.ts` - Expression evaluation descriptions
+- `describeIfStatement.ts` - Conditional execution descriptions
+- `describeBlockStatement.ts` - Block statement descriptions
+- `describeForInStatement.ts` - For loop iteration descriptions
+- `describeBreakStatement.ts` - Loop break descriptions
+- `describeContinueStatement.ts` - Loop continue descriptions
+- `describeBinaryExpression.ts` - Binary operations with short-circuit support
+- `describeUnaryExpression.ts` - Unary operations (negation, NOT)
+- `describeSubscriptExpression.ts` - List/string indexing descriptions
+- `describeSteps.ts` - Helper for describing expression evaluation steps
+- `helpers.ts` - Formatting utilities for Python objects
 
 ### 5. Environment (`src/python/environment.ts`)
 

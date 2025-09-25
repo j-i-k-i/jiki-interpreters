@@ -91,6 +91,7 @@ For everything in here, base your work in the JikiScript interpreter.
 - [x] Ensure nested list work. Look at JikiScript implementation for guidance. Follow Python rules for how this should work.
 
 - [x] Add a for in loop. Look at the JikiScript implementation.
+- [x] Add proper descriptions support to python liek we have in JikiScript. None of this "generateDescription" method nonsense. Proper describers that work properly like JikiScript.
 - [ ] Add a while loop. Look at the JavaScript implementation.
 - [ ] Add fstrings
 - [ ] Don't allow statements that don't actually do anything. For example, a statement that is just a variable. Or a grouping expression that doesn't have assignment. Add a TOOD that you will need to modify this for calling functions (which should just be allowed by themselves) later. Look at how this works in JikiScript as there is a specific type for it.
