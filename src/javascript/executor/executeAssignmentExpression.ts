@@ -2,8 +2,7 @@ import type { Executor } from "../executor";
 import { MemberExpression } from "../expression";
 import type { AssignmentExpression } from "../expression";
 import type { EvaluationResultAssignmentExpression } from "../evaluation-result";
-import { JSArray, JSUndefined, JSDictionary, JSString, JSNumber } from "../jikiObjects";
-import type { Token } from "../token";
+import { JSArray, JSDictionary, JSString, JSNumber } from "../jikiObjects";
 
 export function executeAssignmentExpression(
   executor: Executor,

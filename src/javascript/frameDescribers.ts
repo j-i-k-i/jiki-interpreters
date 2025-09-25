@@ -1,10 +1,5 @@
 import type { Frame, DescriptionContext, Description } from "../shared/frames";
-import type {
-  EvaluationResult,
-  EvaluationResultExpressionStatement,
-  EvaluationResultVariableDeclaration,
-  EvaluationResultIfStatement,
-} from "./evaluation-result";
+import type { EvaluationResult } from "./evaluation-result";
 import type { Statement } from "./statement";
 import type { Expression } from "./expression";
 import { describeExpressionStatement } from "./describers/describeExpressionStatement";

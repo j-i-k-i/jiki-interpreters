@@ -1,5 +1,5 @@
 import { Environment } from "./environment";
-import { SyntaxError } from "./error";
+// import { SyntaxError } from "./error";
 import type { Expression } from "./expression";
 import {
   LiteralExpression,
@@ -15,7 +15,6 @@ import type { Statement } from "./statement";
 import {
   ExpressionStatement,
   AssignmentStatement,
-  PrintStatement,
   IfStatement,
   BlockStatement,
   ForInStatement,
@@ -23,7 +22,7 @@ import {
   ContinueStatement,
 } from "./statement";
 import type { EvaluationResult } from "./evaluation-result";
-import { createPyObject, PyString, type JikiObject } from "./jikiObjects";
+import type { JikiObject } from "./jikiObjects";
 import { TIME_SCALE_FACTOR, type Frame, type FrameExecutionStatus, type TestAugmentedFrame } from "../shared/frames";
 import { type ExecutionContext as SharedExecutionContext } from "../shared/interfaces";
 import { createBaseExecutionContext } from "../shared/executionContext";

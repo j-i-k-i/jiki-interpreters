@@ -1,6 +1,5 @@
 import type { Executor } from "../executor";
 import type { ForStatement } from "../statement";
-import type { EvaluationResult } from "../evaluation-result";
 import { Environment } from "../environment";
 import { VariableDeclaration } from "../statement";
 

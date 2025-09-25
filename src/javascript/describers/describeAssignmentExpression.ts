@@ -2,7 +2,6 @@ import type { AssignmentExpression } from "../expression";
 import { MemberExpression } from "../expression";
 import type { EvaluationResultAssignmentExpression } from "../evaluation-result";
 import { formatJSObject } from "../helpers";
-import type { Token } from "../token";
 
 export function describeAssignmentExpression(
   expression: AssignmentExpression,

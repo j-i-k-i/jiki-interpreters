@@ -4,7 +4,7 @@ import type { ForInStatement } from "../statement";
 import type { EvaluationResultForInStatement } from "../executor/executeForInStatement";
 import type { FrameWithResult } from "../frameDescribers";
 
-export function describeForInStatement(frame: FrameWithResult, context: DescriptionContext): Description {
+export function describeForInStatement(frame: FrameWithResult, _context: DescriptionContext): Description {
   const statement = frame.context as ForInStatement;
   const frameResult = frame.result as EvaluationResultForInStatement;
 

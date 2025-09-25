@@ -1,7 +1,7 @@
 import type { EvaluationResultUnaryExpression } from "../evaluation-result";
 import type { UnaryExpression } from "../expression";
 import type { DescriptionContext } from "../../shared/frames";
-import { codeTag, formatJSObject } from "../helpers";
+import { codeTag } from "../helpers";
 import { describeExpression } from "./describeSteps";
 import type * as JS from "../jikiObjects";
 

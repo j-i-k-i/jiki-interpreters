@@ -1,7 +1,7 @@
 import type { Description, DescriptionContext, FrameWithResult } from "../../shared/frames";
 import type { BlockStatement } from "../statement";
 
-export function describeBlockStatement(frame: FrameWithResult, context: DescriptionContext): Description {
+export function describeBlockStatement(frame: FrameWithResult, _context: DescriptionContext): Description {
   const blockStatement = frame.context as BlockStatement;
   const statementCount = blockStatement.statements.length;
 

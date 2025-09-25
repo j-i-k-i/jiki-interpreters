@@ -1,5 +1,4 @@
 import { Environment } from "./environment";
-import { SyntaxError } from "./error";
 import type { Expression } from "./expression";
 import type { LanguageFeatures } from "./interfaces";
 import {
@@ -26,7 +25,7 @@ import {
   WhileStatement,
 } from "./statement";
 import type { EvaluationResult } from "./evaluation-result";
-import { createJSObject, type JikiObject } from "./jikiObjects";
+import type { JikiObject } from "./jikiObjects";
 import { translate } from "./translator";
 import { TIME_SCALE_FACTOR, type Frame, type FrameExecutionStatus } from "../shared/frames";
 import { type ExecutionContext as SharedExecutionContext } from "../shared/interfaces";
