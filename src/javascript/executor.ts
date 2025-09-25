@@ -29,6 +29,8 @@ import type { EvaluationResult } from "./evaluation-result";
 import { createJSObject, type JikiObject } from "./jikiObjects";
 import { translate } from "./translator";
 import { TIME_SCALE_FACTOR, type Frame, type FrameExecutionStatus } from "../shared/frames";
+import { type ExecutionContext as SharedExecutionContext } from "../shared/interfaces";
+import { createBaseExecutionContext } from "../shared/executionContext";
 import { describeFrame } from "./frameDescribers";
 import cloneDeep from "lodash.clonedeep";
 
@@ -51,9 +53,9 @@ import { executeArrayExpression } from "./executor/executeArrayExpression";
 import { executeMemberExpression } from "./executor/executeMemberExpression";
 import { executeDictionaryExpression } from "./executor/executeDictionaryExpression";
 
-// Simple execution context for JavaScript stdlib
-export type ExecutionContext = {
-  // Will be expanded as needed
+// Execution context for JavaScript stdlib
+export type ExecutionContext = SharedExecutionContext & {
+  // Additional JavaScript-specific properties can be added here
 };
 
 export type RuntimeErrorType =
@@ -95,7 +97,7 @@ export type ExecutorResult = {
 export class Executor {
   private frames: Frame[] = [];
   private location: Location | null = null;
-  private time: number = 0;
+  public time: number = 0;
   private timePerFrame: number = 1;
   public environment: Environment;
   public languageFeatures: LanguageFeatures;
@@ -330,6 +332,6 @@ export class Executor {
 
   // Get execution context for stdlib functions
   public getExecutionContext(): ExecutionContext {
-    return {};
+    return createBaseExecutionContext.call(this);
   }
 }

@@ -19,3 +19,8 @@ export class DisabledLanguageFeatureError extends Error {
     this.name = "DisabledLanguageFeatureError";
   }
 }
+
+export interface ExecutionContext {
+  fastForward: (milliseconds: number) => void;
+  getCurrentTimeInMs: () => number;
+}

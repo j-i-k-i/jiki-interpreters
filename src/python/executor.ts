@@ -16,6 +16,8 @@ import { ExpressionStatement, AssignmentStatement, PrintStatement, IfStatement, 
 import type { EvaluationResult } from "./evaluation-result";
 import { createPyObject, type JikiObject } from "./jikiObjects";
 import { TIME_SCALE_FACTOR, type Frame, type FrameExecutionStatus, type TestAugmentedFrame } from "../shared/frames";
+import { type ExecutionContext as SharedExecutionContext } from "../shared/interfaces";
+import { createBaseExecutionContext } from "../shared/executionContext";
 import type { LanguageFeatures } from "./interfaces";
 import cloneDeep from "lodash.clonedeep";
 
@@ -31,6 +33,11 @@ import { executeIfStatement } from "./executor/executeIfStatement";
 import { executeBlockStatement } from "./executor/executeBlockStatement";
 import { executeListExpression } from "./executor/executeListExpression";
 import { executeSubscriptExpression } from "./executor/executeSubscriptExpression";
+
+// Execution context for Python stdlib (future use)
+export type ExecutionContext = SharedExecutionContext & {
+  // Additional Python-specific properties can be added here
+};
 
 export type RuntimeErrorType =
   | "InvalidBinaryExpression"
@@ -65,7 +72,7 @@ export type ExecutorResult = {
 export class Executor {
   private frames: Frame[] = [];
   private location: Location | null = null;
-  private time: number = 0;
+  public time: number = 0;
   private timePerFrame: number = 1;
   public environment: Environment;
   public languageFeatures: LanguageFeatures;
@@ -301,5 +308,10 @@ export class Executor {
 
   public error(type: RuntimeErrorType, location: Location, context?: any): never {
     throw new RuntimeError(`${type}: ${JSON.stringify(context)}`, location, type, context);
+  }
+
+  // Get execution context for stdlib functions
+  public getExecutionContext(): ExecutionContext {
+    return createBaseExecutionContext.call(this);
   }
 }
