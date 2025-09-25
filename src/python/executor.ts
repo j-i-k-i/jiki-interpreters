@@ -29,6 +29,7 @@ import { type ExecutionContext as SharedExecutionContext } from "../shared/inter
 import { createBaseExecutionContext } from "../shared/executionContext";
 import type { LanguageFeatures } from "./interfaces";
 import cloneDeep from "lodash.clonedeep";
+import { describeFrame, PythonFrame } from "./frameDescribers";
 
 // Import individual executors
 import { executeLiteralExpression } from "./executor/executeLiteralExpression";
@@ -227,7 +228,7 @@ export class Executor {
       location = Location.unknown;
     }
 
-    const frame: Frame = {
+    const frame: PythonFrame = {
       code: location.toCode(this.sourceCode),
       line: location.line,
       status,
@@ -235,7 +236,7 @@ export class Executor {
       error,
       time: this.time,
       timeInMs: Math.round(this.time / TIME_SCALE_FACTOR),
-      generateDescription: () => this.generateDescription(frame),
+      generateDescription: () => describeFrame(frame),
       context: context,
     };
 
@@ -243,93 +244,11 @@ export class Executor {
     if (process.env.NODE_ENV === "test" && process.env.RUNNING_BENCHMARKS !== "true") {
       (frame as TestAugmentedFrame).variables = cloneDeep(this.getVariables());
       // Generate description immediately for testing
-      (frame as TestAugmentedFrame).description = this.generateDescription(frame);
+      (frame as TestAugmentedFrame).description = describeFrame(frame);
     }
 
     this.frames.push(frame);
     this.time += this.timePerFrame;
-  }
-
-  private generateDescription(frame: Frame): string {
-    if (frame.status === "ERROR") {
-      return `Error: ${frame.error?.message || "Unknown error"}`;
-    }
-
-    if (frame.result) {
-      const result = frame.result;
-
-      // Handle different statement types
-      switch (result.type) {
-        case "IfStatement":
-          const conditionValue = result.jikiObject.toString();
-          return `Evaluating if condition: ${conditionValue}`;
-
-        case "BlockStatement":
-          return "Executing block statement";
-
-        case "AssignmentStatement":
-          // Check if it's a subscript assignment
-          if ((result as any).target) {
-            const target = (result as any).target;
-            if (target.type === "SubscriptExpression") {
-              const indexValue = (result as any).index?.jikiObject?.toString() || "index";
-              return `Assignment to list element at index ${indexValue}: ${result.jikiObject.toString()}`;
-            }
-          }
-          return `Assignment: ${(result as any).name} = ${result.jikiObject.toString()}`;
-
-        case "ExpressionStatement":
-          // Check if the expression is a unary NOT operation
-          const expr = (result as any).expression;
-          if (expr?.type === "UnaryExpression" && expr?.operator?.type === "NOT") {
-            const operandValue = expr.right?.jikiObject?.toString() || "value";
-            const resultValue = result.jikiObject.toString();
-            return `Applying 'not' operator to ${operandValue}, result: ${resultValue}`;
-          }
-          if (expr?.type === "SubscriptExpression") {
-            const objectValue = expr.object?.jikiObject?.toString() || "list";
-            const indexValue = expr.index?.jikiObject?.toString() || "index";
-            const resultValue = result.jikiObject.toString();
-            return `Accessing ${objectValue}[${indexValue}], result: ${resultValue}`;
-          }
-          // Add quotes for string values
-          const exprValue = result.jikiObject;
-          const exprStr = exprValue instanceof PyString ? `'${exprValue.toString()}'` : exprValue.toString();
-          return `Evaluating expression: ${exprStr}`;
-
-        case "SubscriptExpression":
-          const objectVal = (result as any).object?.jikiObject?.toString() || "list";
-          const indexVal = (result as any).index?.jikiObject?.toString() || "index";
-          const resultVal = result.jikiObject.toString();
-          return `Accessing ${objectVal}[${indexVal}], result: ${resultVal}`;
-
-        case "ForInStatement":
-          const forResult = result as any;
-          if (forResult.iteration === 0) {
-            const iterableObj = forResult.iterable.jikiObject;
-            // Add quotes for strings
-            const iterableStr =
-              iterableObj instanceof PyString ? `'${iterableObj.toString()}'` : iterableObj.toString();
-            return `Starting for loop over ${iterableStr}`;
-          }
-          const currentValue = forResult.currentValue;
-          // Add quotes for string values
-          const valueStr =
-            currentValue instanceof PyString ? `'${currentValue.toString()}'` : currentValue?.toString() || "";
-          return `Iteration ${forResult.iteration}: ${forResult.variableName} = ${valueStr}`;
-
-        case "BreakStatement":
-          return "Breaking out of loop";
-
-        case "ContinueStatement":
-          return "Continuing to next iteration";
-
-        default:
-          return `Evaluating: ${result.jikiObject.toString()}`;
-      }
-    }
-
-    return "Statement executed";
   }
 
   public getVariables(): Record<string, JikiObject> {

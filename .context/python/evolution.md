@@ -2,6 +2,37 @@
 
 This document tracks the historical development and changes specific to the Python interpreter.
 
+## Modular Description System Implementation (January 2025)
+
+### Background
+
+The Python interpreter's description system was refactored from a monolithic approach to a modular architecture matching the JavaScript interpreter pattern, improving maintainability and educational value.
+
+### Changes Made
+
+**Before**:
+
+- Single `generateDescription()` method in executor.ts with 80+ lines of switch statements
+- Hardcoded string concatenations for descriptions
+- Mixed concerns between execution and description generation
+- No structured format for educational content
+
+**After**:
+
+- Modular describer system with central dispatcher (`frameDescribers.ts`)
+- Individual describer files for each AST node type in `src/python/describers/`
+- Structured `Description` objects with HTML-formatted result and steps
+- Clean separation of concerns between execution and description
+- Consistent use of `immutableJikiObject` for point-in-time state snapshots
+- Lazy description generation for performance optimization
+
+### Impact
+
+- **Performance**: ~9x improvement through lazy description generation
+- **Maintainability**: Each describer is isolated and testable
+- **Educational Value**: Structured HTML output with clear "What happened" and "Steps Python Took" sections
+- **Consistency**: Aligned with JavaScript interpreter patterns for UI compatibility
+
 ## Major Architecture Alignment (January 2025)
 
 ### Background

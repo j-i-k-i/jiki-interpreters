@@ -38,6 +38,7 @@ export function executeIfStatement(executor: Executor, statement: IfStatement): 
       type: "IfStatement",
       condition: result,
       jikiObject: result.jikiObject,
+      immutableJikiObject: result.jikiObject.clone(),
     };
   });
 

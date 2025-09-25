@@ -18,9 +18,11 @@ export function executeBlockStatement(executor: Executor, statement: BlockStatem
 
   // If no statements were executed, return PyNone
   if (!lastResult) {
+    const noneObj = new PyNone();
     return {
       type: "BlockStatement",
-      jikiObject: new PyNone(),
+      jikiObject: noneObj,
+      immutableJikiObject: noneObj.clone(),
     };
   }
 
@@ -28,5 +30,6 @@ export function executeBlockStatement(executor: Executor, statement: BlockStatem
   return {
     type: "BlockStatement",
     jikiObject: lastResult.jikiObject,
+    immutableJikiObject: lastResult.immutableJikiObject,
   };
 }

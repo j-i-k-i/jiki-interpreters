@@ -1,5 +1,6 @@
 import { interpret } from "@python/interpreter";
 import type { TestAugmentedFrame } from "@shared/frames";
+import { assertDescriptionContains, assertDescriptionExists } from "../helpers/assertDescription";
 describe("Python If Statements", () => {
   test("executes then branch when condition is true", () => {
     const code = `x = 1
@@ -122,9 +123,12 @@ if True:
     expect(frames.length).toBeGreaterThan(0);
 
     // Check that if frame has proper description
-    const ifFrame = frames.find(f => (f as TestAugmentedFrame).description.includes("if condition"));
+    const ifFrame = frames.find(f => {
+      const desc = (f as TestAugmentedFrame).description;
+      return desc && desc.includes("condition");
+    });
     expect(ifFrame).toBeTruthy();
-    expect((ifFrame as TestAugmentedFrame)?.description).toContain("Evaluating if condition: True");
+    assertDescriptionContains((ifFrame as TestAugmentedFrame).description!, "condition", "True");
   });
 
   test("handles comparison operators as conditions", () => {
