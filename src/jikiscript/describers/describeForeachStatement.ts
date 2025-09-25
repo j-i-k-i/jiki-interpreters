@@ -5,7 +5,7 @@ import * as Jiki from "../jikiObjects";
 import type { ForeachStatement } from "../statement";
 import { addOrdinalSuffix } from "./helpers";
 
-export function describeForeachStatement(frame: FrameWithResult, context: DescriptionContext): Description {
+export function describeForeachStatement(frame: FrameWithResult, _context: DescriptionContext): Description {
   const frameContext = frame.context as ForeachStatement;
   const frameResult = frame.result as EvaluationResultForeachStatement;
 

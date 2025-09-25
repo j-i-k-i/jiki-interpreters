@@ -30,8 +30,8 @@ export function describeMethodCallExpression(
 function generateMethodDescription(
   expression: MethodCallExpression,
   result: EvaluationResultMethodCallExpression,
-  fnName: string,
-  context: DescriptionContext
+  _fnName: string,
+  _context: DescriptionContext
 ) {
   const descriptionTemplate = result.method.description;
   const argsValues = result.args.map(arg => codeTag(formatJikiObject(arg.jikiObject), expression.location));

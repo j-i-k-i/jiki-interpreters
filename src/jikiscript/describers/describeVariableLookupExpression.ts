@@ -6,7 +6,7 @@ import { codeTag, formatJikiObject } from "../helpers";
 export function describeVariableLookupExpression(
   expression: VariableLookupExpression,
   result: EvaluationResultVariableLookupExpression,
-  context: DescriptionContext
+  _context: DescriptionContext
 ) {
   const name = result.name;
   const value = formatJikiObject(result.immutableJikiObject);
