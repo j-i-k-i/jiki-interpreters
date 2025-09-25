@@ -1,7 +1,5 @@
 import type { EvaluationResultGetterExpression } from "../evaluation-result";
-import { EvaluationResultBinaryExpression } from "../evaluation-result";
 import type { AccessorExpression } from "../expression";
-import { BinaryExpression } from "../expression";
 import type { DescriptionContext } from "../../shared/frames";
 import { codeTag } from "../helpers";
 import { describeExpression } from "./describeSteps";

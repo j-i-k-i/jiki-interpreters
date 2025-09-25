@@ -1,10 +1,5 @@
 import type { Frame, DescriptionContext, Description } from "../shared/frames";
-import type {
-  EvaluationResult,
-  EvaluationResultAssignmentStatement,
-  EvaluationResultExpressionStatement,
-} from "./evaluation-result";
-import type { EvaluationResultForInStatement } from "./executor/executeForInStatement";
+import type { EvaluationResult } from "./evaluation-result";
 import type { Statement } from "./statement";
 import type { Expression } from "./expression";
 import { describeAssignmentStatement } from "./describers/describeAssignmentStatement";
@@ -66,10 +61,6 @@ function generateDescription(frame: FrameWithResult, context: DescriptionContext
       result: `<p>Error: ${frame.error?.message || "Unknown error"}</p>`,
       steps: [],
     };
-  }
-
-  if (!frame.result) {
-    return null;
   }
 
   switch (frame.result.type) {

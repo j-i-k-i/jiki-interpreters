@@ -1,10 +1,5 @@
 import type { EvaluationResultUnaryExpression } from "../evaluation-result";
-import {
-  EvaluationResultFullyEvaluatedLogicalExpression,
-  EvaluationResultLogicalExpression,
-} from "../evaluation-result";
 import type { UnaryExpression } from "../expression";
-import { LogicalExpression } from "../expression";
 import type { DescriptionContext } from "../../shared/frames";
 import { codeTag } from "../helpers";
 import { describeExpression } from "./describeSteps";

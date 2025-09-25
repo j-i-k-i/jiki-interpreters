@@ -28,11 +28,11 @@ function generateFunctionDescription(
   fnName: string,
   context: DescriptionContext
 ) {
-  const descriptionTemplate = context.functionDescriptions ? context.functionDescriptions[fnName] || "" : "";
+  const descriptionTemplate = context.functionDescriptions[fnName] || "";
   const argsValues = result.args.map(arg => codeTag(formatJikiObject(arg.jikiObject), expression.location));
   let fnDesc = descriptionTemplate.replace(/\${arg(\d+)}/g, (_, index) => argsValues[index - 1].toString() || "");
 
-  if (result.jikiObject !== null && result.jikiObject !== undefined) {
+  if (result.jikiObject) {
     if (fnDesc) {
       fnDesc = `, which ${fnDesc}. It `;
     } else {

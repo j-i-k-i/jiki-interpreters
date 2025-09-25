@@ -2,7 +2,7 @@ import type { Executor } from "../executor";
 import { RuntimeError } from "../executor";
 import type { SubscriptExpression } from "../expression";
 import type { EvaluationResultSubscriptExpression } from "../evaluation-result";
-import { PyList, PyNumber, PyNone, type JikiObject } from "../jikiObjects";
+import { PyList, PyNumber, PyNone } from "../jikiObjects";
 
 export function executeSubscriptExpression(
   executor: Executor,

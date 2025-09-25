@@ -1,4 +1,3 @@
-import { isArray, isNumber } from "lodash";
 import type {
   EvaluationResult,
   EvaluationResultBinaryExpression,
