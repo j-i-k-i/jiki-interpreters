@@ -1,4 +1,3 @@
-import { isArray } from "./checks";
 import { FunctionCallTypeMismatchError } from "./error";
 import type { ExecutionContext, ExternalFunction } from "./executor";
 import * as Jiki from "./jikiObjects";

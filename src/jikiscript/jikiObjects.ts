@@ -1,8 +1,6 @@
-import { exec } from "child_process";
 import { isArray, isString } from "./checks";
-import { EvaluationResult } from "./evaluation-result";
 import type { ExecutionContext } from "./executor";
-import type { Arity} from "./functions";
+import type { Arity } from "./functions";
 import { UserDefinedMethod } from "./functions";
 import { UnsetPropertyError } from "./executor/executeInstantiationExpression";
 import { JikiObject as BaseJikiObject } from "../shared/jikiObject";

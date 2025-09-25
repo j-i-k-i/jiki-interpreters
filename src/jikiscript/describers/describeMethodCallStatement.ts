@@ -1,6 +1,5 @@
 import { toSentence } from "@utils/toSentence";
 import type { EvaluationResultMethodCallStatement } from "../evaluation-result";
-import type { MethodCallExpression } from "../expression";
 import type { DescriptionContext, FrameWithResult } from "../../shared/frames";
 import { codeTag, formatJikiObject } from "../helpers";
 import type { MethodCallStatement } from "../statement";

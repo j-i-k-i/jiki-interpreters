@@ -1,5 +1,5 @@
 import type { Arity } from "./functions";
-import { ReturnValue, UserDefinedFunction, isCallable } from "./functions";
+import { ReturnValue, isCallable } from "./functions";
 import { Environment } from "./environment";
 import { RuntimeError, type RuntimeErrorType, isRuntimeError, LogicError } from "./error";
 import type {
@@ -48,11 +48,8 @@ import type { Token } from "./token";
 import type {
   EvaluationResult,
   EvaluationResultBinaryExpression,
-  EvaluationResultBreakStatement,
   EvaluationResultFunctionCallExpression,
   EvaluationResultChangeElementStatement,
-  EvaluationResultChangeVariableStatement,
-  EvaluationResultContinueStatement,
   EvaluationResultDictionaryExpression,
   EvaluationResultExpression,
   EvaluationResultForeachStatement,
@@ -62,22 +59,15 @@ import type {
   EvaluationResultListExpression,
   EvaluationResultLiteralExpression,
   EvaluationResultLogicalExpression,
-  EvaluationResultLogStatement,
   EvaluationResultRepeatStatement,
-  EvaluationResultReturnStatement,
   EvaluationResultSetElementExpression,
-  EvaluationResultSetVariableStatement,
   EvaluationResultUnaryExpression,
   EvaluationResultVariableLookupExpression,
-  EvaluationResultFunctionCallStatement,
   EvaluationResultMethodCallExpression,
-  EvaluationResultMethodCallStatement,
   EvaluationResultInstantiationExpression,
   EvaluationResultClassLookupExpression,
   EvaluationResultGetterExpression,
-  EvaluationResultChangePropertyStatement,
   EvaluationResultThisExpression,
-  EvaluationResultSetPropertyStatement,
 } from "./evaluation-result";
 import { translate } from "./translator";
 import cloneDeep from "lodash.clonedeep";
@@ -94,7 +84,6 @@ import didYouMean from "didyoumean";
 import { formatJikiObject } from "./helpers";
 import { executeBinaryExpression } from "./executor/executeBinaryExpression";
 import * as Jiki from "./jikiObjects";
-import { isBoolean, isNumber, isString } from "./checks";
 import { executeMethodCallExpression } from "./executor/executeMethodCallExpression";
 import { executeInstantiationExpression } from "./executor/executeInstantiationExpression";
 import { executeGetterExpression } from "./executor/executeGetterExpression";

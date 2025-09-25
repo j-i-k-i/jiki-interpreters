@@ -43,7 +43,7 @@ export class Environment {
       if (this.enclosing !== null) {
         return this.enclosing.get(name);
       }
-    } catch (e) {
+    } catch {
       // Silently ignore error and return undefined
     }
   }
