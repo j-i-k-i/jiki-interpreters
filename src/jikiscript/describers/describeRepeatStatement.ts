@@ -1,11 +1,8 @@
-import { isString } from "../checks";
 import type { EvaluationResultRepeatStatement } from "../evaluation-result";
-import { EvaluationResultForeachStatement } from "../evaluation-result";
 import type { Description, DescriptionContext, FrameWithResult } from "../../shared/frames";
 import { codeTag, formatJikiObject } from "../helpers";
 import * as Jiki from "../jikiObjects";
 import type { RepeatStatement } from "../statement";
-import { ForeachStatement } from "../statement";
 import { describeExpression } from "./describeSteps";
 import { addOrdinalSuffix } from "./helpers";
 

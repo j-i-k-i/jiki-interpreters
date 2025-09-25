@@ -1,4 +1,3 @@
-import { isString } from "../checks";
 import type { EvaluationResultForeachStatement } from "../evaluation-result";
 import type { Description, DescriptionContext, FrameWithResult } from "../../shared/frames";
 import { codeTag, formatJikiObject } from "../helpers";
@@ -12,9 +11,8 @@ export function describeForeachStatement(frame: FrameWithResult, context: Descri
 
   if (Jiki.unwrapJikiObject(frameResult.iterable.jikiObject)?.length === 0) {
     return describeEmptyList(frameResult);
-  } 
-    return describePopulatedList(frameContext, frameResult);
-  
+  }
+  return describePopulatedList(frameContext, frameResult);
 }
 function describeEmptyList(frameResult: EvaluationResultForeachStatement): Description {
   const type = frameResult.iterable.jikiObject instanceof Jiki.JikiString ? "string" : "list";

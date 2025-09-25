@@ -1,9 +1,4 @@
-import type {
-  EvaluationResultChangeElementStatement,
-  EvaluationResultExpression} from "../evaluation-result";
-import {
-  EvaluationResult
-} from "../evaluation-result";
+import type { EvaluationResultChangeElementStatement, EvaluationResultExpression } from "../evaluation-result";
 import type { VariableLookupExpression } from "../expression";
 import type { Description, DescriptionContext, FrameWithResult } from "../../shared/frames";
 import { codeTag, formatJikiObject } from "../helpers";
@@ -18,9 +13,8 @@ export function describeChangeElementStatement(frame: FrameWithResult, context: 
 
   if (frameResult.object.jikiObject instanceof Jiki.List) {
     return describeChangeElementStatementList(frameContext, frameResult, context);
-  } 
-    return describeChangeElementStatementDictionary(frameContext, frameResult, context);
-  
+  }
+  return describeChangeElementStatementDictionary(frameContext, frameResult, context);
 }
 
 function describeChangeElementStatementList(

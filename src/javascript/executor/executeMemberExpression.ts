@@ -12,7 +12,7 @@ function useProperty(obj: JikiObject, propertyName: string, executor: Executor, 
     return null;
   }
 
-  const property = stdlib[stdlibType]?.properties?.[propertyName];
+  const property = stdlib[stdlibType].properties[propertyName];
   if (!property) {
     return null;
   }
@@ -39,7 +39,7 @@ function useMethod(obj: JikiObject, methodName: string, executor: Executor, loca
     return null;
   }
 
-  const method = stdlib[stdlibType]?.methods?.[methodName];
+  const method = stdlib[stdlibType].methods[methodName];
   if (!method) {
     return null;
   }

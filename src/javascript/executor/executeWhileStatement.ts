@@ -25,9 +25,7 @@ export function executeWhileStatement(executor: Executor, statement: WhileStatem
       }
 
       // Execute body - this generates its own frames
-      if (statement.body) {
-        executor.executeStatement(statement.body);
-      }
+      executor.executeStatement(statement.body);
     }
   } finally {
     executor.environment = previous;

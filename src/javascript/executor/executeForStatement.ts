@@ -41,9 +41,7 @@ export function executeForStatement(executor: Executor, statement: ForStatement)
       }
 
       // Execute body - this generates its own frames
-      if (statement.body) {
-        executor.executeStatement(statement.body);
-      }
+      executor.executeStatement(statement.body);
 
       // Execute update (if present) - this should generate a frame
       if (statement.update) {

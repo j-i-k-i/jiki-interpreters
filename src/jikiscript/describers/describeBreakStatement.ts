@@ -1,10 +1,4 @@
-import { isString } from "../checks";
-import { EvaluationResultForeachStatement, EvaluationResultRepeatStatement } from "../evaluation-result";
 import type { Description, DescriptionContext, FrameWithResult } from "../../shared/frames";
-import { codeTag, formatJikiObject } from "../helpers";
-import { ForeachStatement, RepeatStatement } from "../statement";
-import { describeExpression } from "./describeSteps";
-import { addOrdinalSuffix } from "./helpers";
 
 export function describeBreakStatement(_fr: FrameWithResult, _dc: DescriptionContext): Description {
   const result = `<p>This line immediately exited the loop.</p>`;
