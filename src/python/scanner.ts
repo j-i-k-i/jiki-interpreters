@@ -133,6 +133,8 @@ export class Scanner {
   private scanToken(): void {
     const c = this.advance();
 
+    // TypeScript doesn't realize that Record lookups can return undefined for missing keys
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (this.tokenizers[c]) {
       this.tokenizers[c].call(this);
     } else if (this.isDigit(c)) {

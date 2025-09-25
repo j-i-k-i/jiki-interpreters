@@ -37,6 +37,8 @@ function describeFullExpression(
   result: EvaluationResultFullyEvaluatedLogicalExpression,
   context: DescriptionContext
 ) {
+  // TypeScript thinks right can't be null but it could be undefined when short-circuited
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   if (result.right === null) {
     return [];
   }

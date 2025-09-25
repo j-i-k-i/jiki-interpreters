@@ -102,6 +102,8 @@ export function executeFunctionCallExpression(
   return {
     type: "FunctionCallExpression",
     jikiObject: jikiObject,
+    // jikiObject can be undefined for void functions
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     immutableJikiObject: jikiObject?.clone(),
     callee,
     args,

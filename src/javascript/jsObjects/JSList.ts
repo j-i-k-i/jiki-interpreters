@@ -34,6 +34,8 @@ export class JSArray extends JikiObject {
     const elementStrings: string[] = [];
     for (let i = 0; i < this.elements.length; i++) {
       const elem = this.elements[i];
+      // Sparse arrays can have undefined elements that need special handling
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       if (elem === undefined) {
         elementStrings.push("undefined");
       } else if (elem instanceof JSString) {

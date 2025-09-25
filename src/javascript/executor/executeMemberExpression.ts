@@ -13,6 +13,8 @@ function useProperty(obj: JikiObject, propertyName: string, executor: Executor, 
   }
 
   const property = stdlib[stdlibType].properties[propertyName];
+  // Checking if property exists in stdlib - necessary as propertyName is dynamic
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   if (!property) {
     return null;
   }
@@ -40,6 +42,8 @@ function useMethod(obj: JikiObject, methodName: string, executor: Executor, loca
   }
 
   const method = stdlib[stdlibType].methods[methodName];
+  // Checking if method exists in stdlib - necessary as methodName is dynamic
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   if (!method) {
     return null;
   }

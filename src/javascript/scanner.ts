@@ -124,6 +124,8 @@ export class Scanner {
     const c = this.advance();
 
     const tokenizer = this.tokenizers[c];
+    // TypeScript doesn't realize that Record lookups can return undefined for missing keys
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (tokenizer) {
       tokenizer.bind(this)();
     } else {

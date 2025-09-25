@@ -44,6 +44,8 @@ export function executeGetterExpression(
   return {
     type: "GetterExpression",
     jikiObject: value,
+    // value can be undefined for getters that return nothing
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     immutableJikiObject: value?.clone(),
     object,
   };
