@@ -1,4 +1,4 @@
-import type { Arity} from "./functions";
+import type { Arity } from "./functions";
 import { ReturnValue, UserDefinedFunction, isCallable } from "./functions";
 import { Environment } from "./environment";
 import { RuntimeError, type RuntimeErrorType, isRuntimeError, LogicError } from "./error";
@@ -41,11 +41,9 @@ import type {
   ContinueStatement,
   ChangePropertyStatement,
   ClassStatement,
-  SetPropertyStatement} from "./statement";
-import {
-  FunctionCallStatement,
-  MethodCallStatement
+  SetPropertyStatement,
 } from "./statement";
+import { FunctionCallStatement, MethodCallStatement } from "./statement";
 import type { Token } from "./token";
 import type {
   EvaluationResult,
@@ -433,10 +431,12 @@ export class Executor {
   public visitChangeElementStatement(statement: ChangeElementStatement): void {
     const obj = this.evaluate(statement.object);
     if (obj.jikiObject instanceof Jiki.List) {
-      this.visitChangeListElementStatement(statement, obj as EvaluationResultListExpression); return;
+      this.visitChangeListElementStatement(statement, obj as EvaluationResultListExpression);
+      return;
     }
     if (obj.jikiObject instanceof Jiki.Dictionary) {
-      this.visitChangeDictionaryElementStatement(statement, obj as EvaluationResultDictionaryExpression); return;
+      this.visitChangeDictionaryElementStatement(statement, obj as EvaluationResultDictionaryExpression);
+      return;
     }
     this.error("InvalidChangeTargetNotModifiable", statement.object.location);
   }
@@ -637,6 +637,7 @@ export class Executor {
     } catch (e) {
       // If we've got a control flow error, don't do anything.
       if (e instanceof BreakFlowControlError) {
+        // Break flow control - handled by outer loop
       }
 
       // Otherwise we have some error that shouldn't be handled here,
@@ -662,6 +663,7 @@ export class Executor {
     } catch (e) {
       // If we've got a control flow error, don't do anything.
       if (e instanceof ContinueFlowControlError) {
+        // Continue flow control - handled by outer loop
       }
 
       // Otherwise we have some error that shouldn't be handled here,
@@ -977,9 +979,15 @@ export class Executor {
   }
 
   public verifyLiteral(value: Jiki.JikiObject, expr: Expression): void {
-    if (value instanceof Jiki.Number) {return;}
-    if (value instanceof Jiki.String) {return;}
-    if (value instanceof Jiki.Boolean) {return;}
+    if (value instanceof Jiki.Number) {
+      return;
+    }
+    if (value instanceof Jiki.String) {
+      return;
+    }
+    if (value instanceof Jiki.Boolean) {
+      return;
+    }
 
     this.guardUncalledFunction(value, expr);
 
@@ -994,7 +1002,9 @@ export class Executor {
   }
 
   public verifyNumber(value: Jiki.JikiObject, expr: Expression): void {
-    if (value instanceof Jiki.Number) {return;}
+    if (value instanceof Jiki.Number) {
+      return;
+    }
 
     this.guardUncalledFunction(value, expr);
 
@@ -1003,7 +1013,9 @@ export class Executor {
     });
   }
   public verifyString(value: Jiki.JikiObject, expr: Expression): void {
-    if (value instanceof Jiki.String) {return;}
+    if (value instanceof Jiki.String) {
+      return;
+    }
     this.guardUncalledFunction(value, expr);
 
     this.error("TypeErrorOperandMustBeStringValue", expr.location, {
@@ -1011,7 +1023,9 @@ export class Executor {
     });
   }
   public verifyBoolean(value: Jiki.JikiObject, expr: Expression): void {
-    if (value instanceof Jiki.Boolean) {return;}
+    if (value instanceof Jiki.Boolean) {
+      return;
+    }
 
     this.error("TypeErrorOperandMustBeBooleanValue", expr.location, {
       value: formatJikiObject(value),
@@ -1187,7 +1201,9 @@ export class Executor {
   }
 
   public addSuccessFrame(location: Location | null, result: EvaluationResult, context?: Statement | Expression): void {
-    if (!this.addSuccessFrames) {return;}
+    if (!this.addSuccessFrames) {
+      return;
+    }
 
     this.addFrame(location, "SUCCESS", result, undefined, context);
   }
@@ -1203,7 +1219,9 @@ export class Executor {
     error?: RuntimeError,
     context?: Statement | Expression
   ): void {
-    if (location === null) {location = Location.unknown;}
+    if (location === null) {
+      location = Location.unknown;
+    }
 
     const frame: Frame = {
       code: location.toCode(this.sourceCode),

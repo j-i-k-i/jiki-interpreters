@@ -1,5 +1,9 @@
 import { isArray, isNumber } from "lodash";
-import type { EvaluationResult, EvaluationResultBinaryExpression, EvaluationResultExpression } from "../evaluation-result";
+import type {
+  EvaluationResult,
+  EvaluationResultBinaryExpression,
+  EvaluationResultExpression,
+} from "../evaluation-result";
 import type { Executor } from "../executor";
 import type { BinaryExpression } from "../expression";
 import * as JikiTypes from "../jikiObjects";
@@ -60,6 +64,7 @@ function handleExpression(
       executor.error("UnexpectedEqualsOperatorForEqualityComparison", expression.location, {
         expression,
       });
+      break;
     default:
       executor.error("InvalidBinaryExpressionOperation", expression.location, {
         expression,

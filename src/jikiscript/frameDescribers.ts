@@ -69,6 +69,7 @@ export function describeFrame(frame: JikiScriptFrame, context?: DescriptionConte
 }
 
 function generateDescription(frame: FrameWithResult, context: DescriptionContext): Description | null {
+  // eslint-disable-next-line @typescript-eslint/switch-exhaustiveness-check
   switch (frame.result.type) {
     case "LogStatement":
       return describeLogStatement(frame, context);
@@ -105,6 +106,9 @@ function generateDescription(frame: FrameWithResult, context: DescriptionContext
 
     case "ContinueStatement":
       return describeContinueStatement(frame, context);
+
+    default:
+      // Handle expression and other types that don't have specific descriptions
+      return null;
   }
-  return null;
 }
