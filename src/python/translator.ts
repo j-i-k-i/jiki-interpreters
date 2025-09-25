@@ -8,7 +8,7 @@ import systemLangPack from "./locales/system/translation.json";
 
 const pythonI18n = createInstance();
 
-pythonI18n.init({
+void pythonI18n.init({
   debug: DEBUG,
   lng: DEFAULT_LANGUAGE,
   initImmediate: false,
@@ -22,7 +22,9 @@ export function getLanguage(): string {
 }
 
 export async function changeLanguage(language: string): Promise<void> {
-  if (pythonI18n.language === language) {return;}
+  if (pythonI18n.language === language) {
+    return;
+  }
 
   await pythonI18n.changeLanguage(language);
 }

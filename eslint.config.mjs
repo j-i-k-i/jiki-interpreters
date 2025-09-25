@@ -5,7 +5,7 @@ import tsParser from '@typescript-eslint/parser';
 export default [
   // Ignore patterns
   {
-    ignores: ["node_modules/**", "dist/**", "build/**", "debug-dict.js", "debug-dict.ts", "vitest.config.ts"]
+    ignores: ["node_modules/**", "dist/**", "build/**", "debug-dict.js", "debug-dict.ts", "vitest.config.ts", "tests/**"]
   },
 
   // Base ESLint recommended config for all files
