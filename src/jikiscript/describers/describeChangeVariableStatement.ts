@@ -1,8 +1,8 @@
-import { EvaluationResultChangeVariableStatement } from "../evaluation-result";
+import type { EvaluationResultChangeVariableStatement } from "../evaluation-result";
 
-import { Description, DescriptionContext, FrameWithResult } from "../../shared/frames";
+import type { Description, DescriptionContext, FrameWithResult } from "../../shared/frames";
 import { codeTag, formatJikiObject } from "../helpers";
-import { ChangeVariableStatement } from "../statement";
+import type { ChangeVariableStatement } from "../statement";
 import { describeExpression } from "./describeSteps";
 
 export function describeChangeVariableStatement(frame: FrameWithResult, context: DescriptionContext): Description {

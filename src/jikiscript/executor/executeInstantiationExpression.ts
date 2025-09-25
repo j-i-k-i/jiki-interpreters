@@ -1,11 +1,12 @@
 import { isNumber } from "lodash";
-import {
+import type {
   EvaluationResultClassLookupExpression,
   EvaluationResultExpression,
   EvaluationResultInstantiationExpression,
 } from "../evaluation-result";
-import { Executor } from "../executor";
-import { BinaryExpression, InstantiationExpression } from "../expression";
+import type { Executor } from "../executor";
+import type { InstantiationExpression } from "../expression";
+import { BinaryExpression } from "../expression";
 import * as JikiTypes from "../jikiObjects";
 
 // Add UnsetPropertiesError

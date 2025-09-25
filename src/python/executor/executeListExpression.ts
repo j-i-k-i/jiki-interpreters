@@ -1,7 +1,8 @@
 import type { Executor } from "../executor";
 import type { ListExpression } from "../expression";
 import type { EvaluationResult } from "../evaluation-result";
-import { PyList, JikiObject } from "../jikiObjects";
+import type { JikiObject } from "../jikiObjects";
+import { PyList } from "../jikiObjects";
 
 export function executeListExpression(executor: Executor, expression: ListExpression): EvaluationResult {
   // Evaluate each element of the list

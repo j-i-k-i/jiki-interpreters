@@ -1,11 +1,13 @@
 import { LogicError } from "../error";
+import type {
+  EvaluationResultGetterExpression} from "../evaluation-result";
 import {
   EvaluationResult,
-  EvaluationResultGetterExpression,
   EvaluationResultMethodCallExpression,
 } from "../evaluation-result";
-import { Executor } from "../executor";
-import { AccessorExpression, MethodCallExpression } from "../expression";
+import type { Executor } from "../executor";
+import type { AccessorExpression} from "../expression";
+import { MethodCallExpression } from "../expression";
 import * as Jiki from "../jikiObjects";
 import { guardArityOnCallExpression } from "./executeFunctionCallExpression";
 
@@ -41,7 +43,7 @@ export function executeGetterExpression(
 
   let value;
   try {
-    value = getter.fn.apply(undefined, [executor.getExecutionContext(), object.jikiObject as Jiki.Instance]);
+    value = getter.fn.apply(undefined, [executor.getExecutionContext(), object.jikiObject]);
   } catch (e: unknown) {
     if (e instanceof LogicError) {
       executor.error("LogicErrorInExecution", expression.location, { message: e.message });

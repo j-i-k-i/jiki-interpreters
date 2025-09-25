@@ -41,9 +41,9 @@ export function createJSObject(value: any): JikiObject {
       map.set(key, createJSObject(val));
     }
     return new JSDictionary(map);
-  } else {
+  } 
     throw new Error(`Cannot create JSObject for value: ${value}`);
-  }
+  
 }
 
 // Helper function to unwrap JSObjects to JavaScript values

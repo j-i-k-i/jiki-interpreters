@@ -128,7 +128,7 @@ if True:
       return desc && desc.includes("condition");
     });
     expect(ifFrame).toBeTruthy();
-    assertDescriptionContains((ifFrame as TestAugmentedFrame).description!, "condition", "True");
+    assertDescriptionContains((ifFrame as TestAugmentedFrame).description, "condition", "True");
   });
 
   test("handles comparison operators as conditions", () => {

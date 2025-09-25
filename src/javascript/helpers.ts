@@ -1,5 +1,5 @@
 import { BinaryExpression, Expression, GroupingExpression } from "./expression";
-import { Location } from "../shared/location";
+import type { Location } from "../shared/location";
 import { Statement } from "./statement";
 import { JikiObject } from "./jikiObjects";
 

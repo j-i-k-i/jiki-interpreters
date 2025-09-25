@@ -1,6 +1,6 @@
-import { EvaluationResultBinaryExpression, EvaluationResultExpression } from "../evaluation-result";
-import { BinaryExpression } from "../expression";
-import { DescriptionContext } from "../../shared/frames";
+import type { EvaluationResultBinaryExpression, EvaluationResultExpression } from "../evaluation-result";
+import type { BinaryExpression } from "../expression";
+import type { DescriptionContext } from "../../shared/frames";
 import { codeTag, formatJikiObject } from "../helpers";
 import { describeExpression } from "./describeSteps";
 

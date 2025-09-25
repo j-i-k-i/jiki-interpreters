@@ -1,8 +1,9 @@
 import { exec } from "child_process";
 import { isArray, isString } from "./checks";
 import { EvaluationResult } from "./evaluation-result";
-import { ExecutionContext } from "./executor";
-import { Arity, UserDefinedMethod } from "./functions";
+import type { ExecutionContext } from "./executor";
+import type { Arity} from "./functions";
+import { UserDefinedMethod } from "./functions";
 import { UnsetPropertyError } from "./executor/executeInstantiationExpression";
 import { JikiObject as BaseJikiObject } from "../shared/jikiObject";
 
@@ -170,7 +171,7 @@ export class Class {
 export class Instance extends JikiObject {
   protected fields: Record<string, JikiObject> = {};
 
-  constructor(private jikiClass: Class) {
+  constructor(private readonly jikiClass: Class) {
     super("instance");
   }
 
@@ -409,7 +410,7 @@ export function wrapJSToJikiObject(value: any): JikiObject | null | undefined {
     return new Boolean(value);
   }
   if (Array.isArray(value)) {
-    return new List(value.map(wrapJSToJikiObject).filter(v => v !== null && v !== undefined) as JikiObject[]);
+    return new List(value.map(wrapJSToJikiObject).filter(v => v !== null && v !== undefined));
   }
   if (typeof value === "object") {
     return new Dictionary(

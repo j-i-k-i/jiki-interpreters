@@ -1,5 +1,5 @@
-import { Description, DescriptionContext } from "../../shared/frames";
-import { FrameWithResult } from "../frameDescribers";
+import type { Description, DescriptionContext } from "../../shared/frames";
+import type { FrameWithResult } from "../frameDescribers";
 
 export function describeBlockStatement(frame: FrameWithResult, context: DescriptionContext): Description {
   const result = `<p>Python is executing a block of statements.</p>`;

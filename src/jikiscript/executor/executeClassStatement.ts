@@ -1,6 +1,6 @@
-import { Executor } from "../executor";
+import type { Executor } from "../executor";
 import * as Jiki from "../jikiObjects";
-import { ClassStatement, ConstructorStatement, MethodStatement, PropertyStatement } from "../statement";
+import type { ClassStatement, ConstructorStatement, MethodStatement, PropertyStatement } from "../statement";
 import { UserDefinedMethod } from "../functions";
 
 export function executeClassStatement(executor: Executor, statement: ClassStatement): void {

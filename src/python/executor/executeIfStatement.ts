@@ -1,7 +1,9 @@
-import { Executor, RuntimeError } from "../executor";
-import { IfStatement } from "../statement";
-import { EvaluationResult } from "../evaluation-result";
-import { PyBoolean, JikiObject } from "../jikiObjects";
+import type { Executor} from "../executor";
+import { RuntimeError } from "../executor";
+import type { IfStatement } from "../statement";
+import type { EvaluationResult } from "../evaluation-result";
+import type { JikiObject } from "../jikiObjects";
+import { PyBoolean } from "../jikiObjects";
 import { translate } from "../translator";
 
 // Python truthiness rules (same as in executeBinaryExpression)
@@ -10,10 +12,10 @@ function isTruthy(obj: JikiObject): boolean {
   const type = obj.type;
 
   // Python falsy values: False, None, 0, 0.0, "", [], {}, set()
-  if (type === "boolean") return value as boolean;
-  if (type === "none") return false;
-  if (type === "number") return value !== 0;
-  if (type === "string") return (value as string).length > 0;
+  if (type === "boolean") {return value as boolean;}
+  if (type === "none") {return false;}
+  if (type === "number") {return value !== 0;}
+  if (type === "string") {return (value as string).length > 0;}
 
   // For now, we'll treat any other type as truthy
   // This will be expanded when we add lists, dicts, etc.

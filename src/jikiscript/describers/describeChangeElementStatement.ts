@@ -1,12 +1,13 @@
-import {
-  EvaluationResult,
+import type {
   EvaluationResultChangeElementStatement,
-  EvaluationResultExpression,
+  EvaluationResultExpression} from "../evaluation-result";
+import {
+  EvaluationResult
 } from "../evaluation-result";
-import { VariableLookupExpression } from "../expression";
-import { Description, DescriptionContext, FrameWithResult } from "../../shared/frames";
+import type { VariableLookupExpression } from "../expression";
+import type { Description, DescriptionContext, FrameWithResult } from "../../shared/frames";
 import { codeTag, formatJikiObject } from "../helpers";
-import { ChangeElementStatement } from "../statement";
+import type { ChangeElementStatement } from "../statement";
 import { describeExpression } from "./describeSteps";
 import { addOrdinalSuffix } from "./helpers";
 import * as Jiki from "../jikiObjects";
@@ -17,9 +18,9 @@ export function describeChangeElementStatement(frame: FrameWithResult, context: 
 
   if (frameResult.object.jikiObject instanceof Jiki.List) {
     return describeChangeElementStatementList(frameContext, frameResult, context);
-  } else {
+  } 
     return describeChangeElementStatementDictionary(frameContext, frameResult, context);
-  }
+  
 }
 
 function describeChangeElementStatementList(

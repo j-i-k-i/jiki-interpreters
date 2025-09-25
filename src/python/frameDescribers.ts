@@ -1,4 +1,4 @@
-import { Frame, DescriptionContext, Description } from "../shared/frames";
+import type { Frame, DescriptionContext, Description } from "../shared/frames";
 import type {
   EvaluationResult,
   EvaluationResultAssignmentStatement,

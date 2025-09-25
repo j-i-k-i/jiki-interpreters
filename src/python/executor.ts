@@ -29,7 +29,8 @@ import { type ExecutionContext as SharedExecutionContext } from "../shared/inter
 import { createBaseExecutionContext } from "../shared/executionContext";
 import type { LanguageFeatures } from "./interfaces";
 import cloneDeep from "lodash.clonedeep";
-import { describeFrame, PythonFrame } from "./frameDescribers";
+import type { PythonFrame } from "./frameDescribers";
+import { describeFrame } from "./frameDescribers";
 
 // Import individual executors
 import { executeLiteralExpression } from "./executor/executeLiteralExpression";
@@ -76,17 +77,17 @@ export class RuntimeError extends Error {
   }
 }
 
-export type ExecutorResult = {
+export interface ExecutorResult {
   frames: Frame[];
   error: null; // Always null - runtime errors become frames
   success: boolean;
-};
+}
 
 export class Executor {
-  private frames: Frame[] = [];
+  private readonly frames: Frame[] = [];
   private location: Location | null = null;
   public time: number = 0;
-  private timePerFrame: number = 1;
+  private readonly timePerFrame: number = 1;
   public environment: Environment;
   public languageFeatures: LanguageFeatures;
 

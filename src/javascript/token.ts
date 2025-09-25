@@ -1,5 +1,5 @@
 import { Location } from "../shared/location";
-import { SomethingWithLocation } from "../shared/interfaces";
+import type { SomethingWithLocation } from "../shared/interfaces";
 
 const StatementKeywordTokens = [
   "BREAK",

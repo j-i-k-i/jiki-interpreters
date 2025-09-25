@@ -22,7 +22,7 @@ export function getLanguage(): string {
 }
 
 export async function changeLanguage(language: string): Promise<void> {
-  if (pythonI18n.language === language) return;
+  if (pythonI18n.language === language) {return;}
 
   await pythonI18n.changeLanguage(language);
 }

@@ -88,17 +88,17 @@ export class RuntimeError extends Error {
 }
 
 // InterpretResult type is now defined in interpreter.ts
-export type ExecutorResult = {
+export interface ExecutorResult {
   frames: Frame[];
   error: null; // Always null - runtime errors become frames
   success: boolean;
-};
+}
 
 export class Executor {
-  private frames: Frame[] = [];
+  private readonly frames: Frame[] = [];
   private location: Location | null = null;
   public time: number = 0;
-  private timePerFrame: number = 1;
+  private readonly timePerFrame: number = 1;
   public environment: Environment;
   public languageFeatures: LanguageFeatures;
 

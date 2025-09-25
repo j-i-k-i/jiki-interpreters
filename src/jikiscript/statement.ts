@@ -4,9 +4,10 @@ import {
   EvaluationResultReturnStatement,
   EvaluationResultSetVariableStatement,
 } from "./evaluation-result";
-import { FunctionCallExpression, Expression, VariableLookupExpression, MethodCallExpression } from "./expression";
-import { SomethingWithLocation } from "./interpreter";
-import { Location } from "./location";
+import type { FunctionCallExpression, Expression, MethodCallExpression } from "./expression";
+import { VariableLookupExpression } from "./expression";
+import type { SomethingWithLocation } from "./interpreter";
+import type { Location } from "./location";
 import type { Token } from "./token";
 import { formatJikiObject } from "./helpers";
 

@@ -8,10 +8,10 @@ import { stdlib, getStdlibType, StdlibError, type Property, type Method } from "
 // Generic function to use a property from stdlib
 function useProperty(obj: JikiObject, propertyName: string, executor: Executor, location: any): JikiObject | null {
   const stdlibType = getStdlibType(obj);
-  if (!stdlibType) return null;
+  if (!stdlibType) {return null;}
 
   const property = stdlib[stdlibType]?.properties?.[propertyName];
-  if (!property) return null;
+  if (!property) {return null;}
 
   try {
     return property.get(executor.getExecutionContext(), obj);
@@ -31,10 +31,10 @@ function useProperty(obj: JikiObject, propertyName: string, executor: Executor, 
 // Generic function to use a method from stdlib
 function useMethod(obj: JikiObject, methodName: string, executor: Executor, location: any): JSFunction | null {
   const stdlibType = getStdlibType(obj);
-  if (!stdlibType) return null;
+  if (!stdlibType) {return null;}
 
   const method = stdlib[stdlibType]?.methods?.[methodName];
-  if (!method) return null;
+  if (!method) {return null;}
 
   // Return a JSFunction that can be called
   // The error handling will happen when the function is actually called

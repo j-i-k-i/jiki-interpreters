@@ -1,19 +1,20 @@
-import { EvaluationResultAssignmentStatement } from "../evaluation-result";
-import { Description, DescriptionContext } from "../../shared/frames";
+import type { EvaluationResultAssignmentStatement } from "../evaluation-result";
+import type { Description, DescriptionContext } from "../../shared/frames";
 import { formatPyObject } from "./helpers";
-import { AssignmentStatement } from "../statement";
+import type { AssignmentStatement } from "../statement";
 import { describeExpression } from "./describeSteps";
-import { PythonFrame, FrameWithResult } from "../frameDescribers";
+import type { FrameWithResult } from "../frameDescribers";
+import { PythonFrame } from "../frameDescribers";
 
 export function describeAssignmentStatement(frame: FrameWithResult, context: DescriptionContext): Description {
   const statement = frame.context as AssignmentStatement;
   const frameResult = frame.result as EvaluationResultAssignmentStatement;
-  const value = formatPyObject(frameResult.immutableJikiObject!);
+  const value = formatPyObject(frameResult.immutableJikiObject);
 
   // Check if it's a subscript assignment
   if ((frameResult as any).target?.type === "SubscriptExpression") {
     const target = (frameResult as any).target;
-    const indexValue = formatPyObject(target.index?.immutableJikiObject!);
+    const indexValue = formatPyObject(target.index?.immutableJikiObject);
     const objectName = (frameResult as any).objectName || "list";
 
     const result = `<p>Python assigned <code>${value}</code> to index <code>${indexValue}</code> of <code>${objectName}</code>.</p>`;

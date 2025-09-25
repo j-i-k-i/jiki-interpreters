@@ -7,7 +7,7 @@ import type {
 
 export function executeFunctionCallStatement(executor: Executor, statement: FunctionCallStatement): void {
   executor.executeFrame<EvaluationResultFunctionCallStatement>(statement, () => {
-    const result = executor.visitFunctionCallExpression(statement.expression) as EvaluationResultFunctionCallExpression;
+    const result = executor.visitFunctionCallExpression(statement.expression);
 
     return {
       type: "FunctionCallStatement",

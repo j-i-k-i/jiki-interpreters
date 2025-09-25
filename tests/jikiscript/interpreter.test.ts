@@ -1,7 +1,9 @@
 import { test, expect, describe } from "vitest";
-import { interpret, evaluateFunction, EvaluationContext } from "@jikiscript/interpreter";
+import type { EvaluationContext } from "@jikiscript/interpreter";
+import { interpret, evaluateFunction } from "@jikiscript/interpreter";
 import type { ExecutionContext } from "@jikiscript/executor";
-import { Number, unwrapJikiObject } from "@jikiscript/jikiObjects";
+import type { Number} from "@jikiscript/jikiObjects";
+import { unwrapJikiObject } from "@jikiscript/jikiObjects";
 import type { TestAugmentedFrame } from "@shared/frames";
 
 describe("statements", () => {

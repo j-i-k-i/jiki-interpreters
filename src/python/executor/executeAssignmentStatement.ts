@@ -82,7 +82,7 @@ export function executeAssignmentStatement(executor: Executor, statement: Assign
   }
 
   // Handle regular identifier assignment
-  const target = statement.target as Token;
+  const target = statement.target;
   executor.environment.define(target.lexeme, value.jikiObject);
 
   return {

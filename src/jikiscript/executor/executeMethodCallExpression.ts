@@ -1,7 +1,7 @@
 import { LogicError } from "../error";
-import { EvaluationResult, EvaluationResultMethodCallExpression } from "../evaluation-result";
-import { Executor } from "../executor";
-import { MethodCallExpression } from "../expression";
+import type { EvaluationResult, EvaluationResultMethodCallExpression } from "../evaluation-result";
+import type { Executor } from "../executor";
+import type { MethodCallExpression } from "../expression";
 import { Callable, UserDefinedMethod } from "../functions";
 import * as Jiki from "../jikiObjects";
 import { guardArityOnCallExpression } from "./executeFunctionCallExpression";
@@ -49,14 +49,14 @@ export function executeMethodCallExpression(
     jikiObject = executor.withThis(object.jikiObject, () => {
       if (method.fn instanceof UserDefinedMethod) {
         return method.fn.call(executor.getExecutionContext(), callableArgs);
-      } else {
+      } 
         return method.fn.call(
           undefined,
           executor.getExecutionContext(),
           object.jikiObject as Jiki.Instance,
           ...callableArgs
         );
-      }
+      
     });
   } catch (e: unknown) {
     if (e instanceof LogicError) {

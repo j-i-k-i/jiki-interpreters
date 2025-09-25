@@ -4,7 +4,7 @@ import type { EvaluationResultMethodCallStatement, EvaluationResultMethodCallExp
 
 export function executeMethodCallStatement(executor: Executor, statement: MethodCallStatement): void {
   executor.executeFrame<EvaluationResultMethodCallStatement>(statement, () => {
-    const result = executor.visitMethodCallExpression(statement.expression) as EvaluationResultMethodCallExpression;
+    const result = executor.visitMethodCallExpression(statement.expression);
 
     return {
       type: "MethodCallStatement",

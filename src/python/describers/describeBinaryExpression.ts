@@ -1,6 +1,6 @@
 import type { Expression, BinaryExpression } from "../expression";
 import type { EvaluationResultBinaryExpression } from "../evaluation-result";
-import { DescriptionContext } from "../../shared/frames";
+import type { DescriptionContext } from "../../shared/frames";
 import { formatPyObject } from "./helpers";
 import { describeExpression } from "./describeSteps";
 
@@ -10,8 +10,8 @@ export function describeBinaryExpression(
   context: DescriptionContext
 ): string[] {
   const binaryExpr = expression as BinaryExpression;
-  const left = formatPyObject(result.left.immutableJikiObject!);
-  const resultValue = formatPyObject(result.immutableJikiObject!);
+  const left = formatPyObject(result.left.immutableJikiObject);
+  const resultValue = formatPyObject(result.immutableJikiObject);
 
   const operatorSymbol = binaryExpr.operator.lexeme;
   const operatorName = getOperatorName(operatorSymbol);
@@ -30,7 +30,7 @@ export function describeBinaryExpression(
     return [`<li>Python evaluated binary expression and got <code>${resultValue}</code>.</li>`];
   }
 
-  const right = formatPyObject(result.right.immutableJikiObject!);
+  const right = formatPyObject(result.right.immutableJikiObject);
   const steps = [
     ...describeExpression(binaryExpr.left, result.left, context),
     ...describeExpression(binaryExpr.right, result.right, context),

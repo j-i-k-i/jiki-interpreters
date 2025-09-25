@@ -1,6 +1,7 @@
 import { marked } from "marked";
 import { deepTrim } from "./describers/helpers";
-import { Frame, FrameExecutionStatus, Description, DescriptionContext } from "../shared/frames";
+import type { Frame, Description, DescriptionContext } from "../shared/frames";
+import { FrameExecutionStatus } from "../shared/frames";
 import type {
   EvaluationResult,
   EvaluationResultChangeVariableStatement,

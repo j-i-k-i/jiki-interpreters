@@ -4,7 +4,7 @@ import { ContinueStatement, ForeachStatement, SetVariableStatement } from "@jiki
 import { Location } from "@jikiscript/location";
 import { FunctionCallExpression, ListExpression, LiteralExpression } from "@jikiscript/expression";
 import { RuntimeError } from "@jikiscript/error";
-import { Primitive } from "@jikiscript/jikiObjects";
+import type { Primitive } from "@jikiscript/jikiObjects";
 
 const generateEchosContext = (echos: any[]) => {
   return {

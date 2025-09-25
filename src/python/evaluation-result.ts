@@ -1,67 +1,67 @@
 import type { JikiObject } from "./jikiObjects";
 
-export type EvaluationResult = {
+export interface EvaluationResult {
   type: string;
   jikiObject: JikiObject;
   immutableJikiObject: JikiObject;
-};
+}
 
 export type EvaluationResultExpression = EvaluationResult;
 
-export type EvaluationResultBinaryExpression = {
+export interface EvaluationResultBinaryExpression {
   type: "BinaryExpression";
   left: EvaluationResultExpression;
   right: EvaluationResultExpression;
   jikiObject: JikiObject;
   immutableJikiObject: JikiObject;
-};
+}
 
-export type EvaluationResultUnaryExpression = {
+export interface EvaluationResultUnaryExpression {
   type: "UnaryExpression";
   operand: EvaluationResultExpression;
   jikiObject: JikiObject;
   immutableJikiObject: JikiObject;
-};
+}
 
-export type EvaluationResultLiteralExpression = {
+export interface EvaluationResultLiteralExpression {
   type: "LiteralExpression";
   jikiObject: JikiObject;
   immutableJikiObject: JikiObject;
-};
+}
 
-export type EvaluationResultGroupingExpression = {
+export interface EvaluationResultGroupingExpression {
   type: "GroupingExpression";
   inner: EvaluationResultExpression;
   jikiObject: JikiObject;
   immutableJikiObject: JikiObject;
-};
+}
 
-export type EvaluationResultExpressionStatement = {
+export interface EvaluationResultExpressionStatement {
   type: "ExpressionStatement";
   expression: EvaluationResultExpression;
   jikiObject: JikiObject;
   immutableJikiObject: JikiObject;
-};
+}
 
-export type EvaluationResultIdentifierExpression = {
+export interface EvaluationResultIdentifierExpression {
   type: "IdentifierExpression";
   name: string;
   jikiObject: JikiObject;
   immutableJikiObject: JikiObject;
-};
+}
 
-export type EvaluationResultAssignmentStatement = {
+export interface EvaluationResultAssignmentStatement {
   type: "AssignmentStatement";
   name: string;
   value: EvaluationResultExpression;
   jikiObject: JikiObject;
   immutableJikiObject: JikiObject;
-};
+}
 
-export type EvaluationResultSubscriptExpression = {
+export interface EvaluationResultSubscriptExpression {
   type: "SubscriptExpression";
   object: EvaluationResultExpression;
   index: EvaluationResultExpression;
   jikiObject: JikiObject;
   immutableJikiObject: JikiObject;
-};
+}

@@ -18,6 +18,6 @@ export function describeAssignmentExpression(
   }
 
   // Handle regular identifier assignment
-  const target = expression.target as Token;
+  const target = expression.target;
   return `<li>JavaScript updated the variable <code>${target.lexeme}</code> to <code>${value}</code>.</li>`;
 }

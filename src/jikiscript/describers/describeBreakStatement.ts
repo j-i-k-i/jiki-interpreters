@@ -1,6 +1,6 @@
 import { isString } from "../checks";
 import { EvaluationResultForeachStatement, EvaluationResultRepeatStatement } from "../evaluation-result";
-import { Description, DescriptionContext, FrameWithResult } from "../../shared/frames";
+import type { Description, DescriptionContext, FrameWithResult } from "../../shared/frames";
 import { codeTag, formatJikiObject } from "../helpers";
 import { ForeachStatement, RepeatStatement } from "../statement";
 import { describeExpression } from "./describeSteps";

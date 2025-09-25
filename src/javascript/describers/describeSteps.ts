@@ -1,4 +1,4 @@
-import {
+import type {
   EvaluationResult,
   EvaluationResultBinaryExpression,
   EvaluationResultGroupingExpression,
@@ -9,8 +9,9 @@ import {
   EvaluationResultDictionaryExpression,
 } from "../evaluation-result";
 import type { EvaluationResultTemplateLiteralExpression } from "../executor/executeTemplateLiteralExpression";
+import type {
+  Expression} from "../expression";
 import {
-  Expression,
   GroupingExpression,
   BinaryExpression,
   UnaryExpression,
@@ -20,7 +21,7 @@ import {
   AssignmentExpression,
   DictionaryExpression,
 } from "../expression";
-import { DescriptionContext } from "../../shared/frames";
+import type { DescriptionContext } from "../../shared/frames";
 import { describeBinaryExpression } from "./describeBinaryExpression";
 import { describeGroupingExpression } from "./describeGroupingExpression";
 import { describeUnaryExpression } from "./describeUnaryExpression";

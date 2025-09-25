@@ -1,13 +1,13 @@
-import { Description, DescriptionContext } from "../../shared/frames";
+import type { Description, DescriptionContext } from "../../shared/frames";
 import { formatPyObject } from "./helpers";
-import { IfStatement } from "../statement";
+import type { IfStatement } from "../statement";
 import { describeExpression } from "./describeSteps";
-import { FrameWithResult } from "../frameDescribers";
+import type { FrameWithResult } from "../frameDescribers";
 
 export function describeIfStatement(frame: FrameWithResult, context: DescriptionContext): Description {
   const statement = frame.context as IfStatement;
   const frameResult = frame.result as any; // Using any since IfStatement result type isn't defined
-  const conditionValue = formatPyObject(frameResult.immutableJikiObject!);
+  const conditionValue = formatPyObject(frameResult.immutableJikiObject);
   const isTruthy = frameResult.jikiObject.isTruthy ? frameResult.jikiObject.isTruthy() : !!frameResult.jikiObject.value;
 
   const result = isTruthy

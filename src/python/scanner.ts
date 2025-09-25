@@ -158,12 +158,12 @@ export class Scanner {
   }
 
   private peek(): string {
-    if (this.isAtEnd()) return "\0";
+    if (this.isAtEnd()) {return "\0";}
     return this.sourceCode.charAt(this.current);
   }
 
   private peekNext(): string {
-    if (this.current + 1 >= this.sourceCode.length) return "\0";
+    if (this.current + 1 >= this.sourceCode.length) {return "\0";}
     return this.sourceCode.charAt(this.current + 1);
   }
 
@@ -172,8 +172,8 @@ export class Scanner {
   }
 
   private match(expected: string): boolean {
-    if (this.isAtEnd()) return false;
-    if (this.sourceCode.charAt(this.current) != expected) return false;
+    if (this.isAtEnd()) {return false;}
+    if (this.sourceCode.charAt(this.current) != expected) {return false;}
 
     this.current++;
     return true;
@@ -343,7 +343,7 @@ export class Scanner {
 
   private tokenizeComment(): void {
     // A comment goes until the end of the line
-    while (this.peek() != "\n" && !this.isAtEnd()) this.advance();
+    while (this.peek() != "\n" && !this.isAtEnd()) {this.advance();}
   }
 
   private tokenizeString(): void {
@@ -398,12 +398,12 @@ export class Scanner {
 
   private tokenizeNumber(): void {
     // Handle integer part
-    while (this.isDigit(this.peek())) this.advance();
+    while (this.isDigit(this.peek())) {this.advance();}
 
     // Look for a fractional part
     if (this.peek() == "." && this.isDigit(this.peekNext())) {
       this.advance(); // consume the .
-      while (this.isDigit(this.peek())) this.advance();
+      while (this.isDigit(this.peek())) {this.advance();}
     }
 
     // Look for scientific notation
@@ -412,7 +412,7 @@ export class Scanner {
       if (this.peek() == "+" || this.peek() == "-") {
         this.advance(); // consume +/-
       }
-      while (this.isDigit(this.peek())) this.advance();
+      while (this.isDigit(this.peek())) {this.advance();}
     }
 
     const value = parseFloat(this.sourceCode.substring(this.start, this.current));
@@ -420,7 +420,7 @@ export class Scanner {
   }
 
   private tokenizeIdentifier(): void {
-    while (this.isAlphaNumeric(this.peek())) this.advance();
+    while (this.isAlphaNumeric(this.peek())) {this.advance();}
 
     const text = this.sourceCode.substring(this.start, this.current);
     const type = Scanner.keywords[text] || "IDENTIFIER";

@@ -11,7 +11,7 @@ export type FrameExecutionStatus = "SUCCESS" | "ERROR";
  * Base frame interface shared by all interpreters.
  * Represents a single step of code execution for educational visualization.
  */
-export type Frame = {
+export interface Frame {
   /** Line number in the source code */
   line: number;
 
@@ -41,7 +41,7 @@ export type Frame = {
 
   /** Additional context (AST node, statement, etc.) */
   context?: any;
-};
+}
 
 /**
  * Helper function to check if all frames succeeded
@@ -60,17 +60,17 @@ export function framesErrored(frames: Frame[]): boolean {
 /**
  * Description type for educational explanations
  */
-export type Description = {
+export interface Description {
   result: String;
   steps: String[];
-};
+}
 
 /**
  * Context for generating descriptions
  */
-export type DescriptionContext = {
+export interface DescriptionContext {
   functionDescriptions: Record<string, string>;
-};
+}
 
 /**
  * Frame with result - used by describers

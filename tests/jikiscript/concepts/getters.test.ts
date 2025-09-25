@@ -1,6 +1,7 @@
 import { parse } from "@jikiscript/parser";
 import type { TestAugmentedFrame } from "@shared/frames";
-import { EvaluationContext, interpret } from "@jikiscript/interpreter";
+import type { EvaluationContext} from "@jikiscript/interpreter";
+import { interpret } from "@jikiscript/interpreter";
 import { ChangeElementStatement, LogStatement, MethodCallStatement } from "@jikiscript/statement";
 import { last } from "lodash";
 import * as Jiki from "@jikiscript/jikiObjects";
@@ -11,7 +12,7 @@ import {
   VariableLookupExpression,
   AccessorExpression,
 } from "@jikiscript/expression";
-import { ExecutionContext } from "@jikiscript/executor";
+import type { ExecutionContext } from "@jikiscript/executor";
 
 describe("parse", () => {
   test("without arguments", () => {

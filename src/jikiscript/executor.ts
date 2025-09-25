@@ -1,7 +1,8 @@
-import { Arity, ReturnValue, UserDefinedFunction, isCallable } from "./functions";
+import type { Arity} from "./functions";
+import { ReturnValue, UserDefinedFunction, isCallable } from "./functions";
 import { Environment } from "./environment";
 import { RuntimeError, type RuntimeErrorType, isRuntimeError, LogicError } from "./error";
-import {
+import type {
   ListExpression,
   BinaryExpression,
   FunctionCallExpression,
@@ -22,7 +23,7 @@ import {
   ThisExpression,
 } from "./expression";
 import { Location, Span } from "./location";
-import {
+import type {
   BlockStatement,
   FunctionStatement,
   IfStatement,
@@ -33,16 +34,17 @@ import {
   SetVariableStatement,
   ChangeVariableStatement,
   RepeatForeverStatement,
-  FunctionCallStatement,
   LogStatement,
   ChangeElementStatement,
   ForeachStatement,
   BreakStatement,
   ContinueStatement,
-  MethodCallStatement,
   ChangePropertyStatement,
   ClassStatement,
-  SetPropertyStatement,
+  SetPropertyStatement} from "./statement";
+import {
+  FunctionCallStatement,
+  MethodCallStatement
 } from "./statement";
 import type { Token } from "./token";
 import type {
@@ -132,29 +134,29 @@ export type ExecutionContext = SharedExecutionContext & {
   contextualThis: Jiki.Instance | null;
 };
 
-export type ExternalFunction = {
+export interface ExternalFunction {
   name: string;
   func: Function;
   description: string;
   arity?: Arity;
-};
+}
 
 export class Executor {
   [key: string]: any; // Allow dynamic method access
-  private frames: Frame[] = [];
+  private readonly frames: Frame[] = [];
   private location: Location | null = null;
   public time: number = 0;
-  private timePerFrame: number;
+  private readonly timePerFrame: number;
   private totalLoopIterations = 0;
-  private maxTotalLoopIterations = 0;
-  private maxRepeatUntilGameOverIterations = 0;
+  private readonly maxTotalLoopIterations: number = 0;
+  private readonly maxRepeatUntilGameOverIterations: number = 0;
   public customFunctionDefinitionMode: boolean;
-  private addSuccessFrames: boolean;
+  private readonly addSuccessFrames: boolean;
 
   private readonly globals = new Environment();
   public environment = this.globals;
 
-  private externalFunctionDescriptions: Record<string, string> = {};
+  private readonly externalFunctionDescriptions: Record<string, string> = {};
 
   // This tracks variables for each statement, so we can output
   // the changes in the frame descriptions
@@ -164,10 +166,10 @@ export class Executor {
 
   constructor(
     private readonly sourceCode: string,
-    private languageFeatures: LanguageFeatures,
-    private externalFunctions: ExternalFunction[],
-    private customFunctions: CallableCustomFunction[],
-    private classes: Jiki.Class[],
+    private readonly languageFeatures: LanguageFeatures,
+    private readonly externalFunctions: ExternalFunction[],
+    private readonly customFunctions: CallableCustomFunction[],
+    private readonly classes: Jiki.Class[],
     private externalState: Record<string, any> = {}
   ) {
     for (let externalFunction of externalFunctions) {
@@ -406,7 +408,7 @@ export class Executor {
     const result = code();
     this.addSuccessFrame(context.location, result, context);
     this.location = null;
-    return result as T;
+    return result;
   }
 
   public visitFunctionCallStatement(statement: FunctionCallStatement): void {
@@ -431,10 +433,10 @@ export class Executor {
   public visitChangeElementStatement(statement: ChangeElementStatement): void {
     const obj = this.evaluate(statement.object);
     if (obj.jikiObject instanceof Jiki.List) {
-      return this.visitChangeListElementStatement(statement, obj as EvaluationResultListExpression);
+      this.visitChangeListElementStatement(statement, obj as EvaluationResultListExpression); return;
     }
     if (obj.jikiObject instanceof Jiki.Dictionary) {
-      return this.visitChangeDictionaryElementStatement(statement, obj as EvaluationResultDictionaryExpression);
+      this.visitChangeDictionaryElementStatement(statement, obj as EvaluationResultDictionaryExpression); return;
     }
     this.error("InvalidChangeTargetNotModifiable", statement.object.location);
   }
@@ -499,7 +501,7 @@ export class Executor {
   }
 
   public visitIfStatement(statement: IfStatement): void {
-    return executeIfStatement(this, statement);
+    executeIfStatement(this, statement);
   }
 
   public visitLogStatement(statement: LogStatement): void {
@@ -975,9 +977,9 @@ export class Executor {
   }
 
   public verifyLiteral(value: Jiki.JikiObject, expr: Expression): void {
-    if (value instanceof Jiki.Number) return;
-    if (value instanceof Jiki.String) return;
-    if (value instanceof Jiki.Boolean) return;
+    if (value instanceof Jiki.Number) {return;}
+    if (value instanceof Jiki.String) {return;}
+    if (value instanceof Jiki.Boolean) {return;}
 
     this.guardUncalledFunction(value, expr);
 
@@ -992,7 +994,7 @@ export class Executor {
   }
 
   public verifyNumber(value: Jiki.JikiObject, expr: Expression): void {
-    if (value instanceof Jiki.Number) return;
+    if (value instanceof Jiki.Number) {return;}
 
     this.guardUncalledFunction(value, expr);
 
@@ -1001,7 +1003,7 @@ export class Executor {
     });
   }
   public verifyString(value: Jiki.JikiObject, expr: Expression): void {
-    if (value instanceof Jiki.String) return;
+    if (value instanceof Jiki.String) {return;}
     this.guardUncalledFunction(value, expr);
 
     this.error("TypeErrorOperandMustBeStringValue", expr.location, {
@@ -1009,7 +1011,7 @@ export class Executor {
     });
   }
   public verifyBoolean(value: Jiki.JikiObject, expr: Expression): void {
-    if (value instanceof Jiki.Boolean) return;
+    if (value instanceof Jiki.Boolean) {return;}
 
     this.error("TypeErrorOperandMustBeBooleanValue", expr.location, {
       value: formatJikiObject(value),
@@ -1185,7 +1187,7 @@ export class Executor {
   }
 
   public addSuccessFrame(location: Location | null, result: EvaluationResult, context?: Statement | Expression): void {
-    if (!this.addSuccessFrames) return;
+    if (!this.addSuccessFrames) {return;}
 
     this.addFrame(location, "SUCCESS", result, undefined, context);
   }
@@ -1201,7 +1203,7 @@ export class Executor {
     error?: RuntimeError,
     context?: Statement | Expression
   ): void {
-    if (location == null) location = Location.unknown;
+    if (location == null) {location = Location.unknown;}
 
     const frame: Frame = {
       code: location.toCode(this.sourceCode),

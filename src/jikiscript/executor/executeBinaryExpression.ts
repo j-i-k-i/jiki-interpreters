@@ -1,7 +1,7 @@
 import { isArray, isNumber } from "lodash";
-import { EvaluationResult, EvaluationResultBinaryExpression, EvaluationResultExpression } from "../evaluation-result";
-import { Executor } from "../executor";
-import { BinaryExpression } from "../expression";
+import type { EvaluationResult, EvaluationResultBinaryExpression, EvaluationResultExpression } from "../evaluation-result";
+import type { Executor } from "../executor";
+import type { BinaryExpression } from "../expression";
 import * as JikiTypes from "../jikiObjects";
 
 const DP_MULTIPLE = 100000;

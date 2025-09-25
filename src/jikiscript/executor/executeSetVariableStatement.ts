@@ -1,5 +1,5 @@
 import type { Executor } from "../executor";
-import { VariableLookupExpression } from "../expression";
+import type { VariableLookupExpression } from "../expression";
 import { isCallable } from "../functions";
 import { RuntimeError } from "../error";
 import type { SetVariableStatement } from "../statement";

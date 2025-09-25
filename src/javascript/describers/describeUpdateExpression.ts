@@ -14,7 +14,7 @@ export function describeUpdateExpression(expression: UpdateExpression, result: E
 
   if (expression.prefix) {
     return `The variable ${varName} was ${operator} from ${codeTag(oldValue, expression.location)} to ${codeTag(newValue, expression.location)}. The expression evaluated to ${codeTag(newValue, expression.location)}.`;
-  } else {
+  } 
     return `The variable ${varName} was ${operator} from ${codeTag(oldValue, expression.location)} to ${codeTag(newValue, expression.location)}. The expression evaluated to ${codeTag(oldValue, expression.location)} (the value before the update).`;
-  }
+  
 }

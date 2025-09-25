@@ -4,7 +4,8 @@ import type { TestAugmentedFrame } from "@shared/frames";
 import { ContinueStatement, ForeachStatement, SetVariableStatement } from "@jikiscript/statement";
 import { FunctionCallExpression, ListExpression, LiteralExpression } from "@jikiscript/expression";
 import { RuntimeError } from "@jikiscript/error";
-import { Primitive, unwrapJikiObject } from "@jikiscript/jikiObjects";
+import type { Primitive} from "@jikiscript/jikiObjects";
+import { unwrapJikiObject } from "@jikiscript/jikiObjects";
 
 const generateEchosContext = (echos: any[]) => {
   return {

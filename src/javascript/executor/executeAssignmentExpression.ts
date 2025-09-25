@@ -62,7 +62,7 @@ export function executeAssignmentExpression(
         });
       }
 
-      const index = indexResult.jikiObject.value as number;
+      const index = indexResult.jikiObject.value;
 
       // Check if index is an integer
       if (!Number.isInteger(index)) {
@@ -102,7 +102,7 @@ export function executeAssignmentExpression(
   }
 
   // Handle regular identifier assignment
-  const target = expression.target as Token;
+  const target = expression.target;
   const success = executor.environment.update(target.lexeme, valueResult.jikiObject);
 
   if (!success) {

@@ -8,12 +8,12 @@ expect.extend({
         pass: true,
         message: () => `expected ${received} not to be nil`,
       };
-    } else {
+    } 
       return {
         pass: false,
         message: () => `expected ${received} to be nil`,
       };
-    }
+    
   },
 
   toBeNotNil(received: any) {
@@ -23,12 +23,12 @@ expect.extend({
         pass: true,
         message: () => `expected ${received} to be nil`,
       };
-    } else {
+    } 
       return {
         pass: false,
         message: () => `expected ${received} not to be nil`,
       };
-    }
+    
   },
   toBeArrayOfSize(received: any, size: number) {
     const pass = Array.isArray(received) && received.length === size;
@@ -37,13 +37,13 @@ expect.extend({
         pass: true,
         message: () => `expected ${received} not to be an array of size ${size}`,
       };
-    } else {
+    } 
       return {
         pass: false,
         message: () =>
           `expected ${received} to be an array of size ${size}, but got ${Array.isArray(received) ? `array of size ${received.length}` : typeof received}`,
       };
-    }
+    
   },
 
   toBeEmpty(received: any) {
@@ -59,12 +59,12 @@ expect.extend({
         pass: true,
         message: () => `expected ${received} not to be empty`,
       };
-    } else {
+    } 
       return {
         pass: false,
         message: () => `expected ${received} to be empty`,
       };
-    }
+    
   },
 
   toIncludeSameMembers(received: any[], expected: any[]) {
@@ -89,11 +89,11 @@ expect.extend({
         pass: true,
         message: () => `expected ${received} not to include same members as ${expected}`,
       };
-    } else {
+    } 
       return {
         pass: false,
         message: () => `expected ${received} to include same members as ${expected}`,
       };
-    }
+    
   },
 });

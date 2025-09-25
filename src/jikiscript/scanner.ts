@@ -16,11 +16,12 @@
  * This process will also produce errors if the source code is invalid, for example
  * if we see an unterminated string, or a number with multiple decimal points.
  */
+import type {
+  SyntaxErrorType} from "./error";
 import {
   DisabledLanguageFeatureError,
   type DisabledLanguageFeatureErrorType,
-  SyntaxError,
-  SyntaxErrorType,
+  SyntaxError
 } from "./error";
 import type { Token, TokenType } from "./token";
 import { Location } from "./location";
@@ -106,7 +107,7 @@ export class Scanner {
   };
 
   constructor(
-    private languageFeatures: LanguageFeatures = {
+    private readonly languageFeatures: LanguageFeatures = {
       includeList: undefined,
       excludeList: undefined,
       timePerFrame: 1,
@@ -130,7 +131,7 @@ export class Scanner {
     }
 
     // Add synthetic EOL token to simplify parsing
-    if (this.shouldAddEOLToken()) this.addSyntheticToken("EOL", "\n");
+    if (this.shouldAddEOLToken()) {this.addSyntheticToken("EOL", "\n");}
 
     // Add synthetic EOF token to simplify parsing
     this.addSyntheticToken("EOF", "\0");
@@ -247,7 +248,7 @@ export class Scanner {
    * and resets the line offset to the next character.
    */
   private tokenizeNewline() {
-    if (this.shouldAddEOLToken()) this.addToken("EOL");
+    if (this.shouldAddEOLToken()) {this.addToken("EOL");}
 
     this.line++;
     this.lineOffset = this.current;
@@ -263,18 +264,18 @@ export class Scanner {
   private tokenizeString(): void {
     // Keep consuming characters until we see another double quote
     // and then stop before we consume it.
-    while (this.peek() != '"' && this.isAnotherCharacter()) this.advance();
+    while (this.peek() != '"' && this.isAnotherCharacter()) {this.advance();}
 
     // If we reach the end of the line, we have an unterminated string
     if (this.peek() != '"')
-      if (this.previouslyAddedToken() == "IDENTIFIER")
-        this.error("MissingDoubleQuoteToStartStringLiteral", {
+      {if (this.previouslyAddedToken() == "IDENTIFIER")
+        {this.error("MissingDoubleQuoteToStartStringLiteral", {
           string: this.tokens[this.tokens.length - 1].lexeme,
-        });
+        });}
       else
-        this.error("MissingDoubleQuoteToTerminateStringLiteral", {
+        {this.error("MissingDoubleQuoteToTerminateStringLiteral", {
           string: this.sourceCode.substring(this.start + 1, this.current),
-        });
+        });}}
 
     // Consume the closing quotation mark
     this.advance();
@@ -291,7 +292,7 @@ export class Scanner {
       this.start = this.current;
 
       if (this.peek() != "$" && this.peekNext() != "{" && !this.isAtEnd()) {
-        while (this.peek() != "$" && this.peek() != "`" && this.peekNext() != "{" && !this.isAtEnd()) this.advance();
+        while (this.peek() != "$" && this.peek() != "`" && this.peekNext() != "{" && !this.isAtEnd()) {this.advance();}
 
         this.addToken("TEMPLATE_LITERAL_TEXT", this.sourceCode.substring(this.start, this.current));
       } else {
@@ -305,7 +306,7 @@ export class Scanner {
           this.scanToken();
         }
 
-        if (this.isAtEnd()) this.error("MissingRightBraceToTerminatePlaceholder");
+        if (this.isAtEnd()) {this.error("MissingRightBraceToTerminatePlaceholder");}
 
         this.start = this.current;
         this.advance();
@@ -313,7 +314,7 @@ export class Scanner {
       }
     }
 
-    if (this.isAtEnd()) this.error("MissingBacktickToTerminateTemplateLiteral");
+    if (this.isAtEnd()) {this.error("MissingBacktickToTerminateTemplateLiteral");}
 
     this.start = this.current;
     this.advance();
@@ -325,7 +326,7 @@ export class Scanner {
    * We then add a token with the value of the number.
    */
   private tokenizeNumber(): void {
-    while (this.isDigit(this.peek()) || this.peek() == ".") this.advance();
+    while (this.isDigit(this.peek()) || this.peek() == ".") {this.advance();}
     const number = this.sourceCode.substring(this.start, this.current);
 
     // Guard against numbers starting with 0
@@ -369,7 +370,7 @@ export class Scanner {
     }
 
     const keyword = Scanner.keywords[this.lexeme()];
-    if (keyword) return keyword;
+    if (keyword) {return keyword;}
 
     if (Scanner.keywords[this.lexeme().toLowerCase()]) {
       this.error("MiscapitalizedKeywordInStatement", {
@@ -381,10 +382,10 @@ export class Scanner {
   }
 
   private tokenizeIdentifier(): void {
-    while (this.isAllowableInIdentifier(this.peek())) this.advance();
+    while (this.isAllowableInIdentifier(this.peek())) {this.advance();}
 
     const keywordType = this.tokenForLexeme(this.lexeme());
-    if (keywordType) return this.addToken(keywordType);
+    if (keywordType) {this.addToken(keywordType); return;}
 
     this.addToken("IDENTIFIER");
   }
@@ -427,8 +428,8 @@ export class Scanner {
 
   private isAnotherCharacter(): boolean {
     const next = this.peek();
-    if (next == "\n") return false;
-    if (next == "\0") return false;
+    if (next == "\n") {return false;}
+    if (next == "\0") {return false;}
     return true;
   }
 
@@ -441,23 +442,23 @@ export class Scanner {
   }
 
   private peek(): string {
-    if (this.isAtEnd()) return "\0";
+    if (this.isAtEnd()) {return "\0";}
     return this.sourceCode[this.current];
   }
 
   private peekNext(): string {
-    if (this.current + 1 >= this.sourceCode.length) return "\0";
+    if (this.current + 1 >= this.sourceCode.length) {return "\0";}
     return this.sourceCode[this.current + 1];
   }
 
   private previouslyAddedToken(): TokenType | null {
-    if (this.tokens.length === 0) return null;
+    if (this.tokens.length === 0) {return null;}
     return this.tokens[this.tokens.length - 1].type;
   }
 
   private match(expected: string): boolean {
-    if (this.isAtEnd()) return false;
-    if (this.sourceCode[this.current] != expected) return false;
+    if (this.isAtEnd()) {return false;}
+    if (this.sourceCode[this.current] != expected) {return false;}
 
     this.current++;
     return true;
@@ -480,21 +481,21 @@ export class Scanner {
   }
 
   private verifyEnabled(tokenType: TokenType, lexeme: string): void {
-    if (!this.languageFeatures) return;
+    if (!this.languageFeatures) {return;}
 
     if (this.languageFeatures.excludeList && this.languageFeatures.excludeList.includes(tokenType))
-      this.disabledLanguageFeatureError("DisabledFeatureExcludeListViolation", {
+      {this.disabledLanguageFeatureError("DisabledFeatureExcludeListViolation", {
         excludeList: this.languageFeatures.excludeList,
         tokenType,
         lexeme,
-      });
+      });}
 
     if (this.languageFeatures.includeList && !this.languageFeatures.includeList.includes(tokenType))
-      this.disabledLanguageFeatureError("DisabledFeatureIncludeListViolation", {
+      {this.disabledLanguageFeatureError("DisabledFeatureIncludeListViolation", {
         includeList: this.languageFeatures.includeList,
         tokenType,
         lexeme,
-      });
+      });}
   }
 
   private error(type: SyntaxErrorType, context: any = {}): never {

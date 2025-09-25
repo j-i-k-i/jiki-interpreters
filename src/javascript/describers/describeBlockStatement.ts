@@ -1,5 +1,5 @@
-import { Description, DescriptionContext, FrameWithResult } from "../../shared/frames";
-import { BlockStatement } from "../statement";
+import type { Description, DescriptionContext, FrameWithResult } from "../../shared/frames";
+import type { BlockStatement } from "../statement";
 
 export function describeBlockStatement(frame: FrameWithResult, context: DescriptionContext): Description {
   const blockStatement = frame.context as BlockStatement;

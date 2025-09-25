@@ -29,7 +29,7 @@ describe("single-character", () => {
     // ["~", "TILDE"], // Unimplemented
   ])("'%s' token", (source: string, expectedType: string) => {
     const tokens = scan(source);
-    expect(tokens[0].type).toBe(expectedType as TokenType);
+    expect(tokens[0].type).toBe(expectedType);
     expect(tokens[0].lexeme).toBe(source);
     expect(tokens[0].literal).toBeNull;
   });
@@ -62,7 +62,7 @@ describe("two-character operators", () => {
     // ["=>", "ARROW"], // Unimplemented
   ])("'%s' token", (source: string, expectedType: string) => {
     const tokens = scan(source);
-    expect(tokens[0].type).toBe(expectedType as TokenType);
+    expect(tokens[0].type).toBe(expectedType);
     expect(tokens[0].lexeme).toBe(source);
     expect(tokens[0].literal).toBeNull;
   });
@@ -110,7 +110,7 @@ describe("keyword", () => {
     // ["yield", "YIELD"], // Unimplemented
   ])("'%s' keyword", (source: string, expectedType: string) => {
     const tokens = scan(source);
-    expect(tokens[0].type).toBe(expectedType as TokenType);
+    expect(tokens[0].type).toBe(expectedType);
     expect(tokens[0].lexeme).toBe(source);
     expect(tokens[0].literal).toBeNull;
   });

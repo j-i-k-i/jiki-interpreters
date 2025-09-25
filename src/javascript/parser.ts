@@ -1,6 +1,7 @@
 import { SyntaxError, type SyntaxErrorType } from "./error";
+import type {
+  Expression} from "./expression";
 import {
-  Expression,
   LiteralExpression,
   BinaryExpression,
   UnaryExpression,
@@ -15,8 +16,9 @@ import {
 } from "./expression";
 import { Location, Span } from "../shared/location";
 import { Scanner } from "./scanner";
+import type {
+  Statement} from "./statement";
 import {
-  Statement,
   ExpressionStatement,
   VariableDeclaration,
   BlockStatement,
@@ -32,7 +34,7 @@ export class Parser {
   private readonly scanner: Scanner;
   private current: number = 0;
   private tokens: Token[] = [];
-  private languageFeatures: LanguageFeatures;
+  private readonly languageFeatures: LanguageFeatures;
 
   constructor(languageFeatures?: LanguageFeatures) {
     this.scanner = new Scanner();
@@ -363,7 +365,7 @@ export class Parser {
       if (!(operand instanceof IdentifierExpression)) {
         this.error("InvalidAssignmentTargetExpression", operator.location);
       }
-      return new UpdateExpression(operator, operand as IdentifierExpression, true, Location.between(operator, operand));
+      return new UpdateExpression(operator, operand, true, Location.between(operator, operand));
     }
 
     if (this.match("MINUS", "PLUS", "NOT")) {
@@ -406,7 +408,7 @@ export class Parser {
       if (!(expr instanceof IdentifierExpression)) {
         this.error("InvalidAssignmentTargetExpression", operator.location);
       }
-      expr = new UpdateExpression(operator, expr as IdentifierExpression, false, Location.between(expr, operator));
+      expr = new UpdateExpression(operator, expr, false, Location.between(expr, operator));
     }
 
     return expr;
@@ -475,17 +477,17 @@ export class Parser {
   }
 
   private check(...tokenTypes: TokenType[]): boolean {
-    if (this.isAtEnd()) return false;
+    if (this.isAtEnd()) {return false;}
     return tokenTypes.includes(this.peek().type);
   }
 
   private advance(): Token {
-    if (!this.isAtEnd()) this.current++;
+    if (!this.isAtEnd()) {this.current++;}
     return this.previous();
   }
 
   private consume(tokenType: TokenType, errorType: SyntaxErrorType): Token {
-    if (this.check(tokenType)) return this.advance();
+    if (this.check(tokenType)) {return this.advance();}
     this.error(errorType, this.peek().location);
   }
 
@@ -534,7 +536,7 @@ export class Parser {
     this.advance();
 
     while (!this.isAtEnd()) {
-      if (this.previous().type === "SEMICOLON") return;
+      if (this.previous().type === "SEMICOLON") {return;}
 
       switch (this.peek().type) {
         case "NUMBER":

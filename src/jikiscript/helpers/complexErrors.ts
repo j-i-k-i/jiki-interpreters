@@ -21,14 +21,14 @@ export function errorForMissingDoAfterParameters(
         errorType: "MissingWithBeforeParametersInFunction",
         context: {},
       };
-    } else {
+    } 
       return {
         errorType: "MissingCommaBetweenFunctionParameters",
         context: {
           parameter: parameters[parameters.length - 1].name.lexeme,
         },
       };
-    }
+    
   }
 
   return {

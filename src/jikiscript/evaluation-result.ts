@@ -1,24 +1,24 @@
-import { Callable } from "./functions";
-import * as JikiTypes from "./jikiObjects";
+import type { Callable } from "./functions";
+import type * as JikiTypes from "./jikiObjects";
 import { ChangeElementStatement } from "./statement";
 import type { TokenType } from "./token";
 
-export type EvaluationResultFunctionCallStatement = {
+export interface EvaluationResultFunctionCallStatement {
   type: "FunctionCallStatement";
   expression: EvaluationResultFunctionCallExpression;
   jikiObject: JikiTypes.JikiObject;
   immutableJikiObject?: JikiTypes.JikiObject;
   data?: Record<string, any>;
-};
-export type EvaluationResultMethodCallStatement = {
+}
+export interface EvaluationResultMethodCallStatement {
   type: "MethodCallStatement";
   expression: EvaluationResultMethodCallExpression;
   jikiObject: JikiTypes.JikiObject;
   immutableJikiObject?: JikiTypes.JikiObject;
   data?: Record<string, any>;
-};
+}
 
-export type EvaluationResultChangeElementStatement = {
+export interface EvaluationResultChangeElementStatement {
   type: "ChangeElementStatement";
   object: EvaluationResult;
   field: EvaluationResult;
@@ -26,38 +26,38 @@ export type EvaluationResultChangeElementStatement = {
   oldValue: any;
   jikiObject?: undefined;
   data?: Record<string, any>;
-};
-export type EvaluationResultChangePropertyStatement = {
+}
+export interface EvaluationResultChangePropertyStatement {
   type: "ChangePropertyStatement";
   object: EvaluationResult;
   value: EvaluationResult;
   jikiObject?: undefined;
   oldValue?: JikiTypes.JikiObject;
   data?: Record<string, any>;
-};
+}
 
-export type EvaluationResultChangeVariableStatement = {
+export interface EvaluationResultChangeVariableStatement {
   type: "ChangeVariableStatement";
   name: string;
   value: EvaluationResult;
   oldValue: JikiTypes.JikiObject;
   jikiObject?: undefined;
   data?: Record<string, any>;
-};
+}
 
-export type EvaluationResultContinueStatement = {
+export interface EvaluationResultContinueStatement {
   type: "ContinueStatement";
   jikiObject?: undefined;
   data?: Record<string, any>;
-};
+}
 
-export type EvaluationResultBreakStatement = {
+export interface EvaluationResultBreakStatement {
   type: "BreakStatement";
   jikiObject?: undefined;
   data?: Record<string, any>;
-};
+}
 
-export type EvaluationResultForeachStatement = {
+export interface EvaluationResultForeachStatement {
   type: "ForeachStatement";
   elementName: string;
   iterable: EvaluationResult;
@@ -66,56 +66,56 @@ export type EvaluationResultForeachStatement = {
   secondTemporaryVariableValue?: JikiTypes.JikiObject;
   jikiObject?: undefined;
   data?: Record<string, any>;
-};
+}
 
-export type EvaluationResultIfStatement = {
+export interface EvaluationResultIfStatement {
   type: "IfStatement";
   condition: EvaluationResult;
   jikiObject: JikiTypes.Boolean;
   immutableJikiObject?: JikiTypes.JikiObject;
   data?: Record<string, any>;
-};
+}
 
-export type EvaluationResultLogStatement = {
+export interface EvaluationResultLogStatement {
   type: "LogStatement";
   expression: EvaluationResult;
   jikiObject: JikiTypes.JikiObject;
   immutableJikiObject?: JikiTypes.JikiObject;
-};
+}
 
-export type EvaluationResultRepeatStatement = {
+export interface EvaluationResultRepeatStatement {
   type: "RepeatStatement";
   count: EvaluationResult;
   iteration: number;
   jikiObject?: undefined;
   data?: Record<string, any>;
-};
+}
 
-export type EvaluationResultReturnStatement = {
+export interface EvaluationResultReturnStatement {
   type: "ReturnStatement";
   expression?: EvaluationResult;
   jikiObject?: JikiTypes.JikiObject;
   immutableJikiObject?: JikiTypes.JikiObject;
   data?: Record<string, any>;
-};
+}
 
-export type EvaluationResultSetVariableStatement = {
+export interface EvaluationResultSetVariableStatement {
   type: "SetVariableStatement";
   name: string;
   value: EvaluationResultExpression;
   jikiObject?: undefined;
   data?: Record<string, any>;
-};
+}
 
-export type EvaluationResultSetPropertyStatement = {
+export interface EvaluationResultSetPropertyStatement {
   type: "SetPropertyStatement";
   property: string;
   value: EvaluationResult;
   jikiObject?: undefined;
   data?: Record<string, any>;
-};
+}
 
-export type EvaluationResultLogicalExpression = {
+export interface EvaluationResultLogicalExpression {
   type: "LogicalExpression";
   left: EvaluationResult;
   right?: EvaluationResult;
@@ -123,68 +123,68 @@ export type EvaluationResultLogicalExpression = {
   jikiObject: JikiTypes.Boolean;
   immutableJikiObject?: JikiTypes.JikiObject;
   data?: Record<string, any>;
-};
+}
 
 export type EvaluationResultFullyEvaluatedLogicalExpression = EvaluationResultLogicalExpression & {
   right: EvaluationResult;
 };
 
-export type EvaluationResultBinaryExpression = {
+export interface EvaluationResultBinaryExpression {
   type: "BinaryExpression";
   jikiObject: JikiTypes.Primitive;
   immutableJikiObject: JikiTypes.JikiObject;
   left: EvaluationResult;
   right: EvaluationResult;
   data?: Record<string, any>;
-};
+}
 
-export type EvaluationResultUnaryExpression = {
+export interface EvaluationResultUnaryExpression {
   type: "UnaryExpression";
   jikiObject: JikiTypes.Primitive;
   immutableJikiObject?: JikiTypes.JikiObject;
   operand: EvaluationResult;
   data?: Record<string, any>;
-};
+}
 
-export type EvaluationResultGroupingExpression = {
+export interface EvaluationResultGroupingExpression {
   type: "GroupingExpression";
   jikiObject: JikiTypes.JikiObject;
   immutableJikiObject?: JikiTypes.JikiObject;
   inner: EvaluationResult;
   data?: Record<string, any>;
-};
+}
 
-export type EvaluationResultLiteralExpression = {
+export interface EvaluationResultLiteralExpression {
   type: "LiteralExpression";
   jikiObject: JikiTypes.Literal;
   immutableJikiObject?: JikiTypes.JikiObject;
   data?: Record<string, any>;
-};
+}
 
-export type EvaluationResultThisExpression = {
+export interface EvaluationResultThisExpression {
   type: "ThisExpression";
   jikiObject: JikiTypes.Instance;
   immutableJikiObject?: JikiTypes.JikiObject;
   data?: Record<string, any>;
-};
+}
 
-export type EvaluationResultVariableLookupExpression = {
+export interface EvaluationResultVariableLookupExpression {
   type: "VariableLookupExpression";
   name: string;
   jikiObject: JikiTypes.JikiObject;
   immutableJikiObject?: JikiTypes.JikiObject;
   data?: Record<string, any>;
-};
-export type EvaluationResultFunctionLookupExpression = {
+}
+export interface EvaluationResultFunctionLookupExpression {
   type: "FunctionLookupExpression";
   name: string;
   function: Callable;
   jikiObject?: JikiTypes.Boolean;
   immutableJikiObject?: JikiTypes.JikiObject;
   data?: Record<string, any>;
-};
+}
 
-export type EvaluationResultGetElementExpression = {
+export interface EvaluationResultGetElementExpression {
   type: "GetElementExpression";
   // Can be a string, list, or dictionary
   obj: EvaluationResultLiteralExpression | EvaluationResultListExpression | EvaluationResultDictionaryExpression;
@@ -193,9 +193,9 @@ export type EvaluationResultGetElementExpression = {
   jikiObject: JikiTypes.JikiObject;
   immutableJikiObject?: JikiTypes.JikiObject;
   data?: Record<string, any>;
-};
+}
 
-export type EvaluationResultSetElementExpression = {
+export interface EvaluationResultSetElementExpression {
   type: "SetElementExpression";
   obj: EvaluationResultListExpression | EvaluationResultDictionaryExpression;
   field: EvaluationResult;
@@ -203,31 +203,31 @@ export type EvaluationResultSetElementExpression = {
   jikiObject: JikiTypes.JikiObject;
   immutableJikiObject?: JikiTypes.JikiObject;
   data?: Record<string, any>;
-};
+}
 
-export type EvaluationResultListExpression = {
+export interface EvaluationResultListExpression {
   type: "ListExpression";
   jikiObject: JikiTypes.List;
   immutableJikiObject?: JikiTypes.JikiObject;
   data?: Record<string, any>;
-};
+}
 
-export type EvaluationResultDictionaryExpression = {
+export interface EvaluationResultDictionaryExpression {
   type: "DictionaryExpression";
   jikiObject: JikiTypes.Dictionary;
   immutableJikiObject?: JikiTypes.JikiObject;
   data?: Record<string, any>;
-};
+}
 
-export type EvaluationResultFunctionCallExpression = {
+export interface EvaluationResultFunctionCallExpression {
   type: "FunctionCallExpression";
   jikiObject: JikiTypes.JikiObject;
   immutableJikiObject?: JikiTypes.JikiObject;
   callee: EvaluationResultVariableLookupExpression | EvaluationResultFunctionLookupExpression;
   args: EvaluationResult[];
   data?: Record<string, any>;
-};
-export type EvaluationResultMethodCallExpression = {
+}
+export interface EvaluationResultMethodCallExpression {
   type: "MethodCallExpression";
   jikiObject: JikiTypes.JikiObject;
   immutableJikiObject?: JikiTypes.JikiObject;
@@ -235,30 +235,30 @@ export type EvaluationResultMethodCallExpression = {
   method: JikiTypes.Method;
   args: EvaluationResult[];
   data?: Record<string, any>;
-};
-export type EvaluationResultClassLookupExpression = {
+}
+export interface EvaluationResultClassLookupExpression {
   type: "ClassLookupExpression";
   name: string;
   class: JikiTypes.Class;
   jikiObject: JikiTypes.Boolean;
   immutableJikiObject?: JikiTypes.JikiObject;
   data?: Record<string, any>;
-};
-export type EvaluationResultInstantiationExpression = {
+}
+export interface EvaluationResultInstantiationExpression {
   type: "InstantiationExpression";
   jikiObject: JikiTypes.Instance;
   immutableJikiObject?: JikiTypes.JikiObject;
   className: EvaluationResultClassLookupExpression;
   args: EvaluationResult[];
   data?: Record<string, any>;
-};
-export type EvaluationResultGetterExpression = {
+}
+export interface EvaluationResultGetterExpression {
   type: "GetterExpression";
   jikiObject: JikiTypes.JikiObject;
   immutableJikiObject?: JikiTypes.JikiObject;
   object: EvaluationResult;
   data?: Record<string, any>;
-};
+}
 
 export type EvaluationResult = EvaluationResultStatement | EvaluationResultExpression;
 

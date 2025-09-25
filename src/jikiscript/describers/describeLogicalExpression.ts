@@ -1,9 +1,9 @@
-import {
+import type {
   EvaluationResultFullyEvaluatedLogicalExpression,
   EvaluationResultLogicalExpression,
 } from "../evaluation-result";
-import { LogicalExpression } from "../expression";
-import { DescriptionContext } from "../../shared/frames";
+import type { LogicalExpression } from "../expression";
+import type { DescriptionContext } from "../../shared/frames";
 import { codeTag, formatJikiObject } from "../helpers";
 import { describeExpression } from "./describeSteps";
 

@@ -1,5 +1,5 @@
 import { TIME_SCALE_FACTOR } from "./frames.js";
-import { ExecutionContext } from "./interfaces.js";
+import type { ExecutionContext } from "./interfaces.js";
 
 export function createBaseExecutionContext(this: { time: number }): ExecutionContext {
   return {

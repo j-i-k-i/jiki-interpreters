@@ -8,9 +8,9 @@ export function describeSubscriptExpression(
   result: EvaluationResultSubscriptExpression
 ): string[] {
   const subscriptExpr = expression as SubscriptExpression;
-  const objectDesc = formatPyObject(result.object.immutableJikiObject!);
-  const indexDesc = formatPyObject(result.index.immutableJikiObject!);
-  const elementDesc = formatPyObject(result.immutableJikiObject!);
+  const objectDesc = formatPyObject(result.object.immutableJikiObject);
+  const indexDesc = formatPyObject(result.index.immutableJikiObject);
+  const elementDesc = formatPyObject(result.immutableJikiObject);
 
   // Special case for integer indices (most common)
   if (result.index.jikiObject instanceof PyNumber && result.index.jikiObject.isInteger()) {
@@ -20,11 +20,11 @@ export function describeSubscriptExpression(
       return [
         `<li>Python accessed element at index <code>${index}</code> (counting from the end) of <code>${objectDesc}</code> to get <code>${elementDesc}</code>.</li>`,
       ];
-    } else {
+    } 
       return [
         `<li>Python accessed element at index <code>${index}</code> of <code>${objectDesc}</code> to get <code>${elementDesc}</code>.</li>`,
       ];
-    }
+    
   }
 
   // General case for expression indices

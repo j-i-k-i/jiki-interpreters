@@ -1,12 +1,14 @@
+import type {
+  EvaluationResultChangePropertyStatement} from "../evaluation-result";
 import {
   EvaluationResult,
-  EvaluationResultChangeElementStatement,
-  EvaluationResultChangePropertyStatement,
+  EvaluationResultChangeElementStatement
 } from "../evaluation-result";
 import { VariableLookupExpression } from "../expression";
-import { Description, DescriptionContext, FrameWithResult } from "../../shared/frames";
+import type { Description, DescriptionContext, FrameWithResult } from "../../shared/frames";
 import { codeTag, formatJikiObject } from "../helpers";
-import { ChangeElementStatement, ChangePropertyStatement } from "../statement";
+import type { ChangePropertyStatement } from "../statement";
+import { ChangeElementStatement } from "../statement";
 import { describeExpression } from "./describeSteps";
 import { addOrdinalSuffix } from "./helpers";
 

@@ -1,5 +1,6 @@
 import { parse } from "@jikiscript/parser";
-import { EvaluationContext, interpret } from "@jikiscript/interpreter";
+import type { EvaluationContext} from "@jikiscript/interpreter";
+import { interpret } from "@jikiscript/interpreter";
 import { FunctionCallStatement, FunctionStatement, LogStatement, ReturnStatement } from "@jikiscript/statement";
 import { last } from "lodash";
 import { unwrapJikiObject } from "@jikiscript/jikiObjects";
@@ -14,7 +15,7 @@ describe("parse", () => {
     expect(stmts[0]).toBeInstanceOf(FunctionCallStatement);
     const expStmt = stmts[0] as FunctionCallStatement;
     expect(expStmt.expression).toBeInstanceOf(FunctionCallExpression);
-    const callExpr = expStmt.expression as FunctionCallExpression;
+    const callExpr = expStmt.expression;
     expect(callExpr.args).toBeEmpty();
   });
 
@@ -24,7 +25,7 @@ describe("parse", () => {
     expect(stmts[0]).toBeInstanceOf(FunctionCallStatement);
     const logStmt = stmts[0] as FunctionCallStatement;
     expect(logStmt.expression).toBeInstanceOf(FunctionCallExpression);
-    const callExpr = logStmt.expression as FunctionCallExpression;
+    const callExpr = logStmt.expression;
     expect(callExpr.args).toBeArrayOfSize(1);
     expect(callExpr.args[0]).toBeInstanceOf(LiteralExpression);
   });

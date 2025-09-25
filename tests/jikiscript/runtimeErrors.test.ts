@@ -1,6 +1,7 @@
-import { RuntimeErrorType } from "@jikiscript/error";
-import { Frame } from "../../src/shared/frames";
-import { EvaluationContext, interpret } from "@jikiscript/interpreter";
+import type { RuntimeErrorType } from "@jikiscript/error";
+import type { Frame } from "../../src/shared/frames";
+import type { EvaluationContext} from "@jikiscript/interpreter";
+import { interpret } from "@jikiscript/interpreter";
 import { Location, Span } from "@jikiscript/location";
 import * as Jiki from "@jikiscript/jikiObjects";
 

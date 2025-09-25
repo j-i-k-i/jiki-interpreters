@@ -94,7 +94,7 @@ export class Scanner {
   };
 
   constructor(
-    private languageFeatures: LanguageFeatures = {
+    private readonly languageFeatures: LanguageFeatures = {
       includeList: undefined,
       excludeList: undefined,
     }
@@ -110,7 +110,7 @@ export class Scanner {
     }
 
     // Add synthetic EOL token to simplify parsing if needed
-    if (this.shouldAddEOLToken()) this.addSyntheticToken("EOL", "\n");
+    if (this.shouldAddEOLToken()) {this.addSyntheticToken("EOL", "\n");}
 
     // Add synthetic EOF token to simplify parsing
     this.addSyntheticToken("EOF", "\0");
@@ -301,7 +301,7 @@ export class Scanner {
   }
 
   private tokenizeNewline() {
-    if (this.shouldAddEOLToken()) this.addToken("EOL");
+    if (this.shouldAddEOLToken()) {this.addToken("EOL");}
     this.line++;
     this.lineOffset = this.current;
   }
@@ -460,21 +460,21 @@ export class Scanner {
     if (this.sourceCode[this.start] == "0" && this.current < this.sourceCode.length) {
       const nextChar = this.peek();
       if (nextChar == "x" || nextChar == "X") {
-        return this.tokenizeHexNumber();
+        this.tokenizeHexNumber(); return;
       } else if (nextChar == "b" || nextChar == "B") {
-        return this.tokenizeBinaryNumber();
+        this.tokenizeBinaryNumber(); return;
       } else if (nextChar == "o" || nextChar == "O") {
-        return this.tokenizeOctalNumber();
+        this.tokenizeOctalNumber(); return;
       }
     }
 
     // Regular decimal number
-    while (this.isDigit(this.peek())) this.advance();
+    while (this.isDigit(this.peek())) {this.advance();}
 
     // Look for a fractional part
     if (this.peek() == "." && this.isDigit(this.peekNext())) {
       this.advance(); // consume the .
-      while (this.isDigit(this.peek())) this.advance();
+      while (this.isDigit(this.peek())) {this.advance();}
     }
 
     // Look for scientific notation
@@ -483,7 +483,7 @@ export class Scanner {
       if (this.peek() == "+" || this.peek() == "-") {
         this.advance(); // consume +/-
       }
-      while (this.isDigit(this.peek())) this.advance();
+      while (this.isDigit(this.peek())) {this.advance();}
     }
 
     const number = this.sourceCode.substring(this.start, this.current);
@@ -492,7 +492,7 @@ export class Scanner {
 
   private tokenizeHexNumber(): void {
     this.advance(); // consume x/X
-    while (this.isHexDigit(this.peek())) this.advance();
+    while (this.isHexDigit(this.peek())) {this.advance();}
 
     const number = this.sourceCode.substring(this.start + 2, this.current); // Skip '0x'
     this.addToken("NUMBER", parseInt(number, 16));
@@ -500,7 +500,7 @@ export class Scanner {
 
   private tokenizeBinaryNumber(): void {
     this.advance(); // consume b/B
-    while (this.peek() == "0" || this.peek() == "1") this.advance();
+    while (this.peek() == "0" || this.peek() == "1") {this.advance();}
 
     const number = this.sourceCode.substring(this.start + 2, this.current); // Skip '0b'
     this.addToken("NUMBER", parseInt(number, 2));
@@ -508,17 +508,17 @@ export class Scanner {
 
   private tokenizeOctalNumber(): void {
     this.advance(); // consume o/O
-    while (this.isOctalDigit(this.peek())) this.advance();
+    while (this.isOctalDigit(this.peek())) {this.advance();}
 
     const number = this.sourceCode.substring(this.start + 2, this.current); // Skip '0o'
     this.addToken("NUMBER", parseInt(number, 8));
   }
 
   private tokenizeIdentifier(): void {
-    while (this.isAllowableInIdentifier(this.peek())) this.advance();
+    while (this.isAllowableInIdentifier(this.peek())) {this.advance();}
 
     const keywordType = this.tokenForLexeme(this.lexeme());
-    if (keywordType) return this.addToken(keywordType);
+    if (keywordType) {this.addToken(keywordType); return;}
 
     this.addToken("IDENTIFIER");
   }
@@ -640,23 +640,23 @@ export class Scanner {
   }
 
   private peek(): string {
-    if (this.isAtEnd()) return "\0";
+    if (this.isAtEnd()) {return "\0";}
     return this.sourceCode[this.current];
   }
 
   private peekNext(): string {
-    if (this.current + 1 >= this.sourceCode.length) return "\0";
+    if (this.current + 1 >= this.sourceCode.length) {return "\0";}
     return this.sourceCode[this.current + 1];
   }
 
   private previouslyAddedToken(): TokenType | null {
-    if (this.tokens.length === 0) return null;
+    if (this.tokens.length === 0) {return null;}
     return this.tokens[this.tokens.length - 1].type;
   }
 
   private match(expected: string): boolean {
-    if (this.isAtEnd()) return false;
-    if (this.sourceCode[this.current] != expected) return false;
+    if (this.isAtEnd()) {return false;}
+    if (this.sourceCode[this.current] != expected) {return false;}
 
     this.current++;
     return true;
@@ -679,21 +679,21 @@ export class Scanner {
   }
 
   private verifyEnabled(tokenType: TokenType, lexeme: string): void {
-    if (!this.languageFeatures) return;
+    if (!this.languageFeatures) {return;}
 
     if (this.languageFeatures.excludeList && this.languageFeatures.excludeList.includes(tokenType))
-      this.disabledLanguageFeatureError("DisabledFeatureExcludeListViolation", {
+      {this.disabledLanguageFeatureError("DisabledFeatureExcludeListViolation", {
         excludeList: this.languageFeatures.excludeList,
         tokenType,
         lexeme,
-      });
+      });}
 
     if (this.languageFeatures.includeList && !this.languageFeatures.includeList.includes(tokenType))
-      this.disabledLanguageFeatureError("DisabledFeatureIncludeListViolation", {
+      {this.disabledLanguageFeatureError("DisabledFeatureIncludeListViolation", {
         includeList: this.languageFeatures.includeList,
         tokenType,
         lexeme,
-      });
+      });}
   }
 
   private error(type: SyntaxErrorType, context: any = {}): never {

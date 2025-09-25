@@ -1,9 +1,9 @@
-import { EvaluationResultUnaryExpression } from "../evaluation-result";
-import { UnaryExpression } from "../expression";
-import { DescriptionContext } from "../../shared/frames";
+import type { EvaluationResultUnaryExpression } from "../evaluation-result";
+import type { UnaryExpression } from "../expression";
+import type { DescriptionContext } from "../../shared/frames";
 import { codeTag, formatJSObject } from "../helpers";
 import { describeExpression } from "./describeSteps";
-import * as JS from "../jikiObjects";
+import type * as JS from "../jikiObjects";
 
 export function describeUnaryExpression(
   expression: UnaryExpression,

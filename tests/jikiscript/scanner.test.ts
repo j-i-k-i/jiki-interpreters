@@ -19,7 +19,7 @@ describe("single-character", () => {
     ["!", "NOT"],
   ])("'%s' token", (source: string, expectedType: string) => {
     const tokens = scan(source);
-    expect(tokens[0].type).toBe(expectedType as TokenType);
+    expect(tokens[0].type).toBe(expectedType);
     expect(tokens[0].lexeme).toBe(source);
     expect(tokens[0].literal).toBeNull;
   });
@@ -35,7 +35,7 @@ describe("one, two or three characters", () => {
     ["==", "EQUALITY"],
   ])("'%s' token", (source: string, expectedType: string) => {
     const tokens = scan(source);
-    expect(tokens[0].type).toBe(expectedType as TokenType);
+    expect(tokens[0].type).toBe(expectedType);
     expect(tokens[0].lexeme).toBe(source);
     expect(tokens[0].literal).toBeNull;
   });
@@ -68,7 +68,7 @@ describe("keyword", () => {
     ["equals", "EQUALITY"],
   ])("'%s' keyword", (source: string, expectedType: string) => {
     const tokens = scan(source);
-    expect(tokens[0].type).toBe(expectedType as TokenType);
+    expect(tokens[0].type).toBe(expectedType);
     expect(tokens[0].lexeme).toBe(source);
     expect(tokens[0].literal).toBeNull;
   });

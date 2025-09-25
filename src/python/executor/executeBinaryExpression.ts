@@ -78,10 +78,10 @@ function isTruthy(obj: JikiObject): boolean {
   const type = obj.type;
 
   // Python falsy values: False, None, 0, 0.0, "", [], {}, set()
-  if (type === "boolean") return value as boolean;
-  if (type === "none") return false;
-  if (type === "number") return value !== 0;
-  if (type === "string") return (value as string).length > 0;
+  if (type === "boolean") {return value as boolean;}
+  if (type === "none") {return false;}
+  if (type === "number") {return value !== 0;}
+  if (type === "string") {return (value as string).length > 0;}
 
   // For now, we'll treat any other type as truthy
   // This will be expanded when we add lists, dicts, etc.
@@ -140,7 +140,7 @@ function handleLogicalOperation(
       jikiObject: rightObject,
       immutableJikiObject: rightObject.clone(),
     } as any;
-  } else {
+  } 
     // OR
     // Python's 'or' operator returns the first truthy value or the last value
     if (leftTruthy) {
@@ -175,7 +175,7 @@ function handleLogicalOperation(
       jikiObject: rightObject,
       immutableJikiObject: rightObject.clone(),
     } as any;
-  }
+  
 }
 
 // Arithmetic operation handlers

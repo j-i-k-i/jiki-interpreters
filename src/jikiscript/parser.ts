@@ -1,10 +1,11 @@
 import { SyntaxError } from "./error";
 import { type SyntaxErrorType } from "./error";
+import type {
+  Expression} from "./expression";
 import {
   ListExpression,
   BinaryExpression,
   FunctionCallExpression,
-  Expression,
   GroupingExpression,
   LiteralExpression,
   LogicalExpression,
@@ -26,6 +27,8 @@ import {
 import type { LanguageFeatures } from "./interpreter";
 import { Location } from "./location";
 import { Scanner } from "./scanner";
+import type {
+  Statement} from "./statement";
 import {
   BlockStatement,
   BreakStatement,
@@ -38,7 +41,6 @@ import {
   RepeatStatement,
   RepeatUntilGameOverStatement,
   ReturnStatement,
-  Statement,
   SetVariableStatement,
   ChangeVariableStatement,
   RepeatForeverStatement,
@@ -64,9 +66,9 @@ export class Parser {
   private tokens: Token[] = [];
 
   constructor(
-    private functionNames: string[] = [],
+    private readonly functionNames: string[] = [],
     languageFeatures: LanguageFeatures,
-    private shouldWrapTopLevelStatements: boolean
+    private readonly shouldWrapTopLevelStatements: boolean
   ) {
     this.scanner = new Scanner(languageFeatures);
   }
@@ -83,7 +85,7 @@ export class Parser {
       }
     }
 
-    if (this.shouldWrapTopLevelStatements) return this.wrapTopLevelStatements(statements);
+    if (this.shouldWrapTopLevelStatements) {return this.wrapTopLevelStatements(statements);}
 
     return statements;
   }
@@ -103,7 +105,7 @@ export class Parser {
 
     for (let i = statements.length - 1; i >= 0; i--) {
       // Don't wrap top-level function statements
-      if (statements[i] instanceof FunctionStatement) continue;
+      if (statements[i] instanceof FunctionStatement) {continue;}
 
       functionStmt.body.unshift(statements[i]);
       statements.splice(i, 1);
@@ -114,8 +116,8 @@ export class Parser {
   }
 
   private declarationStatement(): Statement {
-    if (this.match("FUNCTION")) return this.functionStatement();
-    if (this.match("CLASS")) return this.classStatement();
+    if (this.match("FUNCTION")) {return this.functionStatement();}
+    if (this.match("CLASS")) {return this.classStatement();}
 
     return this.statement();
   }
@@ -139,10 +141,10 @@ export class Parser {
   }
 
   private classBodyStatement(): Statement {
-    if (this.match("CONSTRUCTOR")) return this.constructorStatement();
+    if (this.match("CONSTRUCTOR")) {return this.constructorStatement();}
     if (this.check("PUBLIC", "PRIVATE")) {
-      if (this.checkAhead(2, "PROPERTY")) return this.propertyStatement();
-      if (this.checkAhead(2, "METHOD")) return this.methodStatement();
+      if (this.checkAhead(2, "PROPERTY")) {return this.propertyStatement();}
+      if (this.checkAhead(2, "METHOD")) {return this.methodStatement();}
       this.error("UnexpectedTokenAfterAccessModifier", this.peek().location, {
         accessModifier: this.peek().lexeme,
       });
@@ -217,7 +219,7 @@ export class Parser {
 
         // If we have some keyword other than "DO", it's probably
         // someone using a reserved keyword by accident
-        if (!this.check("DO")) this.guardUnexpectedKeyword();
+        if (!this.check("DO")) {this.guardUnexpectedKeyword();}
 
         const parameterName = this.consume("IDENTIFIER", "MissingParameterNameInFunctionDeclaration", {
           name: name,
@@ -240,20 +242,20 @@ export class Parser {
   }
 
   private statement(): Statement {
-    if (this.match("BREAK")) return this.breakStatement();
-    if (this.match("CHANGE")) return this.changeVariableStatement();
-    if (this.match("CONTINUE")) return this.continueStatement();
-    if (this.match("NEXT")) return this.continueStatement();
-    if (this.match("IF")) return this.ifStatement();
-    if (this.match("LOG")) return this.logStatement();
-    if (this.match("SET")) return this.setVariableStatement();
-    if (this.match("RETURN")) return this.returnStatement();
-    if (this.match("REPEAT")) return this.repeatStatement();
-    if (this.match("REPEAT_FOREVER")) return this.repeatForeverStatement();
-    if (this.match("REPEAT_UNTIL_GAME_OVER")) return this.repeatUntilGameOverStatement();
+    if (this.match("BREAK")) {return this.breakStatement();}
+    if (this.match("CHANGE")) {return this.changeVariableStatement();}
+    if (this.match("CONTINUE")) {return this.continueStatement();}
+    if (this.match("NEXT")) {return this.continueStatement();}
+    if (this.match("IF")) {return this.ifStatement();}
+    if (this.match("LOG")) {return this.logStatement();}
+    if (this.match("SET")) {return this.setVariableStatement();}
+    if (this.match("RETURN")) {return this.returnStatement();}
+    if (this.match("REPEAT")) {return this.repeatStatement();}
+    if (this.match("REPEAT_FOREVER")) {return this.repeatForeverStatement();}
+    if (this.match("REPEAT_UNTIL_GAME_OVER")) {return this.repeatUntilGameOverStatement();}
     // if (this.match('WHILE')) return this.whileStatement()
-    if (this.match("FOR")) return this.forStatement();
-    if (this.match("DO")) return this.blockStatement("do");
+    if (this.match("FOR")) {return this.forStatement();}
+    if (this.match("DO")) {return this.blockStatement("do");}
 
     // Error cases
     if (this.match("ELSE")) {
@@ -400,9 +402,9 @@ export class Parser {
       return this.changeElementStatement(changeToken, getExpression);
     } else if (getExpression instanceof AccessorExpression) {
       return this.changePropertyStatement(changeToken, getExpression);
-    } else {
+    } 
       this.error("SyntaxErrorGeneric", getExpression.location);
-    }
+    
   }
 
   private changeElementStatement(changeToken: Token, getExpression: GetElementExpression): ChangeElementStatement {
@@ -917,18 +919,18 @@ export class Parser {
   }
 
   private primary(): Expression {
-    if (this.match("LEFT_BRACKET")) return this.array();
+    if (this.match("LEFT_BRACKET")) {return this.array();}
 
-    if (this.match("LEFT_BRACE")) return this.dictionary();
+    if (this.match("LEFT_BRACE")) {return this.dictionary();}
 
-    if (this.match("FALSE")) return new LiteralExpression(false, this.previous().location);
+    if (this.match("FALSE")) {return new LiteralExpression(false, this.previous().location);}
 
-    if (this.match("TRUE")) return new LiteralExpression(true, this.previous().location);
+    if (this.match("TRUE")) {return new LiteralExpression(true, this.previous().location);}
 
     // if (this.match('NULL'))
     //   return new LiteralExpression(null, this.previous().location)
 
-    if (this.match("NUMBER", "STRING")) return new LiteralExpression(this.previous().literal, this.previous().location);
+    if (this.match("NUMBER", "STRING")) {return new LiteralExpression(this.previous().literal, this.previous().location);}
 
     if (this.match("THIS")) {
       return new ThisExpression(this.previous().location);
@@ -1134,22 +1136,22 @@ export class Parser {
   }
 
   private check(...tokenTypes: TokenType[]): boolean {
-    if (this.isAtEnd()) return false;
+    if (this.isAtEnd()) {return false;}
     return tokenTypes.includes(this.peek().type);
   }
 
   private checkAhead(steps = 1, ...tokenTypes: TokenType[]): boolean {
-    if (this.isAtEnd()) return false;
+    if (this.isAtEnd()) {return false;}
     return tokenTypes.includes(this.peek(steps).type);
   }
 
   private advance(): Token {
-    if (!this.isAtEnd()) this.current++;
+    if (!this.isAtEnd()) {this.current++;}
     return this.previous();
   }
 
   private consume(tokenType: TokenType, type: SyntaxErrorType, context?: any): Token {
-    if (this.check(tokenType)) return this.advance();
+    if (this.check(tokenType)) {return this.advance();}
 
     this.error(type, this.peek().location, context);
   }
@@ -1223,7 +1225,7 @@ export class Parser {
 
   private guardUnexpectedKeyword() {
     const token = this.nextTokenIsKeyword();
-    if (!token) return;
+    if (!token) {return;}
 
     this.error("UnexpectedKeywordInExpression", token.location, { lexeme: token.lexeme });
   }
@@ -1270,7 +1272,7 @@ export class Parser {
     }
     const token = this.peek(counter);
 
-    if (KeywordTokens.includes(token.type)) return token;
+    if (KeywordTokens.includes(token.type)) {return token;}
     return false;
   }
 

@@ -184,9 +184,9 @@ export function createPyObject(value: any): JikiObject {
     return new PyNone();
   } else if (Array.isArray(value)) {
     return new PyList(value.map(elem => createPyObject(elem)));
-  } else {
+  } 
     throw new Error(`Cannot create PyObject for value: ${value}`);
-  }
+  
 }
 
 // Helper function to unwrap PyObjects to JavaScript values
