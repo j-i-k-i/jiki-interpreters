@@ -87,3 +87,41 @@ export class IfStatement extends Statement {
     return children;
   }
 }
+
+export class ForInStatement extends Statement {
+  constructor(
+    public variable: Token,
+    public iterable: Expression,
+    public body: Statement[],
+    public location: Location
+  ) {
+    super("ForInStatement");
+  }
+  public children() {
+    return [this.iterable];
+  }
+}
+
+export class BreakStatement extends Statement {
+  constructor(
+    public keyword: Token,
+    public location: Location
+  ) {
+    super("BreakStatement");
+  }
+  public children() {
+    return [];
+  }
+}
+
+export class ContinueStatement extends Statement {
+  constructor(
+    public keyword: Token,
+    public location: Location
+  ) {
+    super("ContinueStatement");
+  }
+  public children() {
+    return [];
+  }
+}

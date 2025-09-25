@@ -12,9 +12,18 @@ import {
 } from "./expression";
 import { Location } from "../shared/location";
 import type { Statement } from "./statement";
-import { ExpressionStatement, AssignmentStatement, PrintStatement, IfStatement, BlockStatement } from "./statement";
+import {
+  ExpressionStatement,
+  AssignmentStatement,
+  PrintStatement,
+  IfStatement,
+  BlockStatement,
+  ForInStatement,
+  BreakStatement,
+  ContinueStatement,
+} from "./statement";
 import type { EvaluationResult } from "./evaluation-result";
-import { createPyObject, type JikiObject } from "./jikiObjects";
+import { createPyObject, PyString, type JikiObject } from "./jikiObjects";
 import { TIME_SCALE_FACTOR, type Frame, type FrameExecutionStatus, type TestAugmentedFrame } from "../shared/frames";
 import { type ExecutionContext as SharedExecutionContext } from "../shared/interfaces";
 import { createBaseExecutionContext } from "../shared/executionContext";
@@ -33,6 +42,9 @@ import { executeIfStatement } from "./executor/executeIfStatement";
 import { executeBlockStatement } from "./executor/executeBlockStatement";
 import { executeListExpression } from "./executor/executeListExpression";
 import { executeSubscriptExpression } from "./executor/executeSubscriptExpression";
+import { executeForInStatement } from "./executor/executeForInStatement";
+import { executeBreakStatement } from "./executor/executeBreakStatement";
+import { executeContinueStatement } from "./executor/executeContinueStatement";
 
 // Execution context for Python stdlib (future use)
 export type ExecutionContext = SharedExecutionContext & {
@@ -147,6 +159,14 @@ export class Executor {
       result = executeIfStatement(this, statement);
     } else if (statement instanceof BlockStatement) {
       result = executeBlockStatement(this, statement);
+    } else if (statement instanceof ForInStatement) {
+      result = executeForInStatement(this, statement);
+    } else if (statement instanceof BreakStatement) {
+      executeBreakStatement(this, statement);
+      result = null;
+    } else if (statement instanceof ContinueStatement) {
+      executeContinueStatement(this, statement);
+      result = null;
     }
 
     return result;
@@ -272,13 +292,37 @@ export class Executor {
             const resultValue = result.jikiObject.toString();
             return `Accessing ${objectValue}[${indexValue}], result: ${resultValue}`;
           }
-          return `Evaluating expression: ${result.jikiObject.toString()}`;
+          // Add quotes for string values
+          const exprValue = result.jikiObject;
+          const exprStr = exprValue instanceof PyString ? `'${exprValue.toString()}'` : exprValue.toString();
+          return `Evaluating expression: ${exprStr}`;
 
         case "SubscriptExpression":
           const objectVal = (result as any).object?.jikiObject?.toString() || "list";
           const indexVal = (result as any).index?.jikiObject?.toString() || "index";
           const resultVal = result.jikiObject.toString();
           return `Accessing ${objectVal}[${indexVal}], result: ${resultVal}`;
+
+        case "ForInStatement":
+          const forResult = result as any;
+          if (forResult.iteration === 0) {
+            const iterableObj = forResult.iterable.jikiObject;
+            // Add quotes for strings
+            const iterableStr =
+              iterableObj instanceof PyString ? `'${iterableObj.toString()}'` : iterableObj.toString();
+            return `Starting for loop over ${iterableStr}`;
+          }
+          const currentValue = forResult.currentValue;
+          // Add quotes for string values
+          const valueStr =
+            currentValue instanceof PyString ? `'${currentValue.toString()}'` : currentValue?.toString() || "";
+          return `Iteration ${forResult.iteration}: ${forResult.variableName} = ${valueStr}`;
+
+        case "BreakStatement":
+          return "Breaking out of loop";
+
+        case "ContinueStatement":
+          return "Continuing to next iteration";
 
         default:
           return `Evaluating: ${result.jikiObject.toString()}`;

@@ -189,18 +189,18 @@ export class Scanner {
       "ASSERT",
       "ASYNC",
       "AWAIT",
-      "BREAK",
+      // "BREAK", - Implemented for for loops
       "CLASS",
-      "CONTINUE",
+      // "CONTINUE", - Implemented for for loops
       "DEF",
       "DEL",
       "EXCEPT",
       "FINALLY",
-      "FOR",
+      // "FOR", - Implemented for for-in loops
       "FROM",
       "GLOBAL",
       "IMPORT",
-      "IN",
+      // "IN", - Implemented for for-in loops
       "IS",
       "LAMBDA",
       "NONLOCAL",
