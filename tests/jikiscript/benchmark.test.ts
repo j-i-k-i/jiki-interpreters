@@ -165,6 +165,7 @@ describe("JikiScript performance benchmarks", () => {
     const frameCount = result.frames.length;
     const framesPerMs = frameCount / executionTime;
 
+    console.log(`
 Benchmark Results:
 ==================
 Total frames generated: ${frameCount}
@@ -222,6 +223,7 @@ Average time per frame: ${(executionTime / frameCount).toFixed(4)}ms
     const executionTime = endTime - startTime;
     const frameCount = result.frames.length;
 
+    console.log(`
 1M Frames Benchmark:
 ====================
 Total frames: ${frameCount}
