@@ -7,7 +7,7 @@ export { JSString } from "./JSString";
 export { JSBoolean } from "./JSBoolean";
 export { JSNull } from "./JSNull";
 export { JSUndefined } from "./JSUndefined";
-export { JSList } from "./JSList";
+export { JSArray } from "./JSList";
 export { JSDictionary } from "./JSDictionary";
 export { JSFunction } from "./JSFunction";
 
@@ -18,7 +18,7 @@ import { JSString } from "./JSString";
 import { JSBoolean } from "./JSBoolean";
 import { JSNull } from "./JSNull";
 import { JSUndefined } from "./JSUndefined";
-import { JSList } from "./JSList";
+import { JSArray } from "./JSList";
 import { JSDictionary } from "./JSDictionary";
 
 // Helper function to create JSObjects from JavaScript values
@@ -34,7 +34,7 @@ export function createJSObject(value: any): JikiObject {
   } else if (typeof value === "boolean") {
     return new JSBoolean(value);
   } else if (Array.isArray(value)) {
-    return new JSList(value.map(elem => createJSObject(elem)));
+    return new JSArray(value.map(elem => createJSObject(elem)));
   } else if (typeof value === "object" && value !== null) {
     const map = new Map<string, JikiObject>();
     for (const [key, val] of Object.entries(value)) {
@@ -48,7 +48,7 @@ export function createJSObject(value: any): JikiObject {
 
 // Helper function to unwrap JSObjects to JavaScript values
 export function unwrapJSObject(obj: JikiObject | any): any {
-  if (obj instanceof JSList) {
+  if (obj instanceof JSArray) {
     return obj.value.map(elem => unwrapJSObject(elem));
   } else if (obj instanceof JSDictionary) {
     const result: any = {};

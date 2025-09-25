@@ -2,8 +2,102 @@ import type { Executor } from "../executor";
 import { RuntimeError } from "../executor";
 import type { MemberExpression } from "../expression";
 import type { EvaluationResultMemberExpression } from "../evaluation-result";
-import { JSList, JSNumber, JSString, JSUndefined, JSDictionary, JSFunction, type JikiObject } from "../jikiObjects";
-import { hasArrayProperty, hasArrayMethod, getArrayProperty, getArrayMethod } from "../stdlib/arrays";
+import { JSArray, JSNumber, JSString, JSUndefined, JSDictionary, JSFunction, type JikiObject } from "../jikiObjects";
+import { stdlib, getStdlibType, StdlibError, type Property, type Method } from "../stdlib";
+
+// Generic function to use a property from stdlib
+function useProperty(obj: JikiObject, propertyName: string, executor: Executor, location: any): JikiObject | null {
+  const stdlibType = getStdlibType(obj);
+  if (!stdlibType) return null;
+
+  const property = stdlib[stdlibType]?.properties?.[propertyName];
+  if (!property) return null;
+
+  try {
+    return property.get(executor.getExecutionContext(), obj);
+  } catch (error) {
+    if (error instanceof StdlibError) {
+      throw new RuntimeError(
+        `${error.errorType}: message: ${error.message}`,
+        location,
+        error.errorType as any,
+        error.context
+      );
+    }
+    throw error;
+  }
+}
+
+// Generic function to use a method from stdlib
+function useMethod(obj: JikiObject, methodName: string, executor: Executor, location: any): JSFunction | null {
+  const stdlibType = getStdlibType(obj);
+  if (!stdlibType) return null;
+
+  const method = stdlib[stdlibType]?.methods?.[methodName];
+  if (!method) return null;
+
+  // Return a JSFunction that can be called
+  // The error handling will happen when the function is actually called
+  return new JSFunction(
+    methodName,
+    method.arity,
+    (ctx, _thisObj, args) => {
+      try {
+        return method.call(ctx, obj, args);
+      } catch (error) {
+        if (error instanceof StdlibError) {
+          throw new RuntimeError(
+            `${error.errorType}: message: ${error.message}`,
+            location,
+            error.errorType as any,
+            error.context
+          );
+        }
+        throw error;
+      }
+    },
+    method.description
+  );
+}
+
+// Generic function to resolve a property or method from stdlib
+function resolveStdlibMember(
+  object: JikiObject,
+  propertyName: string,
+  executor: Executor,
+  expression: MemberExpression,
+  objectResult: any,
+  propertyResult: any
+): EvaluationResultMemberExpression {
+  // Check if it's a property
+  const propertyValue = useProperty(object, propertyName, executor, expression.location);
+  if (propertyValue) {
+    return {
+      type: "MemberExpression",
+      object: objectResult,
+      property: propertyResult,
+      jikiObject: propertyValue,
+      immutableJikiObject: propertyValue.clone(),
+    };
+  }
+
+  // Check if it's a method
+  const methodValue = useMethod(object, propertyName, executor, expression.location);
+  if (methodValue) {
+    return {
+      type: "MemberExpression",
+      object: objectResult,
+      property: propertyResult,
+      jikiObject: methodValue,
+      immutableJikiObject: methodValue.clone(),
+    };
+  }
+
+  // Unknown property/method
+  throw new RuntimeError(`PropertyNotFound: property: ${propertyName}`, expression.location, "PropertyNotFound", {
+    property: propertyName,
+  });
+}
 
 export function executeMemberExpression(
   executor: Executor,
@@ -43,8 +137,8 @@ export function executeMemberExpression(
     };
   }
 
-  // For arrays (lists)
-  if (object instanceof JSList) {
+  // For arrays
+  if (object instanceof JSArray) {
     // Check if this is a non-computed access (property/method access)
     if (!expression.computed) {
       // For dot notation, property should be a literal with the property name
@@ -60,44 +154,8 @@ export function executeMemberExpression(
         propertyName = property.toString();
       }
 
-      // Check if it's a property
-      if (hasArrayProperty(propertyName)) {
-        const prop = getArrayProperty(propertyName)!;
-        const value = prop.get(executor.getExecutionContext(), object);
-
-        return {
-          type: "MemberExpression",
-          object: objectResult,
-          property: propertyResult,
-          jikiObject: value,
-          immutableJikiObject: value.clone(),
-        };
-      }
-
-      // Check if it's a method
-      if (hasArrayMethod(propertyName)) {
-        const method = getArrayMethod(propertyName)!;
-        // Return a JSFunction that can be called
-        const jsFunc = new JSFunction(
-          method.name,
-          method.arity,
-          (ctx, _thisObj, args) => method.call(ctx, object, args),
-          method.description
-        );
-
-        return {
-          type: "MemberExpression",
-          object: objectResult,
-          property: propertyResult,
-          jikiObject: jsFunc,
-          immutableJikiObject: jsFunc.clone(),
-        };
-      }
-
-      // Unknown property/method
-      throw new RuntimeError(`PropertyNotFound: property: ${propertyName}`, expression.location, "PropertyNotFound", {
-        property: propertyName,
-      });
+      // Resolve property or method from stdlib
+      return resolveStdlibMember(object, propertyName, executor, expression, objectResult, propertyResult);
     }
 
     // For computed access (bracket notation) - array indexing

@@ -2,7 +2,7 @@ import type { Executor } from "../executor";
 import { MemberExpression } from "../expression";
 import type { AssignmentExpression } from "../expression";
 import type { EvaluationResultAssignmentExpression } from "../evaluation-result";
-import { JSList, JSUndefined, JSDictionary, JSString, JSNumber } from "../jikiObjects";
+import { JSArray, JSUndefined, JSDictionary, JSString, JSNumber } from "../jikiObjects";
 import type { Token } from "../token";
 
 export function executeAssignmentExpression(
@@ -49,7 +49,7 @@ export function executeAssignmentExpression(
     }
 
     // Handle array element assignment
-    if (object instanceof JSList) {
+    if (object instanceof JSArray) {
       const array = object;
 
       // Evaluate the index

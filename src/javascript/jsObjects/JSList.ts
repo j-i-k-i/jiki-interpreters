@@ -1,7 +1,7 @@
 import { JikiObject } from "../../shared/jikiObject";
 import { JSString } from "./JSString";
 
-export class JSList extends JikiObject {
+export class JSArray extends JikiObject {
   private readonly elements: JikiObject[];
 
   constructor(elements: JikiObject[]) {
@@ -46,7 +46,7 @@ export class JSList extends JikiObject {
     return `[ ${elementStrings.join(", ")} ]`;
   }
 
-  public clone(): JSList {
+  public clone(): JSArray {
     // Deep clone - handle sparse arrays correctly
     const clonedElements: JikiObject[] = [];
     for (let i = 0; i < this.elements.length; i++) {
@@ -54,6 +54,6 @@ export class JSList extends JikiObject {
         clonedElements[i] = this.elements[i].clone();
       }
     }
-    return new JSList(clonedElements);
+    return new JSArray(clonedElements);
   }
 }

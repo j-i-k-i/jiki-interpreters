@@ -38,7 +38,8 @@
       "TruthinessDisabled": "TruthinessDisabled: value: {{value}}",
       "IndexOutOfRange": "IndexOutOfRange: index: {{index}}: length: {{length}}",
       "TypeError": "TypeError: {{message}}",
-      "PropertyNotFound": "PropertyNotFound: property: {{property}}"
+      "PropertyNotFound": "PropertyNotFound: property: {{property}}",
+      "ArgumentError": "ArgumentError: {{message}}"
     }
   }
 }
