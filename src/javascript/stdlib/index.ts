@@ -31,7 +31,9 @@ export const stdlib: Record<string, StdlibType> = {
 // Get the stdlib type for a JikiObject
 export function getStdlibType(obj: JikiObject): string | null {
   // Map JikiObject types to stdlib types
-  if (obj.type === "list") {return "array";}
+  if (obj.type === "list") {
+    return "array";
+  }
   // Future: if (obj.type === "string") return "string";
   // Future: if (obj.type === "number") return "number";
   return null;

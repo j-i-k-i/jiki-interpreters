@@ -11,9 +11,8 @@ export function describeReturnStatement(frame: FrameWithResult, context: Descrip
 
   if (frameContext.expression === null) {
     return describeNakedReturn();
-  } 
-    return describeReturnWithValue(frame, context);
-  
+  }
+  return describeReturnWithValue(frame, context);
 }
 
 function describeNakedReturn() {

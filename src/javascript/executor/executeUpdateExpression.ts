@@ -33,12 +33,11 @@ export function executeUpdateExpression(executor: Executor, expression: UpdateEx
       jikiObject: newValue,
       immutableJikiObject: newValue.clone(),
     };
-  } 
-    // Postfix: return the old value
-    return {
-      type: "UpdateExpression",
-      jikiObject: currentValue,
-      immutableJikiObject: currentValue.clone(),
-    };
-  
+  }
+  // Postfix: return the old value
+  return {
+    type: "UpdateExpression",
+    jikiObject: currentValue,
+    immutableJikiObject: currentValue.clone(),
+  };
 }

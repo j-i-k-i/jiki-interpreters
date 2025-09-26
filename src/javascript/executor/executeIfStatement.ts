@@ -12,7 +12,9 @@ export function executeIfStatement(executor: Executor, statement: IfStatement) {
     return;
   }
 
-  if (statement.elseBranch === null) {return;}
+  if (statement.elseBranch === null) {
+    return;
+  }
   executor.executeStatement(statement.elseBranch);
 }
 

@@ -9,8 +9,7 @@ import type {
   EvaluationResultUnaryExpression,
   EvaluationResultVariableLookupExpression,
 } from "../evaluation-result";
-import type {
-  Expression} from "../expression";
+import type { Expression } from "../expression";
 import {
   GroupingExpression,
   BinaryExpression,
@@ -65,9 +64,8 @@ export function describeExpression(
   if (expression instanceof AccessorExpression) {
     if (result.type === "GetterExpression") {
       return describeGetterExpression(expression, result, context);
-    } 
-      //return describeSetterExpression(expression, result, context)
-    
+    }
+    //return describeSetterExpression(expression, result, context)
   }
 
   return [];

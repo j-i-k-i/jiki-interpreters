@@ -1,6 +1,5 @@
 import { SyntaxError, type SyntaxErrorType } from "./error";
-import type {
-  Expression} from "./expression";
+import type { Expression } from "./expression";
 import {
   LiteralExpression,
   BinaryExpression,
@@ -16,8 +15,7 @@ import {
 } from "./expression";
 import { Location, Span } from "../shared/location";
 import { Scanner } from "./scanner";
-import type {
-  Statement} from "./statement";
+import type { Statement } from "./statement";
 import {
   ExpressionStatement,
   VariableDeclaration,
@@ -477,17 +475,23 @@ export class Parser {
   }
 
   private check(...tokenTypes: TokenType[]): boolean {
-    if (this.isAtEnd()) {return false;}
+    if (this.isAtEnd()) {
+      return false;
+    }
     return tokenTypes.includes(this.peek().type);
   }
 
   private advance(): Token {
-    if (!this.isAtEnd()) {this.current++;}
+    if (!this.isAtEnd()) {
+      this.current++;
+    }
     return this.previous();
   }
 
   private consume(tokenType: TokenType, errorType: SyntaxErrorType): Token {
-    if (this.check(tokenType)) {return this.advance();}
+    if (this.check(tokenType)) {
+      return this.advance();
+    }
     this.error(errorType, this.peek().location);
   }
 
@@ -536,7 +540,9 @@ export class Parser {
     this.advance();
 
     while (!this.isAtEnd()) {
-      if (this.previous().type === "SEMICOLON") {return;}
+      if (this.previous().type === "SEMICOLON") {
+        return;
+      }
 
       switch (this.peek().type) {
         case "NUMBER":

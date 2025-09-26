@@ -1,4 +1,4 @@
-import type { JikiObject} from "../jikiObjects";
+import type { JikiObject } from "../jikiObjects";
 import { PyString, PyList } from "../jikiObjects";
 
 export function formatPyObject(obj: JikiObject | undefined | null): string {

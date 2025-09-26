@@ -1,4 +1,4 @@
-import type { JSArray} from "../jsObjects";
+import type { JSArray } from "../jsObjects";
 import { JSNumber, JSUndefined, type JikiObject } from "../jsObjects";
 import type { ExecutionContext } from "../executor";
 import type { Property, Method } from "./index";

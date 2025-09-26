@@ -1,11 +1,19 @@
-import eslint from '@eslint/js';
-import tseslint from '@typescript-eslint/eslint-plugin';
-import tsParser from '@typescript-eslint/parser';
+import eslint from "@eslint/js";
+import tseslint from "@typescript-eslint/eslint-plugin";
+import tsParser from "@typescript-eslint/parser";
 
 export default [
   // Ignore patterns
   {
-    ignores: ["node_modules/**", "dist/**", "build/**", "debug-dict.js", "debug-dict.ts", "vitest.config.ts", "tests/**"]
+    ignores: [
+      "node_modules/**",
+      "dist/**",
+      "build/**",
+      "debug-dict.js",
+      "debug-dict.ts",
+      "vitest.config.ts",
+      "tests/**",
+    ],
   },
 
   // Base ESLint recommended config for all files
@@ -21,8 +29,8 @@ export default [
         "error",
         {
           selector: "Program > VariableDeclaration > VariableDeclarator[init.type='ArrowFunctionExpression']",
-          message: "Use a function declaration for top-level APIs (e.g., `function name(){}`)"
-        }
+          message: "Use a function declaration for top-level APIs (e.g., `function name(){}`)",
+        },
       ],
       // === Correctness / safety ===
       eqeqeq: ["error", "smart"],
@@ -30,8 +38,8 @@ export default [
       "default-case-last": "error",
       // === Noise control ===
       "no-console": ["warn", { allow: ["warn", "error"] }],
-      "no-else-return": "warn"
-    }
+      "no-else-return": "warn",
+    },
   },
 
   // TypeScript files - full rule set with type information
@@ -41,11 +49,11 @@ export default [
       parser: tsParser,
       parserOptions: {
         project: "./tsconfig.json",
-        tsconfigRootDir: import.meta.dirname
-      }
+        tsconfigRootDir: import.meta.dirname,
+      },
     },
     plugins: {
-      '@typescript-eslint': tseslint
+      "@typescript-eslint": tseslint,
     },
     rules: {
       // Disable base rules that conflict with TypeScript
@@ -63,8 +71,8 @@ export default [
         "error",
         {
           selector: "Program > VariableDeclaration > VariableDeclarator[init.type='ArrowFunctionExpression']",
-          message: "Use a function declaration for top-level APIs (e.g., `function name(){}`)"
-        }
+          message: "Use a function declaration for top-level APIs (e.g., `function name(){}`)",
+        },
       ],
 
       // === Correctness / safety ===
@@ -84,7 +92,7 @@ export default [
       // Always use `import type` for type-only imports.
       "@typescript-eslint/consistent-type-imports": [
         "error",
-        { prefer: "type-imports", fixStyle: "separate-type-imports" }
+        { prefer: "type-imports", fixStyle: "separate-type-imports" },
       ],
 
       // Prefer `interface` over `type` for object shapes (cleaner merging).
@@ -101,8 +109,8 @@ export default [
           "ts-ignore": false,
           "ts-nocheck": false,
           "ts-check": true,
-          "ts-expect-error": "allow-with-description"
-        }
+          "ts-expect-error": "allow-with-description",
+        },
       ],
 
       // Prefer `prop: (arg: Type) => Return` over `method(arg: Type): Return` in interfaces.
@@ -115,8 +123,8 @@ export default [
         {
           argsIgnorePattern: "^_",
           varsIgnorePattern: "^_",
-          destructuredArrayIgnorePattern: "^_"
-        }
+          destructuredArrayIgnorePattern: "^_",
+        },
       ],
 
       // Warn on conditions that are always truthy/falsey.
@@ -135,7 +143,7 @@ export default [
       // Prevent passing async functions where a void-return is expected (e.g., setTimeout).
       "@typescript-eslint/no-misused-promises": [
         "error",
-        { checksVoidReturn: { arguments: false, attributes: false } }
+        { checksVoidReturn: { arguments: false, attributes: false } },
       ],
 
       // Error when awaiting a non-Promise value.
@@ -157,10 +165,10 @@ export default [
         {
           selector: "variable",
           format: ["camelCase", "UPPER_CASE", "PascalCase"],
-          leadingUnderscore: "allow"
+          leadingUnderscore: "allow",
         },
         // Functions in camelCase (or PascalCase for components)
-        { selector: "function", format: ["camelCase", "PascalCase"] }
+        { selector: "function", format: ["camelCase", "PascalCase"] },
       ],
 
       // === Noise control ===
@@ -168,7 +176,7 @@ export default [
       "no-console": ["warn", { allow: ["warn", "error"] }],
 
       // Warn when else is redundant after return.
-      "no-else-return": "warn"
-    }
-  }
+      "no-else-return": "warn",
+    },
+  },
 ];

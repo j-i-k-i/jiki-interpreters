@@ -9,8 +9,7 @@ import type {
   EvaluationResultDictionaryExpression,
 } from "../evaluation-result";
 import type { EvaluationResultTemplateLiteralExpression } from "../executor/executeTemplateLiteralExpression";
-import type {
-  Expression} from "../expression";
+import type { Expression } from "../expression";
 import {
   GroupingExpression,
   BinaryExpression,
