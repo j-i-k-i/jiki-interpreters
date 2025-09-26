@@ -1,15 +1,13 @@
-import { Description, DescriptionContext } from "../../shared/frames";
+import type { Description, DescriptionContext } from "../../shared/frames";
 import { formatPyObject, getOrdinal } from "./helpers";
-import { ForInStatement } from "../statement";
-import { EvaluationResultForInStatement } from "../executor/executeForInStatement";
-import { FrameWithResult } from "../frameDescribers";
+import type { EvaluationResultForInStatement } from "../executor/executeForInStatement";
+import type { FrameWithResult } from "../frameDescribers";
 
-export function describeForInStatement(frame: FrameWithResult, context: DescriptionContext): Description {
-  const statement = frame.context as ForInStatement;
+export function describeForInStatement(frame: FrameWithResult, _context: DescriptionContext): Description {
   const frameResult = frame.result as EvaluationResultForInStatement;
 
   if (frameResult.iteration === 0) {
-    const iterableValue = formatPyObject(frameResult.iterable.immutableJikiObject!);
+    const iterableValue = formatPyObject(frameResult.iterable.immutableJikiObject);
     const result = `<p>Python is starting a for loop over <code>${iterableValue}</code>.</p>`;
     const steps = [
       `<li>Python evaluated the iterable expression and got <code>${iterableValue}</code>.</li>`,
@@ -18,7 +16,7 @@ export function describeForInStatement(frame: FrameWithResult, context: Descript
     return { result, steps };
   }
 
-  const currentValue = formatPyObject(frameResult.currentValue!);
+  const currentValue = formatPyObject(frameResult.currentValue);
   const iterationOrdinal = getOrdinal(frameResult.iteration);
 
   const result = `<p>Python is on the ${iterationOrdinal} iteration, setting <code>${frameResult.variableName}</code> to <code>${currentValue}</code>.</p>`;

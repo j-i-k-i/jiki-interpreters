@@ -1,20 +1,18 @@
-import { isString } from "../checks";
-import { EvaluationResultForeachStatement } from "../evaluation-result";
-import { Description, DescriptionContext, FrameWithResult } from "../../shared/frames";
-import { codeTag, formatJikiObject } from "../helpers";
+import type { EvaluationResultForeachStatement } from "../evaluation-result";
+import type { Description, DescriptionContext, FrameWithResult } from "../../shared/frames";
+import { codeTag } from "../helpers";
 import * as Jiki from "../jikiObjects";
-import { ForeachStatement } from "../statement";
+import type { ForeachStatement } from "../statement";
 import { addOrdinalSuffix } from "./helpers";
 
-export function describeForeachStatement(frame: FrameWithResult, context: DescriptionContext): Description {
+export function describeForeachStatement(frame: FrameWithResult, _context: DescriptionContext): Description {
   const frameContext = frame.context as ForeachStatement;
   const frameResult = frame.result as EvaluationResultForeachStatement;
 
   if (Jiki.unwrapJikiObject(frameResult.iterable.jikiObject)?.length === 0) {
     return describeEmptyList(frameResult);
-  } else {
-    return describePopulatedList(frameContext, frameResult);
   }
+  return describePopulatedList(frameContext, frameResult);
 }
 function describeEmptyList(frameResult: EvaluationResultForeachStatement): Description {
   const type = frameResult.iterable.jikiObject instanceof Jiki.JikiString ? "string" : "list";
@@ -45,7 +43,13 @@ function describePopulatedList(
     result += ` and the ${codeTag(
       frameContext.secondElementName.lexeme,
       frameContext.secondElementName.location
-    )} variable set to ${frameResult.secondTemporaryVariableValue ? codeTag(frameResult.secondTemporaryVariableValue, frameContext.iterable.location) : "unknown"}`;
+    )} variable set to ${
+      // Check for undefined/null, not just truthiness (0 and "" are valid values)
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      frameResult.secondTemporaryVariableValue !== undefined
+        ? codeTag(frameResult.secondTemporaryVariableValue, frameContext.iterable.location)
+        : "unknown"
+    }`;
   }
   result += `.</p>`;
   const steps = [

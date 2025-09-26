@@ -1,7 +1,7 @@
-import { EvaluationResultExpressionStatement } from "../evaluation-result";
-import { Description, DescriptionContext, FrameWithResult } from "../../shared/frames";
+import type { EvaluationResultExpressionStatement } from "../evaluation-result";
+import type { Description, DescriptionContext, FrameWithResult } from "../../shared/frames";
 import { formatJSObject } from "../helpers";
-import { ExpressionStatement } from "../statement";
+import type { ExpressionStatement } from "../statement";
 import { describeExpression } from "./describeSteps";
 
 export function describeExpressionStatement(frame: FrameWithResult, context: DescriptionContext): Description {

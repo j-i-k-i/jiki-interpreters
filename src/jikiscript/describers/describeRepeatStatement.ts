@@ -1,9 +1,8 @@
-import { isString } from "../checks";
-import { EvaluationResultForeachStatement, EvaluationResultRepeatStatement } from "../evaluation-result";
-import { Description, DescriptionContext, FrameWithResult } from "../../shared/frames";
+import type { EvaluationResultRepeatStatement } from "../evaluation-result";
+import type { Description, DescriptionContext, FrameWithResult } from "../../shared/frames";
 import { codeTag, formatJikiObject } from "../helpers";
 import * as Jiki from "../jikiObjects";
-import { ForeachStatement, RepeatStatement } from "../statement";
+import type { RepeatStatement } from "../statement";
 import { describeExpression } from "./describeSteps";
 import { addOrdinalSuffix } from "./helpers";
 
@@ -12,7 +11,7 @@ export function describeRepeatStatement(frame: FrameWithResult, context: Descrip
   const frameResult = frame.result as EvaluationResultRepeatStatement;
 
   let res;
-  if (Jiki.unwrapJikiObject(frameResult.count.jikiObject) == 0) {
+  if (Jiki.unwrapJikiObject(frameResult.count.jikiObject) === 0) {
     res = describeNoRepeats(frameContext, frameResult);
   } else {
     res = describeRepeat(frameContext, frameResult);

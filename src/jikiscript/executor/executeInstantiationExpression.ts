@@ -1,11 +1,11 @@
 import { isNumber } from "lodash";
-import {
+import type {
   EvaluationResultClassLookupExpression,
   EvaluationResultExpression,
   EvaluationResultInstantiationExpression,
 } from "../evaluation-result";
-import { Executor } from "../executor";
-import { BinaryExpression, InstantiationExpression } from "../expression";
+import type { Executor } from "../executor";
+import type { InstantiationExpression } from "../expression";
 import * as JikiTypes from "../jikiObjects";
 
 // Add UnsetPropertiesError
@@ -48,6 +48,8 @@ export function executeInstantiationExpression(
     return {
       type: "InstantiationExpression",
       jikiObject: object,
+      // object can be undefined in error cases
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       immutableJikiObject: object?.clone(),
       className,
       args: args,

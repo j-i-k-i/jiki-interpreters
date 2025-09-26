@@ -1,9 +1,10 @@
 import type { Executor } from "../executor";
 import type { BreakStatement } from "../statement";
 import type { EvaluationResultBreakStatement } from "../evaluation-result";
+import type { Location } from "../location";
 
 export class BreakFlowControlError extends Error {
-  constructor(public location: import("../location").Location) {
+  constructor(public location: Location) {
     super();
   }
 }

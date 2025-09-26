@@ -1,6 +1,6 @@
-import { EvaluationResultIfStatement } from "../evaluation-result";
-import { Description, DescriptionContext, FrameWithResult } from "../../shared/frames";
-import { IfStatement } from "../statement";
+import type { EvaluationResultIfStatement } from "../evaluation-result";
+import type { Description, DescriptionContext, FrameWithResult } from "../../shared/frames";
+import type { IfStatement } from "../statement";
 import { describeExpression } from "./describeSteps";
 
 export function describeIfStatement(frame: FrameWithResult, context: DescriptionContext): Description {
@@ -21,13 +21,11 @@ function describeFinalStep(result: EvaluationResultIfStatement, statement: IfSta
 
   if (conditionValue) {
     return `<li>The condition evaluated to <code>true</code>, so JavaScript executed the if block.</li>`;
-  } else {
-    if (statement.elseBranch) {
-      return `<li>The condition evaluated to <code>false</code>, so JavaScript executed the else block.</li>`;
-    } else {
-      return `<li>The condition evaluated to <code>false</code>, so JavaScript skipped the if block.</li>`;
-    }
   }
+  if (statement.elseBranch) {
+    return `<li>The condition evaluated to <code>false</code>, so JavaScript executed the else block.</li>`;
+  }
+  return `<li>The condition evaluated to <code>false</code>, so JavaScript skipped the if block.</li>`;
 }
 
 function describeResult(result: EvaluationResultIfStatement, statement: IfStatement): string {
@@ -35,11 +33,9 @@ function describeResult(result: EvaluationResultIfStatement, statement: IfStatem
 
   if (conditionValue) {
     return `<p>The condition evaluated to <code>true</code>, so the if block was executed.</p>`;
-  } else {
-    if (statement.elseBranch) {
-      return `<p>The condition evaluated to <code>false</code>, so the else block was executed.</p>`;
-    } else {
-      return `<p>The condition evaluated to <code>false</code>, so the if block was skipped.</p>`;
-    }
   }
+  if (statement.elseBranch) {
+    return `<p>The condition evaluated to <code>false</code>, so the else block was executed.</p>`;
+  }
+  return `<p>The condition evaluated to <code>false</code>, so the if block was skipped.</p>`;
 }

@@ -2,11 +2,11 @@ import { stringSimilarity } from "string-similarity-js";
 import type { Token } from "../token";
 import type { Location } from "../location";
 
-export type TypoInfo = {
+export interface TypoInfo {
   actual: string;
   potential: string;
   location: Location;
-};
+}
 
 export function isTypo(token: Token): TypoInfo | undefined {
   let intendedType: string | undefined;

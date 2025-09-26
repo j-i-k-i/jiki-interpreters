@@ -3,16 +3,17 @@ import { RuntimeError } from "../executor";
 import type { ForInStatement } from "../statement";
 import type { EvaluationResult } from "../evaluation-result";
 import { PyList, PyString, PyNumber, PyBoolean, PyNone, type JikiObject } from "../jikiObjects";
+import type { Location } from "../../shared/location";
 
 // Flow control errors for break and continue
 export class BreakFlowControlError extends Error {
-  constructor(public location: import("../../shared/location").Location) {
+  constructor(public location: Location) {
     super();
   }
 }
 
 export class ContinueFlowControlError extends Error {
-  constructor(public location: import("../../shared/location").Location) {
+  constructor(public location: Location) {
     super();
   }
 }

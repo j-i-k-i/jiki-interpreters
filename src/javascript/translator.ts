@@ -8,7 +8,7 @@ import systemLangPack from "./locales/system/translation.json";
 
 const javascriptI18n = createInstance();
 
-javascriptI18n.init({
+void javascriptI18n.init({
   debug: DEBUG,
   lng: DEFAULT_LANGUAGE,
   initImmediate: false,
@@ -22,7 +22,9 @@ export function getLanguage(): string {
 }
 
 export async function changeLanguage(language: string): Promise<void> {
-  if (javascriptI18n.language === language) return;
+  if (javascriptI18n.language === language) {
+    return;
+  }
 
   await javascriptI18n.changeLanguage(language);
 }

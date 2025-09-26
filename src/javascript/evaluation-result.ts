@@ -1,94 +1,94 @@
 import type { JikiObject } from "./jikiObjects";
 
-export type EvaluationResult = {
+export interface EvaluationResult {
   type: string;
   jikiObject: JikiObject;
   immutableJikiObject?: JikiObject;
-};
+}
 
 export type EvaluationResultExpression = EvaluationResult;
 
-export type EvaluationResultBinaryExpression = {
+export interface EvaluationResultBinaryExpression {
   type: "BinaryExpression";
   left: EvaluationResultExpression;
   right: EvaluationResultExpression;
   jikiObject: JikiObject;
   immutableJikiObject?: JikiObject;
-};
+}
 
-export type EvaluationResultUnaryExpression = {
+export interface EvaluationResultUnaryExpression {
   type: "UnaryExpression";
   operand: EvaluationResultExpression;
   jikiObject: JikiObject;
   immutableJikiObject?: JikiObject;
-};
+}
 
-export type EvaluationResultLiteralExpression = {
+export interface EvaluationResultLiteralExpression {
   type: "LiteralExpression";
   jikiObject: JikiObject;
   immutableJikiObject?: JikiObject;
-};
+}
 
-export type EvaluationResultGroupingExpression = {
+export interface EvaluationResultGroupingExpression {
   type: "GroupingExpression";
   inner: EvaluationResultExpression;
   jikiObject: JikiObject;
   immutableJikiObject?: JikiObject;
-};
+}
 
-export type EvaluationResultExpressionStatement = {
+export interface EvaluationResultExpressionStatement {
   type: "ExpressionStatement";
   expression: EvaluationResultExpression;
   jikiObject: JikiObject;
   immutableJikiObject?: JikiObject;
-};
+}
 
-export type EvaluationResultIdentifierExpression = {
+export interface EvaluationResultIdentifierExpression {
   type: "IdentifierExpression";
   name: string;
   jikiObject: JikiObject;
   immutableJikiObject?: JikiObject;
-};
+}
 
-export type EvaluationResultVariableDeclaration = {
+export interface EvaluationResultVariableDeclaration {
   type: "VariableDeclaration";
   name: string;
   value: EvaluationResultExpression;
   jikiObject: JikiObject;
   immutableJikiObject?: JikiObject;
-};
+}
 
-export type EvaluationResultAssignmentExpression = {
+export interface EvaluationResultAssignmentExpression {
   type: "AssignmentExpression";
   name: string;
   value: EvaluationResultExpression;
   jikiObject: JikiObject;
   immutableJikiObject?: JikiObject;
-};
+}
 
-export type EvaluationResultIfStatement = {
+export interface EvaluationResultIfStatement {
   type: "IfStatement";
   condition: EvaluationResultExpression;
   jikiObject: JikiObject;
   immutableJikiObject?: JikiObject;
-};
+}
 
-export type EvaluationResultArrayExpression = {
+export interface EvaluationResultArrayExpression {
   type: "ArrayExpression";
   jikiObject: JikiObject;
   immutableJikiObject?: JikiObject;
-};
+}
 
-export type EvaluationResultMemberExpression = {
+export interface EvaluationResultMemberExpression {
   type: "MemberExpression";
   object: EvaluationResultExpression;
   property: EvaluationResultExpression;
   jikiObject: JikiObject;
   immutableJikiObject?: JikiObject;
-};
+}
 
-export type EvaluationResultDictionaryExpression = {
+export interface EvaluationResultDictionaryExpression {
   type: "DictionaryExpression";
   jikiObject: JikiObject;
   immutableJikiObject?: JikiObject;
-};
+}

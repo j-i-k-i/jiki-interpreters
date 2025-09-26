@@ -1,5 +1,4 @@
 import { Environment } from "./environment";
-import { SyntaxError } from "./error";
 import type { Expression } from "./expression";
 import type { LanguageFeatures } from "./interfaces";
 import {
@@ -26,7 +25,7 @@ import {
   WhileStatement,
 } from "./statement";
 import type { EvaluationResult } from "./evaluation-result";
-import { createJSObject, type JikiObject } from "./jikiObjects";
+import type { JikiObject } from "./jikiObjects";
 import { translate } from "./translator";
 import { TIME_SCALE_FACTOR, type Frame, type FrameExecutionStatus } from "../shared/frames";
 import { type ExecutionContext as SharedExecutionContext } from "../shared/interfaces";
@@ -88,17 +87,17 @@ export class RuntimeError extends Error {
 }
 
 // InterpretResult type is now defined in interpreter.ts
-export type ExecutorResult = {
+export interface ExecutorResult {
   frames: Frame[];
   error: null; // Always null - runtime errors become frames
   success: boolean;
-};
+}
 
 export class Executor {
-  private frames: Frame[] = [];
+  private readonly frames: Frame[] = [];
   private location: Location | null = null;
   public time: number = 0;
-  private timePerFrame: number = 1;
+  private readonly timePerFrame: number = 1;
   public environment: Environment;
   public languageFeatures: LanguageFeatures;
 
@@ -275,7 +274,7 @@ export class Executor {
     error?: RuntimeError,
     context?: Statement | Expression
   ): void {
-    if (location == null) {
+    if (location === null) {
       location = Location.unknown;
     }
 

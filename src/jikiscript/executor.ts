@@ -1,7 +1,8 @@
-import { Arity, ReturnValue, UserDefinedFunction, isCallable } from "./functions";
+import type { Arity } from "./functions";
+import { ReturnValue, isCallable } from "./functions";
 import { Environment } from "./environment";
 import { RuntimeError, type RuntimeErrorType, isRuntimeError, LogicError } from "./error";
-import {
+import type {
   ListExpression,
   BinaryExpression,
   FunctionCallExpression,
@@ -22,7 +23,7 @@ import {
   ThisExpression,
 } from "./expression";
 import { Location, Span } from "./location";
-import {
+import type {
   BlockStatement,
   FunctionStatement,
   IfStatement,
@@ -33,26 +34,22 @@ import {
   SetVariableStatement,
   ChangeVariableStatement,
   RepeatForeverStatement,
-  FunctionCallStatement,
   LogStatement,
   ChangeElementStatement,
   ForeachStatement,
   BreakStatement,
   ContinueStatement,
-  MethodCallStatement,
   ChangePropertyStatement,
   ClassStatement,
   SetPropertyStatement,
 } from "./statement";
+import { FunctionCallStatement, MethodCallStatement } from "./statement";
 import type { Token } from "./token";
 import type {
   EvaluationResult,
   EvaluationResultBinaryExpression,
-  EvaluationResultBreakStatement,
   EvaluationResultFunctionCallExpression,
   EvaluationResultChangeElementStatement,
-  EvaluationResultChangeVariableStatement,
-  EvaluationResultContinueStatement,
   EvaluationResultDictionaryExpression,
   EvaluationResultExpression,
   EvaluationResultForeachStatement,
@@ -62,22 +59,15 @@ import type {
   EvaluationResultListExpression,
   EvaluationResultLiteralExpression,
   EvaluationResultLogicalExpression,
-  EvaluationResultLogStatement,
   EvaluationResultRepeatStatement,
-  EvaluationResultReturnStatement,
   EvaluationResultSetElementExpression,
-  EvaluationResultSetVariableStatement,
   EvaluationResultUnaryExpression,
   EvaluationResultVariableLookupExpression,
-  EvaluationResultFunctionCallStatement,
   EvaluationResultMethodCallExpression,
-  EvaluationResultMethodCallStatement,
   EvaluationResultInstantiationExpression,
   EvaluationResultClassLookupExpression,
   EvaluationResultGetterExpression,
-  EvaluationResultChangePropertyStatement,
   EvaluationResultThisExpression,
-  EvaluationResultSetPropertyStatement,
 } from "./evaluation-result";
 import { translate } from "./translator";
 import cloneDeep from "lodash.clonedeep";
@@ -94,7 +84,6 @@ import didYouMean from "didyoumean";
 import { formatJikiObject } from "./helpers";
 import { executeBinaryExpression } from "./executor/executeBinaryExpression";
 import * as Jiki from "./jikiObjects";
-import { isBoolean, isNumber, isString } from "./checks";
 import { executeMethodCallExpression } from "./executor/executeMethodCallExpression";
 import { executeInstantiationExpression } from "./executor/executeInstantiationExpression";
 import { executeGetterExpression } from "./executor/executeGetterExpression";
@@ -132,29 +121,29 @@ export type ExecutionContext = SharedExecutionContext & {
   contextualThis: Jiki.Instance | null;
 };
 
-export type ExternalFunction = {
+export interface ExternalFunction {
   name: string;
   func: Function;
   description: string;
   arity?: Arity;
-};
+}
 
 export class Executor {
   [key: string]: any; // Allow dynamic method access
-  private frames: Frame[] = [];
+  private readonly frames: Frame[] = [];
   private location: Location | null = null;
   public time: number = 0;
-  private timePerFrame: number;
+  private readonly timePerFrame: number;
   private totalLoopIterations = 0;
-  private maxTotalLoopIterations = 0;
-  private maxRepeatUntilGameOverIterations = 0;
+  private readonly maxTotalLoopIterations: number = 0;
+  private readonly maxRepeatUntilGameOverIterations: number = 0;
   public customFunctionDefinitionMode: boolean;
-  private addSuccessFrames: boolean;
+  private readonly addSuccessFrames: boolean;
 
   private readonly globals = new Environment();
   public environment = this.globals;
 
-  private externalFunctionDescriptions: Record<string, string> = {};
+  private readonly externalFunctionDescriptions: Record<string, string> = {};
 
   // This tracks variables for each statement, so we can output
   // the changes in the frame descriptions
@@ -164,10 +153,10 @@ export class Executor {
 
   constructor(
     private readonly sourceCode: string,
-    private languageFeatures: LanguageFeatures,
-    private externalFunctions: ExternalFunction[],
-    private customFunctions: CallableCustomFunction[],
-    private classes: Jiki.Class[],
+    private readonly languageFeatures: LanguageFeatures,
+    private readonly externalFunctions: ExternalFunction[],
+    private readonly customFunctions: CallableCustomFunction[],
+    private readonly classes: Jiki.Class[],
     private externalState: Record<string, any> = {}
   ) {
     for (let externalFunction of externalFunctions) {
@@ -406,7 +395,7 @@ export class Executor {
     const result = code();
     this.addSuccessFrame(context.location, result, context);
     this.location = null;
-    return result as T;
+    return result;
   }
 
   public visitFunctionCallStatement(statement: FunctionCallStatement): void {
@@ -431,10 +420,12 @@ export class Executor {
   public visitChangeElementStatement(statement: ChangeElementStatement): void {
     const obj = this.evaluate(statement.object);
     if (obj.jikiObject instanceof Jiki.List) {
-      return this.visitChangeListElementStatement(statement, obj as EvaluationResultListExpression);
+      this.visitChangeListElementStatement(statement, obj as EvaluationResultListExpression);
+      return;
     }
     if (obj.jikiObject instanceof Jiki.Dictionary) {
-      return this.visitChangeDictionaryElementStatement(statement, obj as EvaluationResultDictionaryExpression);
+      this.visitChangeDictionaryElementStatement(statement, obj as EvaluationResultDictionaryExpression);
+      return;
     }
     this.error("InvalidChangeTargetNotModifiable", statement.object.location);
   }
@@ -499,7 +490,7 @@ export class Executor {
   }
 
   public visitIfStatement(statement: IfStatement): void {
-    return executeIfStatement(this, statement);
+    executeIfStatement(this, statement);
   }
 
   public visitLogStatement(statement: LogStatement): void {
@@ -533,7 +524,7 @@ export class Executor {
   private retrieveCounterVariableNameForLoop(
     statement: ForeachStatement | RepeatStatement | RepeatForeverStatement | RepeatUntilGameOverStatement
   ): string | null {
-    if (statement.counter == null) {
+    if (statement.counter === null) {
       return null;
     }
 
@@ -572,7 +563,7 @@ export class Executor {
 
     const counterVariableName = this.retrieveCounterVariableNameForLoop(statement);
 
-    if (iterable.jikiObject?.value.length === 0) {
+    if (iterable.jikiObject.value.length === 0) {
       this.executeFrame<EvaluationResultForeachStatement>(statement, () => {
         return {
           type: "ForeachStatement",
@@ -606,7 +597,7 @@ export class Executor {
         // Handle the normal path
         // Because we're using keys that can be strings here,
         // guard in case we need to wrap them as Jiki strings!
-        if (typeof temporaryVariableValue == "string") {
+        if (typeof temporaryVariableValue === "string") {
           temporaryVariableValue = new Jiki.String(temporaryVariableValue);
         }
         const temporaryVariableName = statement.elementName.lexeme;
@@ -635,6 +626,7 @@ export class Executor {
     } catch (e) {
       // If we've got a control flow error, don't do anything.
       if (e instanceof BreakFlowControlError) {
+        // Break flow control - handled by outer loop
       }
 
       // Otherwise we have some error that shouldn't be handled here,
@@ -660,6 +652,7 @@ export class Executor {
     } catch (e) {
       // If we've got a control flow error, don't do anything.
       if (e instanceof ContinueFlowControlError) {
+        // Continue flow control - handled by outer loop
       }
 
       // Otherwise we have some error that shouldn't be handled here,
@@ -701,7 +694,7 @@ export class Executor {
       });
     }
 
-    if (count.value == 0) {
+    if (count.value === 0) {
       this.executeFrame<EvaluationResultRepeatStatement>(statement, () => {
         return {
           type: "RepeatStatement",
@@ -975,9 +968,15 @@ export class Executor {
   }
 
   public verifyLiteral(value: Jiki.JikiObject, expr: Expression): void {
-    if (value instanceof Jiki.Number) return;
-    if (value instanceof Jiki.String) return;
-    if (value instanceof Jiki.Boolean) return;
+    if (value instanceof Jiki.Number) {
+      return;
+    }
+    if (value instanceof Jiki.String) {
+      return;
+    }
+    if (value instanceof Jiki.Boolean) {
+      return;
+    }
 
     this.guardUncalledFunction(value, expr);
 
@@ -992,7 +991,9 @@ export class Executor {
   }
 
   public verifyNumber(value: Jiki.JikiObject, expr: Expression): void {
-    if (value instanceof Jiki.Number) return;
+    if (value instanceof Jiki.Number) {
+      return;
+    }
 
     this.guardUncalledFunction(value, expr);
 
@@ -1001,7 +1002,9 @@ export class Executor {
     });
   }
   public verifyString(value: Jiki.JikiObject, expr: Expression): void {
-    if (value instanceof Jiki.String) return;
+    if (value instanceof Jiki.String) {
+      return;
+    }
     this.guardUncalledFunction(value, expr);
 
     this.error("TypeErrorOperandMustBeStringValue", expr.location, {
@@ -1009,7 +1012,9 @@ export class Executor {
     });
   }
   public verifyBoolean(value: Jiki.JikiObject, expr: Expression): void {
-    if (value instanceof Jiki.Boolean) return;
+    if (value instanceof Jiki.Boolean) {
+      return;
+    }
 
     this.error("TypeErrorOperandMustBeBooleanValue", expr.location, {
       value: formatJikiObject(value),
@@ -1111,7 +1116,7 @@ export class Executor {
     location: Location,
     getOrChange: "get" | "change"
   ) {
-    if (idx.value == 0) {
+    if (idx.value === 0) {
       this.error("RangeErrorArrayIndexIsZeroBased", location);
     }
     const length = obj instanceof Jiki.List ? obj.length : obj.value.length;
@@ -1185,7 +1190,9 @@ export class Executor {
   }
 
   public addSuccessFrame(location: Location | null, result: EvaluationResult, context?: Statement | Expression): void {
-    if (!this.addSuccessFrames) return;
+    if (!this.addSuccessFrames) {
+      return;
+    }
 
     this.addFrame(location, "SUCCESS", result, undefined, context);
   }
@@ -1201,7 +1208,9 @@ export class Executor {
     error?: RuntimeError,
     context?: Statement | Expression
   ): void {
-    if (location == null) location = Location.unknown;
+    if (location === null) {
+      location = Location.unknown;
+    }
 
     const frame: Frame = {
       code: location.toCode(this.sourceCode),
@@ -1220,7 +1229,7 @@ export class Executor {
       context: context,
     };
     // In testing mode (but not benchmarks), augment frame with test-only fields
-    if (process.env.NODE_ENV == "test" && process.env.RUNNING_BENCHMARKS !== "true") {
+    if (process.env.NODE_ENV === "test" && process.env.RUNNING_BENCHMARKS !== "true") {
       (frame as TestAugmentedFrame).variables = cloneDeep(this.environment.variables());
       // Generate description immediately for testing
       (frame as TestAugmentedFrame).description = describeFrame(frame, {
@@ -1235,6 +1244,8 @@ export class Executor {
 
   public addFunctionCallToLog(name: string, args: any[]) {
     const unwrappedArgs = Jiki.unwrapJikiObject(args);
+    // The ||= operator is the idiomatic way to initialize an object property if it doesn't exist
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     this.functionCallLog[name] ||= {};
     this.functionCallLog[name][JSON.stringify(unwrappedArgs)] ||= 0;
     this.functionCallLog[name][JSON.stringify(unwrappedArgs)] += 1;
@@ -1243,7 +1254,7 @@ export class Executor {
   public addFunctionToCallStack(name: string, expression: FunctionCallExpression | MethodCallExpression) {
     this.functionCallStack.push(name);
 
-    if (this.functionCallStack.filter(n => n == name).length > 5) {
+    if (this.functionCallStack.filter(n => n === name).length > 5) {
       this.error("StateErrorInfiniteRecursionDetectedInFunction", expression.location);
     }
   }
@@ -1288,7 +1299,7 @@ export class Executor {
     context = Jiki.unwrapJikiObject(context);
 
     let message;
-    if (type == "LogicErrorInExecution") {
+    if (type === "LogicErrorInExecution") {
       message = context.message;
     } else {
       message = translate(`error.runtime.${type}`, context);

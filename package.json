@@ -12,6 +12,8 @@
     "test:benchmark": "vitest tests/jikiscript/benchmark.test.ts --run",
     "clean": "rm -rf dist",
     "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "prepare": "husky && pnpm run build"
@@ -34,11 +36,16 @@
     }
   },
   "devDependencies": {
+    "@eslint/eslintrc": "^3.3.1",
+    "@eslint/js": "^9.36.0",
     "@types/didyoumean": "^1.2.3",
     "@types/lodash": "^4.17.20",
     "@types/lodash.clonedeep": "^4.5.9",
     "@types/node": "^24.5.2",
+    "@typescript-eslint/eslint-plugin": "^8.44.1",
+    "@typescript-eslint/parser": "^8.44.1",
     "esbuild": "^0.25.10",
+    "eslint": "^9.36.0",
     "husky": "^9.1.7",
     "marked": "^16.2.1",
     "prettier": "^3.6.2",

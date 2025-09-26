@@ -1,23 +1,24 @@
-import { Executor } from "../executor";
-import { FunctionCallExpression, MethodCallExpression } from "../expression";
+import type { Executor } from "../executor";
+import type { FunctionCallExpression } from "../expression";
 import { FunctionCallTypeMismatchError, isRuntimeError, LogicError } from "../error";
-import { Arity, isCallable } from "../functions";
-import {
+import type { Arity } from "../functions";
+import { isCallable } from "../functions";
+import type {
   EvaluationResult,
   EvaluationResultFunctionCallExpression,
   EvaluationResultFunctionLookupExpression,
 } from "../evaluation-result";
 import { isNumber } from "../checks";
-import { cloneDeep } from "lodash";
-import { JikiObject, JikiString, unwrapJikiObject, wrapJSToJikiObject } from "../jikiObjects";
-import { Location } from "../location";
+import type { JikiObject } from "../jikiObjects";
+import { unwrapJikiObject } from "../jikiObjects";
+import type { Location } from "../location";
 import { CustomFunctionError } from "../interpreter";
 
 function throwMissingFunctionError(executor: Executor, expression: FunctionCallExpression, e: Error) {
   if (!isRuntimeError(e)) {
     throw e;
   }
-  if (e.type != "FunctionNotFoundInScope") {
+  if (e.type !== "FunctionNotFoundInScope") {
     throw e;
   }
 
@@ -101,6 +102,8 @@ export function executeFunctionCallExpression(
   return {
     type: "FunctionCallExpression",
     jikiObject: jikiObject,
+    // jikiObject can be undefined for void functions
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     immutableJikiObject: jikiObject?.clone(),
     callee,
     args,

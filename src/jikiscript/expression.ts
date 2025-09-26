@@ -1,8 +1,6 @@
 import type { Token } from "./token";
-import { Location } from "./location";
-import { EvaluationResultFunctionCallExpression } from "./evaluation-result";
-import { SomethingWithLocation } from "./interpreter";
-import { formatJikiObject } from "./helpers";
+import type { Location } from "./location";
+import type { SomethingWithLocation } from "./interpreter";
 
 export abstract class Expression implements SomethingWithLocation {
   constructor(public type: String) {}

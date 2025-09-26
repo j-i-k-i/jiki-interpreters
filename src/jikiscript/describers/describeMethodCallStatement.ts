@@ -1,16 +1,15 @@
 import { toSentence } from "@utils/toSentence";
-import { EvaluationResultMethodCallStatement } from "../evaluation-result";
-import { MethodCallExpression } from "../expression";
-import { DescriptionContext, FrameWithResult } from "../../shared/frames";
+import type { EvaluationResultMethodCallStatement } from "../evaluation-result";
+import type { DescriptionContext, FrameWithResult } from "../../shared/frames";
 import { codeTag, formatJikiObject } from "../helpers";
-import { MethodCallStatement } from "../statement";
+import type { MethodCallStatement } from "../statement";
 import { describeExpression } from "./describeSteps";
-import * as Jiki from "../jikiObjects";
+import type * as Jiki from "../jikiObjects";
 
 export function describeMethodCallStatement(frame: FrameWithResult, context: DescriptionContext) {
   const frameContext = frame.context as MethodCallStatement;
   const frameResult = frame.result as EvaluationResultMethodCallStatement;
-  const expression = frameContext.expression as MethodCallExpression;
+  const expression = frameContext.expression;
 
   const methodName = expression.methodName.lexeme;
 

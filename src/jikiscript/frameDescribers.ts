@@ -1,11 +1,6 @@
-import { marked } from "marked";
 import { deepTrim } from "./describers/helpers";
-import { Frame, FrameExecutionStatus, Description, DescriptionContext } from "../shared/frames";
-import type {
-  EvaluationResult,
-  EvaluationResultChangeVariableStatement,
-  EvaluationResultIfStatement,
-} from "./evaluation-result";
+import type { Frame, Description, DescriptionContext } from "../shared/frames";
+import type { EvaluationResult } from "./evaluation-result";
 import type { Statement } from "./statement";
 import type { Expression } from "./expression";
 import { describeIfStatement } from "./describers/describeIfStatement";
@@ -40,20 +35,19 @@ export function describeFrame(frame: JikiScriptFrame, context?: DescriptionConte
   if (!isFrameWithResult(frame)) {
     return defaultMessage;
   }
-  if (context == null) {
-    context = { functionDescriptions: {} };
-  }
+
+  const actualContext: DescriptionContext = context ?? { functionDescriptions: {} };
 
   let description: Description | null = null;
   try {
-    description = generateDescription(frame, context);
+    description = generateDescription(frame, actualContext);
   } catch (e) {
-    if (process.env.NODE_ENV != "production") {
+    if (process.env.NODE_ENV !== "production") {
       throw e;
     }
     return defaultMessage;
   }
-  if (description == null) {
+  if (description === null) {
     return defaultMessage;
   }
 
@@ -69,6 +63,7 @@ export function describeFrame(frame: JikiScriptFrame, context?: DescriptionConte
 }
 
 function generateDescription(frame: FrameWithResult, context: DescriptionContext): Description | null {
+  // eslint-disable-next-line @typescript-eslint/switch-exhaustiveness-check
   switch (frame.result.type) {
     case "LogStatement":
       return describeLogStatement(frame, context);
@@ -105,6 +100,9 @@ function generateDescription(frame: FrameWithResult, context: DescriptionContext
 
     case "ContinueStatement":
       return describeContinueStatement(frame, context);
+
+    default:
+      // Handle expression and other types that don't have specific descriptions
+      return null;
   }
-  return null;
 }

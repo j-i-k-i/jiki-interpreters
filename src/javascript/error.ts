@@ -1,4 +1,4 @@
-import { Location } from "../shared/location";
+import type { Location } from "../shared/location";
 
 export type SyntaxErrorType =
   | "GenericSyntaxError"

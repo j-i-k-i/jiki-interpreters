@@ -1,6 +1,5 @@
-import { isArray } from "./checks";
 import { FunctionCallTypeMismatchError } from "./error";
-import { ExecutionContext, ExternalFunction } from "./executor";
+import type { ExecutionContext, ExternalFunction } from "./executor";
 import * as Jiki from "./jikiObjects";
 
 export function filteredStdLibFunctions(required?: string[]) {

@@ -1,10 +1,11 @@
 import type { Executor } from "../executor";
 import type { ContinueStatement } from "../statement";
 import type { EvaluationResultContinueStatement } from "../evaluation-result";
+import type { Location } from "../location";
 
 export class ContinueFlowControlError extends Error {
   constructor(
-    public location: import("../location").Location,
+    public location: Location,
     public lexeme: String
   ) {
     super();

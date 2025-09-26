@@ -143,6 +143,8 @@ export class PyList extends JikiObject {
     const elementStrings: string[] = [];
     for (let i = 0; i < this.elements.length; i++) {
       const elem = this.elements[i];
+      // Sparse arrays can have undefined elements - checking is necessary
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       if (elem === undefined) {
         elementStrings.push("undefined");
       } else if (elem instanceof PyString) {
@@ -184,9 +186,8 @@ export function createPyObject(value: any): JikiObject {
     return new PyNone();
   } else if (Array.isArray(value)) {
     return new PyList(value.map(elem => createPyObject(elem)));
-  } else {
-    throw new Error(`Cannot create PyObject for value: ${value}`);
   }
+  throw new Error(`Cannot create PyObject for value: ${value}`);
 }
 
 // Helper function to unwrap PyObjects to JavaScript values

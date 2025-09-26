@@ -1,7 +1,7 @@
 import type { Expression } from "./expression";
 import { SubscriptExpression } from "./expression";
 import type { Token } from "./token";
-import { Location } from "../shared/location";
+import type { Location } from "../shared/location";
 
 export abstract class Statement {
   constructor(public type: string) {}
@@ -51,7 +51,7 @@ export class AssignmentStatement extends Statement {
   // Helper to get name for backwards compatibility
   public get name(): Token {
     if (!(this.target instanceof SubscriptExpression)) {
-      return this.target as Token;
+      return this.target;
     }
     // For subscript, return a dummy token (shouldn't be used in this case)
     throw new Error("Cannot get name from subscript assignment");

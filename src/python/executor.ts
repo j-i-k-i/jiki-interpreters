@@ -1,5 +1,5 @@
 import { Environment } from "./environment";
-import { SyntaxError } from "./error";
+// import { SyntaxError } from "./error";
 import type { Expression } from "./expression";
 import {
   LiteralExpression,
@@ -15,7 +15,6 @@ import type { Statement } from "./statement";
 import {
   ExpressionStatement,
   AssignmentStatement,
-  PrintStatement,
   IfStatement,
   BlockStatement,
   ForInStatement,
@@ -23,13 +22,14 @@ import {
   ContinueStatement,
 } from "./statement";
 import type { EvaluationResult } from "./evaluation-result";
-import { createPyObject, PyString, type JikiObject } from "./jikiObjects";
+import type { JikiObject } from "./jikiObjects";
 import { TIME_SCALE_FACTOR, type Frame, type FrameExecutionStatus, type TestAugmentedFrame } from "../shared/frames";
 import { type ExecutionContext as SharedExecutionContext } from "../shared/interfaces";
 import { createBaseExecutionContext } from "../shared/executionContext";
 import type { LanguageFeatures } from "./interfaces";
 import cloneDeep from "lodash.clonedeep";
-import { describeFrame, PythonFrame } from "./frameDescribers";
+import type { PythonFrame } from "./frameDescribers";
+import { describeFrame } from "./frameDescribers";
 
 // Import individual executors
 import { executeLiteralExpression } from "./executor/executeLiteralExpression";
@@ -76,17 +76,17 @@ export class RuntimeError extends Error {
   }
 }
 
-export type ExecutorResult = {
+export interface ExecutorResult {
   frames: Frame[];
   error: null; // Always null - runtime errors become frames
   success: boolean;
-};
+}
 
 export class Executor {
-  private frames: Frame[] = [];
+  private readonly frames: Frame[] = [];
   private location: Location | null = null;
   public time: number = 0;
-  private timePerFrame: number = 1;
+  private readonly timePerFrame: number = 1;
   public environment: Environment;
   public languageFeatures: LanguageFeatures;
 
@@ -224,7 +224,7 @@ export class Executor {
     error?: RuntimeError,
     context?: Statement | Expression
   ): void {
-    if (location == null) {
+    if (location === null) {
       location = Location.unknown;
     }
 

@@ -5,8 +5,8 @@ import { formatJSObject } from "../helpers";
 
 export function describeDictionaryExpression(
   result: EvaluationResultDictionaryExpression,
-  expression: DictionaryExpression,
-  executor: any
+  _expression: DictionaryExpression,
+  _executor: any
 ): string[] {
   const dictionary = result.immutableJikiObject || result.jikiObject;
 

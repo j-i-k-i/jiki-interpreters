@@ -1,6 +1,6 @@
 import { SyntaxError, type SyntaxErrorType } from "./error";
+import type { Expression } from "./expression";
 import {
-  Expression,
   LiteralExpression,
   BinaryExpression,
   UnaryExpression,
@@ -11,11 +11,10 @@ import {
 } from "./expression";
 import { Location } from "../shared/location";
 import { Scanner } from "./scanner";
+import type { Statement } from "./statement";
 import {
-  Statement,
   ExpressionStatement,
   AssignmentStatement,
-  PrintStatement,
   IfStatement,
   BlockStatement,
   ForInStatement,
@@ -104,10 +103,9 @@ export class Parser {
             return new AssignmentStatement(left.name, value, Location.between(left, value));
           } else if (left instanceof SubscriptExpression) {
             return new AssignmentStatement(left, value, Location.between(left, value));
-          } else {
-            // Reset and fall through to expression statement
-            this.current = savedPosition;
           }
+          // Reset and fall through to expression statement
+          this.current = savedPosition;
         } else {
           // Reset position - it's not an assignment
           this.current = savedPosition;
@@ -295,22 +293,28 @@ export class Parser {
   }
 
   private check(...types: TokenType[]): boolean {
-    if (this.isAtEnd()) return false;
+    if (this.isAtEnd()) {
+      return false;
+    }
     return types.includes(this.peek().type);
   }
 
   private checkNext(type: TokenType): boolean {
-    if (this.current + 1 >= this.tokens.length) return false;
+    if (this.current + 1 >= this.tokens.length) {
+      return false;
+    }
     return this.tokens[this.current + 1].type === type;
   }
 
   private advance(): Token {
-    if (!this.isAtEnd()) this.current++;
+    if (!this.isAtEnd()) {
+      this.current++;
+    }
     return this.previous();
   }
 
   private isAtEnd(): boolean {
-    return this.peek().type == "EOF";
+    return this.peek().type === "EOF";
   }
 
   private peek(): Token {
@@ -322,7 +326,9 @@ export class Parser {
   }
 
   private consume(type: TokenType, message: string): Token {
-    if (this.check(type)) return this.advance();
+    if (this.check(type)) {
+      return this.advance();
+    }
 
     throw this.error(this.peek(), message);
   }
@@ -467,7 +473,9 @@ export class Parser {
     this.advance();
 
     while (!this.isAtEnd()) {
-      if (this.previous().type == "NEWLINE") return;
+      if (this.previous().type === "NEWLINE") {
+        return;
+      }
 
       switch (this.peek().type) {
         case "CLASS":

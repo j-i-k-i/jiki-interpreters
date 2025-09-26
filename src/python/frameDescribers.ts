@@ -1,10 +1,5 @@
-import { Frame, DescriptionContext, Description } from "../shared/frames";
-import type {
-  EvaluationResult,
-  EvaluationResultAssignmentStatement,
-  EvaluationResultExpressionStatement,
-} from "./evaluation-result";
-import type { EvaluationResultForInStatement } from "./executor/executeForInStatement";
+import type { Frame, DescriptionContext, Description } from "../shared/frames";
+import type { EvaluationResult } from "./evaluation-result";
 import type { Statement } from "./statement";
 import type { Expression } from "./expression";
 import { describeAssignmentStatement } from "./describers/describeAssignmentStatement";
@@ -33,20 +28,19 @@ export function describeFrame(frame: PythonFrame, context?: DescriptionContext):
   if (!isFrameWithResult(frame)) {
     return defaultMessage;
   }
-  if (context == null) {
-    context = { functionDescriptions: {} };
-  }
+
+  const actualContext: DescriptionContext = context ?? { functionDescriptions: {} };
 
   let description: Description | null = null;
   try {
-    description = generateDescription(frame, context);
+    description = generateDescription(frame, actualContext);
   } catch (e) {
-    if (process.env.NODE_ENV != "production") {
+    if (process.env.NODE_ENV !== "production") {
       throw e;
     }
     return defaultMessage;
   }
-  if (description == null) {
+  if (description === null) {
     return defaultMessage;
   }
 
@@ -67,10 +61,6 @@ function generateDescription(frame: FrameWithResult, context: DescriptionContext
       result: `<p>Error: ${frame.error?.message || "Unknown error"}</p>`,
       steps: [],
     };
-  }
-
-  if (!frame.result) {
-    return null;
   }
 
   switch (frame.result.type) {

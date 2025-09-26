@@ -1,4 +1,4 @@
-import {
+import type {
   EvaluationResult,
   EvaluationResultBinaryExpression,
   EvaluationResultFunctionCallExpression,
@@ -9,8 +9,8 @@ import {
   EvaluationResultUnaryExpression,
   EvaluationResultVariableLookupExpression,
 } from "../evaluation-result";
+import type { Expression } from "../expression";
 import {
-  Expression,
   GroupingExpression,
   BinaryExpression,
   LogicalExpression,
@@ -22,7 +22,7 @@ import {
   MethodCallExpression,
 } from "../expression";
 import { describeLogicalExpression } from "./describeLogicalExpression";
-import { DescriptionContext } from "../../shared/frames";
+import type { DescriptionContext } from "../../shared/frames";
 import { describeBinaryExpression } from "./describeBinaryExpression";
 import { describeFunctionCallExpression } from "./describeFunctionCallExpression";
 import { describeGroupingExpression } from "./describeGroupingExpression";
@@ -62,11 +62,10 @@ export function describeExpression(
     return describeUnaryExpression(expression, result as EvaluationResultUnaryExpression, context);
   }
   if (expression instanceof AccessorExpression) {
-    if (result.type == "GetterExpression") {
+    if (result.type === "GetterExpression") {
       return describeGetterExpression(expression, result, context);
-    } else {
-      //return describeSetterExpression(expression, result, context)
     }
+    //return describeSetterExpression(expression, result, context)
   }
 
   return [];

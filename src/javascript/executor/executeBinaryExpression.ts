@@ -88,6 +88,7 @@ function handleBinaryOperation(
           "StrictEqualityRequired"
         );
       }
+      // eslint-disable-next-line eqeqeq
       return createJSObject(left == right);
 
     case "NOT_EQUAL":
@@ -99,6 +100,7 @@ function handleBinaryOperation(
           "StrictEqualityRequired"
         );
       }
+      // eslint-disable-next-line eqeqeq
       return createJSObject(left != right);
 
     case "STRICT_EQUAL":

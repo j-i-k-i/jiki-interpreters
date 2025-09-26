@@ -1,7 +1,10 @@
-import { isArray, isNumber } from "lodash";
-import { EvaluationResult, EvaluationResultBinaryExpression, EvaluationResultExpression } from "../evaluation-result";
-import { Executor } from "../executor";
-import { BinaryExpression } from "../expression";
+import type {
+  EvaluationResult,
+  EvaluationResultBinaryExpression,
+  EvaluationResultExpression,
+} from "../evaluation-result";
+import type { Executor } from "../executor";
+import type { BinaryExpression } from "../expression";
 import * as JikiTypes from "../jikiObjects";
 
 const DP_MULTIPLE = 100000;
@@ -35,31 +38,32 @@ function handleExpression(
 ): any {
   switch (expression.operator.type) {
     case "INEQUALITY":
-      return handle_inequality(executor, expression, leftResult, rightResult);
+      return handleInequality(executor, expression, leftResult, rightResult);
     case "EQUALITY":
-      return handle_equality(executor, expression, leftResult, rightResult);
+      return handleEquality(executor, expression, leftResult, rightResult);
     case "GREATER":
-      return handle_greater(executor, expression, leftResult, rightResult);
+      return handleGreater(executor, expression, leftResult, rightResult);
     case "GREATER_EQUAL":
-      return handle_greater_equal(executor, expression, leftResult, rightResult);
+      return handleGreaterEqual(executor, expression, leftResult, rightResult);
     case "LESS":
-      return handle_less(executor, expression, leftResult, rightResult);
+      return handleLess(executor, expression, leftResult, rightResult);
     case "LESS_EQUAL":
-      return handle_less_equal(executor, expression, leftResult, rightResult);
+      return handleLessEqual(executor, expression, leftResult, rightResult);
     case "MINUS":
-      return handle_minus(executor, expression, leftResult, rightResult);
+      return handleMinus(executor, expression, leftResult, rightResult);
     case "PLUS":
-      return handle_plus(executor, expression, leftResult, rightResult);
+      return handlePlus(executor, expression, leftResult, rightResult);
     case "SLASH":
-      return handle_slash(executor, expression, leftResult, rightResult);
+      return handleSlash(executor, expression, leftResult, rightResult);
     case "STAR":
-      return handle_star(executor, expression, leftResult, rightResult);
+      return handleStar(executor, expression, leftResult, rightResult);
     case "PERCENT":
-      return handle_percent(executor, expression, leftResult, rightResult);
+      return handlePercent(executor, expression, leftResult, rightResult);
     case "EQUAL":
       executor.error("UnexpectedEqualsOperatorForEqualityComparison", expression.location, {
         expression,
       });
+      break;
     default:
       executor.error("InvalidBinaryExpressionOperation", expression.location, {
         expression,
@@ -67,7 +71,7 @@ function handleExpression(
   }
 }
 
-function handle_inequality(
+function handleInequality(
   executor: Executor,
   expression: BinaryExpression,
   leftResult: EvaluationResultExpression,
@@ -76,7 +80,7 @@ function handle_inequality(
   return new JikiTypes.Boolean(leftResult.jikiObject.value !== rightResult.jikiObject.value);
 }
 
-function handle_equality(
+function handleEquality(
   executor: Executor,
   expression: BinaryExpression,
   leftResult: EvaluationResultExpression,
@@ -85,7 +89,7 @@ function handle_equality(
   return new JikiTypes.Boolean(leftResult.jikiObject.value === rightResult.jikiObject.value);
 }
 
-function handle_greater(
+function handleGreater(
   executor: Executor,
   expression: BinaryExpression,
   leftResult: EvaluationResultExpression,
@@ -96,7 +100,7 @@ function handle_greater(
   return new JikiTypes.Boolean(leftResult.jikiObject.value > rightResult.jikiObject.value);
 }
 
-function handle_greater_equal(
+function handleGreaterEqual(
   executor: Executor,
   expression: BinaryExpression,
   leftResult: EvaluationResultExpression,
@@ -107,7 +111,7 @@ function handle_greater_equal(
   return new JikiTypes.Boolean(leftResult.jikiObject.value >= rightResult.jikiObject.value);
 }
 
-function handle_less(
+function handleLess(
   executor: Executor,
   expression: BinaryExpression,
   leftResult: EvaluationResultExpression,
@@ -118,7 +122,7 @@ function handle_less(
   return new JikiTypes.Boolean(leftResult.jikiObject.value < rightResult.jikiObject.value);
 }
 
-function handle_less_equal(
+function handleLessEqual(
   executor: Executor,
   expression: BinaryExpression,
   leftResult: EvaluationResultExpression,
@@ -129,7 +133,7 @@ function handle_less_equal(
   return new JikiTypes.Boolean(leftResult.jikiObject.value <= rightResult.jikiObject.value);
 }
 
-function handle_minus(
+function handleMinus(
   executor: Executor,
   expression: BinaryExpression,
   leftResult: EvaluationResultExpression,
@@ -141,7 +145,7 @@ function handle_minus(
   return new JikiTypes.Number(Math.round(minusValue * DP_MULTIPLE) / DP_MULTIPLE);
 }
 
-function handle_plus(
+function handlePlus(
   executor: Executor,
   expression: BinaryExpression,
   leftResult: EvaluationResultExpression,
@@ -153,7 +157,7 @@ function handle_plus(
   return new JikiTypes.Number(Math.round(plusValue * DP_MULTIPLE) / DP_MULTIPLE);
 }
 
-function handle_slash(
+function handleSlash(
   executor: Executor,
   expression: BinaryExpression,
   leftResult: EvaluationResultExpression,
@@ -165,7 +169,7 @@ function handle_slash(
   return new JikiTypes.Number(Math.round(slashValue * DP_MULTIPLE) / DP_MULTIPLE);
 }
 
-function handle_star(
+function handleStar(
   executor: Executor,
   expression: BinaryExpression,
   leftResult: EvaluationResultExpression,
@@ -177,7 +181,7 @@ function handle_star(
   return new JikiTypes.Number(Math.round(starValue * DP_MULTIPLE) / DP_MULTIPLE);
 }
 
-function handle_percent(
+function handlePercent(
   executor: Executor,
   expression: BinaryExpression,
   leftResult: EvaluationResultExpression,

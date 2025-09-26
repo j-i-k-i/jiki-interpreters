@@ -1,10 +1,5 @@
-import { Frame, DescriptionContext, Description } from "../shared/frames";
-import type {
-  EvaluationResult,
-  EvaluationResultExpressionStatement,
-  EvaluationResultVariableDeclaration,
-  EvaluationResultIfStatement,
-} from "./evaluation-result";
+import type { Frame, DescriptionContext, Description } from "../shared/frames";
+import type { EvaluationResult } from "./evaluation-result";
 import type { Statement } from "./statement";
 import type { Expression } from "./expression";
 import { describeExpressionStatement } from "./describers/describeExpressionStatement";
@@ -30,20 +25,19 @@ export function describeFrame(frame: JavaScriptFrame, context?: DescriptionConte
   if (!isFrameWithResult(frame)) {
     return defaultMessage;
   }
-  if (context == null) {
-    context = { functionDescriptions: {} };
-  }
+
+  const actualContext: DescriptionContext = context ?? { functionDescriptions: {} };
 
   let description: Description | null = null;
   try {
-    description = generateDescription(frame, context);
+    description = generateDescription(frame, actualContext);
   } catch (e) {
-    if (process.env.NODE_ENV != "production") {
+    if (process.env.NODE_ENV !== "production") {
       throw e;
     }
     return defaultMessage;
   }
-  if (description == null) {
+  if (description === null) {
     return defaultMessage;
   }
 

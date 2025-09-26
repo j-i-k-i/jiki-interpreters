@@ -1,6 +1,6 @@
-import { Executor } from "../executor";
-import { BlockStatement } from "../statement";
-import { EvaluationResult } from "../evaluation-result";
+import type { Executor } from "../executor";
+import type { BlockStatement } from "../statement";
+import type { EvaluationResult } from "../evaluation-result";
 import { PyNone } from "../jikiObjects";
 
 export function executeBlockStatement(executor: Executor, statement: BlockStatement): EvaluationResult {

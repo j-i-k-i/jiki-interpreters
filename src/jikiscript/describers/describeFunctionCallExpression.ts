@@ -1,6 +1,6 @@
-import { EvaluationResultFunctionCallExpression } from "../evaluation-result";
-import { FunctionCallExpression } from "../expression";
-import { DescriptionContext } from "../../shared/frames";
+import type { EvaluationResultFunctionCallExpression } from "../evaluation-result";
+import type { FunctionCallExpression } from "../expression";
+import type { DescriptionContext } from "../../shared/frames";
 import { codeTag, formatJikiObject } from "../helpers";
 import { describeExpression } from "./describeSteps";
 
@@ -28,11 +28,13 @@ function generateFunctionDescription(
   fnName: string,
   context: DescriptionContext
 ) {
-  const descriptionTemplate = context.functionDescriptions ? context.functionDescriptions[fnName] || "" : "";
+  const descriptionTemplate = context.functionDescriptions[fnName] || "";
   const argsValues = result.args.map(arg => codeTag(formatJikiObject(arg.jikiObject), expression.location));
   let fnDesc = descriptionTemplate.replace(/\${arg(\d+)}/g, (_, index) => argsValues[index - 1].toString() || "");
 
-  if (result.jikiObject !== null && result.jikiObject !== undefined) {
+  // jikiObject can be undefined for void functions
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  if (result.jikiObject) {
     if (fnDesc) {
       fnDesc = `, which ${fnDesc}. It `;
     } else {

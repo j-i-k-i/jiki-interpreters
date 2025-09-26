@@ -1,9 +1,9 @@
-import {
+import type {
   EvaluationResultFullyEvaluatedLogicalExpression,
   EvaluationResultLogicalExpression,
 } from "../evaluation-result";
-import { LogicalExpression } from "../expression";
-import { DescriptionContext } from "../../shared/frames";
+import type { LogicalExpression } from "../expression";
+import type { DescriptionContext } from "../../shared/frames";
 import { codeTag, formatJikiObject } from "../helpers";
 import { describeExpression } from "./describeSteps";
 
@@ -37,7 +37,9 @@ function describeFullExpression(
   result: EvaluationResultFullyEvaluatedLogicalExpression,
   context: DescriptionContext
 ) {
-  if (result.right == null) {
+  // TypeScript thinks right can't be null but it could be undefined when short-circuited
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  if (result.right === null) {
     return [];
   }
   let inBetweenSteps: string[] = [];

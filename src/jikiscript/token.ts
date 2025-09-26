@@ -1,5 +1,4 @@
-import { Location } from "./location";
-import { SomethingWithLocation } from "./interpreter";
+import type { SomethingWithLocation } from "./interpreter";
 
 const StatementKeywordTokens = [
   "BREAK",

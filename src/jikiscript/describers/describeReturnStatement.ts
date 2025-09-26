@@ -1,7 +1,7 @@
-import { EvaluationResultReturnStatement } from "../evaluation-result";
-import { Description, DescriptionContext, FrameWithResult } from "../../shared/frames";
+import type { EvaluationResultReturnStatement } from "../evaluation-result";
+import type { Description, DescriptionContext, FrameWithResult } from "../../shared/frames";
 import { codeTag, formatJikiObject } from "../helpers";
-import { ReturnStatement } from "../statement";
+import type { ReturnStatement } from "../statement";
 import { describeExpression } from "./describeSteps";
 
 const finalStep = `<li>Jiki cleared up and left the function.</li>`;
@@ -11,9 +11,8 @@ export function describeReturnStatement(frame: FrameWithResult, context: Descrip
 
   if (frameContext.expression === null) {
     return describeNakedReturn();
-  } else {
-    return describeReturnWithValue(frame, context);
   }
+  return describeReturnWithValue(frame, context);
 }
 
 function describeNakedReturn() {

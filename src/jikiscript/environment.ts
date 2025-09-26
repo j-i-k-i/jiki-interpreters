@@ -1,4 +1,5 @@
-import { type Callable, isCallable, UserDefinedFunction } from "./functions";
+import type { UserDefinedFunction } from "./functions";
+import { type Callable, isCallable } from "./functions";
 import type { Token } from "./token";
 import { isString } from "./checks";
 import * as Jiki from "./jikiObjects";
@@ -32,13 +33,19 @@ export class Environment {
   }
 
   public get(name: Token): any {
-    if (this.values.has(name.lexeme)) return this.values.get(name.lexeme);
+    if (this.values.has(name.lexeme)) {
+      return this.values.get(name.lexeme);
+    }
 
     // Try the enclosing environment(s), but handle the error here so we can
     // make use of the didYouMean function
     try {
-      if (this.enclosing !== null) return this.enclosing.get(name);
-    } catch (e) {}
+      if (this.enclosing !== null) {
+        return this.enclosing.get(name);
+      }
+    } catch {
+      // Silently ignore error and return undefined
+    }
   }
 
   public updateVariable(name: Token, value: any): void {
@@ -48,7 +55,7 @@ export class Environment {
     }
 
     if (this.enclosing?.get(name)) {
-      this.enclosing?.updateVariable(name, value);
+      this.enclosing.updateVariable(name, value);
       return;
     }
   }
@@ -57,11 +64,17 @@ export class Environment {
     let current: Environment | null = this;
     let vars: any = {};
 
-    while (current != null) {
+    while (current !== null) {
       for (const [key, value] of this.values) {
-        if (key in vars) continue;
-        if (value instanceof Jiki.Class) continue;
-        if (isCallable(value)) continue;
+        if (key in vars) {
+          continue;
+        }
+        if (value instanceof Jiki.Class) {
+          continue;
+        }
+        if (isCallable(value)) {
+          continue;
+        }
 
         vars[key] = value;
       }
@@ -76,11 +89,17 @@ export class Environment {
     let current: Environment | null = this;
     let functions: any = {};
 
-    while (current != null) {
+    while (current !== null) {
       for (const [key, value] of this.values) {
-        if (key in functions) continue;
-        if (value instanceof Jiki.Class) continue;
-        if (!isCallable(value)) continue;
+        if (key in functions) {
+          continue;
+        }
+        if (value instanceof Jiki.Class) {
+          continue;
+        }
+        if (!isCallable(value)) {
+          continue;
+        }
 
         functions[key] = value;
       }

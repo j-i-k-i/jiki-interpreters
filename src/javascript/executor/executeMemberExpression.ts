@@ -3,15 +3,21 @@ import { RuntimeError } from "../executor";
 import type { MemberExpression } from "../expression";
 import type { EvaluationResultMemberExpression } from "../evaluation-result";
 import { JSArray, JSNumber, JSString, JSUndefined, JSDictionary, JSFunction, type JikiObject } from "../jikiObjects";
-import { stdlib, getStdlibType, StdlibError, type Property, type Method } from "../stdlib";
+import { stdlib, getStdlibType, StdlibError } from "../stdlib";
 
 // Generic function to use a property from stdlib
 function useProperty(obj: JikiObject, propertyName: string, executor: Executor, location: any): JikiObject | null {
   const stdlibType = getStdlibType(obj);
-  if (!stdlibType) return null;
+  if (!stdlibType) {
+    return null;
+  }
 
-  const property = stdlib[stdlibType]?.properties?.[propertyName];
-  if (!property) return null;
+  const property = stdlib[stdlibType].properties[propertyName];
+  // Checking if property exists in stdlib - necessary as propertyName is dynamic
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  if (!property) {
+    return null;
+  }
 
   try {
     return property.get(executor.getExecutionContext(), obj);
@@ -31,10 +37,16 @@ function useProperty(obj: JikiObject, propertyName: string, executor: Executor, 
 // Generic function to use a method from stdlib
 function useMethod(obj: JikiObject, methodName: string, executor: Executor, location: any): JSFunction | null {
   const stdlibType = getStdlibType(obj);
-  if (!stdlibType) return null;
+  if (!stdlibType) {
+    return null;
+  }
 
-  const method = stdlib[stdlibType]?.methods?.[methodName];
-  if (!method) return null;
+  const method = stdlib[stdlibType].methods[methodName];
+  // Checking if method exists in stdlib - necessary as methodName is dynamic
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  if (!method) {
+    return null;
+  }
 
   // Return a JSFunction that can be called
   // The error handling will happen when the function is actually called

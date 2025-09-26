@@ -1,6 +1,6 @@
-import { EvaluationResultMethodCallExpression } from "../evaluation-result";
-import { MethodCallExpression } from "../expression";
-import { DescriptionContext } from "../../shared/frames";
+import type { EvaluationResultMethodCallExpression } from "../evaluation-result";
+import type { MethodCallExpression } from "../expression";
+import type { DescriptionContext } from "../../shared/frames";
 import { codeTag, formatJikiObject } from "../helpers";
 import { describeExpression } from "./describeSteps";
 
@@ -30,8 +30,8 @@ export function describeMethodCallExpression(
 function generateMethodDescription(
   expression: MethodCallExpression,
   result: EvaluationResultMethodCallExpression,
-  fnName: string,
-  context: DescriptionContext
+  _fnName: string,
+  _context: DescriptionContext
 ) {
   const descriptionTemplate = result.method.description;
   const argsValues = result.args.map(arg => codeTag(formatJikiObject(arg.jikiObject), expression.location));
@@ -39,6 +39,8 @@ function generateMethodDescription(
     ? descriptionTemplate.replace(/\${arg(\d+)}/g, (_, index) => argsValues[index - 1].toString() || "")
     : null;
 
+  // jikiObject can be null/undefined for void methods
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   if (result.jikiObject !== null && result.jikiObject !== undefined) {
     if (fnDesc) {
       fnDesc = `, which ${fnDesc}. It `;

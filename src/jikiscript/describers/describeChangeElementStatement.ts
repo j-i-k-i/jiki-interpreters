@@ -1,12 +1,8 @@
-import {
-  EvaluationResult,
-  EvaluationResultChangeElementStatement,
-  EvaluationResultExpression,
-} from "../evaluation-result";
-import { VariableLookupExpression } from "../expression";
-import { Description, DescriptionContext, FrameWithResult } from "../../shared/frames";
+import type { EvaluationResultChangeElementStatement, EvaluationResultExpression } from "../evaluation-result";
+import type { VariableLookupExpression } from "../expression";
+import type { Description, DescriptionContext, FrameWithResult } from "../../shared/frames";
 import { codeTag, formatJikiObject } from "../helpers";
-import { ChangeElementStatement } from "../statement";
+import type { ChangeElementStatement } from "../statement";
 import { describeExpression } from "./describeSteps";
 import { addOrdinalSuffix } from "./helpers";
 import * as Jiki from "../jikiObjects";
@@ -17,9 +13,8 @@ export function describeChangeElementStatement(frame: FrameWithResult, context: 
 
   if (frameResult.object.jikiObject instanceof Jiki.List) {
     return describeChangeElementStatementList(frameContext, frameResult, context);
-  } else {
-    return describeChangeElementStatementDictionary(frameContext, frameResult, context);
   }
+  return describeChangeElementStatementDictionary(frameContext, frameResult, context);
 }
 
 function describeChangeElementStatementList(
@@ -38,7 +33,7 @@ function describeChangeElementStatementList(
   let dictDescription = "the list";
   let boxStep: string | undefined;
 
-  if (frameContext.object.type == "VariableLookupExpression") {
+  if (frameContext.object.type === "VariableLookupExpression") {
     const object = frameContext.object as VariableLookupExpression;
     const variableName = object.name.lexeme;
     const variableCodeTag = codeTag(variableName, frameContext.object.location);
@@ -69,7 +64,7 @@ function describeChangeElementStatementDictionary(
   let dictDescription = "the dictionary";
   let boxStep: string | undefined;
 
-  if (frameContext.object.type == "VariableLookupExpression") {
+  if (frameContext.object.type === "VariableLookupExpression") {
     const object = frameContext.object as VariableLookupExpression;
     const variableName = object.name.lexeme;
     const variableCodeTag = codeTag(variableName, frameContext.object.location);
@@ -84,7 +79,7 @@ function describeChangeElementStatementDictionary(
   const keyCodeTag = key ? codeTag(key, frameContext.field.location) : "unknown";
   const valueCodeTag = codeTag(value, frameContext.value.location);
 
-  if (frameResult.oldValue == undefined) {
+  if (frameResult.oldValue === undefined) {
     return describeChangeElementStatementDictionaryAddKey(
       frameContext,
       frameResult,

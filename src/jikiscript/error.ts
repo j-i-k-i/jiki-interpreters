@@ -1,4 +1,4 @@
-import { Location } from "./location";
+import type { Location } from "./location";
 
 export type DisabledLanguageFeatureErrorType =
   | "DisabledFeatureExcludeListViolation"
@@ -221,11 +221,11 @@ export class RuntimeError extends FrontendError<RuntimeErrorType> {}
 
 export class LogicError extends Error {}
 
-type FunctionCallTypeMismatchErrorContext = {
+interface FunctionCallTypeMismatchErrorContext {
   argIdx: number;
   expectedType: string;
   value: string;
-};
+}
 export class FunctionCallTypeMismatchError {
   constructor(public context: FunctionCallTypeMismatchErrorContext) {}
 }

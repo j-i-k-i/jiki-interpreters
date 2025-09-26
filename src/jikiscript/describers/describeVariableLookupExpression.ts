@@ -1,12 +1,12 @@
-import { EvaluationResultVariableLookupExpression } from "../evaluation-result";
-import { VariableLookupExpression } from "../expression";
-import { DescriptionContext } from "../../shared/frames";
+import type { EvaluationResultVariableLookupExpression } from "../evaluation-result";
+import type { VariableLookupExpression } from "../expression";
+import type { DescriptionContext } from "../../shared/frames";
 import { codeTag, formatJikiObject } from "../helpers";
 
 export function describeVariableLookupExpression(
   expression: VariableLookupExpression,
   result: EvaluationResultVariableLookupExpression,
-  context: DescriptionContext
+  _context: DescriptionContext
 ) {
   const name = result.name;
   const value = formatJikiObject(result.immutableJikiObject);

@@ -1,7 +1,7 @@
-import { EvaluationResultVariableDeclaration } from "../evaluation-result";
-import { Description, DescriptionContext, FrameWithResult } from "../../shared/frames";
+import type { EvaluationResultVariableDeclaration } from "../evaluation-result";
+import type { Description, DescriptionContext, FrameWithResult } from "../../shared/frames";
 import { formatJSObject } from "../helpers";
-import { VariableDeclaration } from "../statement";
+import type { VariableDeclaration } from "../statement";
 import { describeExpression } from "./describeSteps";
 
 export function describeVariableDeclaration(frame: FrameWithResult, context: DescriptionContext): Description {

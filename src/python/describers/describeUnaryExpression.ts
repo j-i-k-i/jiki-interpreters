@@ -1,6 +1,6 @@
 import type { Expression, UnaryExpression } from "../expression";
 import type { EvaluationResultUnaryExpression } from "../evaluation-result";
-import { DescriptionContext } from "../../shared/frames";
+import type { DescriptionContext } from "../../shared/frames";
 import { formatPyObject } from "./helpers";
 import { describeExpression } from "./describeSteps";
 
@@ -10,8 +10,8 @@ export function describeUnaryExpression(
   context: DescriptionContext
 ): string[] {
   const unaryExpr = expression as UnaryExpression;
-  const operand = formatPyObject(result.operand.immutableJikiObject!);
-  const resultValue = formatPyObject(result.immutableJikiObject!);
+  const operand = formatPyObject(result.operand.immutableJikiObject);
+  const resultValue = formatPyObject(result.immutableJikiObject);
 
   const operatorType = unaryExpr.operator.type;
   let operatorDesc = "";

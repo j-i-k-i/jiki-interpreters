@@ -1,10 +1,10 @@
 import { SyntaxError } from "./error";
 import { type SyntaxErrorType } from "./error";
+import type { Expression } from "./expression";
 import {
   ListExpression,
   BinaryExpression,
   FunctionCallExpression,
-  Expression,
   GroupingExpression,
   LiteralExpression,
   LogicalExpression,
@@ -26,6 +26,7 @@ import {
 import type { LanguageFeatures } from "./interpreter";
 import { Location } from "./location";
 import { Scanner } from "./scanner";
+import type { Statement } from "./statement";
 import {
   BlockStatement,
   BreakStatement,
@@ -38,7 +39,6 @@ import {
   RepeatStatement,
   RepeatUntilGameOverStatement,
   ReturnStatement,
-  Statement,
   SetVariableStatement,
   ChangeVariableStatement,
   RepeatForeverStatement,
@@ -64,9 +64,9 @@ export class Parser {
   private tokens: Token[] = [];
 
   constructor(
-    private functionNames: string[] = [],
+    private readonly functionNames: string[] = [],
     languageFeatures: LanguageFeatures,
-    private shouldWrapTopLevelStatements: boolean
+    private readonly shouldWrapTopLevelStatements: boolean
   ) {
     this.scanner = new Scanner(languageFeatures);
   }
@@ -78,12 +78,12 @@ export class Parser {
 
     while (!this.isAtEnd()) {
       const statement = this.declarationStatement();
-      if (statement) {
-        statements.push(statement);
-      }
+      statements.push(statement);
     }
 
-    if (this.shouldWrapTopLevelStatements) return this.wrapTopLevelStatements(statements);
+    if (this.shouldWrapTopLevelStatements) {
+      return this.wrapTopLevelStatements(statements);
+    }
 
     return statements;
   }
@@ -103,7 +103,9 @@ export class Parser {
 
     for (let i = statements.length - 1; i >= 0; i--) {
       // Don't wrap top-level function statements
-      if (statements[i] instanceof FunctionStatement) continue;
+      if (statements[i] instanceof FunctionStatement) {
+        continue;
+      }
 
       functionStmt.body.unshift(statements[i]);
       statements.splice(i, 1);
@@ -114,8 +116,12 @@ export class Parser {
   }
 
   private declarationStatement(): Statement {
-    if (this.match("FUNCTION")) return this.functionStatement();
-    if (this.match("CLASS")) return this.classStatement();
+    if (this.match("FUNCTION")) {
+      return this.functionStatement();
+    }
+    if (this.match("CLASS")) {
+      return this.classStatement();
+    }
 
     return this.statement();
   }
@@ -139,10 +145,16 @@ export class Parser {
   }
 
   private classBodyStatement(): Statement {
-    if (this.match("CONSTRUCTOR")) return this.constructorStatement();
+    if (this.match("CONSTRUCTOR")) {
+      return this.constructorStatement();
+    }
     if (this.check("PUBLIC", "PRIVATE")) {
-      if (this.checkAhead(2, "PROPERTY")) return this.propertyStatement();
-      if (this.checkAhead(2, "METHOD")) return this.methodStatement();
+      if (this.checkAhead(2, "PROPERTY")) {
+        return this.propertyStatement();
+      }
+      if (this.checkAhead(2, "METHOD")) {
+        return this.methodStatement();
+      }
       this.error("UnexpectedTokenAfterAccessModifier", this.peek().location, {
         accessModifier: this.peek().lexeme,
       });
@@ -217,13 +229,15 @@ export class Parser {
 
         // If we have some keyword other than "DO", it's probably
         // someone using a reserved keyword by accident
-        if (!this.check("DO")) this.guardUnexpectedKeyword();
+        if (!this.check("DO")) {
+          this.guardUnexpectedKeyword();
+        }
 
         const parameterName = this.consume("IDENTIFIER", "MissingParameterNameInFunctionDeclaration", {
           name: name,
         });
 
-        if (parameters.find(p => p.name.lexeme == parameterName.lexeme)) {
+        if (parameters.find(p => p.name.lexeme === parameterName.lexeme)) {
           this.error("DuplicateParameterNameInFunctionDeclaration", this.previous().location, {
             parameter: parameterName.lexeme,
           });
@@ -232,7 +246,7 @@ export class Parser {
         parameters.push(new FunctionParameter(parameterName, null));
       } while (this.match("COMMA"));
     }
-    if (this.peek().type != "DO") {
+    if (this.peek().type !== "DO") {
       const { errorType, context } = errorForMissingDoAfterParameters(this.peek(), parameters);
       this.error(errorType as SyntaxErrorType, this.peek().location, context);
     }
@@ -240,20 +254,46 @@ export class Parser {
   }
 
   private statement(): Statement {
-    if (this.match("BREAK")) return this.breakStatement();
-    if (this.match("CHANGE")) return this.changeVariableStatement();
-    if (this.match("CONTINUE")) return this.continueStatement();
-    if (this.match("NEXT")) return this.continueStatement();
-    if (this.match("IF")) return this.ifStatement();
-    if (this.match("LOG")) return this.logStatement();
-    if (this.match("SET")) return this.setVariableStatement();
-    if (this.match("RETURN")) return this.returnStatement();
-    if (this.match("REPEAT")) return this.repeatStatement();
-    if (this.match("REPEAT_FOREVER")) return this.repeatForeverStatement();
-    if (this.match("REPEAT_UNTIL_GAME_OVER")) return this.repeatUntilGameOverStatement();
+    if (this.match("BREAK")) {
+      return this.breakStatement();
+    }
+    if (this.match("CHANGE")) {
+      return this.changeVariableStatement();
+    }
+    if (this.match("CONTINUE")) {
+      return this.continueStatement();
+    }
+    if (this.match("NEXT")) {
+      return this.continueStatement();
+    }
+    if (this.match("IF")) {
+      return this.ifStatement();
+    }
+    if (this.match("LOG")) {
+      return this.logStatement();
+    }
+    if (this.match("SET")) {
+      return this.setVariableStatement();
+    }
+    if (this.match("RETURN")) {
+      return this.returnStatement();
+    }
+    if (this.match("REPEAT")) {
+      return this.repeatStatement();
+    }
+    if (this.match("REPEAT_FOREVER")) {
+      return this.repeatForeverStatement();
+    }
+    if (this.match("REPEAT_UNTIL_GAME_OVER")) {
+      return this.repeatUntilGameOverStatement();
+    }
     // if (this.match('WHILE')) return this.whileStatement()
-    if (this.match("FOR")) return this.forStatement();
-    if (this.match("DO")) return this.blockStatement("do");
+    if (this.match("FOR")) {
+      return this.forStatement();
+    }
+    if (this.match("DO")) {
+      return this.blockStatement("do");
+    }
 
     // Error cases
     if (this.match("ELSE")) {
@@ -285,7 +325,7 @@ export class Parser {
       }
     }
 
-    if (this.peek().type == "IDENTIFIER" && this.peek(2).type == "TO") {
+    if (this.peek().type === "IDENTIFIER" && this.peek(2).type === "TO") {
       const errorLocation = Location.between(this.previous(), this.peek());
       this.error("UnexpectedSpaceInIdentifierName", errorLocation, {
         first_half: name.lexeme,
@@ -400,9 +440,8 @@ export class Parser {
       return this.changeElementStatement(changeToken, getExpression);
     } else if (getExpression instanceof AccessorExpression) {
       return this.changePropertyStatement(changeToken, getExpression);
-    } else {
-      this.error("SyntaxErrorGeneric", getExpression.location);
     }
+    this.error("SyntaxErrorGeneric", getExpression.location);
   }
 
   private changeElementStatement(changeToken: Token, getExpression: GetElementExpression): ChangeElementStatement {
@@ -444,7 +483,7 @@ export class Parser {
     try {
       condition = this.expression();
     } catch (e) {
-      if (e instanceof SyntaxError && e.type == "MissingExpressionInStatement") {
+      if (e instanceof SyntaxError && e.type === "MissingExpressionInStatement") {
         this.error("MissingIfConditionAfterIfKeyword", ifToken.location);
       } else {
         throw e;
@@ -549,7 +588,7 @@ export class Parser {
     const eachToken = this.consume("EACH", "MissingEachAfterForKeyword");
     return this.foreachStatement(forToken, eachToken);
   }
-  private foreachStatement(forToken: Token, eachToken: Token): Statement {
+  private foreachStatement(forToken: Token, _eachToken: Token): Statement {
     const elementName = this.consume("IDENTIFIER", "MissingElementNameAfterForeachKeyword");
     let secondElementName: Token | undefined;
     if (this.match("COMMA")) {
@@ -603,7 +642,7 @@ export class Parser {
       try {
         statements.push(this.statement());
       } catch (e) {
-        if (type == "method" && e instanceof SyntaxError && e.type == "UnexpectedVisibilityModifierOutsideClass") {
+        if (type === "method" && e instanceof SyntaxError && e.type === "UnexpectedVisibilityModifierOutsideClass") {
           this.error("UnexpectedVisibilityModifierInsideMethod", e.location!, e.context);
         } else {
           throw e;
@@ -611,7 +650,7 @@ export class Parser {
       }
     }
 
-    if (consumeEnd && (!allowElse || this.peek().type != "ELSE")) {
+    if (consumeEnd && (!allowElse || this.peek().type !== "ELSE")) {
       this.consume("END", "MissingEndAfterBlockStatement", { type });
       this.consumeEndOfLine();
     }
@@ -664,7 +703,7 @@ export class Parser {
     const expr = this.or();
 
     if (this.match("TO")) {
-      const operator = this.previous();
+      this.previous(); // consume the TO operator
       const value = this.or();
 
       if (expr instanceof GetElementExpression) {
@@ -721,7 +760,7 @@ export class Parser {
     let expr = this.comparison();
 
     const nextToken = this.peek();
-    if (nextToken.type == "EQUALITY" || nextToken.type == "INEQUALITY") {
+    if (nextToken.type === "EQUALITY" || nextToken.type === "INEQUALITY") {
       const operator = this.advance();
       const right = this.comparison();
       expr = new BinaryExpression(expr, operator, right, Location.between(expr, right));
@@ -789,7 +828,7 @@ export class Parser {
     try {
       expr = this.primary();
     } catch (e) {
-      if (e instanceof SyntaxError && e.type == "MissingExpressionInStatement") {
+      if (e instanceof SyntaxError && e.type === "MissingExpressionInStatement") {
         this.error("MissingClassNameInDeclaration", newToken.location);
       }
     }
@@ -801,7 +840,7 @@ export class Parser {
 
     this.guardValidClassName(classNameExpression.name);
 
-    const leftParen = this.consume("LEFT_PAREN", "MissingLeftParenthesisInInstantiationExpression", {
+    this.consume("LEFT_PAREN", "MissingLeftParenthesisInInstantiationExpression", {
       class: classNameExpression.name.lexeme,
     });
 
@@ -861,7 +900,7 @@ export class Parser {
       return new AccessorExpression(expression, methodName, Location.between(expression, methodName));
     }
 
-    const leftParen = this.consume("LEFT_PAREN", "MissingLeftParenthesisAfterMethodCall", {
+    this.consume("LEFT_PAREN", "MissingLeftParenthesisAfterMethodCall", {
       method: methodName.lexeme,
     });
 
@@ -917,18 +956,28 @@ export class Parser {
   }
 
   private primary(): Expression {
-    if (this.match("LEFT_BRACKET")) return this.array();
+    if (this.match("LEFT_BRACKET")) {
+      return this.array();
+    }
 
-    if (this.match("LEFT_BRACE")) return this.dictionary();
+    if (this.match("LEFT_BRACE")) {
+      return this.dictionary();
+    }
 
-    if (this.match("FALSE")) return new LiteralExpression(false, this.previous().location);
+    if (this.match("FALSE")) {
+      return new LiteralExpression(false, this.previous().location);
+    }
 
-    if (this.match("TRUE")) return new LiteralExpression(true, this.previous().location);
+    if (this.match("TRUE")) {
+      return new LiteralExpression(true, this.previous().location);
+    }
 
     // if (this.match('NULL'))
     //   return new LiteralExpression(null, this.previous().location)
 
-    if (this.match("NUMBER", "STRING")) return new LiteralExpression(this.previous().literal, this.previous().location);
+    if (this.match("NUMBER", "STRING")) {
+      return new LiteralExpression(this.previous().literal, this.previous().location);
+    }
 
     if (this.match("THIS")) {
       return new ThisExpression(this.previous().location);
@@ -972,7 +1021,7 @@ export class Parser {
       return new GroupingExpression(expression, Location.between(lparen, rparen));
     }
 
-    if (this.peek().type == "FUNCTION") {
+    if (this.peek().type === "FUNCTION") {
       this.error("InvalidNestedFunctionDeclaration", this.peek().location);
     }
     this.error("MissingExpressionInStatement", this.peek().location);
@@ -982,7 +1031,7 @@ export class Parser {
     const openBacktick = this.previous();
     const parts: Expression[] = [];
 
-    while (this.peek().type != "BACKTICK") {
+    while (this.peek().type !== "BACKTICK") {
       if (this.match("DOLLAR_LEFT_BRACE")) {
         const dollarLeftBrace = this.previous();
         const expr = this.expression();
@@ -1017,7 +1066,7 @@ export class Parser {
         try {
           elements.push(this.or());
         } catch (e) {
-          if (!(e instanceof SyntaxError && e.type == "MissingExpressionInStatement")) {
+          if (!(e instanceof SyntaxError && e.type === "MissingExpressionInStatement")) {
             throw e;
           }
           this.error("MissingRightBracketAfterListElements", (prevComma || this.previous()).location);
@@ -1033,9 +1082,10 @@ export class Parser {
           }
 
           // Check for trailing commas
+          // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
           this.guardTrailingComma("RIGHT_BRACKET", (prevComma || leftBracket).location);
         }
-        // If there's no comma, we expect either a `]` or ` `\n]`.
+        // If there's no comma, we expect either a `]` or `\n`.
         // Firstly check for the newline version, and consume the
         // newline if it's there.
         else if (this.check("EOL") && this.checkAhead(2, "RIGHT_BRACKET")) {
@@ -1083,7 +1133,7 @@ export class Parser {
         try {
           key = this.consume("STRING", "MissingStringAsKeyInDictionary");
         } catch (e) {
-          if (!(e instanceof SyntaxError && e.type == "MissingExpressionInStatement")) {
+          if (!(e instanceof SyntaxError && e.type === "MissingExpressionInStatement")) {
             throw e;
           }
           this.error("MissingRightBraceAfterDictionaryElements", (prevComma || this.previous()).location);
@@ -1098,11 +1148,12 @@ export class Parser {
           this.match("EOL"); // Allow for things to be split over lines
 
           // Check for trailing commas
+          // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
           this.guardTrailingComma("RIGHT_BRACE", (prevComma || leftBrace).location);
 
           moreItems = !this.isAtEnd();
         }
-        // If there's no comma, we expect either a `}` or ` `\n}`.
+        // If there's no comma, we expect either a `}` or `\n`.
         // Firstly check for the newline version, and consume the
         // newline if it's there.
         else if (this.check("EOL") && this.checkAhead(2, "RIGHT_BRACE")) {
@@ -1134,22 +1185,30 @@ export class Parser {
   }
 
   private check(...tokenTypes: TokenType[]): boolean {
-    if (this.isAtEnd()) return false;
+    if (this.isAtEnd()) {
+      return false;
+    }
     return tokenTypes.includes(this.peek().type);
   }
 
   private checkAhead(steps = 1, ...tokenTypes: TokenType[]): boolean {
-    if (this.isAtEnd()) return false;
+    if (this.isAtEnd()) {
+      return false;
+    }
     return tokenTypes.includes(this.peek(steps).type);
   }
 
   private advance(): Token {
-    if (!this.isAtEnd()) this.current++;
+    if (!this.isAtEnd()) {
+      this.current++;
+    }
     return this.previous();
   }
 
   private consume(tokenType: TokenType, type: SyntaxErrorType, context?: any): Token {
-    if (this.check(tokenType)) return this.advance();
+    if (this.check(tokenType)) {
+      return this.advance();
+    }
 
     this.error(type, this.peek().location, context);
   }
@@ -1159,7 +1218,7 @@ export class Parser {
 
     // The DO will work, the EOL will fail.
     // Both of these can be handled normally.
-    if (next.type == "EOL" || next.type == "DO") {
+    if (next.type === "EOL" || next.type === "DO") {
       this.consume("DO", "MissingDoToStartIfBody", { type });
       return;
     }
@@ -1188,7 +1247,7 @@ export class Parser {
     const current = this.peek().lexeme;
     let suggestion;
 
-    if (type == "FUNCTION") {
+    if (type === "FUNCTION") {
       suggestion = "Did you mean to start a function on a new line?";
     } else {
       suggestion = "Did you make a typo?";
@@ -1223,7 +1282,9 @@ export class Parser {
 
   private guardUnexpectedKeyword() {
     const token = this.nextTokenIsKeyword();
-    if (!token) return;
+    if (!token) {
+      return;
+    }
 
     this.error("UnexpectedKeywordInExpression", token.location, { lexeme: token.lexeme });
   }
@@ -1236,31 +1297,31 @@ export class Parser {
   }
 
   private guardEqualsSignForAssignment(name: Token) {
-    if (this.peek().type == "EQUAL") {
+    if (this.peek().type === "EQUAL") {
       this.error("UnexpectedEqualsForAssignmentUseSetInstead", this.peek().location, {
         name: name.lexeme,
       });
     }
   }
   private guardEqualsSignForEquality(token: Token) {
-    if (token.type == "EQUAL") {
+    if (token.type === "EQUAL") {
       this.error("UnexpectedEqualsForEqualityUseIsInstead", token.location);
     }
   }
 
   private guardDoubleEquality() {
     const nextToken = this.peek();
-    if (nextToken.type == "EQUALITY" || nextToken.type == "INEQUALITY") {
+    if (nextToken.type === "EQUALITY" || nextToken.type === "INEQUALITY") {
       this.error("UnexpectedChainedEqualityExpression", nextToken.location);
     }
   }
 
   private isAtEnd(): boolean {
-    return this.peek().type == "EOF";
+    return this.peek().type === "EOF";
   }
 
   private isAtEndOfStatement(): boolean {
-    return this.peek().type == "EOL" || this.isAtEnd();
+    return this.peek().type === "EOL" || this.isAtEnd();
   }
 
   private nextTokenIsKeyword(): Token | false {
@@ -1270,7 +1331,9 @@ export class Parser {
     }
     const token = this.peek(counter);
 
-    if (KeywordTokens.includes(token.type)) return token;
+    if (KeywordTokens.includes(token.type)) {
+      return token;
+    }
     return false;
   }
 

@@ -3,12 +3,7 @@
  * This scanner produces tokens for Python syntax.
  */
 
-import {
-  DisabledLanguageFeatureError,
-  type DisabledLanguageFeatureErrorType,
-  SyntaxError,
-  type SyntaxErrorType,
-} from "./error";
+import { SyntaxError } from "./error";
 import type { Token, TokenType } from "./token";
 import { Location } from "../shared/location";
 import { translate } from "./translator";
@@ -138,6 +133,8 @@ export class Scanner {
   private scanToken(): void {
     const c = this.advance();
 
+    // TypeScript doesn't realize that Record lookups can return undefined for missing keys
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (this.tokenizers[c]) {
       this.tokenizers[c].call(this);
     } else if (this.isDigit(c)) {
@@ -158,12 +155,16 @@ export class Scanner {
   }
 
   private peek(): string {
-    if (this.isAtEnd()) return "\0";
+    if (this.isAtEnd()) {
+      return "\0";
+    }
     return this.sourceCode.charAt(this.current);
   }
 
   private peekNext(): string {
-    if (this.current + 1 >= this.sourceCode.length) return "\0";
+    if (this.current + 1 >= this.sourceCode.length) {
+      return "\0";
+    }
     return this.sourceCode.charAt(this.current + 1);
   }
 
@@ -172,8 +173,12 @@ export class Scanner {
   }
 
   private match(expected: string): boolean {
-    if (this.isAtEnd()) return false;
-    if (this.sourceCode.charAt(this.current) != expected) return false;
+    if (this.isAtEnd()) {
+      return false;
+    }
+    if (this.sourceCode.charAt(this.current) !== expected) {
+      return false;
+    }
 
     this.current++;
     return true;
@@ -343,12 +348,14 @@ export class Scanner {
 
   private tokenizeComment(): void {
     // A comment goes until the end of the line
-    while (this.peek() != "\n" && !this.isAtEnd()) this.advance();
+    while (this.peek() !== "\n" && !this.isAtEnd()) {
+      this.advance();
+    }
   }
 
   private tokenizeString(): void {
-    while (this.peek() != '"' && !this.isAtEnd()) {
-      if (this.peek() == "\n") {
+    while (this.peek() !== '"' && !this.isAtEnd()) {
+      if (this.peek() === "\n") {
         this.line++;
         this.lineOffset = this.current + 1;
       }
@@ -372,8 +379,8 @@ export class Scanner {
   }
 
   private tokenizeSingleQuoteString(): void {
-    while (this.peek() != "'" && !this.isAtEnd()) {
-      if (this.peek() == "\n") {
+    while (this.peek() !== "'" && !this.isAtEnd()) {
+      if (this.peek() === "\n") {
         this.line++;
         this.lineOffset = this.current + 1;
       }
@@ -398,21 +405,27 @@ export class Scanner {
 
   private tokenizeNumber(): void {
     // Handle integer part
-    while (this.isDigit(this.peek())) this.advance();
+    while (this.isDigit(this.peek())) {
+      this.advance();
+    }
 
     // Look for a fractional part
-    if (this.peek() == "." && this.isDigit(this.peekNext())) {
+    if (this.peek() === "." && this.isDigit(this.peekNext())) {
       this.advance(); // consume the .
-      while (this.isDigit(this.peek())) this.advance();
+      while (this.isDigit(this.peek())) {
+        this.advance();
+      }
     }
 
     // Look for scientific notation
-    if (this.peek() == "e" || this.peek() == "E") {
+    if (this.peek() === "e" || this.peek() === "E") {
       this.advance(); // consume e/E
-      if (this.peek() == "+" || this.peek() == "-") {
+      if (this.peek() === "+" || this.peek() === "-") {
         this.advance(); // consume +/-
       }
-      while (this.isDigit(this.peek())) this.advance();
+      while (this.isDigit(this.peek())) {
+        this.advance();
+      }
     }
 
     const value = parseFloat(this.sourceCode.substring(this.start, this.current));
@@ -420,7 +433,9 @@ export class Scanner {
   }
 
   private tokenizeIdentifier(): void {
-    while (this.isAlphaNumeric(this.peek())) this.advance();
+    while (this.isAlphaNumeric(this.peek())) {
+      this.advance();
+    }
 
     const text = this.sourceCode.substring(this.start, this.current);
     const type = Scanner.keywords[text] || "IDENTIFIER";
@@ -433,7 +448,7 @@ export class Scanner {
   }
 
   private isAlpha(c: string): boolean {
-    return (c >= "a" && c <= "z") || (c >= "A" && c <= "Z") || c == "_";
+    return (c >= "a" && c <= "z") || (c >= "A" && c <= "Z") || c === "_";
   }
 
   private isAlphaNumeric(c: string): boolean {

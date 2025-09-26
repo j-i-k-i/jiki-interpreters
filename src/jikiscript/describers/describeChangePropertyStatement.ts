@@ -1,14 +1,8 @@
-import {
-  EvaluationResult,
-  EvaluationResultChangeElementStatement,
-  EvaluationResultChangePropertyStatement,
-} from "../evaluation-result";
-import { VariableLookupExpression } from "../expression";
-import { Description, DescriptionContext, FrameWithResult } from "../../shared/frames";
-import { codeTag, formatJikiObject } from "../helpers";
-import { ChangeElementStatement, ChangePropertyStatement } from "../statement";
+import type { EvaluationResultChangePropertyStatement } from "../evaluation-result";
+import type { Description, DescriptionContext, FrameWithResult } from "../../shared/frames";
+import { codeTag } from "../helpers";
+import type { ChangePropertyStatement } from "../statement";
 import { describeExpression } from "./describeSteps";
-import { addOrdinalSuffix } from "./helpers";
 
 export function describeChangePropertyStatement(frame: FrameWithResult, context: DescriptionContext): Description {
   const frameContext = frame.context as ChangePropertyStatement;

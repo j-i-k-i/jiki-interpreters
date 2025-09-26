@@ -1,5 +1,5 @@
-import { Expression } from "./expression";
-import { Statement } from "./statement";
+import type { Expression } from "./expression";
+import type { Statement } from "./statement";
 import { type Token } from "./token";
 
 export class Span {

@@ -1,9 +1,5 @@
-import { toSentence } from "@utils/toSentence";
-import { isArray } from "./checks";
-import { BinaryExpression, FunctionCallExpression, Expression, GroupingExpression } from "./expression";
-import { Location } from "./location";
-import { Statement } from "./statement";
-import { JikiObject, unwrapJikiObject } from "./jikiObjects";
+import type { Location } from "./location";
+import { JikiObject } from "./jikiObjects";
 
 export function formatJikiObject(value?: any): string {
   if (value === undefined) {

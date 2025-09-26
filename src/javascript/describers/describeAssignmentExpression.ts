@@ -2,7 +2,6 @@ import type { AssignmentExpression } from "../expression";
 import { MemberExpression } from "../expression";
 import type { EvaluationResultAssignmentExpression } from "../evaluation-result";
 import { formatJSObject } from "../helpers";
-import type { Token } from "../token";
 
 export function describeAssignmentExpression(
   expression: AssignmentExpression,
@@ -18,6 +17,6 @@ export function describeAssignmentExpression(
   }
 
   // Handle regular identifier assignment
-  const target = expression.target as Token;
+  const target = expression.target;
   return `<li>JavaScript updated the variable <code>${target.lexeme}</code> to <code>${value}</code>.</li>`;
 }

@@ -1,6 +1,6 @@
 import { Expression } from "./expression";
 import type { Token } from "./token";
-import { Location } from "../shared/location";
+import type { Location } from "../shared/location";
 
 export abstract class Statement {
   constructor(public type: string) {}

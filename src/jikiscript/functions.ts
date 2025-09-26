@@ -1,14 +1,14 @@
 import { Environment } from "./environment";
-import { ConstructorStatement, FunctionStatement, MethodStatement } from "./statement";
+import type { ConstructorStatement, FunctionStatement, MethodStatement } from "./statement";
 import type { ExecutionContext } from "./executor";
-import { Location } from "./location";
-import * as Jiki from "./jikiObjects";
+import type { Location } from "./location";
+import type * as Jiki from "./jikiObjects";
 
 export type Arity = number | [min: number, max: number];
 
 export interface Callable {
   arity: Arity;
-  call(context: ExecutionContext, args: any[]): Jiki.JikiObject | void;
+  call: (context: ExecutionContext, args: any[]) => Jiki.JikiObject | void;
 }
 
 export class ReturnValue extends Error {
@@ -27,7 +27,7 @@ export function isCallable(obj: any): obj is Callable {
 class UserDefinedCallable implements Callable {
   public readonly arity: Arity;
 
-  constructor(private declaration: FunctionStatement | ConstructorStatement | MethodStatement) {
+  constructor(private readonly declaration: FunctionStatement | ConstructorStatement | MethodStatement) {
     this.arity = [
       this.declaration.parameters.filter(p => p.defaultValue === null).length,
       this.declaration.parameters.length,

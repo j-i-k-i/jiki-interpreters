@@ -1,15 +1,14 @@
 import { toSentence } from "@utils/toSentence";
-import { EvaluationResultFunctionCallStatement, EvaluationResultMethodCallStatement } from "../evaluation-result";
-import { FunctionCallExpression } from "../expression";
-import { DescriptionContext, FrameWithResult } from "../../shared/frames";
+import type { EvaluationResultMethodCallStatement } from "../evaluation-result";
+import type { DescriptionContext, FrameWithResult } from "../../shared/frames";
 import { codeTag, formatJikiObject } from "../helpers";
-import { FunctionCallStatement } from "../statement";
+import type { FunctionCallStatement } from "../statement";
 import { describeExpression } from "./describeSteps";
 
 export function describeFunctionCallStatement(frame: FrameWithResult, context: DescriptionContext) {
   const frameContext = frame.context as FunctionCallStatement;
   const frameResult = frame.result as EvaluationResultMethodCallStatement;
-  const expression = frameContext.expression as FunctionCallExpression;
+  const expression = frameContext.expression;
 
   const fnName = expression.callee.name.lexeme;
 

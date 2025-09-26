@@ -1,5 +1,5 @@
 import type { Executor } from "../executor";
-import { VariableLookupExpression } from "../expression";
+import type { VariableLookupExpression } from "../expression";
 import { isCallable } from "../functions";
 import { RuntimeError } from "../error";
 import type { SetVariableStatement } from "../statement";
@@ -19,7 +19,7 @@ export function executeSetVariableStatement(executor: Executor, statement: SetVa
     try {
       value = executor.evaluate(statement.value);
     } catch (e) {
-      if (e instanceof RuntimeError && e.type == "ExpressionEvaluatedToNullValue") {
+      if (e instanceof RuntimeError && e.type === "ExpressionEvaluatedToNullValue") {
         executor.error("StateErrorCannotStoreNullValueFromFunction", statement.value.location);
       } else {
         throw e;

@@ -8,7 +8,7 @@ import systemLangPack from "./locales/system/translation.json";
 
 const jikiscriptI18n = createInstance();
 
-jikiscriptI18n.init({
+void jikiscriptI18n.init({
   debug: DEBUG,
   lng: DEFAULT_LANGUAGE,
   initImmediate: false,
@@ -22,7 +22,9 @@ export function getLanguage(): string {
 }
 
 export async function changeLanguage(language: string): Promise<void> {
-  if (jikiscriptI18n.language === language) return;
+  if (jikiscriptI18n.language === language) {
+    return;
+  }
 
   await jikiscriptI18n.changeLanguage(language);
 }

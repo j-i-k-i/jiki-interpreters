@@ -4,7 +4,6 @@ import type { AssignmentStatement } from "../statement";
 import { SubscriptExpression } from "../expression";
 import type { EvaluationResult } from "../evaluation-result";
 import { PyList, PyNumber } from "../jikiObjects";
-import type { Token } from "../token";
 
 export function executeAssignmentStatement(executor: Executor, statement: AssignmentStatement): EvaluationResult {
   const value = executor.evaluate(statement.initializer);
@@ -82,7 +81,7 @@ export function executeAssignmentStatement(executor: Executor, statement: Assign
   }
 
   // Handle regular identifier assignment
-  const target = statement.target as Token;
+  const target = statement.target;
   executor.environment.define(target.lexeme, value.jikiObject);
 
   return {

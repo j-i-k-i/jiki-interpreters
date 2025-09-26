@@ -1,7 +1,7 @@
-import { EvaluationResultLogStatement } from "../evaluation-result";
-import { Description, DescriptionContext, FrameWithResult } from "../../shared/frames";
+import type { EvaluationResultLogStatement } from "../evaluation-result";
+import type { Description, DescriptionContext, FrameWithResult } from "../../shared/frames";
 import { formatJikiObject } from "../helpers";
-import { LogStatement } from "../statement";
+import type { LogStatement } from "../statement";
 import { describeExpression } from "./describeSteps";
 
 export function describeLogStatement(frame: FrameWithResult, context: DescriptionContext): Description {

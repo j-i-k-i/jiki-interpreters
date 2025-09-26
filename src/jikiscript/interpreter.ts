@@ -1,32 +1,32 @@
 import { RuntimeError, type RuntimeErrorType, type StaticError } from "./error";
-import { Expression } from "./expression";
+import type { Expression } from "./expression";
 import { Location } from "./location";
 import { Parser } from "./parser";
 import { Executor } from "./executor";
-import { Statement } from "./statement";
+import type { Statement } from "./statement";
 import type { TokenType } from "./token";
 import { translate } from "./translator";
 import type { ExecutionContext, ExternalFunction } from "./executor";
 import type { Frame } from "../shared/frames";
-import { Arity } from "./functions";
+import type { Arity } from "./functions";
 import * as Jiki from "./jikiObjects";
-import { StdlibFunctions, StdlibFunctionsForLibrary } from "./stdlib";
+import { StdlibFunctionsForLibrary } from "./stdlib";
 
-export type FrameContext = {
+export interface FrameContext {
   result: any;
   expression?: Expression;
   statement?: Statement;
-};
+}
 
 export interface SomethingWithLocation {
   location: Location;
 }
 
-export type CompilationError = {
+export interface CompilationError {
   type: "CompilationError";
   error: StaticError;
   frames: Frame[];
-};
+}
 
 export class CustomFunctionError extends Error {
   constructor(message: string) {
@@ -36,7 +36,7 @@ export class CustomFunctionError extends Error {
 
 export type Toggle = "ON" | "OFF";
 
-export type LanguageFeatures = {
+export interface LanguageFeatures {
   includeList?: TokenType[];
   excludeList?: TokenType[];
   timePerFrame: number;
@@ -47,9 +47,9 @@ export type LanguageFeatures = {
   allowGlobals: boolean;
   customFunctionDefinitionMode: boolean;
   addSuccessFrames: boolean;
-};
+}
 
-export type InputLanguageFeatures = {
+export interface InputLanguageFeatures {
   includeList?: TokenType[];
   excludeList?: TokenType[];
   timePerFrame?: number;
@@ -60,44 +60,44 @@ export type InputLanguageFeatures = {
   allowGlobals?: boolean;
   customFunctionDefinitionMode?: boolean;
   addSuccessFrames?: boolean;
-};
+}
 
-export type CustomFunction = {
+export interface CustomFunction {
   name: string;
   arity: Arity;
   code: string;
-};
-export type CallableCustomFunction = {
+}
+export interface CallableCustomFunction {
   name: string;
   arity: Arity;
   call: () => any;
-};
+}
 
-export type EvaluationContext = {
+export interface EvaluationContext {
   externalFunctions?: ExternalFunction[];
   customFunctions?: CustomFunction[];
   classes?: Jiki.Class[];
   languageFeatures?: InputLanguageFeatures;
   state?: Record<string, any>;
   wrapTopLevelStatements?: boolean;
-};
+}
 
 export type EvaluateFunctionResult = InterpretResult & {
   value: any;
   jikiObject?: Jiki.JikiObject;
 };
 
-export type InterpretResult = {
+export interface InterpretResult {
   frames: Frame[];
   error: StaticError | null;
   meta: Meta;
-};
+}
 
-export type Meta = {
+export interface Meta {
   functionCallLog: Record<string, Record<any, number>>;
   statements: Statement[];
   sourceCode: string;
-};
+}
 
 export function compile(sourceCode: string, context: EvaluationContext = {}) {
   const interpreter = new Interpreter(sourceCode, context);
@@ -142,12 +142,12 @@ export function evaluateExpression(
 export class Interpreter {
   private readonly parser: Parser;
 
-  private state: Record<string, any> = {};
-  private languageFeatures: LanguageFeatures;
-  private externalFunctions: ExternalFunction[] = [];
-  private customFunctions: CallableCustomFunction[] = [];
-  private classes: Jiki.Class[] = [];
-  private wrapTopLevelStatements = false;
+  private readonly state: Record<string, any> = {};
+  private readonly languageFeatures: LanguageFeatures;
+  private readonly externalFunctions: ExternalFunction[] = [];
+  private readonly customFunctions: CallableCustomFunction[] = [];
+  private readonly classes: Jiki.Class[] = [];
+  private readonly wrapTopLevelStatements = false;
 
   private statements: Statement[] = [];
 
@@ -187,7 +187,9 @@ export class Interpreter {
 
   private parseCustomFunctions(customFunctions: CustomFunction[]): CallableCustomFunction[] {
     // This is wildly deeply recursive so be careful!
-    if (customFunctions.length === 0) return [];
+    if (customFunctions.length === 0) {
+      return [];
+    }
 
     customFunctions = customFunctions.reduce((acc, fn) => {
       if (!acc.some(existingFn => existingFn.name === fn.name)) {
@@ -260,10 +262,11 @@ export class Interpreter {
       false
     ).parse(callingCode);
 
-    if (callingStatements.length !== 1)
+    if (callingStatements.length !== 1) {
       this.error("RuntimeErrorCouldNotEvaluateFunctionCall", Location.unknown, {
         callingStatements,
       });
+    }
 
     const executor = new Executor(
       this.sourceCode,
@@ -284,7 +287,7 @@ export class Interpreter {
     };
   }
 
-  public evaluateExpression(expression: string, ...args: any[]): EvaluateFunctionResult {
+  public evaluateExpression(expression: string, ..._args: any[]): EvaluateFunctionResult {
     // Create a new parser with wrapTopLevelStatements set to false
     // and use it to generate the calling statements.
     const callingStatements = new Parser(
@@ -293,10 +296,11 @@ export class Interpreter {
       false
     ).parse(expression);
 
-    if (callingStatements.length !== 1)
+    if (callingStatements.length !== 1) {
       this.error("RuntimeErrorCouldNotEvaluateFunctionCall", Location.unknown, {
         callingStatements,
       });
+    }
 
     const executor = new Executor(
       this.sourceCode,

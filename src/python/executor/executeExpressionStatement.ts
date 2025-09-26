@@ -1,6 +1,6 @@
 import type { Executor } from "../executor";
 import type { ExpressionStatement } from "../statement";
-import type { EvaluationResult, EvaluationResultExpressionStatement } from "../evaluation-result";
+import type { EvaluationResultExpressionStatement } from "../evaluation-result";
 
 export function executeExpressionStatement(
   executor: Executor,

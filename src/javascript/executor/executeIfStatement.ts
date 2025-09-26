@@ -1,6 +1,6 @@
-import { EvaluationResultIfStatement } from "../evaluation-result";
-import { Executor } from "../executor";
-import { IfStatement } from "../statement";
+import type { EvaluationResultIfStatement } from "../evaluation-result";
+import type { Executor } from "../executor";
+import type { IfStatement } from "../statement";
 
 export function executeIfStatement(executor: Executor, statement: IfStatement) {
   const conditionResult = executor.executeFrame<EvaluationResultIfStatement>(statement, () =>
@@ -12,8 +12,10 @@ export function executeIfStatement(executor: Executor, statement: IfStatement) {
     return;
   }
 
-  if (statement.elseBranch === null) return;
-  executor.executeStatement(statement.elseBranch!);
+  if (statement.elseBranch === null) {
+    return;
+  }
+  executor.executeStatement(statement.elseBranch);
 }
 
 function executeCondition(executor: Executor, statement: IfStatement): EvaluationResultIfStatement {

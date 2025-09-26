@@ -2,8 +2,7 @@ import type { Executor } from "../executor";
 import { MemberExpression } from "../expression";
 import type { AssignmentExpression } from "../expression";
 import type { EvaluationResultAssignmentExpression } from "../evaluation-result";
-import { JSArray, JSUndefined, JSDictionary, JSString, JSNumber } from "../jikiObjects";
-import type { Token } from "../token";
+import { JSArray, JSDictionary, JSString, JSNumber } from "../jikiObjects";
 
 export function executeAssignmentExpression(
   executor: Executor,
@@ -62,7 +61,7 @@ export function executeAssignmentExpression(
         });
       }
 
-      const index = indexResult.jikiObject.value as number;
+      const index = indexResult.jikiObject.value;
 
       // Check if index is an integer
       if (!Number.isInteger(index)) {
@@ -102,7 +101,7 @@ export function executeAssignmentExpression(
   }
 
   // Handle regular identifier assignment
-  const target = expression.target as Token;
+  const target = expression.target;
   const success = executor.environment.update(target.lexeme, valueResult.jikiObject);
 
   if (!success) {

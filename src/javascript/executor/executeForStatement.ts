@@ -1,6 +1,5 @@
 import type { Executor } from "../executor";
 import type { ForStatement } from "../statement";
-import type { EvaluationResult } from "../evaluation-result";
 import { Environment } from "../environment";
 import { VariableDeclaration } from "../statement";
 
@@ -42,9 +41,7 @@ export function executeForStatement(executor: Executor, statement: ForStatement)
       }
 
       // Execute body - this generates its own frames
-      if (statement.body) {
-        executor.executeStatement(statement.body);
-      }
+      executor.executeStatement(statement.body);
 
       // Execute update (if present) - this should generate a frame
       if (statement.update) {

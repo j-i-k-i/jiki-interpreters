@@ -1,6 +1,6 @@
 import type { Expression, BinaryExpression } from "../expression";
 import type { EvaluationResultBinaryExpression } from "../evaluation-result";
-import { DescriptionContext } from "../../shared/frames";
+import type { DescriptionContext } from "../../shared/frames";
 import { formatPyObject } from "./helpers";
 import { describeExpression } from "./describeSteps";
 
@@ -10,13 +10,15 @@ export function describeBinaryExpression(
   context: DescriptionContext
 ): string[] {
   const binaryExpr = expression as BinaryExpression;
-  const left = formatPyObject(result.left.immutableJikiObject!);
-  const resultValue = formatPyObject(result.immutableJikiObject!);
+  const left = formatPyObject(result.left.immutableJikiObject);
+  const resultValue = formatPyObject(result.immutableJikiObject);
 
   const operatorSymbol = binaryExpr.operator.lexeme;
   const operatorName = getOperatorName(operatorSymbol);
 
   // Handle short-circuit evaluation for logical operators
+  // result.right can be null for short-circuited logical operators
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   if ((operatorSymbol === "and" || operatorSymbol === "or") && result.right === null) {
     const steps = [
       ...describeExpression(binaryExpr.left, result.left, context),
@@ -25,12 +27,13 @@ export function describeBinaryExpression(
     return steps;
   }
 
-  // Safety check for right - it should always exist if we reach here
+  // Safety check for right - defensive programming in case of logic errors
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   if (!result.right) {
     return [`<li>Python evaluated binary expression and got <code>${resultValue}</code>.</li>`];
   }
 
-  const right = formatPyObject(result.right.immutableJikiObject!);
+  const right = formatPyObject(result.right.immutableJikiObject);
   const steps = [
     ...describeExpression(binaryExpr.left, result.left, context),
     ...describeExpression(binaryExpr.right, result.right, context),
@@ -56,9 +59,9 @@ function getOperatorName(operator: string): string {
       return "calculated the remainder of";
     case "**":
       return "raised to the power";
-    case "==":
+    case "===":
       return "checked if equal";
-    case "!=":
+    case "!==":
       return "checked if not equal";
     case "<":
       return "checked if less than";
