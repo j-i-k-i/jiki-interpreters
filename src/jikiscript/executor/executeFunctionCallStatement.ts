@@ -9,6 +9,8 @@ export function executeFunctionCallStatement(executor: Executor, statement: Func
     return {
       type: "FunctionCallStatement",
       jikiObject: result.jikiObject,
+      // jikiObject can be undefined for void functions
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       immutableJikiObject: result.jikiObject?.clone(),
       expression: result,
     };

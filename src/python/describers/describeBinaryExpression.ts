@@ -17,6 +17,8 @@ export function describeBinaryExpression(
   const operatorName = getOperatorName(operatorSymbol);
 
   // Handle short-circuit evaluation for logical operators
+  // result.right can be null for short-circuited logical operators
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   if ((operatorSymbol === "and" || operatorSymbol === "or") && result.right === null) {
     const steps = [
       ...describeExpression(binaryExpr.left, result.left, context),
@@ -25,7 +27,8 @@ export function describeBinaryExpression(
     return steps;
   }
 
-  // Safety check for right - it should always exist if we reach here
+  // Safety check for right - defensive programming in case of logic errors
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   if (!result.right) {
     return [`<li>Python evaluated binary expression and got <code>${resultValue}</code>.</li>`];
   }

@@ -11,6 +11,14 @@ else
     echo "No files to format"
 fi
 
+# Run ESLint check (treating warnings as errors)
+echo "🔍 Running ESLint..."
+pnpm run lint --max-warnings=0
+if [ $? -ne 0 ]; then
+    echo "❌ ESLint check failed (errors or warnings found). Commit aborted."
+    exit 1
+fi
+
 # Run type check
 echo "🔍 Type checking..."
 pnpm run typecheck

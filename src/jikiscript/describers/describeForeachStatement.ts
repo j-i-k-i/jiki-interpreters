@@ -43,7 +43,13 @@ function describePopulatedList(
     result += ` and the ${codeTag(
       frameContext.secondElementName.lexeme,
       frameContext.secondElementName.location
-    )} variable set to ${frameResult.secondTemporaryVariableValue ? codeTag(frameResult.secondTemporaryVariableValue, frameContext.iterable.location) : "unknown"}`;
+    )} variable set to ${
+      // Check for undefined/null, not just truthiness (0 and "" are valid values)
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+      frameResult.secondTemporaryVariableValue !== undefined
+        ? codeTag(frameResult.secondTemporaryVariableValue, frameContext.iterable.location)
+        : "unknown"
+    }`;
   }
   result += `.</p>`;
   const steps = [

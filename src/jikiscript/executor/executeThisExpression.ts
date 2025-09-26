@@ -10,6 +10,8 @@ export function executeThisExpression(executor: Executor, expression: ThisExpres
   return {
     type: "ThisExpression",
     jikiObject: executor.contextualThis,
+    // contextualThis can be null outside of class methods
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     immutableJikiObject: executor.contextualThis?.clone(),
   };
 }

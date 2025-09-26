@@ -1247,7 +1247,6 @@ export class Executor {
     // The ||= operator is the idiomatic way to initialize an object property if it doesn't exist
     // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     this.functionCallLog[name] ||= {};
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     this.functionCallLog[name][JSON.stringify(unwrappedArgs)] ||= 0;
     this.functionCallLog[name][JSON.stringify(unwrappedArgs)] += 1;
   }

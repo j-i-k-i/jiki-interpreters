@@ -39,6 +39,8 @@ function generateMethodDescription(
     ? descriptionTemplate.replace(/\${arg(\d+)}/g, (_, index) => argsValues[index - 1].toString() || "")
     : null;
 
+  // jikiObject can be null/undefined for void methods
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   if (result.jikiObject !== null && result.jikiObject !== undefined) {
     if (fnDesc) {
       fnDesc = `, which ${fnDesc}. It `;

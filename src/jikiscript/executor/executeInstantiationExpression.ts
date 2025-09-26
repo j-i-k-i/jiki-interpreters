@@ -48,6 +48,8 @@ export function executeInstantiationExpression(
     return {
       type: "InstantiationExpression",
       jikiObject: object,
+      // object can be undefined in error cases
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       immutableJikiObject: object?.clone(),
       className,
       args: args,

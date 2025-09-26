@@ -85,6 +85,8 @@ export class Class {
 
     // Check that the constructor set all the properties
     this.properties.forEach(property => {
+      // Properties must be initialized in constructor - checking for undefined is valid
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       if (instance.getField(property) === undefined) {
         throw new UnsetPropertyError(property);
       }

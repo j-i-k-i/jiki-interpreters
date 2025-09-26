@@ -17,8 +17,12 @@ export function executeReturnStatement(executor: Executor, statement: ReturnStat
       type: "ReturnStatement",
       expression: value,
       jikiObject: value.jikiObject,
+      // jikiObject can be undefined for void returns
+      // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
       immutableJikiObject: value.jikiObject?.clone(),
     };
   });
+  // evaluationResult can be undefined for bare return statements
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   throw new ReturnValue(evaluationResult?.jikiObject, statement.location);
 }

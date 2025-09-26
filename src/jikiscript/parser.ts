@@ -1082,9 +1082,10 @@ export class Parser {
           }
 
           // Check for trailing commas
+          // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
           this.guardTrailingComma("RIGHT_BRACKET", (prevComma || leftBracket).location);
         }
-        // If there's no comma, we expect either a `]` or ` `\n]`.
+        // If there's no comma, we expect either a `]` or `\n`.
         // Firstly check for the newline version, and consume the
         // newline if it's there.
         else if (this.check("EOL") && this.checkAhead(2, "RIGHT_BRACKET")) {
@@ -1147,11 +1148,12 @@ export class Parser {
           this.match("EOL"); // Allow for things to be split over lines
 
           // Check for trailing commas
+          // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
           this.guardTrailingComma("RIGHT_BRACE", (prevComma || leftBrace).location);
 
           moreItems = !this.isAtEnd();
         }
-        // If there's no comma, we expect either a `}` or ` `\n}`.
+        // If there's no comma, we expect either a `}` or `\n`.
         // Firstly check for the newline version, and consume the
         // newline if it's there.
         else if (this.check("EOL") && this.checkAhead(2, "RIGHT_BRACE")) {

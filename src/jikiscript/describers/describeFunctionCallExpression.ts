@@ -32,6 +32,8 @@ function generateFunctionDescription(
   const argsValues = result.args.map(arg => codeTag(formatJikiObject(arg.jikiObject), expression.location));
   let fnDesc = descriptionTemplate.replace(/\${arg(\d+)}/g, (_, index) => argsValues[index - 1].toString() || "");
 
+  // jikiObject can be undefined for void functions
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
   if (result.jikiObject) {
     if (fnDesc) {
       fnDesc = `, which ${fnDesc}. It `;

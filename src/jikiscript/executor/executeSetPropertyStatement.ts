@@ -20,6 +20,8 @@ export function executeSetPropertyStatement(executor: Executor, statement: SetPr
         name: statement.property.lexeme,
       });
     }
+    // Checking if property already exists - undefined is a valid check here
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (executor.contextualThis.getField(statement.property.lexeme) !== undefined) {
       executor.error("PropertyAlreadySetInConstructor", statement.property.location, {
         name: statement.property.lexeme,
