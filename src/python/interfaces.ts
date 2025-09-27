@@ -1,5 +1,22 @@
-// Python AST node types - stub for now, to be filled in later
-export type NodeType = never; // Empty union type for now
+// All supported AST node types in the Python interpreter
+export type NodeType =
+  // Expressions
+  | "LiteralExpression"
+  | "BinaryExpression"
+  | "UnaryExpression"
+  | "GroupingExpression"
+  | "IdentifierExpression"
+  | "ListExpression"
+  | "SubscriptExpression"
+  // Statements
+  | "ExpressionStatement"
+  | "PrintStatement"
+  | "AssignmentStatement"
+  | "BlockStatement"
+  | "IfStatement"
+  | "ForInStatement"
+  | "BreakStatement"
+  | "ContinueStatement";
 
 export interface LanguageFeatures {
   excludeList?: string[];

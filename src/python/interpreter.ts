@@ -18,7 +18,7 @@ export function interpret(
 ): InterpretResult {
   try {
     // Parse the source code (compilation step)
-    const parser = new Parser(fileName);
+    const parser = new Parser(fileName, languageFeatures);
     const statements = parser.parse(sourceCode);
 
     // Execute statements

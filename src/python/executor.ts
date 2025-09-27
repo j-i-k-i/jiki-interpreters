@@ -26,7 +26,7 @@ import type { JikiObject } from "./jikiObjects";
 import { TIME_SCALE_FACTOR, type Frame, type FrameExecutionStatus, type TestAugmentedFrame } from "../shared/frames";
 import { type ExecutionContext as SharedExecutionContext } from "../shared/interfaces";
 import { createBaseExecutionContext } from "../shared/executionContext";
-import type { LanguageFeatures } from "./interfaces";
+import type { LanguageFeatures, NodeType } from "./interfaces";
 import cloneDeep from "lodash.clonedeep";
 import type { PythonFrame } from "./frameDescribers";
 import { describeFrame } from "./frameDescribers";
@@ -60,7 +60,8 @@ export type RuntimeErrorType =
   | "TypeError"
   | "TruthinessDisabled"
   | "TypeCoercionNotAllowed"
-  | "IndexError";
+  | "IndexError"
+  | "NodeNotAllowed";
 
 export class RuntimeError extends Error {
   public category: string = "RuntimeError";
@@ -100,6 +101,23 @@ export class Executor {
       allowTypeCoercion: false,
       ...languageFeatures,
     };
+  }
+
+  private assertNodeAllowed(node: Statement | Expression): void {
+    // Get the node type name from the constructor
+    const nodeType = node.constructor.name as NodeType;
+
+    // If allowedNodes is null or undefined, all nodes are allowed
+    if (this.languageFeatures.allowedNodes === null || this.languageFeatures.allowedNodes === undefined) {
+      return;
+    }
+
+    // Check if this node type is in the allowed list
+    if (!this.languageFeatures.allowedNodes.includes(nodeType)) {
+      throw new RuntimeError(`${nodeType} cannot be executed at this level`, node.location, "NodeNotAllowed", {
+        nodeType,
+      });
+    }
   }
 
   public execute(statements: Statement[]): ExecutorResult {
@@ -150,6 +168,9 @@ export class Executor {
   }
 
   public executeStatement(statement: Statement): EvaluationResult | null {
+    // Safety check: ensure this node type is allowed
+    this.assertNodeAllowed(statement);
+
     let result: EvaluationResult | null = null;
 
     if (statement instanceof ExpressionStatement) {
@@ -174,6 +195,9 @@ export class Executor {
   }
 
   public evaluate(expression: Expression): EvaluationResult {
+    // Safety check: ensure this node type is allowed
+    this.assertNodeAllowed(expression);
+
     if (expression instanceof LiteralExpression) {
       return executeLiteralExpression(this, expression);
     }
