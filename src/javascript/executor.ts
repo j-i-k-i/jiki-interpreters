@@ -1,6 +1,6 @@
 import { Environment } from "./environment";
 import type { Expression } from "./expression";
-import type { LanguageFeatures } from "./interfaces";
+import type { LanguageFeatures, JavaScriptNodeType } from "./interfaces";
 import {
   LiteralExpression,
   BinaryExpression,
@@ -70,7 +70,8 @@ export type RuntimeErrorType =
   | "IndexOutOfRange"
   | "TypeError"
   | "PropertyNotFound"
-  | "ArgumentError";
+  | "ArgumentError"
+  | "NodeNotAllowed";
 
 export class RuntimeError extends Error {
   public category: string = "RuntimeError";
@@ -112,6 +113,23 @@ export class Executor {
       enforceStrictEquality: true, // Default to true (strict equality required)
       ...languageFeatures,
     };
+  }
+
+  private assertNodeAllowed(node: Statement | Expression): void {
+    // Get the node type name from the constructor
+    const nodeType = node.constructor.name as JavaScriptNodeType;
+
+    // If allowedNodes is null or undefined, all nodes are allowed
+    if (this.languageFeatures.allowedNodes === null || this.languageFeatures.allowedNodes === undefined) {
+      return;
+    }
+
+    // Check if this node type is in the allowed list
+    if (!this.languageFeatures.allowedNodes.includes(nodeType)) {
+      throw new RuntimeError(translate(`error.runtime.NodeNotAllowed`, { nodeType }), node.location, "NodeNotAllowed", {
+        nodeType,
+      });
+    }
   }
 
   public execute(statements: Statement[]): ExecutorResult {
@@ -162,6 +180,9 @@ export class Executor {
   }
 
   public executeStatement(statement: Statement): EvaluationResult | null {
+    // Safety check: ensure this node type is allowed
+    this.assertNodeAllowed(statement);
+
     let result: EvaluationResult | null = null;
 
     if (statement instanceof ExpressionStatement) {
@@ -183,6 +204,9 @@ export class Executor {
   }
 
   public evaluate(expression: Expression): EvaluationResult {
+    // Safety check: ensure this node type is allowed
+    this.assertNodeAllowed(expression);
+
     if (expression instanceof LiteralExpression) {
       return executeLiteralExpression(this, expression);
     }

@@ -1,3 +1,25 @@
+// All supported AST node types in the JavaScript interpreter
+export type JavaScriptNodeType =
+  // Expressions
+  | "LiteralExpression"
+  | "BinaryExpression"
+  | "UnaryExpression"
+  | "GroupingExpression"
+  | "IdentifierExpression"
+  | "AssignmentExpression"
+  | "UpdateExpression"
+  | "TemplateLiteralExpression"
+  | "ArrayExpression"
+  | "MemberExpression"
+  | "DictionaryExpression"
+  // Statements
+  | "ExpressionStatement"
+  | "VariableDeclaration"
+  | "BlockStatement"
+  | "IfStatement"
+  | "ForStatement"
+  | "WhileStatement";
+
 export interface LanguageFeatures {
   excludeList?: string[];
   includeList?: string[];
@@ -7,4 +29,9 @@ export interface LanguageFeatures {
   allowTypeCoercion?: boolean;
   oneStatementPerLine?: boolean;
   enforceStrictEquality?: boolean;
+  // AST node-level restrictions
+  // null/undefined = all nodes allowed (default behavior)
+  // [] = no nodes allowed
+  // ["NodeType", ...] = only specified nodes allowed
+  allowedNodes?: JavaScriptNodeType[] | null;
 }

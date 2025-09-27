@@ -26,7 +26,7 @@ import {
 } from "./statement";
 import { type Token, type TokenType } from "./token";
 import { translate } from "./translator";
-import type { LanguageFeatures } from "./interfaces";
+import type { LanguageFeatures, JavaScriptNodeType } from "./interfaces";
 
 export class Parser {
   private readonly scanner: Scanner;
@@ -37,6 +37,45 @@ export class Parser {
   constructor(languageFeatures?: LanguageFeatures) {
     this.scanner = new Scanner();
     this.languageFeatures = languageFeatures || {};
+  }
+
+  private isNodeAllowed(nodeType: JavaScriptNodeType): boolean {
+    // null or undefined = all nodes allowed (default behavior)
+    if (this.languageFeatures.allowedNodes === null || this.languageFeatures.allowedNodes === undefined) {
+      return true;
+    }
+    // Check if the specific node type is in the allowed list
+    return this.languageFeatures.allowedNodes.includes(nodeType);
+  }
+
+  private checkNodeAllowed(nodeType: JavaScriptNodeType, errorType: SyntaxErrorType, location: Location): void {
+    if (!this.isNodeAllowed(nodeType)) {
+      const friendlyName = this.getNodeFriendlyName(nodeType);
+      this.error(errorType, location, { nodeType, friendlyName });
+    }
+  }
+
+  private getNodeFriendlyName(nodeType: JavaScriptNodeType): string {
+    const friendlyNames: Record<JavaScriptNodeType, string> = {
+      LiteralExpression: "Literals",
+      BinaryExpression: "Binary expressions",
+      UnaryExpression: "Unary expressions",
+      GroupingExpression: "Grouping expressions",
+      IdentifierExpression: "Identifiers",
+      AssignmentExpression: "Assignments",
+      UpdateExpression: "Update expressions",
+      TemplateLiteralExpression: "Template literals",
+      ArrayExpression: "Arrays",
+      MemberExpression: "Member access",
+      DictionaryExpression: "Objects",
+      ExpressionStatement: "Expression statements",
+      VariableDeclaration: "Variable declarations",
+      BlockStatement: "Block statements",
+      IfStatement: "If statements",
+      ForStatement: "For loops",
+      WhileStatement: "While loops",
+    };
+    return friendlyNames[nodeType] || nodeType;
   }
 
   public parse(sourceCode: string): Statement[] {
@@ -107,6 +146,9 @@ export class Parser {
       }
 
       // Handle expression statements
+      // Check if ExpressionStatement is allowed
+      this.checkNodeAllowed("ExpressionStatement", "ExpressionStatementNotAllowed", this.peek().location);
+
       const expr = this.expression();
       const semicolonToken = this.consumeSemicolon();
       // Create location that spans from expression start to semicolon end
@@ -124,6 +166,9 @@ export class Parser {
   }
 
   private variableDeclaration(letToken: Token): Statement {
+    // Check if VariableDeclaration is allowed
+    this.checkNodeAllowed("VariableDeclaration", "VariableDeclarationNotAllowed", letToken.location);
+
     const name = this.consume("IDENTIFIER", "MissingVariableName");
 
     let initializer: Expression | null = null;
@@ -148,6 +193,10 @@ export class Parser {
 
   private blockStatement(): Statement {
     const leftBrace = this.previous();
+
+    // Check if BlockStatement is allowed
+    this.checkNodeAllowed("BlockStatement", "BlockStatementNotAllowed", leftBrace.location);
+
     const statements = this.block(true); // true = consume the RIGHT_BRACE
     const rightBrace = this.previous(); // block() consumed the RIGHT_BRACE
     return new BlockStatement(statements, Location.between(leftBrace, rightBrace));
@@ -183,6 +232,10 @@ export class Parser {
 
   private ifStatement(): Statement {
     const ifToken = this.previous();
+
+    // Check if IfStatement is allowed
+    this.checkNodeAllowed("IfStatement", "IfStatementNotAllowed", ifToken.location);
+
     this.consume("LEFT_PAREN", "MissingLeftParenthesisAfterIf");
     const condition = this.expression();
     this.consume("RIGHT_PAREN", "MissingRightParenthesisAfterIfCondition");
@@ -199,6 +252,9 @@ export class Parser {
 
   private whileStatement(): Statement {
     const whileToken = this.previous();
+
+    // Check if WhileStatement is allowed
+    this.checkNodeAllowed("WhileStatement", "WhileStatementNotAllowed", whileToken.location);
     this.consume("LEFT_PAREN", "MissingLeftParenthesisAfterIf"); // Reuse error type for now
 
     // Parse condition
@@ -212,6 +268,9 @@ export class Parser {
 
   private forStatement(): Statement {
     const forToken = this.previous();
+
+    // Check if ForStatement is allowed
+    this.checkNodeAllowed("ForStatement", "ForStatementNotAllowed", forToken.location);
     this.consume("LEFT_PAREN", "MissingLeftParenthesisAfterIf"); // Reuse error type for now
 
     // Save the oneStatementPerLine setting and temporarily disable it
@@ -267,6 +326,9 @@ export class Parser {
     const expr = this.logicalOr();
 
     if (this.match("EQUAL")) {
+      // Check if AssignmentExpression is allowed
+      this.checkNodeAllowed("AssignmentExpression", "AssignmentExpressionNotAllowed", expr.location);
+
       const value = this.assignment();
 
       if (expr instanceof IdentifierExpression) {
@@ -287,6 +349,9 @@ export class Parser {
     let expr = this.logicalAnd();
 
     while (this.match("LOGICAL_OR")) {
+      // Check if BinaryExpression is allowed (logical operators use BinaryExpression)
+      this.checkNodeAllowed("BinaryExpression", "BinaryExpressionNotAllowed", this.previous().location);
+
       const operator = this.previous();
       const right = this.logicalAnd();
       expr = new BinaryExpression(expr, operator, right, Location.between(expr, right));
@@ -299,6 +364,9 @@ export class Parser {
     let expr = this.equality();
 
     while (this.match("LOGICAL_AND")) {
+      // Check if BinaryExpression is allowed
+      this.checkNodeAllowed("BinaryExpression", "BinaryExpressionNotAllowed", this.previous().location);
+
       const operator = this.previous();
       const right = this.equality();
       expr = new BinaryExpression(expr, operator, right, Location.between(expr, right));
@@ -311,6 +379,9 @@ export class Parser {
     let expr = this.comparison();
 
     while (this.match("EQUAL_EQUAL", "NOT_EQUAL", "STRICT_EQUAL", "NOT_STRICT_EQUAL")) {
+      // Check if BinaryExpression is allowed
+      this.checkNodeAllowed("BinaryExpression", "BinaryExpressionNotAllowed", this.previous().location);
+
       const operator = this.previous();
       const right = this.comparison();
       expr = new BinaryExpression(expr, operator, right, Location.between(expr, right));
@@ -323,6 +394,9 @@ export class Parser {
     let expr = this.addition();
 
     while (this.match("GREATER", "GREATER_EQUAL", "LESS", "LESS_EQUAL")) {
+      // Check if BinaryExpression is allowed
+      this.checkNodeAllowed("BinaryExpression", "BinaryExpressionNotAllowed", this.previous().location);
+
       const operator = this.previous();
       const right = this.addition();
       expr = new BinaryExpression(expr, operator, right, Location.between(expr, right));
@@ -335,6 +409,9 @@ export class Parser {
     let expr = this.multiplication();
 
     while (this.match("PLUS", "MINUS")) {
+      // Check if BinaryExpression is allowed
+      this.checkNodeAllowed("BinaryExpression", "BinaryExpressionNotAllowed", this.previous().location);
+
       const operator = this.previous();
       const right = this.multiplication();
       expr = new BinaryExpression(expr, operator, right, Location.between(expr, right));
@@ -347,6 +424,9 @@ export class Parser {
     let expr = this.unary();
 
     while (this.match("STAR", "SLASH")) {
+      // Check if BinaryExpression is allowed
+      this.checkNodeAllowed("BinaryExpression", "BinaryExpressionNotAllowed", this.previous().location);
+
       const operator = this.previous();
       const right = this.unary();
       expr = new BinaryExpression(expr, operator, right, Location.between(expr, right));
@@ -358,6 +438,9 @@ export class Parser {
   private unary(): Expression {
     // Handle prefix increment/decrement
     if (this.match("INCREMENT", "DECREMENT")) {
+      // Check if UpdateExpression is allowed
+      this.checkNodeAllowed("UpdateExpression", "UpdateExpressionNotAllowed", this.previous().location);
+
       const operator = this.previous();
       const operand = this.unary();
       if (!(operand instanceof IdentifierExpression)) {
@@ -367,6 +450,9 @@ export class Parser {
     }
 
     if (this.match("MINUS", "PLUS", "NOT")) {
+      // Check if UnaryExpression is allowed
+      this.checkNodeAllowed("UnaryExpression", "UnaryExpressionNotAllowed", this.previous().location);
+
       const operator = this.previous();
       const right = this.unary();
       return new UnaryExpression(operator, right, Location.between(operator, right));
@@ -382,12 +468,18 @@ export class Parser {
     // This allows expressions like arr[0][1] or obj.prop.nested or obj["key"]
     while (true) {
       if (this.match("LEFT_BRACKET")) {
+        // Check if MemberExpression is allowed
+        this.checkNodeAllowed("MemberExpression", "MemberExpressionNotAllowed", this.previous().location);
+
         // Bracket notation: obj["prop"] or arr[0]
         const property = this.assignment();
         this.consume("RIGHT_BRACKET", "MissingRightBracketInMemberAccess");
         const rightBracket = this.previous();
         expr = new MemberExpression(expr, property, true, Location.between(expr, rightBracket));
       } else if (this.match("DOT")) {
+        // Check if MemberExpression is allowed
+        this.checkNodeAllowed("MemberExpression", "MemberExpressionNotAllowed", this.previous().location);
+
         // Dot notation: obj.prop
         const propertyToken = this.advance();
         if (propertyToken.type !== "IDENTIFIER") {
@@ -402,6 +494,9 @@ export class Parser {
 
     // Handle postfix increment/decrement
     while (this.match("INCREMENT", "DECREMENT")) {
+      // Check if UpdateExpression is allowed
+      this.checkNodeAllowed("UpdateExpression", "UpdateExpressionNotAllowed", this.previous().location);
+
       const operator = this.previous();
       if (!(expr instanceof IdentifierExpression)) {
         this.error("InvalidAssignmentTargetExpression", operator.location);
@@ -414,30 +509,44 @@ export class Parser {
 
   private primary(): Expression {
     if (this.match("TRUE")) {
+      // Check if LiteralExpression is allowed
+      this.checkNodeAllowed("LiteralExpression", "LiteralExpressionNotAllowed", this.previous().location);
       return new LiteralExpression(true, this.previous().location);
     }
 
     if (this.match("FALSE")) {
+      // Check if LiteralExpression is allowed
+      this.checkNodeAllowed("LiteralExpression", "LiteralExpressionNotAllowed", this.previous().location);
       return new LiteralExpression(false, this.previous().location);
     }
 
     if (this.match("NULL")) {
+      // Check if LiteralExpression is allowed
+      this.checkNodeAllowed("LiteralExpression", "LiteralExpressionNotAllowed", this.previous().location);
       return new LiteralExpression(null, this.previous().location);
     }
 
     if (this.match("UNDEFINED")) {
+      // Check if LiteralExpression is allowed
+      this.checkNodeAllowed("LiteralExpression", "LiteralExpressionNotAllowed", this.previous().location);
       return new LiteralExpression(undefined, this.previous().location);
     }
 
     if (this.match("NUMBER")) {
+      // Check if LiteralExpression is allowed
+      this.checkNodeAllowed("LiteralExpression", "LiteralExpressionNotAllowed", this.previous().location);
       return new LiteralExpression(this.previous().literal as number, this.previous().location);
     }
 
     if (this.match("STRING")) {
+      // Check if LiteralExpression is allowed
+      this.checkNodeAllowed("LiteralExpression", "LiteralExpressionNotAllowed", this.previous().location);
       return new LiteralExpression(this.previous().literal as string, this.previous().location);
     }
 
     if (this.match("IDENTIFIER")) {
+      // Check if IdentifierExpression is allowed
+      this.checkNodeAllowed("IdentifierExpression", "IdentifierExpressionNotAllowed", this.previous().location);
       return new IdentifierExpression(this.previous(), this.previous().location);
     }
 
@@ -447,6 +556,8 @@ export class Parser {
 
     if (this.match("LEFT_PAREN")) {
       const lparen = this.previous();
+      // Check if GroupingExpression is allowed
+      this.checkNodeAllowed("GroupingExpression", "GroupingExpressionNotAllowed", lparen.location);
       const expr = this.expression();
       this.consume("RIGHT_PAREN", "MissingRightParenthesisAfterExpression");
       const rparen = this.previous();
@@ -556,6 +667,10 @@ export class Parser {
 
   private parseTemplateLiteral(): Expression {
     const startToken = this.previous(); // The opening backtick
+
+    // Check if TemplateLiteralExpression is allowed
+    this.checkNodeAllowed("TemplateLiteralExpression", "TemplateLiteralExpressionNotAllowed", startToken.location);
+
     const parts: (string | Expression)[] = [];
 
     while (!this.check("BACKTICK") && !this.isAtEnd()) {
@@ -580,6 +695,10 @@ export class Parser {
 
   private parseArray(): Expression {
     const leftBracket = this.previous();
+
+    // Check if ArrayExpression is allowed
+    this.checkNodeAllowed("ArrayExpression", "ArrayExpressionNotAllowed", leftBracket.location);
+
     const elements: Expression[] = [];
 
     // Skip EOL tokens after opening bracket
@@ -626,6 +745,10 @@ export class Parser {
 
   private parseDictionary(): Expression {
     const leftBrace = this.previous();
+
+    // Check if DictionaryExpression is allowed
+    this.checkNodeAllowed("DictionaryExpression", "DictionaryExpressionNotAllowed", leftBrace.location);
+
     const elements = new Map<string, Expression>();
 
     // Skip EOL tokens after opening brace
