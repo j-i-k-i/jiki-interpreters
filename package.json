@@ -1,5 +1,5 @@
 {
-  "name": "interpreters",
+  "name": "@jiki/interpreters",
   "version": "1.0.0",
   "description": "JikiScript language implementation",
   "main": "dist/index.js",
