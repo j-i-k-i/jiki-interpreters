@@ -1,7 +1,7 @@
 import { interpret } from "@javascript/interpreter";
 import type { TestAugmentedFrame } from "@shared/frames";
 import { SyntaxError } from "@javascript/error";
-import type { JavaScriptNodeType } from "@javascript/interfaces";
+import type { NodeType } from "@javascript/interfaces";
 
 describe("JavaScript allowedNodes feature", () => {
   describe("allowedNodes: null (default)", () => {
@@ -57,7 +57,7 @@ describe("JavaScript allowedNodes feature", () => {
     describe("VariableDeclaration", () => {
       test("allows variable declarations when included", () => {
         const code = `let x = 5;`;
-        const allowedNodes: JavaScriptNodeType[] = ["VariableDeclaration", "LiteralExpression"];
+        const allowedNodes: NodeType[] = ["VariableDeclaration", "LiteralExpression"];
         const { error, frames } = interpret(code, { allowedNodes });
         expect(error).toBeNull();
         expect(frames.length).toBeGreaterThan(0);
@@ -65,7 +65,7 @@ describe("JavaScript allowedNodes feature", () => {
 
       test("prevents variable declarations when not included", () => {
         const code = `let x = 5;`;
-        const allowedNodes: JavaScriptNodeType[] = ["LiteralExpression", "ExpressionStatement"];
+        const allowedNodes: NodeType[] = ["LiteralExpression", "ExpressionStatement"];
         const { error, frames } = interpret(code, { allowedNodes });
         expect(error).toBeInstanceOf(SyntaxError);
         expect(error?.type).toBe("VariableDeclarationNotAllowed");
@@ -76,12 +76,7 @@ describe("JavaScript allowedNodes feature", () => {
     describe("IfStatement", () => {
       test("allows if statements when included", () => {
         const code = `if (true) { 1; }`;
-        const allowedNodes: JavaScriptNodeType[] = [
-          "IfStatement",
-          "BlockStatement",
-          "LiteralExpression",
-          "ExpressionStatement",
-        ];
+        const allowedNodes: NodeType[] = ["IfStatement", "BlockStatement", "LiteralExpression", "ExpressionStatement"];
         const { error, frames } = interpret(code, { allowedNodes });
         expect(error).toBeNull();
         expect(frames.length).toBeGreaterThan(0);
@@ -89,7 +84,7 @@ describe("JavaScript allowedNodes feature", () => {
 
       test("prevents if statements when not included", () => {
         const code = `if (true) { 1; }`;
-        const allowedNodes: JavaScriptNodeType[] = ["BlockStatement", "LiteralExpression", "ExpressionStatement"];
+        const allowedNodes: NodeType[] = ["BlockStatement", "LiteralExpression", "ExpressionStatement"];
         const { error, frames } = interpret(code, { allowedNodes });
         expect(error).toBeInstanceOf(SyntaxError);
         expect(error?.type).toBe("IfStatementNotAllowed");
@@ -100,7 +95,7 @@ describe("JavaScript allowedNodes feature", () => {
     describe("ForStatement", () => {
       test("allows for loops when included", () => {
         const code = `for (let i = 0; i < 3; i = i + 1) { }`;
-        const allowedNodes: JavaScriptNodeType[] = [
+        const allowedNodes: NodeType[] = [
           "ForStatement",
           "VariableDeclaration",
           "BlockStatement",
@@ -116,7 +111,7 @@ describe("JavaScript allowedNodes feature", () => {
 
       test("prevents for loops when not included", () => {
         const code = `for (let i = 0; i < 3; i = i + 1) { }`;
-        const allowedNodes: JavaScriptNodeType[] = ["VariableDeclaration", "LiteralExpression"];
+        const allowedNodes: NodeType[] = ["VariableDeclaration", "LiteralExpression"];
         const { error, frames } = interpret(code, { allowedNodes });
         expect(error).toBeInstanceOf(SyntaxError);
         expect(error?.type).toBe("ForStatementNotAllowed");
@@ -127,7 +122,7 @@ describe("JavaScript allowedNodes feature", () => {
     describe("WhileStatement", () => {
       test("allows while loops when included", () => {
         const code = `while (false) { }`;
-        const allowedNodes: JavaScriptNodeType[] = ["WhileStatement", "BlockStatement", "LiteralExpression"];
+        const allowedNodes: NodeType[] = ["WhileStatement", "BlockStatement", "LiteralExpression"];
         const { error, frames } = interpret(code, { allowedNodes });
         expect(error).toBeNull();
         expect(frames.length).toBeGreaterThan(0);
@@ -135,7 +130,7 @@ describe("JavaScript allowedNodes feature", () => {
 
       test("prevents while loops when not included", () => {
         const code = `while (false) { }`;
-        const allowedNodes: JavaScriptNodeType[] = ["BlockStatement", "LiteralExpression"];
+        const allowedNodes: NodeType[] = ["BlockStatement", "LiteralExpression"];
         const { error, frames } = interpret(code, { allowedNodes });
         expect(error).toBeInstanceOf(SyntaxError);
         expect(error?.type).toBe("WhileStatementNotAllowed");
@@ -146,7 +141,7 @@ describe("JavaScript allowedNodes feature", () => {
     describe("BlockStatement", () => {
       test("allows blocks when included", () => {
         const code = `{ 1; }`;
-        const allowedNodes: JavaScriptNodeType[] = ["BlockStatement", "ExpressionStatement", "LiteralExpression"];
+        const allowedNodes: NodeType[] = ["BlockStatement", "ExpressionStatement", "LiteralExpression"];
         const { error, frames } = interpret(code, { allowedNodes });
         expect(error).toBeNull();
         expect(frames.length).toBeGreaterThan(0);
@@ -154,7 +149,7 @@ describe("JavaScript allowedNodes feature", () => {
 
       test("prevents blocks when not included", () => {
         const code = `{ 1; }`;
-        const allowedNodes: JavaScriptNodeType[] = ["ExpressionStatement", "LiteralExpression"];
+        const allowedNodes: NodeType[] = ["ExpressionStatement", "LiteralExpression"];
         const { error, frames } = interpret(code, { allowedNodes });
         expect(error).toBeInstanceOf(SyntaxError);
         expect(error?.type).toBe("BlockStatementNotAllowed");
@@ -165,7 +160,7 @@ describe("JavaScript allowedNodes feature", () => {
     describe("ExpressionStatement", () => {
       test("allows expression statements when included", () => {
         const code = `5;`;
-        const allowedNodes: JavaScriptNodeType[] = ["ExpressionStatement", "LiteralExpression"];
+        const allowedNodes: NodeType[] = ["ExpressionStatement", "LiteralExpression"];
         const { error, frames } = interpret(code, { allowedNodes });
         expect(error).toBeNull();
         expect(frames.length).toBeGreaterThan(0);
@@ -173,7 +168,7 @@ describe("JavaScript allowedNodes feature", () => {
 
       test("prevents expression statements when not included", () => {
         const code = `5;`;
-        const allowedNodes: JavaScriptNodeType[] = ["LiteralExpression"];
+        const allowedNodes: NodeType[] = ["LiteralExpression"];
         const { error, frames } = interpret(code, { allowedNodes });
         expect(error).toBeInstanceOf(SyntaxError);
         expect(error?.type).toBe("ExpressionStatementNotAllowed");
@@ -186,7 +181,7 @@ describe("JavaScript allowedNodes feature", () => {
     describe("LiteralExpression", () => {
       test("allows literals when included", () => {
         const code = `42;`;
-        const allowedNodes: JavaScriptNodeType[] = ["ExpressionStatement", "LiteralExpression"];
+        const allowedNodes: NodeType[] = ["ExpressionStatement", "LiteralExpression"];
         const { error, frames } = interpret(code, { allowedNodes });
         expect(error).toBeNull();
         expect(frames.length).toBeGreaterThan(0);
@@ -194,7 +189,7 @@ describe("JavaScript allowedNodes feature", () => {
 
       test("prevents literals when not included", () => {
         const code = `42;`;
-        const allowedNodes: JavaScriptNodeType[] = ["ExpressionStatement"];
+        const allowedNodes: NodeType[] = ["ExpressionStatement"];
         const { error, frames } = interpret(code, { allowedNodes });
         expect(error).toBeInstanceOf(SyntaxError);
         expect(error?.type).toBe("LiteralExpressionNotAllowed");
@@ -211,7 +206,7 @@ describe("JavaScript allowedNodes feature", () => {
           { code: `"hello";`, desc: "string" },
         ];
 
-        const allowedNodes: JavaScriptNodeType[] = ["ExpressionStatement"];
+        const allowedNodes: NodeType[] = ["ExpressionStatement"];
 
         for (const { code, desc } of testCases) {
           const { error } = interpret(code, { allowedNodes });
@@ -224,7 +219,7 @@ describe("JavaScript allowedNodes feature", () => {
     describe("BinaryExpression", () => {
       test("allows binary expressions when included", () => {
         const code = `1 + 2;`;
-        const allowedNodes: JavaScriptNodeType[] = ["ExpressionStatement", "BinaryExpression", "LiteralExpression"];
+        const allowedNodes: NodeType[] = ["ExpressionStatement", "BinaryExpression", "LiteralExpression"];
         const { error, frames } = interpret(code, { allowedNodes });
         expect(error).toBeNull();
         expect(frames.length).toBeGreaterThan(0);
@@ -232,7 +227,7 @@ describe("JavaScript allowedNodes feature", () => {
 
       test("prevents binary expressions when not included", () => {
         const code = `1 + 2;`;
-        const allowedNodes: JavaScriptNodeType[] = ["ExpressionStatement", "LiteralExpression"];
+        const allowedNodes: NodeType[] = ["ExpressionStatement", "LiteralExpression"];
         const { error, frames } = interpret(code, { allowedNodes });
         expect(error).toBeInstanceOf(SyntaxError);
         expect(error?.type).toBe("BinaryExpressionNotAllowed");
@@ -255,7 +250,7 @@ describe("JavaScript allowedNodes feature", () => {
           { code: `true || false;`, op: "logical OR" },
         ];
 
-        const allowedNodes: JavaScriptNodeType[] = ["ExpressionStatement", "LiteralExpression"];
+        const allowedNodes: NodeType[] = ["ExpressionStatement", "LiteralExpression"];
 
         for (const { code, op } of testCases) {
           const { error } = interpret(code, { allowedNodes });
@@ -268,7 +263,7 @@ describe("JavaScript allowedNodes feature", () => {
     describe("UnaryExpression", () => {
       test("allows unary expressions when included", () => {
         const code = `-5;`;
-        const allowedNodes: JavaScriptNodeType[] = ["ExpressionStatement", "UnaryExpression", "LiteralExpression"];
+        const allowedNodes: NodeType[] = ["ExpressionStatement", "UnaryExpression", "LiteralExpression"];
         const { error, frames } = interpret(code, { allowedNodes });
         expect(error).toBeNull();
         expect(frames.length).toBeGreaterThan(0);
@@ -276,7 +271,7 @@ describe("JavaScript allowedNodes feature", () => {
 
       test("prevents unary expressions when not included", () => {
         const code = `-5;`;
-        const allowedNodes: JavaScriptNodeType[] = ["ExpressionStatement", "LiteralExpression"];
+        const allowedNodes: NodeType[] = ["ExpressionStatement", "LiteralExpression"];
         const { error, frames } = interpret(code, { allowedNodes });
         expect(error).toBeInstanceOf(SyntaxError);
         expect(error?.type).toBe("UnaryExpressionNotAllowed");
@@ -287,7 +282,7 @@ describe("JavaScript allowedNodes feature", () => {
     describe("AssignmentExpression", () => {
       test("allows assignments when included", () => {
         const code = `let x = 5; x = 10;`;
-        const allowedNodes: JavaScriptNodeType[] = [
+        const allowedNodes: NodeType[] = [
           "VariableDeclaration",
           "ExpressionStatement",
           "AssignmentExpression",
@@ -302,7 +297,7 @@ describe("JavaScript allowedNodes feature", () => {
 
       test("prevents assignments when not included", () => {
         const code = `let x = 5; x = 10;`;
-        const allowedNodes: JavaScriptNodeType[] = [
+        const allowedNodes: NodeType[] = [
           "VariableDeclaration",
           "ExpressionStatement",
           "IdentifierExpression",
@@ -317,7 +312,7 @@ describe("JavaScript allowedNodes feature", () => {
     describe("UpdateExpression", () => {
       test("allows update expressions when included", () => {
         const code = `let x = 5; x++;`;
-        const allowedNodes: JavaScriptNodeType[] = [
+        const allowedNodes: NodeType[] = [
           "VariableDeclaration",
           "ExpressionStatement",
           "UpdateExpression",
@@ -332,7 +327,7 @@ describe("JavaScript allowedNodes feature", () => {
 
       test("prevents prefix increment when not included", () => {
         const code = `let x = 5; ++x;`;
-        const allowedNodes: JavaScriptNodeType[] = [
+        const allowedNodes: NodeType[] = [
           "VariableDeclaration",
           "ExpressionStatement",
           "IdentifierExpression",
@@ -345,7 +340,7 @@ describe("JavaScript allowedNodes feature", () => {
 
       test("prevents postfix decrement when not included", () => {
         const code = `let x = 5; x--;`;
-        const allowedNodes: JavaScriptNodeType[] = [
+        const allowedNodes: NodeType[] = [
           "VariableDeclaration",
           "ExpressionStatement",
           "IdentifierExpression",
@@ -360,7 +355,7 @@ describe("JavaScript allowedNodes feature", () => {
     describe("IdentifierExpression", () => {
       test("allows identifiers when included", () => {
         const code = `let x = 5; x;`;
-        const allowedNodes: JavaScriptNodeType[] = [
+        const allowedNodes: NodeType[] = [
           "VariableDeclaration",
           "ExpressionStatement",
           "IdentifierExpression",
@@ -373,7 +368,7 @@ describe("JavaScript allowedNodes feature", () => {
 
       test("prevents identifiers when not included", () => {
         const code = `let x = 5; x;`;
-        const allowedNodes: JavaScriptNodeType[] = ["VariableDeclaration", "ExpressionStatement", "LiteralExpression"];
+        const allowedNodes: NodeType[] = ["VariableDeclaration", "ExpressionStatement", "LiteralExpression"];
         const { error, frames } = interpret(code, { allowedNodes });
         expect(error).toBeInstanceOf(SyntaxError);
         expect(error?.type).toBe("IdentifierExpressionNotAllowed");
@@ -383,7 +378,7 @@ describe("JavaScript allowedNodes feature", () => {
     describe("GroupingExpression", () => {
       test("allows grouping when included", () => {
         const code = `(5);`;
-        const allowedNodes: JavaScriptNodeType[] = ["ExpressionStatement", "GroupingExpression", "LiteralExpression"];
+        const allowedNodes: NodeType[] = ["ExpressionStatement", "GroupingExpression", "LiteralExpression"];
         const { error, frames } = interpret(code, { allowedNodes });
         expect(error).toBeNull();
         expect(frames.length).toBeGreaterThan(0);
@@ -391,7 +386,7 @@ describe("JavaScript allowedNodes feature", () => {
 
       test("prevents grouping when not included", () => {
         const code = `(5);`;
-        const allowedNodes: JavaScriptNodeType[] = ["ExpressionStatement", "LiteralExpression"];
+        const allowedNodes: NodeType[] = ["ExpressionStatement", "LiteralExpression"];
         const { error, frames } = interpret(code, { allowedNodes });
         expect(error).toBeInstanceOf(SyntaxError);
         expect(error?.type).toBe("GroupingExpressionNotAllowed");
@@ -402,7 +397,7 @@ describe("JavaScript allowedNodes feature", () => {
     describe("ArrayExpression", () => {
       test("allows arrays when included", () => {
         const code = `[1, 2, 3];`;
-        const allowedNodes: JavaScriptNodeType[] = ["ExpressionStatement", "ArrayExpression", "LiteralExpression"];
+        const allowedNodes: NodeType[] = ["ExpressionStatement", "ArrayExpression", "LiteralExpression"];
         const { error, frames } = interpret(code, { allowedNodes });
         expect(error).toBeNull();
         expect(frames.length).toBeGreaterThan(0);
@@ -410,7 +405,7 @@ describe("JavaScript allowedNodes feature", () => {
 
       test("prevents arrays when not included", () => {
         const code = `[1, 2, 3];`;
-        const allowedNodes: JavaScriptNodeType[] = ["ExpressionStatement", "LiteralExpression"];
+        const allowedNodes: NodeType[] = ["ExpressionStatement", "LiteralExpression"];
         const { error, frames } = interpret(code, { allowedNodes });
         expect(error).toBeInstanceOf(SyntaxError);
         expect(error?.type).toBe("ArrayExpressionNotAllowed");
@@ -421,7 +416,7 @@ describe("JavaScript allowedNodes feature", () => {
     describe("DictionaryExpression", () => {
       test("allows objects when included", () => {
         const code = `({ x: 5, y: 10 });`; // Object literal needs parentheses at statement level
-        const allowedNodes: JavaScriptNodeType[] = [
+        const allowedNodes: NodeType[] = [
           "ExpressionStatement",
           "GroupingExpression",
           "DictionaryExpression",
@@ -434,7 +429,7 @@ describe("JavaScript allowedNodes feature", () => {
 
       test("prevents objects when not included", () => {
         const code = `let obj = { x: 5 };`; // Use in variable declaration to avoid ambiguity
-        const allowedNodes: JavaScriptNodeType[] = ["VariableDeclaration", "LiteralExpression"];
+        const allowedNodes: NodeType[] = ["VariableDeclaration", "LiteralExpression"];
         const { error, frames } = interpret(code, { allowedNodes });
         expect(error).toBeInstanceOf(SyntaxError);
         expect(error?.type).toBe("DictionaryExpressionNotAllowed");
@@ -445,7 +440,7 @@ describe("JavaScript allowedNodes feature", () => {
     describe("MemberExpression", () => {
       test("allows member access when included", () => {
         const code = `let arr = [1, 2]; arr[0];`;
-        const allowedNodes: JavaScriptNodeType[] = [
+        const allowedNodes: NodeType[] = [
           "VariableDeclaration",
           "ExpressionStatement",
           "ArrayExpression",
@@ -460,7 +455,7 @@ describe("JavaScript allowedNodes feature", () => {
 
       test("prevents bracket notation when not included", () => {
         const code = `let arr = [1, 2]; arr[0];`;
-        const allowedNodes: JavaScriptNodeType[] = [
+        const allowedNodes: NodeType[] = [
           "VariableDeclaration",
           "ExpressionStatement",
           "ArrayExpression",
@@ -474,7 +469,7 @@ describe("JavaScript allowedNodes feature", () => {
 
       test("prevents dot notation when not included", () => {
         const code = `let obj = { x: 5 }; obj.x;`;
-        const allowedNodes: JavaScriptNodeType[] = [
+        const allowedNodes: NodeType[] = [
           "VariableDeclaration",
           "ExpressionStatement",
           "DictionaryExpression",
@@ -490,7 +485,7 @@ describe("JavaScript allowedNodes feature", () => {
     describe("TemplateLiteralExpression", () => {
       test("allows template literals when included", () => {
         const code = "`hello world`;";
-        const allowedNodes: JavaScriptNodeType[] = ["ExpressionStatement", "TemplateLiteralExpression"];
+        const allowedNodes: NodeType[] = ["ExpressionStatement", "TemplateLiteralExpression"];
         const { error, frames } = interpret(code, { allowedNodes });
         expect(error).toBeNull();
         expect(frames.length).toBeGreaterThan(0);
@@ -498,7 +493,7 @@ describe("JavaScript allowedNodes feature", () => {
 
       test("prevents template literals when not included", () => {
         const code = "`hello`;";
-        const allowedNodes: JavaScriptNodeType[] = ["ExpressionStatement", "LiteralExpression"];
+        const allowedNodes: NodeType[] = ["ExpressionStatement", "LiteralExpression"];
         const { error, frames } = interpret(code, { allowedNodes });
         expect(error).toBeInstanceOf(SyntaxError);
         expect(error?.type).toBe("TemplateLiteralExpressionNotAllowed");
@@ -509,7 +504,7 @@ describe("JavaScript allowedNodes feature", () => {
 
   describe("Complex scenarios", () => {
     test("allows only literals and expression statements", () => {
-      const allowedNodes: JavaScriptNodeType[] = ["ExpressionStatement", "LiteralExpression"];
+      const allowedNodes: NodeType[] = ["ExpressionStatement", "LiteralExpression"];
 
       // Should work
       const { error: error1 } = interpret(`5;`, { allowedNodes });
@@ -525,7 +520,7 @@ describe("JavaScript allowedNodes feature", () => {
     });
 
     test("allows basic arithmetic only", () => {
-      const allowedNodes: JavaScriptNodeType[] = [
+      const allowedNodes: NodeType[] = [
         "ExpressionStatement",
         "LiteralExpression",
         "BinaryExpression",
@@ -543,7 +538,7 @@ describe("JavaScript allowedNodes feature", () => {
     });
 
     test("allows variables but no control flow", () => {
-      const allowedNodes: JavaScriptNodeType[] = [
+      const allowedNodes: NodeType[] = [
         "VariableDeclaration",
         "ExpressionStatement",
         "AssignmentExpression",
@@ -576,7 +571,7 @@ describe("JavaScript allowedNodes feature", () => {
     });
 
     test("allows control flow but no loops", () => {
-      const allowedNodes: JavaScriptNodeType[] = [
+      const allowedNodes: NodeType[] = [
         "VariableDeclaration",
         "IfStatement",
         "BlockStatement",

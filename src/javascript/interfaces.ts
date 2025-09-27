@@ -1,5 +1,5 @@
 // All supported AST node types in the JavaScript interpreter
-export type JavaScriptNodeType =
+export type NodeType =
   // Expressions
   | "LiteralExpression"
   | "BinaryExpression"
@@ -33,5 +33,5 @@ export interface LanguageFeatures {
   // null/undefined = all nodes allowed (default behavior)
   // [] = no nodes allowed
   // ["NodeType", ...] = only specified nodes allowed
-  allowedNodes?: JavaScriptNodeType[] | null;
+  allowedNodes?: NodeType[] | null;
 }

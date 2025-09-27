@@ -1,6 +1,6 @@
 import { Environment } from "./environment";
 import type { Expression } from "./expression";
-import type { LanguageFeatures, JavaScriptNodeType } from "./interfaces";
+import type { LanguageFeatures, NodeType } from "./interfaces";
 import {
   LiteralExpression,
   BinaryExpression,
@@ -117,7 +117,7 @@ export class Executor {
 
   private assertNodeAllowed(node: Statement | Expression): void {
     // Get the node type name from the constructor
-    const nodeType = node.constructor.name as JavaScriptNodeType;
+    const nodeType = node.constructor.name as NodeType;
 
     // If allowedNodes is null or undefined, all nodes are allowed
     if (this.languageFeatures.allowedNodes === null || this.languageFeatures.allowedNodes === undefined) {

@@ -26,7 +26,7 @@ import {
 } from "./statement";
 import { type Token, type TokenType } from "./token";
 import { translate } from "./translator";
-import type { LanguageFeatures, JavaScriptNodeType } from "./interfaces";
+import type { LanguageFeatures, NodeType } from "./interfaces";
 
 export class Parser {
   private readonly scanner: Scanner;
@@ -39,7 +39,7 @@ export class Parser {
     this.languageFeatures = languageFeatures || {};
   }
 
-  private isNodeAllowed(nodeType: JavaScriptNodeType): boolean {
+  private isNodeAllowed(nodeType: NodeType): boolean {
     // null or undefined = all nodes allowed (default behavior)
     if (this.languageFeatures.allowedNodes === null || this.languageFeatures.allowedNodes === undefined) {
       return true;
@@ -48,15 +48,15 @@ export class Parser {
     return this.languageFeatures.allowedNodes.includes(nodeType);
   }
 
-  private checkNodeAllowed(nodeType: JavaScriptNodeType, errorType: SyntaxErrorType, location: Location): void {
+  private checkNodeAllowed(nodeType: NodeType, errorType: SyntaxErrorType, location: Location): void {
     if (!this.isNodeAllowed(nodeType)) {
       const friendlyName = this.getNodeFriendlyName(nodeType);
       this.error(errorType, location, { nodeType, friendlyName });
     }
   }
 
-  private getNodeFriendlyName(nodeType: JavaScriptNodeType): string {
-    const friendlyNames: Record<JavaScriptNodeType, string> = {
+  private getNodeFriendlyName(nodeType: NodeType): string {
+    const friendlyNames: Record<NodeType, string> = {
       LiteralExpression: "Literals",
       BinaryExpression: "Binary expressions",
       UnaryExpression: "Unary expressions",

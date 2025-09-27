@@ -106,7 +106,7 @@ Supports configurable AST node-level restrictions via `allowedNodes` in Language
 
 When implementing support for a new AST node type, you MUST:
 
-1. **Update JavaScriptNodeType**: Add the new node type to the `JavaScriptNodeType` union in `src/javascript/interfaces.ts`
+1. **Update NodeType**: Add the new node type to the `NodeType` union in `src/javascript/interfaces.ts`
 2. **Add Error Type**: Add `<NodeName>NotAllowed` to `SyntaxErrorType` in `src/javascript/error.ts`
 3. **Update Parser**: Add `checkNodeAllowed()` call in the relevant parsing method in `src/javascript/parser.ts`
 4. **Add Safety Check**: Executor already has generic checks, but verify it handles the new node
