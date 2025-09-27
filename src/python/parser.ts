@@ -22,14 +22,59 @@ import {
   ContinueStatement,
 } from "./statement";
 import { type Token, type TokenType } from "./token";
+import type { LanguageFeatures, NodeType } from "./interfaces";
 
 export class Parser {
   private readonly scanner: Scanner;
   private current: number = 0;
   private tokens: Token[] = [];
+  private readonly languageFeatures: LanguageFeatures;
 
-  constructor(private readonly fileName: string) {
+  constructor(
+    private readonly fileName: string,
+    languageFeatures?: LanguageFeatures
+  ) {
     this.scanner = new Scanner(fileName);
+    this.languageFeatures = languageFeatures || {};
+  }
+
+  private isNodeAllowed(nodeType: NodeType): boolean {
+    // null or undefined = all nodes allowed (default behavior)
+    if (this.languageFeatures.allowedNodes === null || this.languageFeatures.allowedNodes === undefined) {
+      return true;
+    }
+    // Check if the specific node type is in the allowed list
+    return this.languageFeatures.allowedNodes.includes(nodeType);
+  }
+
+  private checkNodeAllowed(nodeType: NodeType, errorType: SyntaxErrorType, location: Location): void {
+    if (!this.isNodeAllowed(nodeType)) {
+      const friendlyName = this.getNodeFriendlyName(nodeType);
+      throw new SyntaxError(errorType, `${friendlyName} cannot be used at this level`, location, this.fileName, {
+        nodeType,
+      });
+    }
+  }
+
+  private getNodeFriendlyName(nodeType: NodeType): string {
+    const friendlyNames: Record<NodeType, string> = {
+      LiteralExpression: "Literals",
+      BinaryExpression: "Binary expressions",
+      UnaryExpression: "Unary expressions",
+      GroupingExpression: "Grouping expressions",
+      IdentifierExpression: "Identifiers",
+      ListExpression: "Lists",
+      SubscriptExpression: "Subscript expressions",
+      ExpressionStatement: "Expression statements",
+      PrintStatement: "Print statements",
+      AssignmentStatement: "Assignment statements",
+      BlockStatement: "Block statements",
+      IfStatement: "If statements",
+      ForInStatement: "For loops",
+      BreakStatement: "Break statements",
+      ContinueStatement: "Continue statements",
+    };
+    return friendlyNames[nodeType] || nodeType;
   }
 
   public parse(sourceCode: string): Statement[] {
@@ -79,39 +124,28 @@ export class Parser {
         return this.continueStatement();
       }
 
-      // Check for assignment statement (IDENTIFIER = expression or subscript = expression)
-      // We need to parse the left side first to determine if it's an assignment
-      if (this.check("IDENTIFIER")) {
-        // Save current position
-        const savedPosition = this.current;
-
-        // Try to parse the left side
-        const left = this.postfix();
-
-        // Check if it's followed by an assignment
-        if (this.check("EQUAL")) {
-          this.advance(); // consume the EQUAL
-          const value = this.expression();
-
-          // Python doesn't require semicolons, but consume newline if present
-          if (this.check("NEWLINE")) {
-            this.advance();
-          }
-
-          // Create assignment based on left side type
-          if (left instanceof IdentifierExpression) {
-            return new AssignmentStatement(left.name, value, Location.between(left, value));
-          } else if (left instanceof SubscriptExpression) {
-            return new AssignmentStatement(left, value, Location.between(left, value));
-          }
-          // Reset and fall through to expression statement
-          this.current = savedPosition;
-        } else {
-          // Reset position - it's not an assignment
-          this.current = savedPosition;
+      // For potential expression or assignment statements,
+      // determine the type first before parsing
+      if (
+        this.check("IDENTIFIER") ||
+        this.check("NUMBER") ||
+        this.check("STRING") ||
+        this.check("TRUE") ||
+        this.check("FALSE") ||
+        this.check("NONE") ||
+        this.check("LEFT_PAREN") ||
+        this.check("LEFT_BRACKET") ||
+        this.check("NOT") ||
+        this.check("MINUS")
+      ) {
+        // Look ahead to determine if it's an assignment
+        if (this.isAssignmentAhead()) {
+          return this.assignmentStatement();
         }
+        return this.expressionStatement();
       }
 
+      // If we get here, try to parse as expression statement
       return this.expressionStatement();
     } catch (error) {
       this.synchronize();
@@ -119,13 +153,73 @@ export class Parser {
     }
   }
 
-  // No longer needed as assignment is handled in statement() method
-  // Keep for potential future use or remove
+  // Helper method to look ahead and determine if the current position starts an assignment
+  private isAssignmentAhead(): boolean {
+    // Only identifiers can start assignments in Python
+    if (!this.check("IDENTIFIER")) {
+      return false;
+    }
+
+    // Look ahead in the token stream
+    let pos = this.current;
+
+    // Skip the identifier
+    pos++;
+
+    // Skip any subscript operations (e.g., x[0][1] = ...)
+    while (pos < this.tokens.length && this.tokens[pos].type === "LEFT_BRACKET") {
+      pos++;
+      // Find matching right bracket
+      let bracketDepth = 1;
+      while (pos < this.tokens.length && bracketDepth > 0) {
+        if (this.tokens[pos].type === "LEFT_BRACKET") {
+          bracketDepth++;
+        }
+        if (this.tokens[pos].type === "RIGHT_BRACKET") {
+          bracketDepth--;
+        }
+        pos++;
+      }
+    }
+
+    // Check if the next token is EQUAL (assignment)
+    const isAssignment = pos < this.tokens.length && this.tokens[pos].type === "EQUAL";
+
+    return isAssignment;
+  }
+
   private assignmentStatement(): Statement {
-    throw new Error("assignmentStatement should not be called directly");
+    // Check if AssignmentStatement is allowed first
+    this.checkNodeAllowed("AssignmentStatement", "AssignmentStatementNotAllowed", this.peek().location);
+
+    // Now parse the left side
+    const left = this.postfix();
+
+    // Consume the EQUAL token
+    this.consume("EQUAL", "Expected '=' in assignment statement");
+
+    // Parse the right side
+    const value = this.expression();
+
+    // Python doesn't require semicolons, but consume newline if present
+    if (this.check("NEWLINE")) {
+      this.advance();
+    }
+
+    // Create assignment based on left side type
+    if (left instanceof IdentifierExpression) {
+      return new AssignmentStatement(left.name, value, Location.between(left, value));
+    }
+    if (left instanceof SubscriptExpression) {
+      return new AssignmentStatement(left, value, Location.between(left, value));
+    }
+    throw new SyntaxError("ParseError", "Invalid assignment target", left.location, this.fileName);
   }
 
   private expressionStatement(): Statement {
+    // Check if ExpressionStatement is allowed
+    this.checkNodeAllowed("ExpressionStatement", "ExpressionStatementNotAllowed", this.peek().location);
+
     const expr = this.expression();
     // Python doesn't require semicolons, but consume newline if present
     if (this.check("NEWLINE")) {
@@ -142,6 +236,9 @@ export class Parser {
     let expr = this.and();
 
     while (this.match("OR")) {
+      // Check if BinaryExpression is allowed
+      this.checkNodeAllowed("BinaryExpression", "BinaryExpressionNotAllowed", this.previous().location);
+
       const operator = this.previous();
       const right = this.and();
       expr = new BinaryExpression(expr, operator, right, Location.between(expr, right));
@@ -154,6 +251,9 @@ export class Parser {
     let expr = this.equality();
 
     while (this.match("AND")) {
+      // Check if BinaryExpression is allowed
+      this.checkNodeAllowed("BinaryExpression", "BinaryExpressionNotAllowed", this.previous().location);
+
       const operator = this.previous();
       const right = this.equality();
       expr = new BinaryExpression(expr, operator, right, Location.between(expr, right));
@@ -166,6 +266,9 @@ export class Parser {
     let expr = this.comparison();
 
     while (this.match("NOT_EQUAL", "EQUAL_EQUAL")) {
+      // Check if BinaryExpression is allowed
+      this.checkNodeAllowed("BinaryExpression", "BinaryExpressionNotAllowed", this.previous().location);
+
       const operator = this.previous();
       const right = this.comparison();
       expr = new BinaryExpression(expr, operator, right, Location.between(expr, right));
@@ -178,6 +281,9 @@ export class Parser {
     let expr = this.term();
 
     while (this.match("GREATER", "GREATER_EQUAL", "LESS", "LESS_EQUAL")) {
+      // Check if BinaryExpression is allowed
+      this.checkNodeAllowed("BinaryExpression", "BinaryExpressionNotAllowed", this.previous().location);
+
       const operator = this.previous();
       const right = this.term();
       expr = new BinaryExpression(expr, operator, right, Location.between(expr, right));
@@ -190,6 +296,9 @@ export class Parser {
     let expr = this.factor();
 
     while (this.match("MINUS", "PLUS")) {
+      // Check if BinaryExpression is allowed
+      this.checkNodeAllowed("BinaryExpression", "BinaryExpressionNotAllowed", this.previous().location);
+
       const operator = this.previous();
       const right = this.factor();
       expr = new BinaryExpression(expr, operator, right, Location.between(expr, right));
@@ -202,6 +311,9 @@ export class Parser {
     let expr = this.power();
 
     while (this.match("SLASH", "DOUBLE_SLASH", "STAR", "PERCENT")) {
+      // Check if BinaryExpression is allowed
+      this.checkNodeAllowed("BinaryExpression", "BinaryExpressionNotAllowed", this.previous().location);
+
       const operator = this.previous();
       const right = this.power();
       expr = new BinaryExpression(expr, operator, right, Location.between(expr, right));
@@ -215,6 +327,9 @@ export class Parser {
 
     // Power operator is right-associative
     if (this.match("DOUBLE_STAR")) {
+      // Check if BinaryExpression is allowed
+      this.checkNodeAllowed("BinaryExpression", "BinaryExpressionNotAllowed", this.previous().location);
+
       const operator = this.previous();
       const right = this.power(); // Right-associative recursion
       expr = new BinaryExpression(expr, operator, right, Location.between(expr, right));
@@ -226,6 +341,8 @@ export class Parser {
   private unary(): Expression {
     if (this.match("NOT", "MINUS")) {
       const operator = this.previous();
+      // Check if UnaryExpression is allowed
+      this.checkNodeAllowed("UnaryExpression", "UnaryExpressionNotAllowed", operator.location);
       const right = this.unary();
       return new UnaryExpression(operator, right, Location.between(operator, right));
     }
@@ -239,6 +356,9 @@ export class Parser {
     // Handle subscript access (list[index])
     // This allows chaining like list[0][1] for nested lists
     while (this.match("LEFT_BRACKET")) {
+      // Check if SubscriptExpression is allowed
+      this.checkNodeAllowed("SubscriptExpression", "SubscriptExpressionNotAllowed", this.previous().location);
+
       const index = this.expression();
       const rightBracket = this.consume("RIGHT_BRACKET", "Expect ']' after subscript index.");
       expr = new SubscriptExpression(expr, index, Location.between(expr, rightBracket));
@@ -249,26 +369,39 @@ export class Parser {
 
   private primary(): Expression {
     if (this.match("FALSE")) {
+      // Check if LiteralExpression is allowed
+      this.checkNodeAllowed("LiteralExpression", "LiteralExpressionNotAllowed", this.previous().location);
       return new LiteralExpression(false, this.previous().location);
     }
 
     if (this.match("TRUE")) {
+      // Check if LiteralExpression is allowed
+      this.checkNodeAllowed("LiteralExpression", "LiteralExpressionNotAllowed", this.previous().location);
       return new LiteralExpression(true, this.previous().location);
     }
 
     if (this.match("NONE")) {
+      // Check if LiteralExpression is allowed
+      this.checkNodeAllowed("LiteralExpression", "LiteralExpressionNotAllowed", this.previous().location);
       return new LiteralExpression(null, this.previous().location);
     }
 
     if (this.match("NUMBER", "STRING")) {
+      // Check if LiteralExpression is allowed
+      this.checkNodeAllowed("LiteralExpression", "LiteralExpressionNotAllowed", this.previous().location);
       return new LiteralExpression(this.previous().literal, this.previous().location);
     }
 
     if (this.match("IDENTIFIER")) {
+      // Check if IdentifierExpression is allowed
+      this.checkNodeAllowed("IdentifierExpression", "IdentifierExpressionNotAllowed", this.previous().location);
       return new IdentifierExpression(this.previous(), this.previous().location);
     }
 
     if (this.match("LEFT_PAREN")) {
+      const lparen = this.previous();
+      // Check if GroupingExpression is allowed
+      this.checkNodeAllowed("GroupingExpression", "GroupingExpressionNotAllowed", lparen.location);
       const expr = this.expression();
       this.consume("RIGHT_PAREN", "Expect ')' after expression.");
       return new GroupingExpression(expr, Location.between(expr, expr));
@@ -339,6 +472,10 @@ export class Parser {
 
   private ifStatement(): Statement {
     const ifToken = this.previous();
+
+    // Check if IfStatement is allowed
+    this.checkNodeAllowed("IfStatement", "IfStatementNotAllowed", ifToken.location);
+
     const condition = this.expression();
     this.consume("COLON", "Expect ':' after if condition.");
 
@@ -372,6 +509,9 @@ export class Parser {
   private forInStatement(): Statement {
     const forToken = this.previous();
 
+    // Check if ForInStatement is allowed
+    this.checkNodeAllowed("ForInStatement", "ForInStatementNotAllowed", forToken.location);
+
     // Parse the variable name
     const variable = this.consume("IDENTIFIER", "Expect variable name after 'for'.");
 
@@ -401,6 +541,9 @@ export class Parser {
   private breakStatement(): Statement {
     const breakToken = this.previous();
 
+    // Check if BreakStatement is allowed
+    this.checkNodeAllowed("BreakStatement", "BreakStatementNotAllowed", breakToken.location);
+
     // Python doesn't require semicolons, but consume newline if present
     if (this.check("NEWLINE")) {
       this.advance();
@@ -412,6 +555,9 @@ export class Parser {
   private continueStatement(): Statement {
     const continueToken = this.previous();
 
+    // Check if ContinueStatement is allowed
+    this.checkNodeAllowed("ContinueStatement", "ContinueStatementNotAllowed", continueToken.location);
+
     // Python doesn't require semicolons, but consume newline if present
     if (this.check("NEWLINE")) {
       this.advance();
@@ -422,6 +568,9 @@ export class Parser {
 
   private block(): Statement {
     const startToken = this.peek();
+
+    // Check if BlockStatement is allowed
+    this.checkNodeAllowed("BlockStatement", "BlockStatementNotAllowed", startToken.location);
 
     // Expect an INDENT token to start the block
     this.consume("INDENT", "Expected indented block.");
@@ -455,6 +604,10 @@ export class Parser {
 
   private listExpression(): Expression {
     const leftBracket = this.previous();
+
+    // Check if ListExpression is allowed
+    this.checkNodeAllowed("ListExpression", "ListExpressionNotAllowed", leftBracket.location);
+
     const elements: Expression[] = [];
 
     // Handle empty list

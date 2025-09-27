@@ -1,3 +1,3 @@
-export * from "./scanner";
-export * from "./token";
-export * from "./interpreter";
+export { interpret } from "./interpreter";
+export type { InterpretResult } from "./interpreter";
+export type { NodeType, LanguageFeatures } from "./interfaces";

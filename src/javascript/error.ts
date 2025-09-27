@@ -28,7 +28,25 @@ export type SyntaxErrorType =
   | "UnimplementedToken"
   | "UnknownCharacter"
   | "UnterminatedComment"
-  | "UnterminatedString";
+  | "UnterminatedString"
+  // Node restriction errors
+  | "LiteralExpressionNotAllowed"
+  | "BinaryExpressionNotAllowed"
+  | "UnaryExpressionNotAllowed"
+  | "GroupingExpressionNotAllowed"
+  | "IdentifierExpressionNotAllowed"
+  | "AssignmentExpressionNotAllowed"
+  | "UpdateExpressionNotAllowed"
+  | "TemplateLiteralExpressionNotAllowed"
+  | "ArrayExpressionNotAllowed"
+  | "MemberExpressionNotAllowed"
+  | "DictionaryExpressionNotAllowed"
+  | "ExpressionStatementNotAllowed"
+  | "VariableDeclarationNotAllowed"
+  | "BlockStatementNotAllowed"
+  | "IfStatementNotAllowed"
+  | "ForStatementNotAllowed"
+  | "WhileStatementNotAllowed";
 
 export class SyntaxError extends Error {
   constructor(

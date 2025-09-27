@@ -94,6 +94,27 @@ Configurable language features:
 
 Uses unified frame system with JavaScript-specific extensions for educational descriptions.
 
+### 10. AST Node Restrictions System
+
+Supports configurable AST node-level restrictions via `allowedNodes` in LanguageFeatures:
+
+- `allowedNodes: null | undefined` - All nodes allowed (default behavior)
+- `allowedNodes: []` - No nodes allowed (maximum restriction)
+- `allowedNodes: ["NodeType", ...]` - Only specified nodes allowed
+
+**IMPORTANT: When Adding New AST Node Types**
+
+When implementing support for a new AST node type, you MUST:
+
+1. **Update NodeType**: Add the new node type to the `NodeType` union in `src/javascript/interfaces.ts`
+2. **Add Error Type**: Add `<NodeName>NotAllowed` to `SyntaxErrorType` in `src/javascript/error.ts`
+3. **Update Parser**: Add `checkNodeAllowed()` call in the relevant parsing method in `src/javascript/parser.ts`
+4. **Add Safety Check**: Executor already has generic checks, but verify it handles the new node
+5. **Add Tests**: Add test cases for the new node in `tests/javascript/language-features/allowedNodes.test.ts`
+6. **Update PLAN.md**: Add the new node type to the "Supported AST Node Types" section
+
+This ensures the node restriction system remains complete and consistent.
+
 ## Loop Constructs
 
 ### For Loops
