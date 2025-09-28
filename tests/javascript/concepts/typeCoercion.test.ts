@@ -9,7 +9,7 @@ describe("JavaScript Type Coercion", () => {
 
     describe("arithmetic operations", () => {
       test("number + boolean throws error", () => {
-        const result = interpret("5 + true;", languageFeatures);
+        const result = interpret("5 + true;", { languageFeatures });
         expect(result.error).toBe(null);
         expect(result.frames).toHaveLength(1);
         expect(result.frames[0].status).toBe("ERROR");
@@ -19,7 +19,7 @@ describe("JavaScript Type Coercion", () => {
       });
 
       test("boolean + number throws error", () => {
-        const result = interpret("true + 5;", languageFeatures);
+        const result = interpret("true + 5;", { languageFeatures });
         expect(result.error).toBe(null);
         expect(result.frames).toHaveLength(1);
         expect(result.frames[0].status).toBe("ERROR");
@@ -29,7 +29,7 @@ describe("JavaScript Type Coercion", () => {
       });
 
       test("string + number throws error", () => {
-        const result = interpret('"hello" + 5;', languageFeatures);
+        const result = interpret('"hello" + 5;', { languageFeatures });
         expect(result.error).toBe(null);
         expect(result.frames).toHaveLength(1);
         expect(result.frames[0].status).toBe("ERROR");
@@ -39,7 +39,7 @@ describe("JavaScript Type Coercion", () => {
       });
 
       test("number + string throws error", () => {
-        const result = interpret('5 + "hello";', languageFeatures);
+        const result = interpret('5 + "hello";', { languageFeatures });
         expect(result.error).toBe(null);
         expect(result.frames).toHaveLength(1);
         expect(result.frames[0].status).toBe("ERROR");
@@ -49,7 +49,7 @@ describe("JavaScript Type Coercion", () => {
       });
 
       test("number - boolean throws error", () => {
-        const result = interpret("10 - true;", languageFeatures);
+        const result = interpret("10 - true;", { languageFeatures });
         expect(result.error).toBe(null);
         expect(result.frames).toHaveLength(1);
         expect(result.frames[0].status).toBe("ERROR");
@@ -57,7 +57,7 @@ describe("JavaScript Type Coercion", () => {
       });
 
       test("boolean - number throws error", () => {
-        const result = interpret("false - 3;", languageFeatures);
+        const result = interpret("false - 3;", { languageFeatures });
         expect(result.error).toBe(null);
         expect(result.frames).toHaveLength(1);
         expect(result.frames[0].status).toBe("ERROR");
@@ -65,7 +65,7 @@ describe("JavaScript Type Coercion", () => {
       });
 
       test("string - number throws error", () => {
-        const result = interpret('"10" - 5;', languageFeatures);
+        const result = interpret('"10" - 5;', { languageFeatures });
         expect(result.error).toBe(null);
         expect(result.frames).toHaveLength(1);
         expect(result.frames[0].status).toBe("ERROR");
@@ -73,7 +73,7 @@ describe("JavaScript Type Coercion", () => {
       });
 
       test("number * boolean throws error", () => {
-        const result = interpret("5 * true;", languageFeatures);
+        const result = interpret("5 * true;", { languageFeatures });
         expect(result.error).toBe(null);
         expect(result.frames).toHaveLength(1);
         expect(result.frames[0].status).toBe("ERROR");
@@ -81,7 +81,7 @@ describe("JavaScript Type Coercion", () => {
       });
 
       test("string * number throws error", () => {
-        const result = interpret('"2" * 3;', languageFeatures);
+        const result = interpret('"2" * 3;', { languageFeatures });
         expect(result.error).toBe(null);
         expect(result.frames).toHaveLength(1);
         expect(result.frames[0].status).toBe("ERROR");
@@ -89,7 +89,7 @@ describe("JavaScript Type Coercion", () => {
       });
 
       test("number / boolean throws error", () => {
-        const result = interpret("10 / false;", languageFeatures);
+        const result = interpret("10 / false;", { languageFeatures });
         expect(result.error).toBe(null);
         expect(result.frames).toHaveLength(1);
         expect(result.frames[0].status).toBe("ERROR");
@@ -97,7 +97,7 @@ describe("JavaScript Type Coercion", () => {
       });
 
       test("boolean / number throws error", () => {
-        const result = interpret("true / 2;", languageFeatures);
+        const result = interpret("true / 2;", { languageFeatures });
         expect(result.error).toBe(null);
         expect(result.frames).toHaveLength(1);
         expect(result.frames[0].status).toBe("ERROR");
@@ -107,7 +107,7 @@ describe("JavaScript Type Coercion", () => {
 
     describe("allowed operations", () => {
       test("number + number works", () => {
-        const result = interpret("5 + 3;", languageFeatures);
+        const result = interpret("5 + 3;", { languageFeatures });
         expect(result.error).toBe(null);
         expect(result.frames).toHaveLength(1);
         expect(result.frames[0].status).toBe("SUCCESS");
@@ -115,7 +115,7 @@ describe("JavaScript Type Coercion", () => {
       });
 
       test("string + string works (concatenation)", () => {
-        const result = interpret('"hello" + " world";', languageFeatures);
+        const result = interpret('"hello" + " world";', { languageFeatures });
         expect(result.error).toBe(null);
         expect(result.frames).toHaveLength(1);
         expect(result.frames[0].status).toBe("SUCCESS");
@@ -123,7 +123,7 @@ describe("JavaScript Type Coercion", () => {
       });
 
       test("number - number works", () => {
-        const result = interpret("10 - 3;", languageFeatures);
+        const result = interpret("10 - 3;", { languageFeatures });
         expect(result.error).toBe(null);
         expect(result.frames).toHaveLength(1);
         expect(result.frames[0].status).toBe("SUCCESS");
@@ -131,7 +131,7 @@ describe("JavaScript Type Coercion", () => {
       });
 
       test("number * number works", () => {
-        const result = interpret("4 * 5;", languageFeatures);
+        const result = interpret("4 * 5;", { languageFeatures });
         expect(result.error).toBe(null);
         expect(result.frames).toHaveLength(1);
         expect(result.frames[0].status).toBe("SUCCESS");
@@ -139,7 +139,7 @@ describe("JavaScript Type Coercion", () => {
       });
 
       test("number / number works", () => {
-        const result = interpret("10 / 2;", languageFeatures);
+        const result = interpret("10 / 2;", { languageFeatures });
         expect(result.error).toBe(null);
         expect(result.frames).toHaveLength(1);
         expect(result.frames[0].status).toBe("SUCCESS");
@@ -154,7 +154,7 @@ describe("JavaScript Type Coercion", () => {
           let x = 5;
           x + true;
         `,
-          languageFeatures
+          { languageFeatures }
         );
         expect(result.error).toBe(null);
         expect(result.frames[0].status).toBe("SUCCESS");
@@ -170,7 +170,7 @@ describe("JavaScript Type Coercion", () => {
           let b = false;
           b + 10;
         `,
-          languageFeatures
+          { languageFeatures }
         );
         expect(result.error).toBe(null);
         expect(result.frames[0].status).toBe("SUCCESS");
@@ -186,7 +186,7 @@ describe("JavaScript Type Coercion", () => {
           let s = "test";
           s + 42;
         `,
-          languageFeatures
+          { languageFeatures }
         );
         expect(result.error).toBe(null);
         expect(result.frames[0].status).toBe("SUCCESS");
@@ -199,14 +199,14 @@ describe("JavaScript Type Coercion", () => {
 
     describe("complex expressions", () => {
       test("nested expression with type coercion throws error", () => {
-        const result = interpret("(5 + 3) * true;", languageFeatures);
+        const result = interpret("(5 + 3) * true;", { languageFeatures });
         expect(result.error).toBe(null);
         expect(result.frames[0].status).toBe("ERROR");
         expect(result.frames[0].error?.message).toBe("TypeCoercionNotAllowed: operator: *: right: boolean");
       });
 
       test("multiple operations with type coercion throws error at first issue", () => {
-        const result = interpret("5 + true - 2;", languageFeatures);
+        const result = interpret("5 + true - 2;", { languageFeatures });
         expect(result.error).toBe(null);
         expect(result.frames[0].status).toBe("ERROR");
         expect(result.frames[0].error?.message).toBe(
@@ -223,7 +223,7 @@ describe("JavaScript Type Coercion", () => {
 
     describe("arithmetic operations with coercion", () => {
       test("number + boolean coerces (5 + true = 6)", () => {
-        const result = interpret("5 + true;", languageFeatures);
+        const result = interpret("5 + true;", { languageFeatures });
         expect(result.error).toBe(null);
         expect(result.frames).toHaveLength(1);
         expect(result.frames[0].status).toBe("SUCCESS");
@@ -231,7 +231,7 @@ describe("JavaScript Type Coercion", () => {
       });
 
       test("boolean + number coerces (true + 5 = 6)", () => {
-        const result = interpret("true + 5;", languageFeatures);
+        const result = interpret("true + 5;", { languageFeatures });
         expect(result.error).toBe(null);
         expect(result.frames).toHaveLength(1);
         expect(result.frames[0].status).toBe("SUCCESS");
@@ -239,7 +239,7 @@ describe("JavaScript Type Coercion", () => {
       });
 
       test("boolean + boolean coerces (true + false = 1)", () => {
-        const result = interpret("true + false;", languageFeatures);
+        const result = interpret("true + false;", { languageFeatures });
         expect(result.error).toBe(null);
         expect(result.frames).toHaveLength(1);
         expect(result.frames[0].status).toBe("SUCCESS");
@@ -247,7 +247,7 @@ describe("JavaScript Type Coercion", () => {
       });
 
       test("string + number coerces to string concatenation", () => {
-        const result = interpret('"hello" + 5;', languageFeatures);
+        const result = interpret('"hello" + 5;', { languageFeatures });
         expect(result.error).toBe(null);
         expect(result.frames).toHaveLength(1);
         expect(result.frames[0].status).toBe("SUCCESS");
@@ -255,7 +255,7 @@ describe("JavaScript Type Coercion", () => {
       });
 
       test("number + string coerces to string concatenation", () => {
-        const result = interpret('5 + "hello";', languageFeatures);
+        const result = interpret('5 + "hello";', { languageFeatures });
         expect(result.error).toBe(null);
         expect(result.frames).toHaveLength(1);
         expect(result.frames[0].status).toBe("SUCCESS");
@@ -263,7 +263,7 @@ describe("JavaScript Type Coercion", () => {
       });
 
       test("number - boolean coerces (10 - true = 9)", () => {
-        const result = interpret("10 - true;", languageFeatures);
+        const result = interpret("10 - true;", { languageFeatures });
         expect(result.error).toBe(null);
         expect(result.frames).toHaveLength(1);
         expect(result.frames[0].status).toBe("SUCCESS");
@@ -271,7 +271,7 @@ describe("JavaScript Type Coercion", () => {
       });
 
       test("boolean - number coerces (false - 3 = -3)", () => {
-        const result = interpret("false - 3;", languageFeatures);
+        const result = interpret("false - 3;", { languageFeatures });
         expect(result.error).toBe(null);
         expect(result.frames).toHaveLength(1);
         expect(result.frames[0].status).toBe("SUCCESS");
@@ -279,7 +279,7 @@ describe("JavaScript Type Coercion", () => {
       });
 
       test("string - number coerces string to number", () => {
-        const result = interpret('"10" - 5;', languageFeatures);
+        const result = interpret('"10" - 5;', { languageFeatures });
         expect(result.error).toBe(null);
         expect(result.frames).toHaveLength(1);
         expect(result.frames[0].status).toBe("SUCCESS");
@@ -287,7 +287,7 @@ describe("JavaScript Type Coercion", () => {
       });
 
       test("number * boolean coerces (5 * true = 5)", () => {
-        const result = interpret("5 * true;", languageFeatures);
+        const result = interpret("5 * true;", { languageFeatures });
         expect(result.error).toBe(null);
         expect(result.frames).toHaveLength(1);
         expect(result.frames[0].status).toBe("SUCCESS");
@@ -295,7 +295,7 @@ describe("JavaScript Type Coercion", () => {
       });
 
       test("number * false coerces (5 * false = 0)", () => {
-        const result = interpret("5 * false;", languageFeatures);
+        const result = interpret("5 * false;", { languageFeatures });
         expect(result.error).toBe(null);
         expect(result.frames).toHaveLength(1);
         expect(result.frames[0].status).toBe("SUCCESS");
@@ -303,7 +303,7 @@ describe("JavaScript Type Coercion", () => {
       });
 
       test("string * number coerces string to number", () => {
-        const result = interpret('"2" * 3;', languageFeatures);
+        const result = interpret('"2" * 3;', { languageFeatures });
         expect(result.error).toBe(null);
         expect(result.frames).toHaveLength(1);
         expect(result.frames[0].status).toBe("SUCCESS");
@@ -311,7 +311,7 @@ describe("JavaScript Type Coercion", () => {
       });
 
       test("number / boolean coerces (10 / true = 10)", () => {
-        const result = interpret("10 / true;", languageFeatures);
+        const result = interpret("10 / true;", { languageFeatures });
         expect(result.error).toBe(null);
         expect(result.frames).toHaveLength(1);
         expect(result.frames[0].status).toBe("SUCCESS");
@@ -319,7 +319,7 @@ describe("JavaScript Type Coercion", () => {
       });
 
       test("boolean / number coerces (true / 2 = 0.5)", () => {
-        const result = interpret("true / 2;", languageFeatures);
+        const result = interpret("true / 2;", { languageFeatures });
         expect(result.error).toBe(null);
         expect(result.frames).toHaveLength(1);
         expect(result.frames[0].status).toBe("SUCCESS");
@@ -327,7 +327,7 @@ describe("JavaScript Type Coercion", () => {
       });
 
       test("division by false results in Infinity", () => {
-        const result = interpret("10 / false;", languageFeatures);
+        const result = interpret("10 / false;", { languageFeatures });
         expect(result.error).toBe(null);
         expect(result.frames).toHaveLength(1);
         expect(result.frames[0].status).toBe("SUCCESS");
@@ -337,7 +337,7 @@ describe("JavaScript Type Coercion", () => {
 
     describe("complex expressions with coercion", () => {
       test("nested expression with type coercion works", () => {
-        const result = interpret("(5 + 3) * true;", languageFeatures);
+        const result = interpret("(5 + 3) * true;", { languageFeatures });
         expect(result.error).toBe(null);
         expect(result.frames).toHaveLength(1);
         expect(result.frames[0].status).toBe("SUCCESS");
@@ -345,7 +345,7 @@ describe("JavaScript Type Coercion", () => {
       });
 
       test("chained operations with mixed types", () => {
-        const result = interpret("5 + true - false;", languageFeatures);
+        const result = interpret("5 + true - false;", { languageFeatures });
         expect(result.error).toBe(null);
         expect(result.frames).toHaveLength(1);
         expect(result.frames[0].status).toBe("SUCCESS");
@@ -353,7 +353,7 @@ describe("JavaScript Type Coercion", () => {
       });
 
       test("string concatenation with coercion", () => {
-        const result = interpret('"Result: " + (10 + true);', languageFeatures);
+        const result = interpret('"Result: " + (10 + true);', { languageFeatures });
         expect(result.error).toBe(null);
         expect(result.frames).toHaveLength(1);
         expect(result.frames[0].status).toBe("SUCCESS");
@@ -368,7 +368,7 @@ describe("JavaScript Type Coercion", () => {
           let x = 5;
           x + true;
         `,
-          languageFeatures
+          { languageFeatures }
         );
         expect(result.error).toBe(null);
         expect(result.frames[1].status).toBe("SUCCESS");
@@ -381,7 +381,7 @@ describe("JavaScript Type Coercion", () => {
           let b = false;
           b + 10;
         `,
-          languageFeatures
+          { languageFeatures }
         );
         expect(result.error).toBe(null);
         expect(result.frames[1].status).toBe("SUCCESS");
@@ -394,7 +394,7 @@ describe("JavaScript Type Coercion", () => {
           let s = "test";
           s + 42;
         `,
-          languageFeatures
+          { languageFeatures }
         );
         expect(result.error).toBe(null);
         expect(result.frames[1].status).toBe("SUCCESS");
@@ -404,7 +404,7 @@ describe("JavaScript Type Coercion", () => {
 
     describe("edge cases", () => {
       test("null coercion in arithmetic", () => {
-        const result = interpret("null + 5;", languageFeatures);
+        const result = interpret("null + 5;", { languageFeatures });
         expect(result.error).toBe(null);
         expect(result.frames).toHaveLength(1);
         expect(result.frames[0].status).toBe("SUCCESS");
@@ -417,7 +417,7 @@ describe("JavaScript Type Coercion", () => {
           let x;
           x + 5;
         `,
-          { ...languageFeatures, requireVariableInstantiation: false }
+          { languageFeatures: { ...languageFeatures, requireVariableInstantiation: false } }
         );
         expect(result.error).toBe(null);
         // First frame is variable declaration

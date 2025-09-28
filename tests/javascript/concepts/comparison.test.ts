@@ -118,31 +118,33 @@ describe("JavaScript Comparison Operators", () => {
 
   describe("Equality (==)", () => {
     test("returns true for equal numbers", () => {
-      const { frames, error } = interpret("5 == 5;", { enforceStrictEquality: false });
+      const { frames, error } = interpret("5 == 5;", { languageFeatures: { enforceStrictEquality: false } });
       expect(error).toBeNull();
       expect(frames[0].result?.jikiObject.value).toBe(true);
     });
 
     test("returns false for different numbers", () => {
-      const { frames, error } = interpret("5 == 3;", { enforceStrictEquality: false });
+      const { frames, error } = interpret("5 == 3;", { languageFeatures: { enforceStrictEquality: false } });
       expect(error).toBeNull();
       expect(frames[0].result?.jikiObject.value).toBe(false);
     });
 
     test("returns true for equal strings", () => {
-      const { frames, error } = interpret('"hello" == "hello";', { enforceStrictEquality: false });
+      const { frames, error } = interpret('"hello" == "hello";', {
+        languageFeatures: { enforceStrictEquality: false },
+      });
       expect(error).toBeNull();
       expect(frames[0].result?.jikiObject.value).toBe(true);
     });
 
     test("returns true for equal booleans", () => {
-      const { frames, error } = interpret("true == true;", { enforceStrictEquality: false });
+      const { frames, error } = interpret("true == true;", { languageFeatures: { enforceStrictEquality: false } });
       expect(error).toBeNull();
       expect(frames[0].result?.jikiObject.value).toBe(true);
     });
 
     test("returns true for type coercion (5 == '5')", () => {
-      const { frames, error } = interpret('5 == "5";', { enforceStrictEquality: false });
+      const { frames, error } = interpret('5 == "5";', { languageFeatures: { enforceStrictEquality: false } });
       expect(error).toBeNull();
       // JavaScript's == does type coercion, so 5 == "5" is true
       expect(frames[0].result?.jikiObject.value).toBe(true);
@@ -151,25 +153,27 @@ describe("JavaScript Comparison Operators", () => {
 
   describe("Inequality (!=)", () => {
     test("returns false for equal numbers", () => {
-      const { frames, error } = interpret("5 != 5;", { enforceStrictEquality: false });
+      const { frames, error } = interpret("5 != 5;", { languageFeatures: { enforceStrictEquality: false } });
       expect(error).toBeNull();
       expect(frames[0].result?.jikiObject.value).toBe(false);
     });
 
     test("returns true for different numbers", () => {
-      const { frames, error } = interpret("5 != 3;", { enforceStrictEquality: false });
+      const { frames, error } = interpret("5 != 3;", { languageFeatures: { enforceStrictEquality: false } });
       expect(error).toBeNull();
       expect(frames[0].result?.jikiObject.value).toBe(true);
     });
 
     test("returns false for equal strings", () => {
-      const { frames, error } = interpret('"hello" != "hello";', { enforceStrictEquality: false });
+      const { frames, error } = interpret('"hello" != "hello";', {
+        languageFeatures: { enforceStrictEquality: false },
+      });
       expect(error).toBeNull();
       expect(frames[0].result?.jikiObject.value).toBe(false);
     });
 
     test("returns false for type coercion (5 != '5')", () => {
-      const { frames, error } = interpret('5 != "5";', { enforceStrictEquality: false });
+      const { frames, error } = interpret('5 != "5";', { languageFeatures: { enforceStrictEquality: false } });
       expect(error).toBeNull();
       // JavaScript's != does type coercion, so 5 != "5" is false
       expect(frames[0].result?.jikiObject.value).toBe(false);

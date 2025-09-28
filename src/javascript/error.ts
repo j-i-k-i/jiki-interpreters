@@ -41,12 +41,14 @@ export type SyntaxErrorType =
   | "ArrayExpressionNotAllowed"
   | "MemberExpressionNotAllowed"
   | "DictionaryExpressionNotAllowed"
+  | "CallExpressionNotAllowed"
   | "ExpressionStatementNotAllowed"
   | "VariableDeclarationNotAllowed"
   | "BlockStatementNotAllowed"
   | "IfStatementNotAllowed"
   | "ForStatementNotAllowed"
-  | "WhileStatementNotAllowed";
+  | "WhileStatementNotAllowed"
+  | "MissingRightParenthesisAfterArguments";
 
 export class SyntaxError extends Error {
   constructor(

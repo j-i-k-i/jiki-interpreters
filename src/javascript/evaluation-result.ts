@@ -48,6 +48,7 @@ export interface EvaluationResultIdentifierExpression {
   name: string;
   jikiObject: JikiObject;
   immutableJikiObject?: JikiObject;
+  functionName?: string; // Present when identifier refers to a function
 }
 
 export interface EvaluationResultVariableDeclaration {
@@ -91,4 +92,12 @@ export interface EvaluationResultDictionaryExpression {
   type: "DictionaryExpression";
   jikiObject: JikiObject;
   immutableJikiObject?: JikiObject;
+}
+
+export interface EvaluationResultCallExpression {
+  type: "CallExpression";
+  jikiObject: JikiObject;
+  immutableJikiObject?: JikiObject;
+  functionName?: string;
+  args?: EvaluationResult[];
 }

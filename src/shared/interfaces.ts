@@ -24,3 +24,15 @@ export interface ExecutionContext {
   fastForward: (milliseconds: number) => void;
   getCurrentTimeInMs: () => number;
 }
+
+// Arity can be a fixed number or a range [min, max]
+// For variable arity functions, use [min, Infinity]
+export type Arity = number | [number, number];
+
+// Generic external function interface for all interpreters
+export interface ExternalFunction {
+  name: string;
+  func: Function;
+  description: string;
+  arity?: Arity;
+}

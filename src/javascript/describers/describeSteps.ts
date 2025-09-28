@@ -7,6 +7,7 @@ import type {
   EvaluationResultMemberExpression,
   EvaluationResultAssignmentExpression,
   EvaluationResultDictionaryExpression,
+  EvaluationResultCallExpression,
 } from "../evaluation-result";
 import type { EvaluationResultTemplateLiteralExpression } from "../executor/executeTemplateLiteralExpression";
 import type { Expression } from "../expression";
@@ -19,6 +20,7 @@ import {
   MemberExpression,
   AssignmentExpression,
   DictionaryExpression,
+  CallExpression,
 } from "../expression";
 import type { DescriptionContext } from "../../shared/frames";
 import { describeBinaryExpression } from "./describeBinaryExpression";
@@ -29,6 +31,7 @@ import { describeArrayExpression } from "./describeArrayExpression";
 import { describeMemberExpression } from "./describeMemberExpression";
 import { describeAssignmentExpression } from "./describeAssignmentExpression";
 import { describeDictionaryExpression } from "./describeDictionaryExpression";
+import { describeCallExpression } from "./describeCallExpression";
 
 export function describeExpression(
   expression: Expression,
@@ -58,6 +61,9 @@ export function describeExpression(
   }
   if (expression instanceof DictionaryExpression) {
     return describeDictionaryExpression(result as EvaluationResultDictionaryExpression, expression, null as any);
+  }
+  if (expression instanceof CallExpression) {
+    return describeCallExpression(expression, result as EvaluationResultCallExpression, context);
   }
 
   return [];

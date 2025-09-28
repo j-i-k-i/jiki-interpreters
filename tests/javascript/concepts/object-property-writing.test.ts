@@ -327,7 +327,7 @@ describe("Object Property Writing", () => {
         let obj;
         obj.property = "value";
       `;
-      const result = interpret(code, { requireVariableInstantiation: false });
+      const result = interpret(code, { languageFeatures: { requireVariableInstantiation: false } });
       expect(result.success).toBe(true);
       expect(result.error).toBe(null);
       expect(result.frames).toHaveLength(2);

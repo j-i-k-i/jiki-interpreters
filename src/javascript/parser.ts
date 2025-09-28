@@ -12,6 +12,7 @@ import {
   ArrayExpression,
   MemberExpression,
   DictionaryExpression,
+  CallExpression,
 } from "./expression";
 import { Location, Span } from "../shared/location";
 import { Scanner } from "./scanner";
@@ -68,6 +69,7 @@ export class Parser {
       ArrayExpression: "Arrays",
       MemberExpression: "Member access",
       DictionaryExpression: "Objects",
+      CallExpression: "Function calls",
       ExpressionStatement: "Expression statements",
       VariableDeclaration: "Variable declarations",
       BlockStatement: "Block statements",
@@ -464,10 +466,16 @@ export class Parser {
   private postfix(): Expression {
     let expr = this.primary();
 
-    // Handle chained member access (array indexing and property access)
-    // This allows expressions like arr[0][1] or obj.prop.nested or obj["key"]
+    // Handle chained member access (array indexing and property access) and function calls
+    // This allows expressions like arr[0][1] or obj.prop.nested or obj["key"] or func() or obj.method()
     while (true) {
-      if (this.match("LEFT_BRACKET")) {
+      if (this.match("LEFT_PAREN")) {
+        // Check if CallExpression is allowed
+        this.checkNodeAllowed("CallExpression", "CallExpressionNotAllowed", this.previous().location);
+
+        // Function call: func(arg1, arg2)
+        expr = this.finishCallExpression(expr);
+      } else if (this.match("LEFT_BRACKET")) {
         // Check if MemberExpression is allowed
         this.checkNodeAllowed("MemberExpression", "MemberExpressionNotAllowed", this.previous().location);
 
@@ -505,6 +513,21 @@ export class Parser {
     }
 
     return expr;
+  }
+
+  private finishCallExpression(callee: Expression): CallExpression {
+    const args: Expression[] = [];
+
+    if (!this.check("RIGHT_PAREN")) {
+      do {
+        args.push(this.assignment());
+      } while (this.match("COMMA"));
+    }
+
+    this.consume("RIGHT_PAREN", "MissingRightParenthesisAfterArguments");
+    const rightParen = this.previous();
+
+    return new CallExpression(callee, args, Location.between(callee, rightParen));
   }
 
   private primary(): Expression {

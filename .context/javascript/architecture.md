@@ -23,7 +23,7 @@ Supports single/two-character tokens, literals, keywords, and identifiers.
 
 Builds an Abstract Syntax Tree (AST) from tokens using recursive descent parsing.
 
-**AST Nodes**: Literals, binary/unary expressions, grouping, identifiers, assignments, expression statements, variable declarations, block statements, if statements, for statements, while statements, template literals, arrays.
+**AST Nodes**: Literals, binary/unary expressions, grouping, identifiers, assignments, expression statements, variable declarations, block statements, if statements, for statements, while statements, template literals, arrays, dictionaries, member access, function calls.
 
 Standard operator precedence from grouping through assignment.
 
@@ -32,6 +32,13 @@ Standard operator precedence from grouping through assignment.
 Evaluates the AST and generates execution frames.
 
 Modular executor architecture with dedicated modules for each AST node type. Main executor coordinates specialized executor functions with consistent interfaces.
+
+**External Functions**: The executor supports registration and invocation of external functions through:
+
+- Registration at interpreter initialization via `externalFunctions` array
+- Storage in a Map for fast lookup by name
+- Execution through CallExpression with ExecutionContext passed as first parameter
+- Automatic conversion between JavaScript values and JikiObjects
 
 **Performance Optimizations:**
 
@@ -135,6 +142,28 @@ This ensures the node restriction system remains complete and consistent.
 ## Error Handling
 
 Follows shared error pattern: parse errors returned as `error`, runtime errors become error frames. Includes variable, shadowing, and operation errors.
+
+## External Functions
+
+The JavaScript interpreter supports external functions that can be called from JavaScript code:
+
+```typescript
+interface ExternalFunction {
+  name: string; // Function name used in JavaScript code
+  func: Function; // The actual function implementation
+  description: string; // Human-readable description for educational feedback
+  arity?: Arity; // Optional arity constraints (number or [min, max])
+}
+```
+
+External functions:
+
+- Receive `ExecutionContext` as the first parameter
+- Receive JavaScript values (not JikiObjects) as arguments
+- Return JavaScript values that are automatically wrapped as JikiObjects
+- Are registered at interpreter initialization
+- Can be used in any expression context
+- Support variable arity with `[min, max]` ranges
 
 ## Extensibility
 

@@ -25,7 +25,7 @@ describe("JavaScript truthiness feature", () => {
             result = "falsy";
           }
         `;
-        const { frames, error } = interpret(code, features);
+        const { frames, error } = interpret(code, { languageFeatures: features });
         expect(error).toBeNull();
         expect((frames[frames.length - 1] as TestAugmentedFrame).variables.result.value).toBe("falsy");
       });
@@ -39,7 +39,7 @@ describe("JavaScript truthiness feature", () => {
             result = "falsy";
           }
         `;
-        const { frames, error } = interpret(code, features);
+        const { frames, error } = interpret(code, { languageFeatures: features });
         expect(error).toBeNull();
         expect((frames[frames.length - 1] as TestAugmentedFrame).variables.result.value).toBe("truthy");
       });
@@ -53,7 +53,7 @@ describe("JavaScript truthiness feature", () => {
             result = "falsy";
           }
         `;
-        const { frames, error } = interpret(code, features);
+        const { frames, error } = interpret(code, { languageFeatures: features });
         expect(error).toBeNull();
         expect((frames[frames.length - 1] as TestAugmentedFrame).variables.result.value).toBe("falsy");
       });
@@ -67,7 +67,7 @@ describe("JavaScript truthiness feature", () => {
             result = "falsy";
           }
         `;
-        const { frames, error } = interpret(code, features);
+        const { frames, error } = interpret(code, { languageFeatures: features });
         expect(error).toBeNull();
         expect((frames[frames.length - 1] as TestAugmentedFrame).variables.result.value).toBe("truthy");
       });
@@ -81,7 +81,7 @@ describe("JavaScript truthiness feature", () => {
             result = "falsy";
           }
         `;
-        const { frames, error } = interpret(code, features);
+        const { frames, error } = interpret(code, { languageFeatures: features });
         expect(error).toBeNull();
         expect((frames[frames.length - 1] as TestAugmentedFrame).variables.result.value).toBe("falsy");
       });
@@ -95,7 +95,7 @@ describe("JavaScript truthiness feature", () => {
             result = "falsy";
           }
         `;
-        const { frames, error } = interpret(code, features);
+        const { frames, error } = interpret(code, { languageFeatures: features });
         expect(error).toBeNull();
         expect((frames[frames.length - 1] as TestAugmentedFrame).variables.result.value).toBe("falsy");
       });
@@ -104,28 +104,28 @@ describe("JavaScript truthiness feature", () => {
     describe("logical operators", () => {
       test("AND with truthy values", () => {
         const code = `let result = 5 && "hello";`;
-        const { frames, error } = interpret(code, features);
+        const { frames, error } = interpret(code, { languageFeatures: features });
         expect(error).toBeNull();
         expect((frames[frames.length - 1] as TestAugmentedFrame).variables.result.value).toBe("hello");
       });
 
       test("AND with falsy value", () => {
         const code = `let result = 0 && "hello";`;
-        const { frames, error } = interpret(code, features);
+        const { frames, error } = interpret(code, { languageFeatures: features });
         expect(error).toBeNull();
         expect((frames[frames.length - 1] as TestAugmentedFrame).variables.result.value).toBe(0);
       });
 
       test("OR with falsy then truthy", () => {
         const code = `let result = 0 || "default";`;
-        const { frames, error } = interpret(code, features);
+        const { frames, error } = interpret(code, { languageFeatures: features });
         expect(error).toBeNull();
         expect((frames[frames.length - 1] as TestAugmentedFrame).variables.result.value).toBe("default");
       });
 
       test("OR with truthy first", () => {
         const code = `let result = "first" || "second";`;
-        const { frames, error } = interpret(code, features);
+        const { frames, error } = interpret(code, { languageFeatures: features });
         expect(error).toBeNull();
         expect((frames[frames.length - 1] as TestAugmentedFrame).variables.result.value).toBe("first");
       });
@@ -252,7 +252,7 @@ describe("JavaScript truthiness feature", () => {
   describe("explicit allowTruthiness: false", () => {
     test("truthiness disabled when explicitly set to false", () => {
       const code = "if (1) { let x = 5; }";
-      const { frames } = interpret(code, { allowTruthiness: false });
+      const { frames } = interpret(code, { languageFeatures: { allowTruthiness: false } });
       expectFrameToBeError(frames[0], code, "TruthinessDisabled");
       expect(frames[0].error!.message).toBe("TruthinessDisabled: value: number");
     });

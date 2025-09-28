@@ -16,7 +16,7 @@ describe("requireVariableInstantiation language feature", () => {
       const code = `let x = 5;`;
       const languageFeatures = { requireVariableInstantiation: true };
 
-      const result = interpret(code, languageFeatures);
+      const result = interpret(code, { languageFeatures });
       expect(result.error).toBeNull();
       expect(result.frames.length).toBeGreaterThan(0);
     });
@@ -40,7 +40,7 @@ describe("requireVariableInstantiation language feature", () => {
       const code = `let x;`;
       const languageFeatures = { requireVariableInstantiation: false };
 
-      const result = interpret(code, languageFeatures);
+      const result = interpret(code, { languageFeatures });
       expect(result.error).toBeNull();
       expect(result.frames.length).toBe(1);
 
@@ -53,7 +53,7 @@ describe("requireVariableInstantiation language feature", () => {
       const code = `let x = 5;`;
       const languageFeatures = { requireVariableInstantiation: false };
 
-      const result = interpret(code, languageFeatures);
+      const result = interpret(code, { languageFeatures });
       expect(result.error).toBeNull();
       expect(result.frames.length).toBe(1);
 
@@ -69,7 +69,7 @@ describe("requireVariableInstantiation language feature", () => {
       `;
       const languageFeatures = { requireVariableInstantiation: false };
 
-      const result = interpret(code, languageFeatures);
+      const result = interpret(code, { languageFeatures });
       expect(result.error).toBeNull();
       expect(result.frames.length).toBe(2);
 
@@ -86,7 +86,7 @@ describe("requireVariableInstantiation language feature", () => {
       `;
       const languageFeatures = { requireVariableInstantiation: false };
 
-      const result = interpret(code, languageFeatures);
+      const result = interpret(code, { languageFeatures });
       expect(result.error).toBeNull();
       expect(result.frames.length).toBe(3);
 
@@ -103,7 +103,7 @@ describe("requireVariableInstantiation language feature", () => {
       `;
       const languageFeatures = { requireVariableInstantiation: false };
 
-      const result = interpret(code, languageFeatures);
+      const result = interpret(code, { languageFeatures });
       expect(result.error).toBeNull();
       expect(result.frames.length).toBe(3);
 
@@ -121,7 +121,7 @@ describe("requireVariableInstantiation language feature", () => {
       `;
       const languageFeatures = { requireVariableInstantiation: false };
 
-      const result = interpret(code, languageFeatures);
+      const result = interpret(code, { languageFeatures });
       expect(result.error).toBeNull();
       expect(result.frames.length).toBe(2); // declaration, assignment
     });
@@ -139,7 +139,7 @@ describe("requireVariableInstantiation language feature", () => {
         allowShadowing: true,
       };
 
-      const result = interpret(code, languageFeatures);
+      const result = interpret(code, { languageFeatures });
       expect(result.error).toBeNull();
       expect(result.frames.length).toBe(3); // outer declaration, inner declaration, assignment
     });
@@ -153,7 +153,7 @@ describe("requireVariableInstantiation language feature", () => {
       `;
       const languageFeatures = { requireVariableInstantiation: false };
 
-      const result = interpret(code, languageFeatures);
+      const result = interpret(code, { languageFeatures });
       expect(result.error).toBeNull();
 
       // Find the variable declaration frame
@@ -170,7 +170,7 @@ describe("requireVariableInstantiation language feature", () => {
     //   `;
     //   const languageFeatures = { requireVariableInstantiation: false };
     //
-    //   const result = interpret(code, languageFeatures);
+    //   const result = interpret(code, { languageFeatures });
     //   expect(result.error).toBeNull();
     //
     //   const lastFrame = result.frames[result.frames.length - 1];
@@ -183,7 +183,7 @@ describe("requireVariableInstantiation language feature", () => {
       const code = `let x;`;
       const languageFeatures = { requireVariableInstantiation: false };
 
-      const result = interpret(code, languageFeatures);
+      const result = interpret(code, { languageFeatures });
       expect(result.error).toBeNull();
       expect(result.frames.length).toBeGreaterThan(0);
 
@@ -200,7 +200,7 @@ describe("requireVariableInstantiation language feature", () => {
       const code = `let x = 42;`;
       const languageFeatures = { requireVariableInstantiation: false };
 
-      const result = interpret(code, languageFeatures);
+      const result = interpret(code, { languageFeatures });
       const frame = result.frames[0];
 
       expect((frame as TestAugmentedFrame).description).toContain("Declared variable");

@@ -128,7 +128,7 @@ describe("JavaScript while loops", () => {
           i = i - 1;
         }
       `;
-      const { frames, error } = interpret(code, { allowTruthiness: false });
+      const { frames, error } = interpret(code, { languageFeatures: { allowTruthiness: false } });
       expect(error).toBeNull();
       // Should have an error frame for the non-boolean condition
       const errorFrame = frames.find(f => f.status === "ERROR");

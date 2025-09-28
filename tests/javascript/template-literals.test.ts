@@ -212,7 +212,7 @@ describe("Template Literals", () => {
           let x = 1;
         }
       `,
-        { allowTruthiness: true }
+        { languageFeatures: { allowTruthiness: true } }
       );
       expect(result.error).toBeNull();
       expect(result.frames).toHaveLength(2);
