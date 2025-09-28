@@ -12,6 +12,7 @@ export type NodeType =
   | "ArrayExpression"
   | "MemberExpression"
   | "DictionaryExpression"
+  | "CallExpression"
   // Statements
   | "ExpressionStatement"
   | "VariableDeclaration"

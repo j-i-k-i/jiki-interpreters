@@ -25,7 +25,7 @@ describe("comprehensive interpreter", () => {
 
     test("arithmetic and logical combined", () => {
       // With truthiness enabled to allow numbers in logical operations
-      const { frames, error } = interpret("(1 + 2) && true;", { allowTruthiness: true });
+      const { frames, error } = interpret("(1 + 2) && true;", { languageFeatures: { allowTruthiness: true } });
       expect(error).toBeNull();
       expect(frames).toBeArrayOfSize(1);
       expect(frames[0].status).toBe("SUCCESS");
@@ -42,7 +42,7 @@ describe("comprehensive interpreter", () => {
 
     test("string and number operations", () => {
       // JavaScript allows this - should concatenate when type coercion is enabled
-      const { frames, error } = interpret('"Count: " + (1 + 2);', { allowTypeCoercion: true });
+      const { frames, error } = interpret('"Count: " + (1 + 2);', { languageFeatures: { allowTypeCoercion: true } });
       expect(error).toBeNull();
       expect(frames).toBeArrayOfSize(1);
       expect(frames[0].status).toBe("SUCCESS");

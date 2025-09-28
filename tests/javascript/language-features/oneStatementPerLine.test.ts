@@ -51,7 +51,7 @@ describe("JavaScript oneStatementPerLine feature", () => {
         let y = 10;
         let z = x + y;
       `;
-      const { frames, error } = interpret(code, features);
+      const { frames, error } = interpret(code, { languageFeatures: features });
       expect(error).toBeNull();
       expect((frames[frames.length - 1] as TestAugmentedFrame).variables.x.value).toBe(5);
       expect((frames[frames.length - 1] as TestAugmentedFrame).variables.y.value).toBe(10);
@@ -60,7 +60,7 @@ describe("JavaScript oneStatementPerLine feature", () => {
 
     test("throws error for multiple variable declarations on same line", () => {
       const code = `let x = 5; let y = 10;`;
-      const { error } = interpret(code, features);
+      const { error } = interpret(code, { languageFeatures: features });
       expect(error).not.toBeNull();
       expect(error).toBeInstanceOf(SyntaxError);
       expect(error!.type).toBe("MultipleStatementsPerLine");
@@ -69,7 +69,7 @@ describe("JavaScript oneStatementPerLine feature", () => {
 
     test("throws error for multiple assignments on same line", () => {
       const code = `let a = 1; a = 2; a = 3;`;
-      const { error } = interpret(code, features);
+      const { error } = interpret(code, { languageFeatures: features });
       expect(error).not.toBeNull();
       expect(error).toBeInstanceOf(SyntaxError);
       expect(error!.type).toBe("MultipleStatementsPerLine");
@@ -77,7 +77,7 @@ describe("JavaScript oneStatementPerLine feature", () => {
 
     test("throws error for if and else on same line", () => {
       const code = `let result = 0; if (true) { result = 1; } else { result = 2; }`;
-      const { error } = interpret(code, features);
+      const { error } = interpret(code, { languageFeatures: features });
       expect(error).not.toBeNull();
       expect(error).toBeInstanceOf(SyntaxError);
       expect(error!.type).toBe("MultipleStatementsPerLine");
@@ -92,7 +92,7 @@ describe("JavaScript oneStatementPerLine feature", () => {
           result = 2;
         }
       `;
-      const { frames, error } = interpret(code, features);
+      const { frames, error } = interpret(code, { languageFeatures: features });
       expect(error).toBeNull();
       expect((frames[frames.length - 1] as TestAugmentedFrame).variables.result.value).toBe(1);
     });
@@ -100,7 +100,7 @@ describe("JavaScript oneStatementPerLine feature", () => {
     test("allows single statement in block on one line", () => {
       // With semicolon approach, this is allowed since there's only one semicolon
       const code = `{ let x = 1; }`;
-      const { frames, error } = interpret(code, features);
+      const { frames, error } = interpret(code, { languageFeatures: features });
       expect(error).toBeNull();
       expect(frames).not.toHaveLength(0);
     });
@@ -108,7 +108,7 @@ describe("JavaScript oneStatementPerLine feature", () => {
     test("throws error for multiple statements on same line at top level", () => {
       // Multiple statements on same line should fail at top level
       const code = `let x = 1; let y = 2;`;
-      const { error } = interpret(code, features);
+      const { error } = interpret(code, { languageFeatures: features });
       expect(error).not.toBeNull();
       expect(error).toBeInstanceOf(SyntaxError);
       expect(error!.type).toBe("MultipleStatementsPerLine");
@@ -120,7 +120,7 @@ describe("JavaScript oneStatementPerLine feature", () => {
         {
           let x = 1; }
       `;
-      const { frames, error } = interpret(code, features);
+      const { frames, error } = interpret(code, { languageFeatures: features });
       expect(error).toBeNull();
       expect(frames).not.toHaveLength(0);
     });
@@ -133,14 +133,14 @@ describe("JavaScript oneStatementPerLine feature", () => {
           let z = x + y;
         }
       `;
-      const { frames, error } = interpret(code, features);
+      const { frames, error } = interpret(code, { languageFeatures: features });
       expect(error).toBeNull();
       expect(frames).not.toHaveLength(0);
     });
 
     test("throws error for expression statement and variable declaration on same line", () => {
       const code = `5 + 3; let x = 10;`;
-      const { error } = interpret(code, features);
+      const { error } = interpret(code, { languageFeatures: features });
       expect(error).not.toBeNull();
       expect(error).toBeInstanceOf(SyntaxError);
       expect(error!.type).toBe("MultipleStatementsPerLine");
@@ -156,7 +156,7 @@ describe("JavaScript oneStatementPerLine feature", () => {
         let x = (5 + 3) * 2 - 1;
         let y = x > 10 && x < 20;
       `;
-      const { frames, error } = interpret(simpleCode, features);
+      const { frames, error } = interpret(simpleCode, { languageFeatures: features });
       expect(error).toBeNull();
       expect((frames[frames.length - 1] as TestAugmentedFrame).variables.x.value).toBe(15);
       expect((frames[frames.length - 1] as TestAugmentedFrame).variables.y.value).toBe(true);
@@ -171,7 +171,7 @@ describe("JavaScript oneStatementPerLine feature", () => {
           let inner = 2;
         }
       `;
-      const { frames, error } = interpret(code, features);
+      const { frames, error } = interpret(code, { languageFeatures: features });
       expect(error).toBeNull();
       expect(frames).not.toHaveLength(0);
       expect((frames[frames.length - 1] as TestAugmentedFrame).variables.outer.value).toBe(1);
@@ -179,7 +179,7 @@ describe("JavaScript oneStatementPerLine feature", () => {
 
     test("throws error for multiple statements separated by semicolons on same line", () => {
       const code = `let a = 1; let b = 2; let c = 3;`;
-      const { error } = interpret(code, features);
+      const { error } = interpret(code, { languageFeatures: features });
       expect(error).not.toBeNull();
       expect(error).toBeInstanceOf(SyntaxError);
       expect(error!.type).toBe("MultipleStatementsPerLine");
@@ -191,7 +191,7 @@ describe("JavaScript oneStatementPerLine feature", () => {
       // But actually, the 'let' is part of the if statement body, not a separate statement
       // Let's test a clearer case
       const clearCode = `let a = 1; if (true) { a = 2; }`;
-      const { error } = interpret(clearCode, features);
+      const { error } = interpret(clearCode, { languageFeatures: features });
       expect(error).not.toBeNull();
       expect(error).toBeInstanceOf(SyntaxError);
       expect(error!.type).toBe("MultipleStatementsPerLine");
@@ -203,7 +203,7 @@ describe("JavaScript oneStatementPerLine feature", () => {
         ;
         let y = 10;
       `;
-      const { frames, error } = interpret(code, features);
+      const { frames, error } = interpret(code, { languageFeatures: features });
       expect(error).toBeNull();
       expect((frames[frames.length - 1] as TestAugmentedFrame).variables.x.value).toBe(5);
       expect((frames[frames.length - 1] as TestAugmentedFrame).variables.y.value).toBe(10);
@@ -212,7 +212,7 @@ describe("JavaScript oneStatementPerLine feature", () => {
     test("allows for loops with semicolons in parentheses", () => {
       // For loops have semicolons inside parentheses which should be allowed
       const code = `for (let i = 0; i < 10; i = i + 1) { }`;
-      const { error } = interpret(code, features);
+      const { error } = interpret(code, { languageFeatures: features });
       expect(error).toBeNull();
     });
 
@@ -222,7 +222,7 @@ describe("JavaScript oneStatementPerLine feature", () => {
           let x = i;
         }
       `;
-      const { error } = interpret(code, features);
+      const { error } = interpret(code, { languageFeatures: features });
       expect(error).toBeNull();
     });
 
@@ -231,7 +231,7 @@ describe("JavaScript oneStatementPerLine feature", () => {
     // that will run forever during execution (not parsing)
     test.skip("allows for loops with empty sections", () => {
       const code = `for (;;) { }`;
-      const { error } = interpret(code, features);
+      const { error } = interpret(code, { languageFeatures: features });
       expect(error).toBeNull();
     });
 
@@ -239,7 +239,7 @@ describe("JavaScript oneStatementPerLine feature", () => {
       // With our semicolon-based approach, this is allowed because the semicolon
       // inside the block is followed by }, and the next statement starts fresh
       const code = `for (let i = 0; i < 10; i = i + 1) { let y = i; } let x = 5;`;
-      const { error } = interpret(code, features);
+      const { error } = interpret(code, { languageFeatures: features });
       expect(error).toBeNull();
     });
   });
@@ -247,7 +247,7 @@ describe("JavaScript oneStatementPerLine feature", () => {
   describe("explicit oneStatementPerLine: false", () => {
     test("allows multiple statements when explicitly set to false", () => {
       const code = `let a = 1; let b = 2; let c = a + b;`;
-      const { frames, error } = interpret(code, { oneStatementPerLine: false });
+      const { frames, error } = interpret(code, { languageFeatures: { oneStatementPerLine: false } });
       expect(error).toBeNull();
       expect((frames[frames.length - 1] as TestAugmentedFrame).variables.a.value).toBe(1);
       expect((frames[frames.length - 1] as TestAugmentedFrame).variables.b.value).toBe(2);

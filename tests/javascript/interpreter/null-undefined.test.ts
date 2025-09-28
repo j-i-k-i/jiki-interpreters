@@ -56,7 +56,7 @@ describe("JavaScript Interpreter: null and undefined", () => {
         let b = undefined;
         let looseEqual = a == b;
       `;
-      const result = interpret(code, { enforceStrictEquality: false });
+      const result = interpret(code, { languageFeatures: { enforceStrictEquality: false } });
       expect(result.error).toBe(null);
       expect(result.success).toBe(true);
       const lastFrame = result.frames[result.frames.length - 1];
@@ -101,7 +101,7 @@ describe("JavaScript Interpreter: null and undefined", () => {
 
     test("uninitialized variable with requireVariableInstantiation disabled", () => {
       const code = "let x;";
-      const result = interpret(code, { requireVariableInstantiation: false });
+      const result = interpret(code, { languageFeatures: { requireVariableInstantiation: false } });
       expect(result.error).toBe(null);
       expect(result.success).toBe(true);
       expect(result.frames).toHaveLength(1);
@@ -118,7 +118,7 @@ describe("JavaScript Interpreter: null and undefined", () => {
           result = true;
         }
       `;
-      const result = interpret(code, { allowTruthiness: true });
+      const result = interpret(code, { languageFeatures: { allowTruthiness: true } });
       expect(result.error).toBe(null);
       expect(result.success).toBe(true);
       expect((result.frames[result.frames.length - 1] as any).variables.result.value).toBe(true);
@@ -132,7 +132,7 @@ describe("JavaScript Interpreter: null and undefined", () => {
           result = true;
         }
       `;
-      const result = interpret(code, { allowTruthiness: true });
+      const result = interpret(code, { languageFeatures: { allowTruthiness: true } });
       expect(result.error).toBe(null);
       expect(result.success).toBe(true);
       expect((result.frames[result.frames.length - 1] as any).variables.result.value).toBe(true);
@@ -145,7 +145,7 @@ describe("JavaScript Interpreter: null and undefined", () => {
           let y = 1;
         }
       `;
-      const result = interpret(code, { allowTruthiness: false });
+      const result = interpret(code, { languageFeatures: { allowTruthiness: false } });
       expect(result.error).toBe(null);
       expect(result.success).toBe(true);
       expect(result.frames[result.frames.length - 1].status).toBe("ERROR");
@@ -159,7 +159,7 @@ describe("JavaScript Interpreter: null and undefined", () => {
           let y = 1;
         }
       `;
-      const result = interpret(code, { allowTruthiness: false });
+      const result = interpret(code, { languageFeatures: { allowTruthiness: false } });
       expect(result.error).toBe(null);
       expect(result.success).toBe(true);
       expect(result.frames[result.frames.length - 1].status).toBe("ERROR");
@@ -175,7 +175,7 @@ describe("JavaScript Interpreter: null and undefined", () => {
         let c = 5 || null;
         let d = 5 && null;
       `;
-      const result = interpret(code, { allowTruthiness: true });
+      const result = interpret(code, { languageFeatures: { allowTruthiness: true } });
       expect(result.error).toBe(null);
       expect(result.success).toBe(true);
       const lastFrame = result.frames[result.frames.length - 1];
@@ -192,7 +192,7 @@ describe("JavaScript Interpreter: null and undefined", () => {
         let c = 10 || undefined;
         let d = 10 && undefined;
       `;
-      const result = interpret(code, { allowTruthiness: true });
+      const result = interpret(code, { languageFeatures: { allowTruthiness: true } });
       expect(result.error).toBe(null);
       expect(result.success).toBe(true);
       const lastFrame = result.frames[result.frames.length - 1];
@@ -206,7 +206,7 @@ describe("JavaScript Interpreter: null and undefined", () => {
   describe("null and undefined type coercion", () => {
     test("null + number with type coercion enabled", () => {
       const code = "let x = null + 5;";
-      const result = interpret(code, { allowTypeCoercion: true });
+      const result = interpret(code, { languageFeatures: { allowTypeCoercion: true } });
       expect(result.error).toBe(null);
       expect(result.success).toBe(true);
       expect((result.frames[0] as any).variables.x.value).toBe(5); // null coerces to 0
@@ -214,7 +214,7 @@ describe("JavaScript Interpreter: null and undefined", () => {
 
     test("null + number with type coercion disabled", () => {
       const code = "let x = null + 5;";
-      const result = interpret(code, { allowTypeCoercion: false });
+      const result = interpret(code, { languageFeatures: { allowTypeCoercion: false } });
       expect(result.error).toBe(null);
       expect(result.success).toBe(true);
       expect(result.frames[0].status).toBe("ERROR");
@@ -223,7 +223,7 @@ describe("JavaScript Interpreter: null and undefined", () => {
 
     test("undefined + number with type coercion enabled", () => {
       const code = "let x = undefined + 5;";
-      const result = interpret(code, { allowTypeCoercion: true });
+      const result = interpret(code, { languageFeatures: { allowTypeCoercion: true } });
       expect(result.error).toBe(null);
       expect(result.success).toBe(true);
       expect((result.frames[0] as any).variables.x.toString()).toBe("NaN");
@@ -231,7 +231,7 @@ describe("JavaScript Interpreter: null and undefined", () => {
 
     test("undefined + number with type coercion disabled", () => {
       const code = "let x = undefined + 5;";
-      const result = interpret(code, { allowTypeCoercion: false });
+      const result = interpret(code, { languageFeatures: { allowTypeCoercion: false } });
       expect(result.error).toBe(null);
       expect(result.success).toBe(true);
       expect(result.frames[0].status).toBe("ERROR");
@@ -240,7 +240,7 @@ describe("JavaScript Interpreter: null and undefined", () => {
 
     test("null + string with type coercion enabled", () => {
       const code = 'let x = null + "test";';
-      const result = interpret(code, { allowTypeCoercion: true });
+      const result = interpret(code, { languageFeatures: { allowTypeCoercion: true } });
       expect(result.error).toBe(null);
       expect(result.success).toBe(true);
       expect((result.frames[0] as any).variables.x.value).toBe("nulltest");
@@ -248,7 +248,7 @@ describe("JavaScript Interpreter: null and undefined", () => {
 
     test("undefined + string with type coercion enabled", () => {
       const code = 'let x = undefined + "test";';
-      const result = interpret(code, { allowTypeCoercion: true });
+      const result = interpret(code, { languageFeatures: { allowTypeCoercion: true } });
       expect(result.error).toBe(null);
       expect(result.success).toBe(true);
       expect((result.frames[0] as any).variables.x.value).toBe("undefinedtest");

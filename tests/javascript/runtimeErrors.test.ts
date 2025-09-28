@@ -237,7 +237,7 @@ describe("Runtime Errors", () => {
     describe("allowShadowing: true", () => {
       test("simple variable shadowing allowed in block", () => {
         const code = "let x = 5; { let x = 10; x; }";
-        const { frames } = interpret(code, { allowShadowing: true });
+        const { frames } = interpret(code, { languageFeatures: { allowShadowing: true } });
         expect(frames).toBeArrayOfSize(3);
         expect(frames[0].status).toBe("SUCCESS"); // let x = 5
         expect(frames[1].status).toBe("SUCCESS"); // let x = 10 (shadowing allowed)
@@ -249,7 +249,7 @@ describe("Runtime Errors", () => {
 
       test("nested shadowing allowed", () => {
         const code = "let x = 1; { let x = 2; { let x = 3; x; } x; } x;";
-        const { frames } = interpret(code, { allowShadowing: true });
+        const { frames } = interpret(code, { languageFeatures: { allowShadowing: true } });
         expect(frames).toBeArrayOfSize(6);
         expect(frames[0].status).toBe("SUCCESS"); // let x = 1
         expect(frames[1].status).toBe("SUCCESS"); // let x = 2
@@ -266,7 +266,7 @@ describe("Runtime Errors", () => {
 
       test("variable state restoration after shadowed block", () => {
         const code = "let x = 5; { let x = 10; } x;";
-        const { frames } = interpret(code, { allowShadowing: true });
+        const { frames } = interpret(code, { languageFeatures: { allowShadowing: true } });
         expect(frames).toBeArrayOfSize(3);
         expect(frames[0].status).toBe("SUCCESS"); // let x = 5
         expect(frames[1].status).toBe("SUCCESS"); // let x = 10 (shadowing)
@@ -280,7 +280,7 @@ describe("Runtime Errors", () => {
 
       test("assignment to shadowed variable doesn't affect outer", () => {
         const code = "let x = 5; { let x = 10; x = 20; } x;";
-        const { frames } = interpret(code, { allowShadowing: true });
+        const { frames } = interpret(code, { languageFeatures: { allowShadowing: true } });
         expect(frames).toBeArrayOfSize(4);
         expect(frames[0].status).toBe("SUCCESS"); // let x = 5
         expect(frames[1].status).toBe("SUCCESS"); // let x = 10
@@ -307,7 +307,7 @@ describe("Runtime Errors", () => {
 
       test("explicit allowShadowing false", () => {
         const code = "let x = 5; { let x = 10; }";
-        const { frames } = interpret(code, { allowShadowing: false });
+        const { frames } = interpret(code, { languageFeatures: { allowShadowing: false } });
         expect(frames).toBeArrayOfSize(2); // Execution stops after error
         expect(frames[0].status).toBe("SUCCESS"); // let x = 5
         expectFrameToBeError(frames[1], "let x = 10;", "ShadowingDisabled"); // Should error
@@ -368,7 +368,7 @@ describe("Runtime Errors", () => {
 
     test("shadowing allowed in if body", () => {
       const code = "let x = 5; if (true) { let x = 10; x; }";
-      const { frames } = interpret(code, { allowShadowing: true });
+      const { frames } = interpret(code, { languageFeatures: { allowShadowing: true } });
       expect(frames).toBeArrayOfSize(4);
       expect(frames[0].status).toBe("SUCCESS"); // let x = 5
       expect(frames[1].status).toBe("SUCCESS"); // if condition

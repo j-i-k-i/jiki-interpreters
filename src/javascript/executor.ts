@@ -13,6 +13,7 @@ import {
   ArrayExpression,
   MemberExpression,
   DictionaryExpression,
+  CallExpression,
 } from "./expression";
 import { Location } from "../shared/location";
 import type { Statement } from "./statement";
@@ -28,7 +29,7 @@ import type { EvaluationResult } from "./evaluation-result";
 import type { JikiObject } from "./jikiObjects";
 import { translate } from "./translator";
 import { TIME_SCALE_FACTOR, type Frame, type FrameExecutionStatus } from "../shared/frames";
-import { type ExecutionContext as SharedExecutionContext } from "../shared/interfaces";
+import { type ExecutionContext as SharedExecutionContext, type ExternalFunction } from "../shared/interfaces";
 import { createBaseExecutionContext } from "../shared/executionContext";
 import { describeFrame } from "./frameDescribers";
 import cloneDeep from "lodash.clonedeep";
@@ -51,6 +52,7 @@ import { executeTemplateLiteralExpression } from "./executor/executeTemplateLite
 import { executeArrayExpression } from "./executor/executeArrayExpression";
 import { executeMemberExpression } from "./executor/executeMemberExpression";
 import { executeDictionaryExpression } from "./executor/executeDictionaryExpression";
+import { executeCallExpression } from "./executor/executeCallExpression";
 
 // Execution context for JavaScript stdlib
 export type ExecutionContext = SharedExecutionContext & {
@@ -71,7 +73,9 @@ export type RuntimeErrorType =
   | "TypeError"
   | "PropertyNotFound"
   | "ArgumentError"
-  | "NodeNotAllowed";
+  | "NodeNotAllowed"
+  | "FunctionNotFound"
+  | "InvalidNumberOfArguments";
 
 export class RuntimeError extends Error {
   public category: string = "RuntimeError";
@@ -101,10 +105,12 @@ export class Executor {
   private readonly timePerFrame: number = 1;
   public environment: Environment;
   public languageFeatures: LanguageFeatures;
+  private readonly externalFunctions: Map<string, ExternalFunction>;
 
   constructor(
     private readonly sourceCode: string,
-    languageFeatures?: LanguageFeatures
+    languageFeatures?: LanguageFeatures,
+    externalFunctions?: ExternalFunction[]
   ) {
     this.environment = new Environment();
     this.languageFeatures = {
@@ -113,6 +119,14 @@ export class Executor {
       enforceStrictEquality: true, // Default to true (strict equality required)
       ...languageFeatures,
     };
+
+    // Store external functions in a map for fast lookup
+    this.externalFunctions = new Map();
+    if (externalFunctions) {
+      for (const func of externalFunctions) {
+        this.externalFunctions.set(func.name, func);
+      }
+    }
   }
 
   private assertNodeAllowed(node: Statement | Expression): void {
@@ -251,6 +265,10 @@ export class Executor {
       return executeDictionaryExpression(this, expression);
     }
 
+    if (expression instanceof CallExpression) {
+      return executeCallExpression(this, expression);
+    }
+
     throw new RuntimeError(
       `Unsupported expression type: ${expression.type}`,
       expression.location,
@@ -351,6 +369,10 @@ export class Executor {
   public error(type: RuntimeErrorType, location: Location, context?: any): never {
     const message = translate(`error.runtime.${type}`, context);
     throw new RuntimeError(message, location, type, context);
+  }
+
+  public getExternalFunction(name: string): ExternalFunction | undefined {
+    return this.externalFunctions.get(name);
   }
 
   // Get execution context for stdlib functions

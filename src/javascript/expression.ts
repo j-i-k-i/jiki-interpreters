@@ -149,3 +149,16 @@ export class DictionaryExpression extends Expression {
     return Array.from(this.elements.values());
   }
 }
+
+export class CallExpression extends Expression {
+  constructor(
+    public callee: Expression,
+    public args: Expression[],
+    public location: Location
+  ) {
+    super("CallExpression");
+  }
+  public children() {
+    return [this.callee, ...this.args];
+  }
+}
