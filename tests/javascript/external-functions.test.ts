@@ -221,4 +221,58 @@ describe("JavaScript External Functions", () => {
     expect(result.error).toBeNull();
     expect(result.frames.length).toBeGreaterThan(0);
   });
+
+  describe("Error handling", () => {
+    it("should catch and report errors thrown by external functions", () => {
+      const throwingFunc: ExternalFunction = {
+        name: "throwError",
+        func: (context: ExecutionContext) => {
+          throw new Error("Something went wrong");
+        },
+        description: "Function that throws an error",
+        arity: 0,
+      };
+
+      const result = interpret("throwError();", { externalFunctions: [throwingFunc] });
+
+      expect(result.error).toBeNull(); // Runtime errors don't become parse errors
+      expect(result.success).toBe(false);
+      expect(result.frames).toHaveLength(1);
+      expect(result.frames[0].status).toBe("ERROR");
+      expect((result.frames[0] as any).error.type).toBe("FunctionExecutionError");
+      expect((result.frames[0] as any).error.message).toBe(
+        "FunctionExecutionError: function: throwError: message: Something went wrong"
+      );
+    });
+
+    it("should handle errors with arguments", () => {
+      const throwingFunc: ExternalFunction = {
+        name: "riskyOperation",
+        func: (context: ExecutionContext, value: number) => {
+          if (value < 0) {
+            throw new Error("Negative values not allowed");
+          }
+          return value * 2;
+        },
+        description: "Function that might throw",
+        arity: 1,
+      };
+
+      // Should work with valid input
+      let result = interpret("riskyOperation(5);", { externalFunctions: [throwingFunc] });
+      expect(result.error).toBeNull();
+      expect(result.success).toBe(true);
+      expect((result.frames[0] as any).result?.jikiObject?.value).toBe(10);
+
+      // Should throw with invalid input
+      result = interpret("riskyOperation(-5);", { externalFunctions: [throwingFunc] });
+      expect(result.error).toBeNull();
+      expect(result.success).toBe(false);
+      expect(result.frames[0].status).toBe("ERROR");
+      expect((result.frames[0] as any).error.type).toBe("FunctionExecutionError");
+      expect((result.frames[0] as any).error.message).toBe(
+        "FunctionExecutionError: function: riskyOperation: message: Negative values not allowed"
+      );
+    });
+  });
 });

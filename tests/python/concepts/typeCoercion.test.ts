@@ -1,12 +1,7 @@
-import { describe, test, expect, beforeEach } from "vitest";
+import { describe, test, expect } from "vitest";
 import { interpret } from "../../../src/python/interpreter";
-import { changeLanguage } from "../../../src/python/translator";
 
 describe("Python Type Coercion", () => {
-  beforeEach(() => {
-    changeLanguage("system");
-  });
-
   describe("with allowTypeCoercion disabled (default)", () => {
     const languageFeatures = {
       languageFeatures: {

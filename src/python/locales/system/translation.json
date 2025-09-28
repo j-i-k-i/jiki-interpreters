@@ -16,6 +16,7 @@
       "UnterminatedString": "UnterminatedString"
     },
     "runtime": {
+      "FunctionExecutionError": "FunctionExecutionError: function: {{function}}: message: {{message}}",
       "InvalidBinaryExpression": "InvalidBinaryExpression",
       "InvalidUnaryExpression": "InvalidUnaryExpression",
       "TruthinessDisabled": "TruthinessDisabled: value: {{value}}",

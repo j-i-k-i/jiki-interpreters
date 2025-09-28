@@ -1,7 +1,6 @@
 import { scan } from "@javascript/scanner";
 import { type TokenType } from "@javascript/token";
 import { interpret } from "@javascript/interpreter";
-import { changeLanguage } from "@javascript/translator";
 
 describe("single-character", () => {
   test.each([
@@ -499,9 +498,6 @@ describe.skip("synthetic", () => {
 // When implementing a token, move it from this section to the appropriate section above
 // and uncomment it in the test arrays.
 describe("JavaScript - Unimplemented Tokens", () => {
-  // Set language to system for consistent error messages
-  changeLanguage("system");
-
   describe("Unimplemented Keywords", () => {
     const unimplementedKeywords = [
       { token: "break", type: "BREAK" },

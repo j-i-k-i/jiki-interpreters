@@ -283,7 +283,7 @@ describe("Object Property Writing", () => {
         num.property = "value";
       `;
       const result = interpret(code);
-      expect(result.success).toBe(true);
+      expect(result.success).toBe(false);
       expect(result.error).toBe(null);
       expect(result.frames).toHaveLength(2);
 
@@ -298,7 +298,7 @@ describe("Object Property Writing", () => {
         str.property = "value";
       `;
       const result = interpret(code);
-      expect(result.success).toBe(true);
+      expect(result.success).toBe(false);
       expect(result.error).toBe(null);
       expect(result.frames).toHaveLength(2);
 
@@ -313,7 +313,7 @@ describe("Object Property Writing", () => {
         obj.property = "value";
       `;
       const result = interpret(code);
-      expect(result.success).toBe(true);
+      expect(result.success).toBe(false);
       expect(result.error).toBe(null);
       expect(result.frames).toHaveLength(2);
 
@@ -328,7 +328,7 @@ describe("Object Property Writing", () => {
         obj.property = "value";
       `;
       const result = interpret(code, { languageFeatures: { requireVariableInstantiation: false } });
-      expect(result.success).toBe(true);
+      expect(result.success).toBe(false);
       expect(result.error).toBe(null);
       expect(result.frames).toHaveLength(2);
 
