@@ -18,19 +18,7 @@ export interface InterpretResult {
   success: boolean;
 }
 
-export function interpret(
-  sourceCode: string,
-  contextOrFeatures: EvaluationContext | LanguageFeatures = {}
-): InterpretResult {
-  // Support both old and new signatures for backward compatibility
-  let context: EvaluationContext;
-  if ("languageFeatures" in contextOrFeatures || "externalFunctions" in contextOrFeatures) {
-    context = contextOrFeatures;
-  } else {
-    // Old style: just language features
-    context = { languageFeatures: contextOrFeatures as LanguageFeatures };
-  }
-
+export function interpret(sourceCode: string, context: EvaluationContext = {}): InterpretResult {
   try {
     // Parse the source code (compilation step)
     const statements = parse(sourceCode, context);

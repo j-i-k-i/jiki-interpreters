@@ -34,7 +34,7 @@ export class Parser {
 
   constructor(
     private readonly fileName: string,
-    context: EvaluationContext
+    context: EvaluationContext = {}
   ) {
     this.scanner = new Scanner(fileName);
     this.languageFeatures = context.languageFeatures || {};

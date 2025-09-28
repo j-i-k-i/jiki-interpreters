@@ -13,7 +13,7 @@ function expectFrameToBeError(frame: Frame, code: string, type: RuntimeErrorType
 
 describe("Python truthiness feature", () => {
   describe("allowTruthiness: true", () => {
-    const features = { allowTruthiness: true };
+    const features = { languageFeatures: { allowTruthiness: true } };
 
     describe("not operator", () => {
       test("numbers - 0 is falsy", () => {
@@ -230,7 +230,7 @@ result = (a and not b) or (b and not a)`;
   describe("explicit allowTruthiness: false", () => {
     test("truthiness disabled when explicitly set to false", () => {
       const code = "result = 1 and 2";
-      const { frames } = interpret(code, { allowTruthiness: false });
+      const { frames } = interpret(code, { languageFeatures: { allowTruthiness: false } });
       expectFrameToBeError(frames[0], code, "TruthinessDisabled");
       expect(frames[0].error!.message).toBe("TruthinessDisabled: value: number");
     });

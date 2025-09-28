@@ -20,18 +20,9 @@ export interface InterpretResult {
 
 export function interpret(
   sourceCode: string,
-  contextOrFeatures: EvaluationContext | LanguageFeatures = {},
+  context: EvaluationContext = {},
   fileName: string = "python-script"
 ): InterpretResult {
-  // Support both old and new signatures for backward compatibility
-  let context: EvaluationContext;
-  if ("languageFeatures" in contextOrFeatures || "externalFunctions" in contextOrFeatures) {
-    context = contextOrFeatures;
-  } else {
-    // Old style: just language features
-    context = { languageFeatures: contextOrFeatures as LanguageFeatures };
-  }
-
   try {
     // Parse the source code (compilation step)
     const parser = new Parser(fileName, context);

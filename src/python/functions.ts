@@ -7,7 +7,7 @@ export interface Callable {
 }
 
 export function isCallable(obj: any): obj is Callable {
-  return obj instanceof Object && "call" in obj;
+  return obj instanceof Object && "arity" in obj && "call" in obj;
 }
 
 export class PyCallable extends JikiObject {

@@ -36,7 +36,7 @@ export class Parser {
   private tokens: Token[] = [];
   private readonly languageFeatures: LanguageFeatures;
 
-  constructor(context: EvaluationContext) {
+  constructor(context: EvaluationContext = {}) {
     this.scanner = new Scanner();
     this.languageFeatures = context.languageFeatures || {};
   }

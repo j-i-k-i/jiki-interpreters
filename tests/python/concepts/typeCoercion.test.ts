@@ -9,7 +9,9 @@ describe("Python Type Coercion", () => {
 
   describe("with allowTypeCoercion disabled (default)", () => {
     const languageFeatures = {
-      allowTypeCoercion: false,
+      languageFeatures: {
+        allowTypeCoercion: false,
+      },
     };
 
     describe("arithmetic operations", () => {
@@ -289,7 +291,9 @@ s + 42`,
 
   describe("with allowTypeCoercion enabled", () => {
     const languageFeatures = {
-      allowTypeCoercion: true,
+      languageFeatures: {
+        allowTypeCoercion: true,
+      },
     };
 
     describe("arithmetic operations with coercion", () => {
