@@ -1,14 +1,10 @@
 import { describe, expect, it } from "vitest";
 import { interpret } from "../../src/python/interpreter";
-import { changeLanguage } from "../../src/python/translator";
 
 // UNIMPLEMENTED TOKENS
 // When implementing a token, move it from this section to the appropriate implemented section
 // and create proper scanner tests for it.
 describe("Python - Unimplemented Tokens", () => {
-  // Set language to system for consistent error messages
-  changeLanguage("system");
-
   describe("Unimplemented Keywords", () => {
     const unimplementedKeywords = [
       { token: "as", type: "AS" },

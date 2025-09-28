@@ -30,16 +30,17 @@
       "UnterminatedString": "Did you forget to add end quote?"
     },
     "runtime": {
+      "ArgumentError": "ArgumentError: {{message}}",
+      "FunctionExecutionError": "FunctionExecutionError: function: {{function}}: message: {{message}}",
+      "IndexOutOfRange": "IndexOutOfRange: index: {{index}}: length: {{length}}",
       "InvalidBinaryExpression": "InvalidBinaryExpression",
       "InvalidUnaryExpression": "InvalidUnaryExpression",
-      "UnsupportedOperation": "UnsupportedOperation",
-      "VariableNotDeclared": "VariableNotDeclared: name: {{name}}",
+      "PropertyNotFound": "PropertyNotFound: property: {{property}}",
       "ShadowingDisabled": "ShadowingDisabled: name: {{name}}",
       "TruthinessDisabled": "TruthinessDisabled: value: {{value}}",
-      "IndexOutOfRange": "IndexOutOfRange: index: {{index}}: length: {{length}}",
       "TypeError": "TypeError: {{message}}",
-      "PropertyNotFound": "PropertyNotFound: property: {{property}}",
-      "ArgumentError": "ArgumentError: {{message}}"
+      "UnsupportedOperation": "UnsupportedOperation",
+      "VariableNotDeclared": "VariableNotDeclared: name: {{name}}"
     }
   }
 }

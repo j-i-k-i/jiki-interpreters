@@ -27,7 +27,7 @@ Source Code → Scanner → Parser → Executor → Frames → UI
 type InterpretResult = {
   frames: Frame[];
   error: SyntaxError | null; // ONLY parse errors
-  success: boolean;
+  success: boolean; // false if any error frames exist
 };
 ```
 
@@ -35,7 +35,7 @@ type InterpretResult = {
 
 All executors MUST implement:
 
-- `execute(statements)` - main execution entry point
+- `execute(statements)` - main execution entry point, returns `{ frames, error: null, success: !hasErrorFrames }`
 - `addFrame()`, `addSuccessFrame()`, `addErrorFrame()` - frame management
 - `executeFrame()` - execution wrapper for consistent frame generation
 
@@ -126,14 +126,46 @@ Shared frame interface and types used by all interpreters for consistent UI inte
 
 Shared `Location` and `Span` classes for consistent location tracking across all parsers.
 
+## External Functions Support
+
+All interpreters support external functions through a consistent pattern:
+
+### Language-Specific Callable Classes
+
+Each language implements its own Callable class extending JikiObject:
+
+- JikiScript: Built-in callable support
+- JavaScript: `JSCallable` class
+- Python: `PyCallable` class
+
+### Registration Pattern
+
+External functions are registered as callable objects in the environment during executor initialization:
+
+```typescript
+if (context.externalFunctions) {
+  for (const func of context.externalFunctions) {
+    const callable = new PyCallable(func.name, func.arity, func.func);
+    this.environment.define(func.name, callable);
+  }
+}
+```
+
+### Error Handling
+
+When external functions throw errors, they're caught and converted to `FunctionExecutionError` runtime errors.
+
 ## Testing Requirements
 
 All interpreters MUST have consistent test categories:
 
-- Runtime Error Tests: Use system language, expect error frames
+- Runtime Error Tests: Expect error frames with `success: false`
 - Syntax Error Tests: Expect returned errors with empty frames
 - Concept Tests: Feature-specific testing
 - Integration Tests: End-to-end interpretation
+- External Function Tests: Including error scenarios
+
+**IMPORTANT**: Global test setup (`tests/setup.ts`) sets all interpreters to use "system" language. Individual test files should NOT call `changeLanguage("system")`.
 
 ## UI Compatibility Requirements
 

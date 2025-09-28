@@ -1,6 +1,5 @@
 import { test, expect, describe } from "vitest";
 import { interpret } from "../../src/javascript/interpreter";
-import { changeLanguage } from "../../src/javascript/translator";
 
 // Type for frames augmented in test environment
 interface TestFrame {
@@ -289,14 +288,13 @@ describe("JavaScript Arrays", () => {
     });
 
     test("index out of bounds - negative", async () => {
-      await changeLanguage("system");
       const code = `
         let arr = [10, 20, 30];
         let value = arr[-1];
       `;
       const result = interpret(code);
 
-      expect(result.success).toBe(true); // Runtime errors don't affect success
+      expect(result.success).toBe(false); // Runtime errors don't affect success
       expect(result.frames.length).toBe(2);
 
       const frame = result.frames[1] as TestFrame;
@@ -305,14 +303,13 @@ describe("JavaScript Arrays", () => {
     });
 
     test("non-numeric index", async () => {
-      await changeLanguage("system");
       const code = `
         let arr = [10, 20, 30];
         let value = arr["hello"];
       `;
       const result = interpret(code);
 
-      expect(result.success).toBe(true); // Runtime errors don't affect success
+      expect(result.success).toBe(false); // Runtime errors don't affect success
       expect(result.frames.length).toBe(2);
 
       const frame = result.frames[1] as TestFrame;
@@ -321,14 +318,13 @@ describe("JavaScript Arrays", () => {
     });
 
     test("non-integer index", async () => {
-      await changeLanguage("system");
       const code = `
         let arr = [10, 20, 30];
         let value = arr[1.5];
       `;
       const result = interpret(code);
 
-      expect(result.success).toBe(true); // Runtime errors don't affect success
+      expect(result.success).toBe(false); // Runtime errors don't affect success
       expect(result.frames.length).toBe(2);
 
       const frame = result.frames[1] as TestFrame;
@@ -337,14 +333,13 @@ describe("JavaScript Arrays", () => {
     });
 
     test("accessing non-array", async () => {
-      await changeLanguage("system");
       const code = `
         let notArray = 42;
         let value = notArray[0];
       `;
       const result = interpret(code);
 
-      expect(result.success).toBe(true); // Runtime errors don't affect success
+      expect(result.success).toBe(false); // Runtime errors don't affect success
       expect(result.frames.length).toBe(2);
 
       const frame = result.frames[1] as TestFrame;
@@ -448,14 +443,13 @@ describe("JavaScript Arrays", () => {
     });
 
     test("error in chained access - non-array in chain", async () => {
-      await changeLanguage("system");
       const code = `
         let matrix = [[1, 2], [3, 4]];
         let value = matrix[0][1][0];
       `;
       const result = interpret(code);
 
-      expect(result.success).toBe(true);
+      expect(result.success).toBe(false);
       expect(result.frames.length).toBe(2);
 
       const frame = result.frames[1] as TestFrame;

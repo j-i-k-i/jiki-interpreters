@@ -1,10 +1,13 @@
 import type { Executor } from "../executor";
 import { RuntimeError } from "../executor";
 import type { IdentifierExpression } from "../expression";
-import type { EvaluationResult } from "../evaluation-result";
+import type { EvaluationResultIdentifierExpression } from "../evaluation-result";
 import { translate } from "../translator";
 
-export function executeIdentifierExpression(executor: Executor, expression: IdentifierExpression): EvaluationResult {
+export function executeIdentifierExpression(
+  executor: Executor,
+  expression: IdentifierExpression
+): EvaluationResultIdentifierExpression {
   const value = executor.environment.get(expression.name.lexeme);
 
   if (value === undefined) {
@@ -20,5 +23,5 @@ export function executeIdentifierExpression(executor: Executor, expression: Iden
     name: expression.name.lexeme,
     jikiObject: value,
     immutableJikiObject: value.clone(),
-  } as any;
+  };
 }

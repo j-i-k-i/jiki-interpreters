@@ -9,6 +9,7 @@ import {
   IdentifierExpression,
   ListExpression,
   SubscriptExpression,
+  CallExpression,
 } from "./expression";
 import { Location } from "../shared/location";
 import type { Statement } from "./statement";
@@ -27,9 +28,11 @@ import { TIME_SCALE_FACTOR, type Frame, type FrameExecutionStatus, type TestAugm
 import { type ExecutionContext as SharedExecutionContext } from "../shared/interfaces";
 import { createBaseExecutionContext } from "../shared/executionContext";
 import type { LanguageFeatures, NodeType } from "./interfaces";
+import type { EvaluationContext } from "./interpreter";
 import cloneDeep from "lodash.clonedeep";
 import type { PythonFrame } from "./frameDescribers";
 import { describeFrame } from "./frameDescribers";
+import { PyCallable } from "./functions";
 
 // Import individual executors
 import { executeLiteralExpression } from "./executor/executeLiteralExpression";
@@ -46,6 +49,7 @@ import { executeSubscriptExpression } from "./executor/executeSubscriptExpressio
 import { executeForInStatement } from "./executor/executeForInStatement";
 import { executeBreakStatement } from "./executor/executeBreakStatement";
 import { executeContinueStatement } from "./executor/executeContinueStatement";
+import { executeCallExpression } from "./executor/executeCallExpression";
 
 // Execution context for Python stdlib (future use)
 export type ExecutionContext = SharedExecutionContext & {
@@ -61,7 +65,10 @@ export type RuntimeErrorType =
   | "TruthinessDisabled"
   | "TypeCoercionNotAllowed"
   | "IndexError"
-  | "NodeNotAllowed";
+  | "NodeNotAllowed"
+  | "FunctionNotFound"
+  | "InvalidNumberOfArguments"
+  | "FunctionExecutionError";
 
 export class RuntimeError extends Error {
   public category: string = "RuntimeError";
@@ -93,14 +100,22 @@ export class Executor {
 
   constructor(
     private readonly sourceCode: string,
-    languageFeatures?: LanguageFeatures
+    context: EvaluationContext
   ) {
     this.environment = new Environment();
     this.languageFeatures = {
       allowTruthiness: false, // Default to false for educational purposes
       allowTypeCoercion: false,
-      ...languageFeatures,
+      ...context.languageFeatures,
     };
+
+    // Register external functions as PyCallable objects in the environment
+    if (context.externalFunctions) {
+      for (const func of context.externalFunctions) {
+        const callable = new PyCallable(func.name, func.arity, func.func);
+        this.environment.define(func.name, callable);
+      }
+    }
   }
 
   private assertNodeAllowed(node: Statement | Expression): void {
@@ -224,6 +239,10 @@ export class Executor {
 
     if (expression instanceof SubscriptExpression) {
       return executeSubscriptExpression(this, expression);
+    }
+
+    if (expression instanceof CallExpression) {
+      return executeCallExpression(this, expression);
     }
 
     throw new RuntimeError(`Unknown expression type: ${expression.type}`, expression.location, "UnsupportedOperation");

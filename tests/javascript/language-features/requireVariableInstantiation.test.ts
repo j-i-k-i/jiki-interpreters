@@ -9,7 +9,7 @@ describe("requireVariableInstantiation language feature", () => {
       const code = `let x;`;
       const languageFeatures = { requireVariableInstantiation: true };
 
-      expect(() => parse(code, languageFeatures)).toThrow("MissingInitializerInVariableDeclaration");
+      expect(() => parse(code, { languageFeatures })).toThrow("MissingInitializerInVariableDeclaration");
     });
 
     test("should allow initialized variable declaration", () => {

@@ -2,9 +2,10 @@ import type { Executor } from "../executor";
 import { RuntimeError } from "../executor";
 import type { CallExpression } from "../expression";
 import type { EvaluationResult, EvaluationResultCallExpression } from "../evaluation-result";
-import { createJSObject, type JikiObject } from "../jikiObjects";
+import { createPyObject } from "../jikiObjects";
+import type { JikiObject } from "../jikiObjects";
 import type { Arity } from "../../shared/interfaces";
-import { isCallable, type JSCallable } from "../functions";
+import { isCallable, type PyCallable } from "../functions";
 
 export function executeCallExpression(executor: Executor, expression: CallExpression): EvaluationResultCallExpression {
   // Evaluate the callee
@@ -18,8 +19,8 @@ export function executeCallExpression(executor: Executor, expression: CallExpres
     });
   }
 
-  // Type assertion since we know it's a JSCallable from our implementation
-  const callable = calleeValue as JSCallable;
+  // Type assertion since we know it's a PyCallable from our implementation
+  const callable = calleeValue as PyCallable;
 
   // Evaluate arguments and store both the results and JikiObjects
   const argResults: EvaluationResult[] = [];
@@ -41,13 +42,13 @@ export function executeCallExpression(executor: Executor, expression: CallExpres
     const argValues = argJikiObjects.map(arg => arg.value);
     const result = callable.call(executionContext, argValues);
 
-    // Convert the result back to a JikiObject
-    const jikiResult = createJSObject(result);
+    // Convert the result back to a PyObject
+    const pyResult = createPyObject(result);
 
     return {
       type: "CallExpression",
-      jikiObject: jikiResult,
-      immutableJikiObject: jikiResult.clone(),
+      jikiObject: pyResult,
+      immutableJikiObject: pyResult.clone(),
       functionName: callable.name,
       args: argResults, // Store full evaluation results for describers
     };

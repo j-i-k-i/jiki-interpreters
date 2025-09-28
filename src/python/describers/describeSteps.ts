@@ -4,6 +4,7 @@ import type { DescriptionContext } from "../../shared/frames";
 import { describeBinaryExpression } from "./describeBinaryExpression";
 import { describeUnaryExpression } from "./describeUnaryExpression";
 import { describeSubscriptExpression } from "./describeSubscriptExpression";
+import { describeCallExpression } from "./describeCallExpression";
 import { formatPyObject } from "./helpers";
 
 export function describeExpression(
@@ -20,6 +21,9 @@ export function describeExpression(
 
     case "SubscriptExpression":
       return describeSubscriptExpression(expression, result as any);
+
+    case "CallExpression":
+      return describeCallExpression(expression as any, result as any);
 
     case "IdentifierExpression": {
       const identResult = result as any;

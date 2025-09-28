@@ -94,3 +94,16 @@ export class SubscriptExpression extends Expression {
     return [this.object, this.index];
   }
 }
+
+export class CallExpression extends Expression {
+  constructor(
+    public callee: Expression,
+    public args: Expression[],
+    public location: Location
+  ) {
+    super("CallExpression");
+  }
+  public children() {
+    return [this.callee, ...this.args];
+  }
+}

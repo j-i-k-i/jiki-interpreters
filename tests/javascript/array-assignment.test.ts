@@ -1,6 +1,5 @@
 import { describe, it, expect } from "vitest";
 import { interpret } from "../../src/javascript/interpreter";
-import { changeLanguage } from "../../src/javascript/translator";
 
 // Type for frames augmented in test environment
 interface TestFrame {
@@ -172,7 +171,6 @@ describe("JavaScript - Array Element Assignment", () => {
         x[0] = 10;
       `;
 
-      changeLanguage("system");
       const result = interpret(sourceCode);
       expect(result.error).toBeNull();
       expect(result.frames.length).toBe(2); // Should have 2 frames: variable declaration and error
@@ -188,7 +186,6 @@ describe("JavaScript - Array Element Assignment", () => {
         arr["foo"] = 10;
       `;
 
-      changeLanguage("system");
       const result = interpret(sourceCode);
       expect(result.error).toBeNull();
       expect(result.frames.length).toBe(2);
@@ -204,7 +201,6 @@ describe("JavaScript - Array Element Assignment", () => {
         arr[1.5] = 10;
       `;
 
-      changeLanguage("system");
       const result = interpret(sourceCode);
       expect(result.error).toBeNull();
       expect(result.frames.length).toBe(2);
@@ -220,7 +216,6 @@ describe("JavaScript - Array Element Assignment", () => {
         arr[-1] = 10;
       `;
 
-      changeLanguage("system");
       const result = interpret(sourceCode);
       expect(result.error).toBeNull();
       expect(result.frames.length).toBe(2);
@@ -236,7 +231,6 @@ describe("JavaScript - Array Element Assignment", () => {
         arr[1][0] = 5;
       `;
 
-      changeLanguage("system");
       const result = interpret(sourceCode);
       expect(result.error).toBeNull();
       expect(result.frames.length).toBe(2);

@@ -2,7 +2,6 @@ import { interpret } from "@javascript/interpreter";
 import type { TestAugmentedFrame } from "@shared/frames";
 import { RuntimeErrorType } from "@javascript/executor";
 import { Frame } from "@shared/frames";
-import { changeLanguage } from "@javascript/translator";
 
 function expectFrameToBeError(frame: Frame, code: string, type: RuntimeErrorType) {
   expect(frame.code.trim()).toBe(code.trim());
@@ -17,7 +16,6 @@ describe("JavaScript strict equality feature", () => {
     const features = { enforceStrictEquality: true };
 
     test("using == throws StrictEqualityRequired error", () => {
-      changeLanguage("system");
       const code = `let result = 5 == "5";`;
       const { frames, error } = interpret(code, { languageFeatures: features });
       expect(error).toBeNull();
@@ -26,7 +24,6 @@ describe("JavaScript strict equality feature", () => {
     });
 
     test("using != throws StrictEqualityRequired error", () => {
-      changeLanguage("system");
       const code = `let result = 5 != "5";`;
       const { frames, error } = interpret(code, { languageFeatures: features });
       expect(error).toBeNull();
@@ -235,7 +232,6 @@ describe("JavaScript strict equality feature", () => {
 
   describe("default behavior", () => {
     test("default enforces strict equality (enforceStrictEquality: true)", () => {
-      changeLanguage("system");
       const code = `let result = 5 == "5";`;
       const { frames, error } = interpret(code); // No features specified, should use default
       expect(error).toBeNull();

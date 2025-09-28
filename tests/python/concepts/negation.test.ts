@@ -37,7 +37,7 @@ describe("negation concepts", () => {
 
   describe("NOT with truthiness (enabled)", () => {
     test("not 0 should return True", () => {
-      const { frames, error } = interpret("not 0", { allowTruthiness: true });
+      const { frames, error } = interpret("not 0", { languageFeatures: { allowTruthiness: true } });
       expect(error).toBeNull();
       expect(frames).toBeArrayOfSize(1);
       expect(frames[0].status).toBe("SUCCESS");
@@ -45,7 +45,7 @@ describe("negation concepts", () => {
     });
 
     test("not 1 should return False", () => {
-      const { frames, error } = interpret("not 1", { allowTruthiness: true });
+      const { frames, error } = interpret("not 1", { languageFeatures: { allowTruthiness: true } });
       expect(error).toBeNull();
       expect(frames).toBeArrayOfSize(1);
       expect(frames[0].status).toBe("SUCCESS");
@@ -53,7 +53,7 @@ describe("negation concepts", () => {
     });
 
     test('not "" should return True', () => {
-      const { frames, error } = interpret('not ""', { allowTruthiness: true });
+      const { frames, error } = interpret('not ""', { languageFeatures: { allowTruthiness: true } });
       expect(error).toBeNull();
       expect(frames).toBeArrayOfSize(1);
       expect(frames[0].status).toBe("SUCCESS");
@@ -61,7 +61,7 @@ describe("negation concepts", () => {
     });
 
     test('not "hello" should return False', () => {
-      const { frames, error } = interpret('not "hello"', { allowTruthiness: true });
+      const { frames, error } = interpret('not "hello"', { languageFeatures: { allowTruthiness: true } });
       expect(error).toBeNull();
       expect(frames).toBeArrayOfSize(1);
       expect(frames[0].status).toBe("SUCCESS");
@@ -69,7 +69,7 @@ describe("negation concepts", () => {
     });
 
     test("not None should return True", () => {
-      const { frames, error } = interpret("not None", { allowTruthiness: true });
+      const { frames, error } = interpret("not None", { languageFeatures: { allowTruthiness: true } });
       expect(error).toBeNull();
       expect(frames).toBeArrayOfSize(1);
       expect(frames[0].status).toBe("SUCCESS");

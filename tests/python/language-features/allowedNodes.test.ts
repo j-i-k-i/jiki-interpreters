@@ -19,7 +19,7 @@ if x > 5:
 for i in [1, 2, 3]:
     x = x + 1
       `.trim();
-      const { error, frames } = interpret(code, { allowedNodes: null });
+      const { error, frames } = interpret(code, { languageFeatures: { allowedNodes: null } });
       expect(error).toBeNull();
       expect(frames.length).toBeGreaterThan(0);
     });
@@ -40,7 +40,7 @@ if x > 5:
   describe("allowedNodes: [] (empty array)", () => {
     test("prevents all parsing when allowedNodes is empty", () => {
       const code = `5`;
-      const { error, frames } = interpret(code, { allowedNodes: [] });
+      const { error, frames } = interpret(code, { languageFeatures: { allowedNodes: [] } });
       expect(error).toBeInstanceOf(SyntaxError);
       expect(error?.type).toBe("ExpressionStatementNotAllowed");
       expect(frames).toHaveLength(0);
@@ -48,7 +48,7 @@ if x > 5:
 
     test("cannot even parse literals with empty allowedNodes", () => {
       const code = `42`;
-      const { error, frames } = interpret(code, { allowedNodes: [] });
+      const { error, frames } = interpret(code, { languageFeatures: { allowedNodes: [] } });
       expect(error).toBeInstanceOf(SyntaxError);
       expect(error?.type).toBe("ExpressionStatementNotAllowed");
       expect(frames).toHaveLength(0);
@@ -60,7 +60,7 @@ if x > 5:
       test("allows assignments when included", () => {
         const code = `x = 5`;
         const allowedNodes: NodeType[] = ["AssignmentStatement", "LiteralExpression", "IdentifierExpression"];
-        const { error, frames } = interpret(code, { allowedNodes });
+        const { error, frames } = interpret(code, { languageFeatures: { allowedNodes } });
         expect(error).toBeNull();
         expect(frames.length).toBeGreaterThan(0);
       });
@@ -68,7 +68,7 @@ if x > 5:
       test("prevents assignments when not included", () => {
         const code = `x = 5`;
         const allowedNodes: NodeType[] = ["LiteralExpression", "ExpressionStatement"];
-        const { error, frames } = interpret(code, { allowedNodes });
+        const { error, frames } = interpret(code, { languageFeatures: { allowedNodes } });
         expect(error).toBeInstanceOf(SyntaxError);
         expect(error?.type).toBe("AssignmentStatementNotAllowed");
         expect(frames).toHaveLength(0);
@@ -82,7 +82,7 @@ if True:
     1
         `.trim();
         const allowedNodes: NodeType[] = ["IfStatement", "BlockStatement", "LiteralExpression", "ExpressionStatement"];
-        const { error, frames } = interpret(code, { allowedNodes });
+        const { error, frames } = interpret(code, { languageFeatures: { allowedNodes } });
         expect(error).toBeNull();
         expect(frames.length).toBeGreaterThan(0);
       });
@@ -93,7 +93,7 @@ if True:
     1
         `.trim();
         const allowedNodes: NodeType[] = ["BlockStatement", "LiteralExpression", "ExpressionStatement"];
-        const { error, frames } = interpret(code, { allowedNodes });
+        const { error, frames } = interpret(code, { languageFeatures: { allowedNodes } });
         expect(error).toBeInstanceOf(SyntaxError);
         expect(error?.type).toBe("IfStatementNotAllowed");
         expect(frames).toHaveLength(0);
@@ -114,7 +114,7 @@ for i in [1, 2, 3]:
           "IdentifierExpression",
           "AssignmentStatement",
         ];
-        const { error, frames } = interpret(code, { allowedNodes });
+        const { error, frames } = interpret(code, { languageFeatures: { allowedNodes } });
         expect(error).toBeNull();
         expect(frames.length).toBeGreaterThan(0);
       });
@@ -125,7 +125,7 @@ for i in [1, 2]:
     x = i
         `.trim();
         const allowedNodes: NodeType[] = ["ListExpression", "LiteralExpression"];
-        const { error, frames } = interpret(code, { allowedNodes });
+        const { error, frames } = interpret(code, { languageFeatures: { allowedNodes } });
         expect(error).toBeInstanceOf(SyntaxError);
         expect(error?.type).toBe("ForInStatementNotAllowed");
         expect(frames).toHaveLength(0);
@@ -146,7 +146,7 @@ for i in [1]:
           "LiteralExpression",
           "IdentifierExpression",
         ];
-        const { error, frames } = interpret(code, { allowedNodes });
+        const { error, frames } = interpret(code, { languageFeatures: { allowedNodes } });
         expect(error).toBeNull();
         expect(frames.length).toBeGreaterThan(0);
       });
@@ -157,7 +157,7 @@ for i in [1]:
     break
         `.trim();
         const allowedNodes: NodeType[] = ["ForInStatement", "BlockStatement", "ListExpression", "LiteralExpression"];
-        const { error, frames } = interpret(code, { allowedNodes });
+        const { error, frames } = interpret(code, { languageFeatures: { allowedNodes } });
         expect(error).toBeInstanceOf(SyntaxError);
         expect(error?.type).toBe("BreakStatementNotAllowed");
         expect(frames).toHaveLength(0);
@@ -178,7 +178,7 @@ for i in [1]:
           "LiteralExpression",
           "IdentifierExpression",
         ];
-        const { error, frames } = interpret(code, { allowedNodes });
+        const { error, frames } = interpret(code, { languageFeatures: { allowedNodes } });
         expect(error).toBeNull();
         expect(frames.length).toBeGreaterThan(0);
       });
@@ -189,7 +189,7 @@ for i in [1]:
     continue
         `.trim();
         const allowedNodes: NodeType[] = ["ForInStatement", "BlockStatement", "ListExpression", "LiteralExpression"];
-        const { error, frames } = interpret(code, { allowedNodes });
+        const { error, frames } = interpret(code, { languageFeatures: { allowedNodes } });
         expect(error).toBeInstanceOf(SyntaxError);
         expect(error?.type).toBe("ContinueStatementNotAllowed");
         expect(frames).toHaveLength(0);
@@ -203,7 +203,7 @@ if True:
     1
         `.trim();
         const allowedNodes: NodeType[] = ["IfStatement", "BlockStatement", "ExpressionStatement", "LiteralExpression"];
-        const { error, frames } = interpret(code, { allowedNodes });
+        const { error, frames } = interpret(code, { languageFeatures: { allowedNodes } });
         expect(error).toBeNull();
         expect(frames.length).toBeGreaterThan(0);
       });
@@ -214,7 +214,7 @@ if True:
     1
         `.trim();
         const allowedNodes: NodeType[] = ["IfStatement", "ExpressionStatement", "LiteralExpression"];
-        const { error, frames } = interpret(code, { allowedNodes });
+        const { error, frames } = interpret(code, { languageFeatures: { allowedNodes } });
         expect(error).toBeInstanceOf(SyntaxError);
         expect(error?.type).toBe("BlockStatementNotAllowed");
         expect(frames).toHaveLength(0);
@@ -225,7 +225,7 @@ if True:
       test("allows expression statements when included", () => {
         const code = `5`;
         const allowedNodes: NodeType[] = ["ExpressionStatement", "LiteralExpression"];
-        const { error, frames } = interpret(code, { allowedNodes });
+        const { error, frames } = interpret(code, { languageFeatures: { allowedNodes } });
         expect(error).toBeNull();
         expect(frames.length).toBeGreaterThan(0);
       });
@@ -233,7 +233,7 @@ if True:
       test("prevents expression statements when not included", () => {
         const code = `5`;
         const allowedNodes: NodeType[] = ["LiteralExpression"];
-        const { error, frames } = interpret(code, { allowedNodes });
+        const { error, frames } = interpret(code, { languageFeatures: { allowedNodes } });
         expect(error).toBeInstanceOf(SyntaxError);
         expect(error?.type).toBe("ExpressionStatementNotAllowed");
         expect(frames).toHaveLength(0);
@@ -246,7 +246,7 @@ if True:
       test("allows literals when included", () => {
         const code = `42`;
         const allowedNodes: NodeType[] = ["ExpressionStatement", "LiteralExpression"];
-        const { error, frames } = interpret(code, { allowedNodes });
+        const { error, frames } = interpret(code, { languageFeatures: { allowedNodes } });
         expect(error).toBeNull();
         expect(frames.length).toBeGreaterThan(0);
       });
@@ -254,7 +254,7 @@ if True:
       test("prevents literals when not included", () => {
         const code = `42`;
         const allowedNodes: NodeType[] = ["ExpressionStatement"];
-        const { error, frames } = interpret(code, { allowedNodes });
+        const { error, frames } = interpret(code, { languageFeatures: { allowedNodes } });
         expect(error).toBeInstanceOf(SyntaxError);
         expect(error?.type).toBe("LiteralExpressionNotAllowed");
         expect(frames).toHaveLength(0);
@@ -272,7 +272,7 @@ if True:
         const allowedNodes: NodeType[] = ["ExpressionStatement"];
 
         for (const { code, desc } of testCases) {
-          const { error } = interpret(code, { allowedNodes });
+          const { error } = interpret(code, { languageFeatures: { allowedNodes } });
           expect(error).toBeInstanceOf(SyntaxError);
           expect(error?.type).toBe("LiteralExpressionNotAllowed");
         }
@@ -283,7 +283,7 @@ if True:
       test("allows binary expressions when included", () => {
         const code = `1 + 2`;
         const allowedNodes: NodeType[] = ["ExpressionStatement", "BinaryExpression", "LiteralExpression"];
-        const { error, frames } = interpret(code, { allowedNodes });
+        const { error, frames } = interpret(code, { languageFeatures: { allowedNodes } });
         expect(error).toBeNull();
         expect(frames.length).toBeGreaterThan(0);
       });
@@ -291,7 +291,7 @@ if True:
       test("prevents binary expressions when not included", () => {
         const code = `1 + 2`;
         const allowedNodes: NodeType[] = ["ExpressionStatement", "LiteralExpression"];
-        const { error, frames } = interpret(code, { allowedNodes });
+        const { error, frames } = interpret(code, { languageFeatures: { allowedNodes } });
         expect(error).toBeInstanceOf(SyntaxError);
         expect(error?.type).toBe("BinaryExpressionNotAllowed");
         expect(frames).toHaveLength(0);
@@ -316,7 +316,7 @@ if True:
         const allowedNodes: NodeType[] = ["ExpressionStatement", "LiteralExpression"];
 
         for (const { code, op } of testCases) {
-          const { error } = interpret(code, { allowedNodes });
+          const { error } = interpret(code, { languageFeatures: { allowedNodes } });
           expect(error).toBeInstanceOf(SyntaxError);
           expect(error?.type).toBe("BinaryExpressionNotAllowed");
         }
@@ -327,7 +327,7 @@ if True:
       test("allows unary expressions when included", () => {
         const code = `-5`;
         const allowedNodes: NodeType[] = ["ExpressionStatement", "UnaryExpression", "LiteralExpression"];
-        const { error, frames } = interpret(code, { allowedNodes });
+        const { error, frames } = interpret(code, { languageFeatures: { allowedNodes } });
         expect(error).toBeNull();
         expect(frames.length).toBeGreaterThan(0);
       });
@@ -335,7 +335,7 @@ if True:
       test("prevents unary expressions when not included", () => {
         const code = `-5`;
         const allowedNodes: NodeType[] = ["ExpressionStatement", "LiteralExpression"];
-        const { error, frames } = interpret(code, { allowedNodes });
+        const { error, frames } = interpret(code, { languageFeatures: { allowedNodes } });
         expect(error).toBeInstanceOf(SyntaxError);
         expect(error?.type).toBe("UnaryExpressionNotAllowed");
         expect(frames).toHaveLength(0);
@@ -344,7 +344,7 @@ if True:
       test("prevents not operator", () => {
         const code = `not True`;
         const allowedNodes: NodeType[] = ["ExpressionStatement", "LiteralExpression"];
-        const { error, frames } = interpret(code, { allowedNodes });
+        const { error, frames } = interpret(code, { languageFeatures: { allowedNodes } });
         expect(error).toBeInstanceOf(SyntaxError);
         expect(error?.type).toBe("UnaryExpressionNotAllowed");
         expect(frames).toHaveLength(0);
@@ -363,7 +363,7 @@ x
           "IdentifierExpression",
           "LiteralExpression",
         ];
-        const { error, frames } = interpret(code, { allowedNodes });
+        const { error, frames } = interpret(code, { languageFeatures: { allowedNodes } });
         expect(error).toBeNull();
         expect(frames.length).toBeGreaterThan(0);
       });
@@ -374,7 +374,7 @@ x = 5
 x
         `.trim();
         const allowedNodes: NodeType[] = ["AssignmentStatement", "ExpressionStatement", "LiteralExpression"];
-        const { error, frames } = interpret(code, { allowedNodes });
+        const { error, frames } = interpret(code, { languageFeatures: { allowedNodes } });
         expect(error).toBeInstanceOf(SyntaxError);
         expect(error?.type).toBe("IdentifierExpressionNotAllowed");
         expect(frames).toHaveLength(0);
@@ -385,7 +385,7 @@ x
       test("allows grouping when included", () => {
         const code = `(5)`;
         const allowedNodes: NodeType[] = ["ExpressionStatement", "GroupingExpression", "LiteralExpression"];
-        const { error, frames } = interpret(code, { allowedNodes });
+        const { error, frames } = interpret(code, { languageFeatures: { allowedNodes } });
         expect(error).toBeNull();
         expect(frames.length).toBeGreaterThan(0);
       });
@@ -393,7 +393,7 @@ x
       test("prevents grouping when not included", () => {
         const code = `(5)`;
         const allowedNodes: NodeType[] = ["ExpressionStatement", "LiteralExpression"];
-        const { error, frames } = interpret(code, { allowedNodes });
+        const { error, frames } = interpret(code, { languageFeatures: { allowedNodes } });
         expect(error).toBeInstanceOf(SyntaxError);
         expect(error?.type).toBe("GroupingExpressionNotAllowed");
         expect(frames).toHaveLength(0);
@@ -404,7 +404,7 @@ x
       test("allows lists when included", () => {
         const code = `[1, 2, 3]`;
         const allowedNodes: NodeType[] = ["ExpressionStatement", "ListExpression", "LiteralExpression"];
-        const { error, frames } = interpret(code, { allowedNodes });
+        const { error, frames } = interpret(code, { languageFeatures: { allowedNodes } });
         expect(error).toBeNull();
         expect(frames.length).toBeGreaterThan(0);
       });
@@ -412,7 +412,7 @@ x
       test("prevents lists when not included", () => {
         const code = `[1, 2, 3]`;
         const allowedNodes: NodeType[] = ["ExpressionStatement", "LiteralExpression"];
-        const { error, frames } = interpret(code, { allowedNodes });
+        const { error, frames } = interpret(code, { languageFeatures: { allowedNodes } });
         expect(error).toBeInstanceOf(SyntaxError);
         expect(error?.type).toBe("ListExpressionNotAllowed");
         expect(frames).toHaveLength(0);
@@ -433,7 +433,7 @@ lst[0]
           "IdentifierExpression",
           "LiteralExpression",
         ];
-        const { error, frames } = interpret(code, { allowedNodes });
+        const { error, frames } = interpret(code, { languageFeatures: { allowedNodes } });
         expect(error).toBeNull();
         expect(frames.length).toBeGreaterThan(0);
       });
@@ -450,7 +450,7 @@ lst[0]
           "IdentifierExpression",
           "LiteralExpression",
         ];
-        const { error, frames } = interpret(code, { allowedNodes });
+        const { error, frames } = interpret(code, { languageFeatures: { allowedNodes } });
         expect(error).toBeInstanceOf(SyntaxError);
         expect(error?.type).toBe("SubscriptExpressionNotAllowed");
         expect(frames).toHaveLength(0);
@@ -463,15 +463,15 @@ lst[0]
       const allowedNodes: NodeType[] = ["ExpressionStatement", "LiteralExpression"];
 
       // Should work
-      const { error: error1 } = interpret(`5`, { allowedNodes });
+      const { error: error1 } = interpret(`5`, { languageFeatures: { allowedNodes } });
       expect(error1).toBeNull();
 
       // Should fail - needs assignment
-      const { error: error2 } = interpret(`x = 5`, { allowedNodes });
+      const { error: error2 } = interpret(`x = 5`, { languageFeatures: { allowedNodes } });
       expect(error2?.type).toBe("AssignmentStatementNotAllowed");
 
       // Should fail - needs binary expression
-      const { error: error3 } = interpret(`1 + 2`, { allowedNodes });
+      const { error: error3 } = interpret(`1 + 2`, { languageFeatures: { allowedNodes } });
       expect(error3?.type).toBe("BinaryExpressionNotAllowed");
     });
 
@@ -484,12 +484,12 @@ lst[0]
       ];
 
       // Should work
-      const { error: error1, frames: frames1 } = interpret(`(1 + 2) * 3`, { allowedNodes });
+      const { error: error1, frames: frames1 } = interpret(`(1 + 2) * 3`, { languageFeatures: { allowedNodes } });
       expect(error1).toBeNull();
       expect(frames1.length).toBeGreaterThan(0);
 
       // Should fail - needs assignment
-      const { error: error2 } = interpret(`x = 1 + 2`, { allowedNodes });
+      const { error: error2 } = interpret(`x = 1 + 2`, { languageFeatures: { allowedNodes } });
       expect(error2?.type).toBe("AssignmentStatementNotAllowed");
     });
 
@@ -509,7 +509,7 @@ x = 5
 x = x + 1
 x
       `.trim(),
-        { allowedNodes }
+        { languageFeatures: { allowedNodes } }
       );
       expect(error1).toBeNull();
       expect((frames1[frames1.length - 1] as TestAugmentedFrame).variables.x.value).toBe(6);
@@ -521,7 +521,7 @@ x = 5
 if x > 0:
     x = 10
       `.trim(),
-        { allowedNodes }
+        { languageFeatures: { allowedNodes } }
       );
       expect(error2?.type).toBe("IfStatementNotAllowed");
     });
@@ -544,7 +544,7 @@ x = 5
 if x > 0:
     x = 10
       `.trim(),
-        { allowedNodes }
+        { languageFeatures: { allowedNodes } }
       );
       expect(error1).toBeNull();
       expect((frames1[frames1.length - 1] as TestAugmentedFrame).variables.x.value).toBe(10);
@@ -555,7 +555,7 @@ if x > 0:
 for i in [1, 2, 3]:
     x = i
       `.trim(),
-        { allowedNodes }
+        { languageFeatures: { allowedNodes } }
       );
       expect(error2?.type).toBe("ForInStatementNotAllowed");
     });

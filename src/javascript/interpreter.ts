@@ -21,10 +21,10 @@ export interface InterpretResult {
 export function interpret(sourceCode: string, context: EvaluationContext = {}): InterpretResult {
   try {
     // Parse the source code (compilation step)
-    const statements = parse(sourceCode, context.languageFeatures);
+    const statements = parse(sourceCode, context);
 
     // Execute statements
-    const executor = new Executor(sourceCode, context.languageFeatures, context.externalFunctions);
+    const executor = new Executor(sourceCode, context);
     const result = executor.execute(statements);
 
     return {

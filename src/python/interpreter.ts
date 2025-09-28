@@ -3,6 +3,13 @@ import { Executor } from "./executor";
 import type { SyntaxError } from "./error";
 import type { Frame } from "../shared/frames";
 import type { LanguageFeatures } from "./interfaces";
+import type { ExternalFunction } from "../shared/interfaces";
+
+// Evaluation context that includes external functions
+export interface EvaluationContext {
+  languageFeatures?: LanguageFeatures;
+  externalFunctions?: ExternalFunction[];
+}
 
 // Update InterpretResult to match shared pattern
 export interface InterpretResult {
@@ -13,16 +20,16 @@ export interface InterpretResult {
 
 export function interpret(
   sourceCode: string,
-  languageFeatures?: LanguageFeatures,
+  context: EvaluationContext = {},
   fileName: string = "python-script"
 ): InterpretResult {
   try {
     // Parse the source code (compilation step)
-    const parser = new Parser(fileName, languageFeatures);
+    const parser = new Parser(fileName, context);
     const statements = parser.parse(sourceCode);
 
     // Execute statements
-    const executor = new Executor(sourceCode, languageFeatures);
+    const executor = new Executor(sourceCode, context);
     const result = executor.execute(statements);
 
     return {

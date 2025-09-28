@@ -29,10 +29,12 @@ import type { EvaluationResult } from "./evaluation-result";
 import type { JikiObject } from "./jikiObjects";
 import { translate } from "./translator";
 import { TIME_SCALE_FACTOR, type Frame, type FrameExecutionStatus } from "../shared/frames";
-import { type ExecutionContext as SharedExecutionContext, type ExternalFunction } from "../shared/interfaces";
+import { type ExecutionContext as SharedExecutionContext } from "../shared/interfaces";
 import { createBaseExecutionContext } from "../shared/executionContext";
+import type { EvaluationContext } from "./interpreter";
 import { describeFrame } from "./frameDescribers";
 import cloneDeep from "lodash.clonedeep";
+import { JSCallable } from "./functions";
 
 // Import individual executors
 import { executeAssignmentExpression } from "./executor/executeAssignmentExpression";
@@ -75,7 +77,8 @@ export type RuntimeErrorType =
   | "ArgumentError"
   | "NodeNotAllowed"
   | "FunctionNotFound"
-  | "InvalidNumberOfArguments";
+  | "InvalidNumberOfArguments"
+  | "FunctionExecutionError";
 
 export class RuntimeError extends Error {
   public category: string = "RuntimeError";
@@ -105,26 +108,24 @@ export class Executor {
   private readonly timePerFrame: number = 1;
   public environment: Environment;
   public languageFeatures: LanguageFeatures;
-  private readonly externalFunctions: Map<string, ExternalFunction>;
 
   constructor(
     private readonly sourceCode: string,
-    languageFeatures?: LanguageFeatures,
-    externalFunctions?: ExternalFunction[]
+    context: EvaluationContext
   ) {
     this.environment = new Environment();
     this.languageFeatures = {
       allowShadowing: false, // Default to false (shadowing disabled)
       allowTypeCoercion: false, // Default to false (type coercion disabled)
       enforceStrictEquality: true, // Default to true (strict equality required)
-      ...languageFeatures,
+      ...context.languageFeatures,
     };
 
-    // Store external functions in a map for fast lookup
-    this.externalFunctions = new Map();
-    if (externalFunctions) {
-      for (const func of externalFunctions) {
-        this.externalFunctions.set(func.name, func);
+    // Register external functions as JSCallable objects in the environment
+    if (context.externalFunctions) {
+      for (const func of context.externalFunctions) {
+        const callable = new JSCallable(func.name, func.arity, func.func);
+        this.environment.define(func.name, callable);
       }
     }
   }
@@ -168,7 +169,7 @@ export class Executor {
     return {
       frames: this.frames,
       error: null, // Always null - runtime errors are in frames
-      success: true, // Always true - runtime errors don't affect success
+      success: !this.frames.find(f => f.status === "ERROR"),
     };
   }
 
@@ -369,10 +370,6 @@ export class Executor {
   public error(type: RuntimeErrorType, location: Location, context?: any): never {
     const message = translate(`error.runtime.${type}`, context);
     throw new RuntimeError(message, location, type, context);
-  }
-
-  public getExternalFunction(name: string): ExternalFunction | undefined {
-    return this.externalFunctions.get(name);
   }
 
   // Get execution context for stdlib functions

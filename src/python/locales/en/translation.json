@@ -16,6 +16,7 @@
       "UnterminatedString": "Unterminated string literal. Make sure to close your string quotes."
     },
     "runtime": {
+      "FunctionExecutionError": "Error executing function '{{function}}': {{message}}",
       "InvalidBinaryExpression": "Invalid binary operation between these values.",
       "InvalidUnaryExpression": "Invalid unary operation on this value.",
       "TruthinessDisabled": "Cannot use {{value}} as a boolean value. Only boolean values are allowed in conditions when truthiness is disabled.",

@@ -28,6 +28,7 @@ import {
 import { type Token, type TokenType } from "./token";
 import { translate } from "./translator";
 import type { LanguageFeatures, NodeType } from "./interfaces";
+import type { EvaluationContext } from "./interpreter";
 
 export class Parser {
   private readonly scanner: Scanner;
@@ -35,9 +36,9 @@ export class Parser {
   private tokens: Token[] = [];
   private readonly languageFeatures: LanguageFeatures;
 
-  constructor(languageFeatures?: LanguageFeatures) {
+  constructor(context: EvaluationContext = {}) {
     this.scanner = new Scanner();
-    this.languageFeatures = languageFeatures || {};
+    this.languageFeatures = context.languageFeatures || {};
   }
 
   private isNodeAllowed(nodeType: NodeType): boolean {
@@ -853,6 +854,6 @@ export class Parser {
   }
 }
 
-export function parse(sourceCode: string, languageFeatures?: LanguageFeatures): Statement[] {
-  return new Parser(languageFeatures).parse(sourceCode);
+export function parse(sourceCode: string, context: EvaluationContext = {}): Statement[] {
+  return new Parser(context).parse(sourceCode);
 }
