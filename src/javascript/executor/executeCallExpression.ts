@@ -1,37 +1,25 @@
 import type { Executor } from "../executor";
 import { RuntimeError } from "../executor";
 import type { CallExpression } from "../expression";
-import type {
-  EvaluationResult,
-  EvaluationResultIdentifierExpression,
-  EvaluationResultCallExpression,
-} from "../evaluation-result";
+import type { EvaluationResult, EvaluationResultCallExpression } from "../evaluation-result";
 import { createJSObject, type JikiObject } from "../jikiObjects";
 import type { Arity } from "../../shared/interfaces";
+import { isCallable, type JSCallable } from "../functions";
 
 export function executeCallExpression(executor: Executor, expression: CallExpression): EvaluationResultCallExpression {
   // Evaluate the callee
   const calleeResult = executor.evaluate(expression.callee);
+  const calleeValue = calleeResult.jikiObject;
 
-  // For now, we only support calling external functions by identifier
-  // Check if the result is an identifier with a function name
-  const identifierResult = calleeResult as EvaluationResultIdentifierExpression;
-  if (!identifierResult.functionName) {
+  // Check if the value is callable
+  if (!isCallable(calleeValue)) {
     throw new RuntimeError(`TypeError: ${expression.callee.type} is not callable`, expression.location, "TypeError", {
       callee: expression.callee.type,
     });
   }
 
-  // Look up the external function
-  const externalFunction = executor.getExternalFunction(identifierResult.functionName);
-  if (!externalFunction) {
-    throw new RuntimeError(
-      `FunctionNotFound: name: ${identifierResult.functionName}`,
-      expression.location,
-      "FunctionNotFound",
-      { name: identifierResult.functionName }
-    );
-  }
+  // Type assertion since we know it's a JSCallable from our implementation
+  const callable = calleeValue as JSCallable;
 
   // Evaluate arguments and store both the results and JikiObjects
   const argResults: EvaluationResult[] = [];
@@ -43,16 +31,15 @@ export function executeCallExpression(executor: Executor, expression: CallExpres
   }
 
   // Check arity
-  checkArity(executor, externalFunction.arity, argJikiObjects.length, expression, identifierResult.functionName);
+  checkArity(executor, callable.arity, argJikiObjects.length, expression, callable.name);
 
-  // Call the external function
-  // External functions receive ExecutionContext as first parameter, then the arguments
+  // Call the function
   const executionContext = executor.getExecutionContext();
 
   try {
-    // Convert JikiObjects to values for the external function
+    // Convert JikiObjects to values for the function
     const argValues = argJikiObjects.map(arg => arg.value);
-    const result = externalFunction.func(executionContext, ...argValues);
+    const result = callable.call(executionContext, argValues);
 
     // Convert the result back to a JikiObject
     const jikiResult = createJSObject(result);
@@ -61,17 +48,17 @@ export function executeCallExpression(executor: Executor, expression: CallExpres
       type: "CallExpression",
       jikiObject: jikiResult,
       immutableJikiObject: jikiResult.clone(),
-      functionName: identifierResult.functionName,
+      functionName: callable.name,
       args: argResults, // Store full evaluation results for describers
     };
   } catch (error) {
     // Handle any errors from the external function
     if (error instanceof Error) {
       throw new RuntimeError(
-        `FunctionExecutionError: function: ${identifierResult.functionName}: message: ${error.message}`,
+        `FunctionExecutionError: function: ${callable.name}: message: ${error.message}`,
         expression.location,
-        "TypeError",
-        { function: identifierResult.functionName, message: error.message }
+        "FunctionExecutionError",
+        { function: callable.name, message: error.message }
       );
     }
     throw error;
