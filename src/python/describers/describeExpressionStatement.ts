@@ -10,9 +10,19 @@ export function describeExpressionStatement(frame: FrameWithResult, context: Des
   const frameResult = frame.result as EvaluationResultExpressionStatement;
   const value = formatPyObject(frameResult.immutableJikiObject);
 
-  const result = `<p>This expression evaluated to <code>${value}</code>.</p>`;
-  let steps = describeExpression(statement.expression, frameResult.expression, context);
-  steps = [...steps, `<li>Python evaluated this expression and got <code>${value}</code>.</li>`];
+  // Check if this is a CallExpression for better description
+  let result: string;
+  let steps: string[];
+
+  if (frameResult.expression.type === "CallExpression") {
+    const callResult = frameResult.expression as any;
+    result = `<p>Python used the <code>${callResult.functionName}</code> function and returned <code>${value}</code>.</p>`;
+    steps = describeExpression(statement.expression, frameResult.expression, context);
+  } else {
+    result = `<p>This expression evaluated to <code>${value}</code>.</p>`;
+    steps = describeExpression(statement.expression, frameResult.expression, context);
+    steps = [...steps, `<li>Python evaluated this expression and got <code>${value}</code>.</li>`];
+  }
 
   return {
     result,

@@ -18,13 +18,25 @@ export interface InterpretResult {
   success: boolean;
 }
 
-export function interpret(sourceCode: string, context: EvaluationContext = {}): InterpretResult {
+export function interpret(
+  sourceCode: string,
+  contextOrFeatures: EvaluationContext | LanguageFeatures = {}
+): InterpretResult {
+  // Support both old and new signatures for backward compatibility
+  let context: EvaluationContext;
+  if ("languageFeatures" in contextOrFeatures || "externalFunctions" in contextOrFeatures) {
+    context = contextOrFeatures;
+  } else {
+    // Old style: just language features
+    context = { languageFeatures: contextOrFeatures as LanguageFeatures };
+  }
+
   try {
     // Parse the source code (compilation step)
-    const statements = parse(sourceCode, context.languageFeatures);
+    const statements = parse(sourceCode, context);
 
     // Execute statements
-    const executor = new Executor(sourceCode, context.languageFeatures, context.externalFunctions);
+    const executor = new Executor(sourceCode, context);
     const result = executor.execute(statements);
 
     return {

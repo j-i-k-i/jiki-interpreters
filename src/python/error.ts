@@ -41,6 +41,7 @@ export type SyntaxErrorType =
   | "IdentifierExpressionNotAllowed"
   | "ListExpressionNotAllowed"
   | "SubscriptExpressionNotAllowed"
+  | "CallExpressionNotAllowed"
   | "ExpressionStatementNotAllowed"
   | "PrintStatementNotAllowed"
   | "AssignmentStatementNotAllowed"

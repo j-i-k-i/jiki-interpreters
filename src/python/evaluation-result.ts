@@ -46,6 +46,7 @@ export interface EvaluationResultExpressionStatement {
 export interface EvaluationResultIdentifierExpression {
   type: "IdentifierExpression";
   name: string;
+  functionName?: string; // For external function lookup
   jikiObject: JikiObject;
   immutableJikiObject: JikiObject;
 }
@@ -62,6 +63,14 @@ export interface EvaluationResultSubscriptExpression {
   type: "SubscriptExpression";
   object: EvaluationResultExpression;
   index: EvaluationResultExpression;
+  jikiObject: JikiObject;
+  immutableJikiObject: JikiObject;
+}
+
+export interface EvaluationResultCallExpression {
+  type: "CallExpression";
+  functionName: string;
+  args: EvaluationResult[];
   jikiObject: JikiObject;
   immutableJikiObject: JikiObject;
 }

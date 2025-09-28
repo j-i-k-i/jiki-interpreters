@@ -93,6 +93,7 @@ For everything in here, base your work in the JikiScript interpreter.
 
 - [x] Add a for in loop. Look at the JikiScript implementation.
 - [x] Add proper descriptions support to python liek we have in JikiScript. None of this "generateDescription" method nonsense. Proper describers that work properly like JikiScript.
+- [x] Add the ability to call external functions. Look at the JavaScript implementation of this. We'll use a standard CallExpression but we'll check to see if the function is external and use it if so. We need to keep the format the same in terms of using ExecutionContext etc. The same external functions contract needs to apply to all three languages and should be made generic.
 - [ ] Add a while loop. Look at the JavaScript implementation.
 - [ ] Add fstrings
 - [ ] Don't allow statements that don't actually do anything. For example, a statement that is just a variable. Or a grouping expression that doesn't have assignment. Add a TOOD that you will need to modify this for calling functions (which should just be allowed by themselves) later. Look at how this works in JikiScript as there is a specific type for it.

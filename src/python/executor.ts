@@ -9,6 +9,7 @@ import {
   IdentifierExpression,
   ListExpression,
   SubscriptExpression,
+  CallExpression,
 } from "./expression";
 import { Location } from "../shared/location";
 import type { Statement } from "./statement";
@@ -27,6 +28,8 @@ import { TIME_SCALE_FACTOR, type Frame, type FrameExecutionStatus, type TestAugm
 import { type ExecutionContext as SharedExecutionContext } from "../shared/interfaces";
 import { createBaseExecutionContext } from "../shared/executionContext";
 import type { LanguageFeatures, NodeType } from "./interfaces";
+import type { ExternalFunction } from "../shared/interfaces";
+import type { EvaluationContext } from "./interpreter";
 import cloneDeep from "lodash.clonedeep";
 import type { PythonFrame } from "./frameDescribers";
 import { describeFrame } from "./frameDescribers";
@@ -46,6 +49,7 @@ import { executeSubscriptExpression } from "./executor/executeSubscriptExpressio
 import { executeForInStatement } from "./executor/executeForInStatement";
 import { executeBreakStatement } from "./executor/executeBreakStatement";
 import { executeContinueStatement } from "./executor/executeContinueStatement";
+import { executeCallExpression } from "./executor/executeCallExpression";
 
 // Execution context for Python stdlib (future use)
 export type ExecutionContext = SharedExecutionContext & {
@@ -61,7 +65,9 @@ export type RuntimeErrorType =
   | "TruthinessDisabled"
   | "TypeCoercionNotAllowed"
   | "IndexError"
-  | "NodeNotAllowed";
+  | "NodeNotAllowed"
+  | "FunctionNotFound"
+  | "InvalidNumberOfArguments";
 
 export class RuntimeError extends Error {
   public category: string = "RuntimeError";
@@ -90,17 +96,26 @@ export class Executor {
   private readonly timePerFrame: number = 1;
   public environment: Environment;
   public languageFeatures: LanguageFeatures;
+  private readonly externalFunctions: Map<string, ExternalFunction>;
 
   constructor(
     private readonly sourceCode: string,
-    languageFeatures?: LanguageFeatures
+    context: EvaluationContext
   ) {
     this.environment = new Environment();
     this.languageFeatures = {
       allowTruthiness: false, // Default to false for educational purposes
       allowTypeCoercion: false,
-      ...languageFeatures,
+      ...context.languageFeatures,
     };
+
+    // Initialize external functions map
+    this.externalFunctions = new Map();
+    if (context.externalFunctions) {
+      for (const func of context.externalFunctions) {
+        this.externalFunctions.set(func.name, func);
+      }
+    }
   }
 
   private assertNodeAllowed(node: Statement | Expression): void {
@@ -226,6 +241,10 @@ export class Executor {
       return executeSubscriptExpression(this, expression);
     }
 
+    if (expression instanceof CallExpression) {
+      return executeCallExpression(this, expression);
+    }
+
     throw new RuntimeError(`Unknown expression type: ${expression.type}`, expression.location, "UnsupportedOperation");
   }
 
@@ -300,5 +319,10 @@ export class Executor {
   // Get execution context for stdlib functions
   public getExecutionContext(): ExecutionContext {
     return createBaseExecutionContext.call(this);
+  }
+
+  // Get external function by name
+  public getExternalFunction(name: string): ExternalFunction | undefined {
+    return this.externalFunctions.get(name);
   }
 }

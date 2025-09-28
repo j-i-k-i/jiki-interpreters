@@ -8,6 +8,7 @@ export type NodeType =
   | "IdentifierExpression"
   | "ListExpression"
   | "SubscriptExpression"
+  | "CallExpression"
   // Statements
   | "ExpressionStatement"
   | "PrintStatement"

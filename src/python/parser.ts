@@ -8,6 +8,7 @@ import {
   IdentifierExpression,
   ListExpression,
   SubscriptExpression,
+  CallExpression,
 } from "./expression";
 import { Location } from "../shared/location";
 import { Scanner } from "./scanner";
@@ -23,6 +24,7 @@ import {
 } from "./statement";
 import { type Token, type TokenType } from "./token";
 import type { LanguageFeatures, NodeType } from "./interfaces";
+import type { EvaluationContext } from "./interpreter";
 
 export class Parser {
   private readonly scanner: Scanner;
@@ -32,10 +34,10 @@ export class Parser {
 
   constructor(
     private readonly fileName: string,
-    languageFeatures?: LanguageFeatures
+    context: EvaluationContext
   ) {
     this.scanner = new Scanner(fileName);
-    this.languageFeatures = languageFeatures || {};
+    this.languageFeatures = context.languageFeatures || {};
   }
 
   private isNodeAllowed(nodeType: NodeType): boolean {
@@ -65,6 +67,7 @@ export class Parser {
       IdentifierExpression: "Identifiers",
       ListExpression: "Lists",
       SubscriptExpression: "Subscript expressions",
+      CallExpression: "Function calls",
       ExpressionStatement: "Expression statements",
       PrintStatement: "Print statements",
       AssignmentStatement: "Assignment statements",
@@ -353,15 +356,24 @@ export class Parser {
   private postfix(): Expression {
     let expr = this.primary();
 
-    // Handle subscript access (list[index])
-    // This allows chaining like list[0][1] for nested lists
-    while (this.match("LEFT_BRACKET")) {
-      // Check if SubscriptExpression is allowed
-      this.checkNodeAllowed("SubscriptExpression", "SubscriptExpressionNotAllowed", this.previous().location);
+    // Handle postfix operations: subscript access and function calls
+    // This allows chaining like list[0][1] for nested lists and func(arg1)(arg2) for curried functions
+    while (true) {
+      if (this.match("LEFT_BRACKET")) {
+        // Check if SubscriptExpression is allowed
+        this.checkNodeAllowed("SubscriptExpression", "SubscriptExpressionNotAllowed", this.previous().location);
 
-      const index = this.expression();
-      const rightBracket = this.consume("RIGHT_BRACKET", "Expect ']' after subscript index.");
-      expr = new SubscriptExpression(expr, index, Location.between(expr, rightBracket));
+        const index = this.expression();
+        const rightBracket = this.consume("RIGHT_BRACKET", "Expect ']' after subscript index.");
+        expr = new SubscriptExpression(expr, index, Location.between(expr, rightBracket));
+      } else if (this.match("LEFT_PAREN")) {
+        // Check if CallExpression is allowed
+        this.checkNodeAllowed("CallExpression", "CallExpressionNotAllowed", this.previous().location);
+
+        expr = this.finishCallExpression(expr);
+      } else {
+        break;
+      }
     }
 
     return expr;
@@ -620,6 +632,21 @@ export class Parser {
     const rightBracket = this.consume("RIGHT_BRACKET", "Expect ']' after list elements.");
 
     return new ListExpression(elements, Location.between(leftBracket, rightBracket));
+  }
+
+  private finishCallExpression(callee: Expression): CallExpression {
+    const args: Expression[] = [];
+
+    // Handle empty argument list
+    if (!this.check("RIGHT_PAREN")) {
+      do {
+        args.push(this.expression());
+      } while (this.match("COMMA"));
+    }
+
+    const rightParen = this.consume("RIGHT_PAREN", "Expect ')' after arguments.");
+
+    return new CallExpression(callee, args, Location.between(callee, rightParen));
   }
 
   private synchronize(): void {

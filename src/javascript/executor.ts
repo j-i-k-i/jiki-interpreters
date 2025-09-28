@@ -31,6 +31,7 @@ import { translate } from "./translator";
 import { TIME_SCALE_FACTOR, type Frame, type FrameExecutionStatus } from "../shared/frames";
 import { type ExecutionContext as SharedExecutionContext, type ExternalFunction } from "../shared/interfaces";
 import { createBaseExecutionContext } from "../shared/executionContext";
+import type { EvaluationContext } from "./interpreter";
 import { describeFrame } from "./frameDescribers";
 import cloneDeep from "lodash.clonedeep";
 
@@ -109,21 +110,20 @@ export class Executor {
 
   constructor(
     private readonly sourceCode: string,
-    languageFeatures?: LanguageFeatures,
-    externalFunctions?: ExternalFunction[]
+    context: EvaluationContext
   ) {
     this.environment = new Environment();
     this.languageFeatures = {
       allowShadowing: false, // Default to false (shadowing disabled)
       allowTypeCoercion: false, // Default to false (type coercion disabled)
       enforceStrictEquality: true, // Default to true (strict equality required)
-      ...languageFeatures,
+      ...context.languageFeatures,
     };
 
     // Store external functions in a map for fast lookup
     this.externalFunctions = new Map();
-    if (externalFunctions) {
-      for (const func of externalFunctions) {
+    if (context.externalFunctions) {
+      for (const func of context.externalFunctions) {
         this.externalFunctions.set(func.name, func);
       }
     }
