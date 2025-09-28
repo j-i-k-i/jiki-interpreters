@@ -139,3 +139,29 @@ When updating an interpreter to follow shared architecture:
 - Point-in-time documentation should be separated from current architecture guides
 
 This historical context helps understand architectural decisions but is not required for current development. Current patterns are documented in the main architecture files.
+
+## 2025-01-28: External Functions and Success Flag Standardization
+
+### Changes Made
+
+1. **External Function Support Enhancement**
+   - Added `PyCallable` and `JSCallable` classes extending JikiObject
+   - External functions now stored as callable objects in environment
+   - Removed separate external function registries
+   - Added `FunctionExecutionError` for when external functions throw
+   - Added comprehensive tests for error scenarios
+
+2. **Success Flag Standardization**
+   - Fixed JavaScript executor to return `success: false` when error frames exist
+   - Previously JavaScript always returned `success: true` regardless of errors
+   - Now both Python and JavaScript use: `success: !this.frames.find(f => f.status === "ERROR")`
+   - Updated ~20 test files to expect correct success values
+
+3. **Test Setup Simplification**
+   - Global test setup (`tests/setup.ts`) already sets all interpreters to "system" language
+   - Removed redundant `changeLanguage("system")` calls from individual test files
+   - This simplifies test maintenance and reduces boilerplate
+
+### Impact
+
+These changes ensure consistent behavior between JavaScript and Python interpreters, particularly around error handling and external function integration. The success flag fix was critical for proper UI integration, as the UI relies on this flag to determine if execution completed successfully.

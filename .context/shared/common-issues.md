@@ -22,6 +22,12 @@ This document outlines the most common mistakes developers make when working on 
 
 **✅ CORRECT**: All execution must use `executeFrame()` wrapper.
 
+### ❌ Success Flag Always True
+
+**WRONG**: Hardcoding `success: true` in executor result regardless of error frames.
+
+**✅ CORRECT**: Set `success: !this.frames.find(f => f.status === "ERROR")` - success is false if any error frames exist.
+
 ## Error Message Format Issues
 
 ### ❌ Wrong System Message Format
@@ -32,9 +38,9 @@ This document outlines the most common mistakes developers make when working on 
 
 ### ❌ Missing Language Configuration in Tests
 
-**WRONG**: Tests without `changeLanguage("system")` setup get English messages.
+**WRONG**: Adding `changeLanguage("system")` in individual test files when it's already configured globally.
 
-**✅ CORRECT**: Runtime error tests MUST use system language configuration.
+**✅ CORRECT**: Global test setup (`tests/setup.ts`) already sets all interpreters to use "system" language. Individual test files DO NOT need to call `changeLanguage("system")`.
 
 ## Location Tracking Problems
 
