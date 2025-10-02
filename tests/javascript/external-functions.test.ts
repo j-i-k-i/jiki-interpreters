@@ -228,7 +228,7 @@ describe("JavaScript External Functions", () => {
         name: "move",
         func: (context: ExecutionContext, direction: string) => {
           if (direction === "off-edge") {
-            context.logicError!("You can't walk through walls! The character is at the edge of the maze.");
+            context.logicError("You can't walk through walls! The character is at the edge of the maze.");
           }
           return "OK";
         },

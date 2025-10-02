@@ -23,7 +23,7 @@ export class DisabledLanguageFeatureError extends Error {
 export interface ExecutionContext {
   fastForward: (milliseconds: number) => void;
   getCurrentTimeInMs: () => number;
-  logicError?: (message: string) => never; // Optional: for custom functions to throw educational errors
+  logicError: (message: string) => never; // For custom functions to throw educational errors
 }
 
 // Arity can be a fixed number or a range [min, max]
