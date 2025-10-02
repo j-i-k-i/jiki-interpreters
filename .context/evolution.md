@@ -4,6 +4,56 @@ This document tracks the historical development, major changes, and architectura
 
 ## Major Architectural Changes
 
+### January 2025: LogicError Pattern Standardization
+
+**Date**: January 2025
+
+**Problem**: Custom functions (stdlib and external) needed a way to throw educational, human-readable error messages that would be displayed directly to students without i18n translation. This was initially only implemented in JikiScript.
+
+**Solution**: Standardized the LogicError pattern across all interpreters (JikiScript, JavaScript, Python):
+
+**Implementation**:
+
+1. Added `LogicError` class extending `Error` to each interpreter's error.ts
+2. Added `"LogicErrorInExecution"` to RuntimeErrorType enum for each interpreter
+3. Added `logicError(message: string)` method to each executor
+4. Integrated `logicError` function into ExecutionContext for custom functions
+5. Added catch handling in function/method call execution and statement execution
+6. Special-cased error message handling to use direct message instead of translation
+
+**Use Cases**:
+
+- Type conversion failures (e.g., `toNumber("abc")`)
+- Game logic violations (e.g., maze character walking off edge)
+- Domain-specific constraints requiring specific feedback
+
+**Example Usage**:
+
+```typescript
+function moveCharacter(ctx: ExecutionContext, direction: string) {
+  if (isOffEdge(direction)) {
+    ctx.logicError("You can't walk through walls! The character is at the edge of the maze.");
+  }
+  // ... normal logic
+}
+```
+
+**Files Affected**:
+
+- `.context/shared/interpreter-architecture.md` - Added Logic Error Pattern section
+- `.context/jikiscript/architecture.md` - Documented JikiScript implementation
+- `src/javascript/error.ts` - Added LogicError class
+- `src/javascript/executor.ts` - Added logicError method and ExecutionContext integration
+- `src/javascript/executor/executeCallExpression.ts` - Added LogicError catch handling
+- `src/python/error.ts` - Added LogicError class
+- `src/python/executor.ts` - Added logicError method and ExecutionContext integration
+- `src/python/executor/executeCallExpression.ts` - Added LogicError catch handling
+- `src/shared/interfaces.ts` - Added optional logicError to ExecutionContext interface
+- `tests/javascript/external-functions.test.ts` - Added LogicError test
+- `tests/python/external-functions.test.ts` - Added LogicError test
+
+**Benefits**: Consistent error handling pattern across all interpreters, enables educational feedback for custom function logic violations, maintains JikiScript's existing implementation while extending to JS/Python.
+
 ### January 2025: Object Field Standardization
 
 **Problem**: The three interpreters had inconsistent object field naming in their `EvaluationResult` types:

@@ -72,3 +72,42 @@ Uses modular architecture with specialized executors for each AST node type. Mai
 - **Execution Descriptions**: Plain-language explanations of code behavior
 - **Variable Tracking**: Detailed state snapshots for debugging
 - **Frame Generation**: Timeline data for interactive scrubbing
+
+## Error Handling
+
+### Logic Errors
+
+JikiScript implements the **LogicError pattern** to allow custom functions (stdlib or external) to provide educational feedback when logic constraints are violated.
+
+**Implementation Details:**
+
+- **Class**: `LogicError` extends `Error` (src/jikiscript/error.ts:222)
+- **Runtime Error Type**: `"LogicErrorInExecution"` (error.ts:138)
+- **Executor Method**: `logicError(message: string)` throws LogicError (executor.ts:223-225)
+- **ExecutionContext**: Includes `logicError` function for custom functions (executor.ts:1277)
+
+**Catch Locations:**
+
+- `executeGetterExpression.ts:38-40` - Property getters
+- `executeMethodCallExpression.ts:61-63` - Method calls
+- `executeChangePropertyStatement.ts:38-40` - Property setters
+- `executeFunctionCallExpression.ts:92-94` - Function calls
+- `executor.ts:1038-1040` - Statement execution wrapper
+
+**Error Message Handling**: When `"LogicErrorInExecution"` is caught, the error message is used directly (no i18n translation) in executor.ts:1302-1303
+
+**Example Usage** (from stdlib.ts:134-138):
+
+```typescript
+function toNumber(executionCtx: ExecutionContext, str: JikiString): Number {
+  const num = Number(str.value);
+  if (isNaN(num)) {
+    executionCtx.logicError(
+      `Could not convert the string to a number. Does <code>${JSON.stringify(
+        str.value
+      )}</code> look like a valid number?`
+    );
+  }
+  return new Number(num);
+}
+```

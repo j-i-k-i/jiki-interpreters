@@ -155,6 +155,73 @@ if (context.externalFunctions) {
 
 When external functions throw errors, they're caught and converted to `FunctionExecutionError` runtime errors.
 
+## Logic Error Pattern
+
+All interpreters MUST support the **LogicError pattern** for custom functions (stdlib or external) to throw educational, human-readable error messages to students.
+
+### Purpose
+
+LogicErrors are used when custom function logic fails in a way that requires clear, educational feedback to the student. Unlike regular runtime errors that are translated via i18n, LogicErrors provide direct, contextual messages.
+
+### Use Cases
+
+- **Type conversion failures**: `toNumber("abc")` - "Could not convert the string to a number. Does 'abc' look like a valid number?"
+- **Game logic violations**: Maze character walks off edge - "You can't walk through walls! The character is at the edge of the maze."
+- **Domain-specific constraints**: Custom validation that needs specific feedback
+
+### Implementation Requirements (MANDATORY)
+
+All interpreters MUST implement:
+
+1. **LogicError Class**: Simple error class extending `Error`
+
+   ```typescript
+   export class LogicError extends Error {}
+   ```
+
+2. **Runtime Error Type**: Add `"LogicErrorInExecution"` to RuntimeErrorType enum
+
+3. **Executor Method**:
+
+   ```typescript
+   public logicError(message: string): never {
+     throw new LogicError(message);
+   }
+   ```
+
+4. **ExecutionContext Integration**: Include `logicError` function in the ExecutionContext returned by `getExecutionContext()`
+
+5. **Catch Handling**: Catch LogicError in:
+   - Function/method call execution
+   - Property getter/setter execution (if supported)
+   - Statement execution wrapper
+
+   Convert to error frame with the message used directly (no translation):
+
+   ```typescript
+   catch (e: unknown) {
+     if (e instanceof LogicError) {
+       executor.error("LogicErrorInExecution", location, { message: e.message });
+     }
+     throw e;
+   }
+   ```
+
+6. **Error Frame Generation**: When error type is `"LogicErrorInExecution"`, use `context.message` directly instead of translation
+
+### External Function Usage
+
+Custom functions receive the ExecutionContext and can call `logicError()`:
+
+```typescript
+function moveCharacter(ctx: ExecutionContext, direction: string) {
+  if (isOffEdge(direction)) {
+    ctx.logicError("You can't walk through walls! The character is at the edge of the maze.");
+  }
+  // ... normal logic
+}
+```
+
 ## Testing Requirements
 
 All interpreters MUST have consistent test categories:

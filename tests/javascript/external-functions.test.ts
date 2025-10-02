@@ -223,6 +223,31 @@ describe("JavaScript External Functions", () => {
   });
 
   describe("Error handling", () => {
+    it("should handle LogicError from external functions with educational messages", () => {
+      const moveCharacter: ExternalFunction = {
+        name: "move",
+        func: (context: ExecutionContext, direction: string) => {
+          if (direction === "off-edge") {
+            context.logicError!("You can't walk through walls! The character is at the edge of the maze.");
+          }
+          return "OK";
+        },
+        description: "Moves the character in a direction",
+        arity: 1,
+      };
+
+      const result = interpret('move("off-edge");', { externalFunctions: [moveCharacter] });
+
+      expect(result.error).toBeNull(); // Runtime errors don't become parse errors
+      expect(result.success).toBe(false);
+      expect(result.frames).toHaveLength(1);
+      expect(result.frames[0].status).toBe("ERROR");
+      expect((result.frames[0] as any).error.type).toBe("LogicErrorInExecution");
+      expect((result.frames[0] as any).error.message).toBe(
+        "You can't walk through walls! The character is at the edge of the maze."
+      );
+    });
+
     it("should catch and report errors thrown by external functions", () => {
       const throwingFunc: ExternalFunction = {
         name: "throwError",
