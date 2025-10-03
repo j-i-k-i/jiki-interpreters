@@ -53,6 +53,36 @@ Generate human-readable descriptions for all execution steps including arithmeti
 
 Nested environment chain supporting lexical scoping, variable declaration, access, updates, and scope isolation with automatic block cleanup.
 
+**Key Responsibilities:**
+
+- Stores variables as JikiObject instances in a Map
+- Chains to parent environment for lexical scope resolution
+- Enforces language features (e.g., shadowing rules)
+- Provides unique ID for debugging/tracking
+
+**Shadowing Enforcement:**
+The Environment enforces `allowShadowing` language feature directly in the `define()` method:
+
+- When `allowShadowing: false`, checks if variable name exists in any enclosing scope
+- Uses `isDefinedInEnclosingScope()` to recursively walk parent chain
+- Throws `ShadowingDisabled` RuntimeError with variable name and location
+- Applies uniformly to ALL variable definitions: `let` declarations, function parameters, function names
+
+This centralized approach ensures consistent behavior across:
+
+- Block-level `let` declarations
+- Function parameter binding
+- Function name declarations
+- External function registration (uses `Location.unknown`)
+
+**Methods:**
+
+- `define(name, value, location)`: Add variable, enforce shadowing rules
+- `get(name)`: Retrieve variable, walk scope chain
+- `update(name, value)`: Update existing variable
+- `isDefinedInEnclosingScope(name)`: Check if name exists in parent scopes
+- `getAllVariables()`: Collect all variables for frame generation
+
 ### 6. JikiObjects (`src/javascript/jsObjects/`)
 
 Wrapper objects extending shared `JikiObject` base class. Each type is now in its own file under `jsObjects/` directory. Supports JSNumber, JSString, JSBoolean, JSNull, JSUndefined, JSList, JSDictionary, and JSFunction with consistent cross-interpreter compatibility.
