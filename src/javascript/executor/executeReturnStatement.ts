@@ -8,9 +8,11 @@ export function executeReturnStatement(executor: Executor, statement: ReturnStat
   const evaluationResult = executor.executeFrame(statement, () => {
     if (statement.expression === null) {
       // Void return - create a JikiObject with undefined value
+      const undefinedObj = createJSObject(undefined);
       return {
         type: "ReturnStatement",
-        jikiObject: createJSObject(undefined),
+        jikiObject: undefinedObj,
+        immutableJikiObject: undefinedObj.clone(),
       };
     }
 

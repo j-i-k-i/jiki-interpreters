@@ -8,7 +8,7 @@ export function describeReturnStatement(frame: FrameWithResult, _context: Descri
   const result = frame.result as EvaluationResultReturnStatement;
   const statement = frame.context as ReturnStatement;
 
-  if (statement.expression === null || result.jikiObject === undefined) {
+  if (statement.expression === null) {
     // void return
     return {
       result: `<p>JavaScript returned from the function with no value.</p>`,
