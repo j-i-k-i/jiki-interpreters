@@ -54,3 +54,7 @@ Without esbuild, the compiled JavaScript would contain unresolved imports like `
 ### CI/CD
 
 The project uses parallel GitHub Actions workflows for CI: tests, type checking, and formatting.
+
+---
+
+Copyright (c) 2025 Jiki Ltd. All rights reserved.
