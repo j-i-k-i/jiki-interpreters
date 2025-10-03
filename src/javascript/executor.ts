@@ -16,7 +16,7 @@ import {
   DictionaryExpression,
   CallExpression,
 } from "./expression";
-import type { Location } from "../shared/location";
+import { Location } from "../shared/location";
 import type { Statement } from "./statement";
 import {
   ExpressionStatement,
@@ -25,6 +25,8 @@ import {
   IfStatement,
   ForStatement,
   WhileStatement,
+  FunctionDeclaration,
+  ReturnStatement,
 } from "./statement";
 import type { EvaluationResult } from "./evaluation-result";
 import type { JikiObject } from "./jikiObjects";
@@ -35,7 +37,7 @@ import { createBaseExecutionContext } from "../shared/executionContext";
 import type { EvaluationContext } from "./interpreter";
 import { describeFrame } from "./frameDescribers";
 import cloneDeep from "lodash.clonedeep";
-import { JSCallable } from "./functions";
+import { JSCallable, ReturnValue } from "./functions";
 
 // Import individual executors
 import { executeAssignmentExpression } from "./executor/executeAssignmentExpression";
@@ -56,6 +58,8 @@ import { executeArrayExpression } from "./executor/executeArrayExpression";
 import { executeMemberExpression } from "./executor/executeMemberExpression";
 import { executeDictionaryExpression } from "./executor/executeDictionaryExpression";
 import { executeCallExpression } from "./executor/executeCallExpression";
+import { executeFunctionDeclaration } from "./executor/executeFunctionDeclaration";
+import { executeReturnStatement } from "./executor/executeReturnStatement";
 
 // Execution context for JavaScript stdlib
 export type ExecutionContext = SharedExecutionContext & {
@@ -80,7 +84,8 @@ export type RuntimeErrorType =
   | "FunctionNotFound"
   | "InvalidNumberOfArguments"
   | "FunctionExecutionError"
-  | "LogicErrorInExecution";
+  | "LogicErrorInExecution"
+  | "ReturnOutsideFunction";
 
 export class RuntimeError extends Error {
   public category: string = "RuntimeError";
@@ -114,19 +119,20 @@ export class Executor {
     private readonly sourceCode: string,
     context: EvaluationContext
   ) {
-    this.environment = new Environment();
     this.languageFeatures = {
       allowShadowing: false, // Default to false (shadowing disabled)
       allowTypeCoercion: false, // Default to false (type coercion disabled)
       enforceStrictEquality: true, // Default to true (strict equality required)
       ...context.languageFeatures,
     };
+    this.environment = new Environment(this.languageFeatures);
 
     // Register external functions as JSCallable objects in the environment
     if (context.externalFunctions) {
       for (const func of context.externalFunctions) {
         const callable = new JSCallable(func.name, func.arity, func.func);
-        this.environment.define(func.name, callable);
+        // External functions don't have source location, use Location.unknown
+        this.environment.define(func.name, callable, Location.unknown);
       }
     }
   }
@@ -179,6 +185,15 @@ export class Executor {
       fn();
       return true;
     } catch (error) {
+      if (error instanceof ReturnValue) {
+        // Return outside function - pop the frame and add an error frame
+        this.frames.pop();
+        this.addErrorFrame(
+          error.location,
+          new RuntimeError(translate(`error.runtime.ReturnOutsideFunction`), error.location, "ReturnOutsideFunction")
+        );
+        return false;
+      }
       // Re-throw RuntimeErrors to be handled by outer try-catch
       if (error instanceof RuntimeError) {
         throw error;
@@ -213,6 +228,12 @@ export class Executor {
         executeForStatement(this, statement);
       } else if (statement instanceof WhileStatement) {
         executeWhileStatement(this, statement);
+      } else if (statement instanceof FunctionDeclaration) {
+        // Function declarations don't generate frames, just define the function
+        executeFunctionDeclaration(this, statement);
+      } else if (statement instanceof ReturnStatement) {
+        // Return statements generate frames and throw ReturnValue
+        executeReturnStatement(this, statement);
       }
     } catch (e: unknown) {
       if (e instanceof LogicError) {
@@ -377,6 +398,10 @@ export class Executor {
 
   public logicError(message: string): never {
     throw new LogicError(message);
+  }
+
+  public defineVariable(name: string, value: any, location: Location): void {
+    this.environment.define(name, value, location);
   }
 
   // Get execution context for stdlib functions

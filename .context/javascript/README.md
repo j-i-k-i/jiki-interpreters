@@ -101,6 +101,7 @@ JavaScript-specific extensions are handled through `frameDescribers.ts` which pr
 - Arrays (lists) with creation and index access
 - Objects (dictionaries) with literal syntax { key: value }
 - Member access for arrays (index notation)
+- **User-defined functions** (function declarations, return statements, closures)
 
 ### Planned Features
 
@@ -109,7 +110,7 @@ JavaScript-specific extensions are handled through `frameDescribers.ts` which pr
 - Object property assignment
 - Switch statements
 - Do-while loops
-- Functions and arrow functions
+- Arrow functions and function expressions
 - Classes and prototypes
 - Async/await
 - Modules (import/export)

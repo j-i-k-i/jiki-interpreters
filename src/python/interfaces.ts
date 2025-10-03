@@ -17,7 +17,9 @@ export type NodeType =
   | "IfStatement"
   | "ForInStatement"
   | "BreakStatement"
-  | "ContinueStatement";
+  | "ContinueStatement"
+  | "FunctionDeclaration"
+  | "ReturnStatement";
 
 export interface LanguageFeatures {
   excludeList?: string[];

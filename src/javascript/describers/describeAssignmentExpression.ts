@@ -7,7 +7,7 @@ export function describeAssignmentExpression(
   expression: AssignmentExpression,
   result: EvaluationResultAssignmentExpression
 ): string {
-  const value = formatJSObject(result.immutableJikiObject!);
+  const value = formatJSObject(result.immutableJikiObject);
 
   // Handle member expression assignment
   if (expression.target instanceof MemberExpression) {

@@ -1,5 +1,7 @@
 import type { Arity, ExecutionContext } from "../shared/interfaces";
 import { JikiObject } from "./jikiObjects";
+import type { FunctionDeclaration } from "./statement";
+import type { Location } from "../shared/location";
 
 export interface Callable {
   arity: Arity | undefined;
@@ -29,6 +31,31 @@ export class PyCallable extends JikiObject {
 
   clone(): PyCallable {
     return new PyCallable(this.name, this.arity, this.func);
+  }
+
+  toString(): string {
+    return `<function ${this.name}>`;
+  }
+}
+
+export class ReturnValue extends Error {
+  constructor(
+    public value: any,
+    public location: Location
+  ) {
+    super();
+  }
+}
+
+export class PyUserDefinedFunction extends PyCallable {
+  constructor(private readonly declaration: FunctionDeclaration) {
+    super(declaration.name.lexeme, declaration.parameters.length, () => {
+      throw new Error("User-defined functions should not call func directly");
+    });
+  }
+
+  getDeclaration(): FunctionDeclaration {
+    return this.declaration;
   }
 
   toString(): string {

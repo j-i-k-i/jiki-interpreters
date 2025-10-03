@@ -24,7 +24,7 @@ export function describeTemplateLiteralExpression(
   }
 
   // Describe combining the parts into the final string
-  const finalValue = unwrapJSObject(result.immutableJikiObject!);
+  const finalValue = unwrapJSObject(result.immutableJikiObject);
   const valueStr = typeof finalValue === "string" ? `"${finalValue}"` : String(finalValue);
   steps.push(`Combined the template parts into ${valueStr}.`);
 

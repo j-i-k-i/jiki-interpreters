@@ -8,7 +8,7 @@ import { describeExpression } from "./describeSteps";
 export function describeExpressionStatement(frame: FrameWithResult, context: DescriptionContext): Description {
   const expressionStatement = frame.context as ExpressionStatement;
   const frameResult = frame.result as EvaluationResultExpressionStatement;
-  const value = formatJSObject(frameResult.immutableJikiObject!);
+  const value = formatJSObject(frameResult.immutableJikiObject);
 
   // Special case for function calls - more educational description
   if (expressionStatement.expression instanceof CallExpression) {

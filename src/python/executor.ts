@@ -22,6 +22,8 @@ import {
   ForInStatement,
   BreakStatement,
   ContinueStatement,
+  FunctionDeclaration,
+  ReturnStatement,
 } from "./statement";
 import type { EvaluationResult } from "./evaluation-result";
 import type { JikiObject } from "./jikiObjects";
@@ -33,7 +35,7 @@ import type { EvaluationContext } from "./interpreter";
 import cloneDeep from "lodash.clonedeep";
 import type { PythonFrame } from "./frameDescribers";
 import { describeFrame } from "./frameDescribers";
-import { PyCallable } from "./functions";
+import { PyCallable, ReturnValue } from "./functions";
 
 // Import individual executors
 import { executeLiteralExpression } from "./executor/executeLiteralExpression";
@@ -51,6 +53,8 @@ import { executeForInStatement } from "./executor/executeForInStatement";
 import { executeBreakStatement } from "./executor/executeBreakStatement";
 import { executeContinueStatement } from "./executor/executeContinueStatement";
 import { executeCallExpression } from "./executor/executeCallExpression";
+import { executeFunctionDeclaration } from "./executor/executeFunctionDeclaration";
+import { executeReturnStatement } from "./executor/executeReturnStatement";
 
 // Execution context for Python stdlib (future use)
 export type ExecutionContext = SharedExecutionContext & {
@@ -70,7 +74,8 @@ export type RuntimeErrorType =
   | "FunctionNotFound"
   | "InvalidNumberOfArguments"
   | "FunctionExecutionError"
-  | "LogicErrorInExecution";
+  | "LogicErrorInExecution"
+  | "ReturnOutsideFunction";
 
 export class RuntimeError extends Error {
   public category: string = "RuntimeError";
@@ -167,6 +172,17 @@ export class Executor {
       fn();
       return true;
     } catch (error) {
+      if (error instanceof ReturnValue) {
+        // Return outside function - pop the frame and add an error frame
+        this.frames.pop();
+        const returnError = new RuntimeError(
+          "Return statement outside of function",
+          error.location,
+          "ReturnOutsideFunction"
+        );
+        this.addErrorFrame(error.location, returnError);
+        return false;
+      }
       // Re-throw RuntimeErrors to be handled by outer try-catch
       if (error instanceof RuntimeError) {
         throw error;
@@ -203,6 +219,14 @@ export class Executor {
         result = null;
       } else if (statement instanceof ContinueStatement) {
         executeContinueStatement(this, statement);
+        result = null;
+      } else if (statement instanceof FunctionDeclaration) {
+        // Function declarations don't generate frames, just define the function
+        executeFunctionDeclaration(this, statement);
+        result = null;
+      } else if (statement instanceof ReturnStatement) {
+        // Return statements generate frames and throw ReturnValue
+        executeReturnStatement(this, statement);
         result = null;
       }
     } catch (e: unknown) {

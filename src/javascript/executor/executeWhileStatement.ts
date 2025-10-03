@@ -4,7 +4,7 @@ import { Environment } from "../environment";
 
 export function executeWhileStatement(executor: Executor, statement: WhileStatement): void {
   // Create a new environment for the while loop
-  const loopEnvironment = new Environment(executor.environment);
+  const loopEnvironment = new Environment(executor.languageFeatures, executor.environment);
   const previous = executor.environment;
 
   try {

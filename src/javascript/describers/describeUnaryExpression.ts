@@ -31,7 +31,7 @@ function describeNotExpression(
     `<li>JavaScript evaluated that ${codeTag(
       `!${resBool}`,
       expression.operand.location
-    )} is ${codeTag(result.immutableJikiObject!, expression.location)}.</li>`,
+    )} is ${codeTag(result.immutableJikiObject, expression.location)}.</li>`,
   ];
   return steps;
 }
@@ -52,7 +52,7 @@ function describeMinusExpression(
     `<li>JavaScript evaluated that ${codeTag(
       `-${resNum}`,
       expression.operand.location
-    )} is ${codeTag(result.immutableJikiObject!, expression.location)}.</li>`,
+    )} is ${codeTag(result.immutableJikiObject, expression.location)}.</li>`,
   ];
   return steps;
 }

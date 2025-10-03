@@ -2,6 +2,187 @@
 
 This document tracks the historical development and changes specific to the Python interpreter.
 
+## 2025-10-03: User-Defined Functions Implementation
+
+### Overview
+
+Implemented complete support for user-defined functions in Python, including function declaration (`def`) and return statements. This enables students to learn function concepts with Jiki's frame-by-frame visualization.
+
+### Core Implementation
+
+**AST Nodes** (`src/python/statement.ts`):
+
+- `FunctionDeclaration`: Represents `def` statements with name, parameters, and body
+- `ReturnStatement`: Represents `return` statements with optional expression
+- `FunctionParameter`: Represents function parameter declarations
+
+**Callables** (`src/python/functions.ts`):
+
+- `PyUserDefinedFunction`: Extends `PyCallable` base class for user-defined functions
+  - Stores function declaration AST
+  - Provides `getDeclaration()` accessor for execution
+  - Returns `<function name>` string representation
+- `ReturnValue`: Exception class for unwinding call stack on return
+  - Contains return value as JikiObject
+  - Includes location for error reporting
+
+**Execution Modules**:
+
+- `executeFunctionDeclaration.ts`: Creates `PyUserDefinedFunction` and binds to environment
+- `executeReturnStatement.ts`: Evaluates return value and throws `ReturnValue` exception
+- `executeCallExpression.ts`: Enhanced to handle user-defined function calls:
+  - Creates new environment chained to function's parent (closure support)
+  - Binds parameters to argument values
+  - Executes function body statements
+  - Catches `ReturnValue` exceptions for return flow
+  - Returns None for functions without explicit return
+
+**Parser Enhancements** (`src/python/parser.ts`):
+
+- Added `functionDeclaration()` method for parsing `def` statements
+- Handles Python syntax: `def name(params): NEWLINE INDENT body DEDENT`
+- Validates duplicate parameter names
+- Added `returnStatement()` method for parsing `return` statements
+- **Critical Fix**: Refactored entire parser error handling system to match JikiScript canonical pattern:
+  - `consume()` signature changed from `(TokenType, string)` to `(TokenType, SyntaxErrorType, context?)`
+  - `error()` now uses `translate()` for i18n instead of hardcoding "ParseError"
+  - Updated all 17+ `consume()` calls throughout parser
+  - Fixed broken parser error reporting that was masking specific error types
+
+**Error Types** (`src/python/error.ts`):
+
+- Added function-specific errors: `MissingFunctionName`, `MissingLeftParenthesisAfterFunctionName`, `MissingParameterName`, `MissingRightParenthesisAfterParameters`, `MissingColonAfterFunctionSignature`, `DuplicateParameterName`, `ReturnOutsideFunction`
+- Added generic parser errors: `MissingExpression`, `MissingIdentifier`, `MissingIn`, `MissingColon`, `MissingIndent`, `IndentationError`
+
+**Frame Generation**:
+
+- Added `describeReturnStatement.ts` describer for educational frame descriptions
+- Return statements generate frames showing return value or void return
+
+**Evaluation Results** (`src/python/evaluation-result.ts`):
+
+- Added `EvaluationResultReturnStatement` type with expression and jikiObject fields
+
+### Python-Specific Implementation Details
+
+**Syntax Handling**:
+
+- Python uses `def name(params):` followed by NEWLINE INDENT body DEDENT
+- Contrast with JavaScript's `function name(params) {}` with braces
+- Parser consumes COLON after function signature
+- Parser handles optional NEWLINE before indented body block
+
+**Scope and Closures**:
+
+- Functions create new environment chained to current environment
+- Enables proper closure support and LEGB scope resolution
+- Parameters bound to new environment before body execution
+- Environment restored after function execution completes
+
+**Return Behavior**:
+
+- Explicit `return value` evaluates expression and returns as JikiObject
+- Explicit `return` (no value) returns None
+- Implicit return (reaching end of function) returns None
+- All return paths use `ReturnValue` exception for stack unwinding
+
+### Breaking Changes and Test Updates
+
+**Parser Error Refactor Impact**:
+
+- All existing parser tests expecting error message strings updated to expect error types
+- Updated 4 tests in `tests/python/parser/for.test.ts` to expect error types
+- Updated 3 tests in `tests/python/parser/if.test.ts` to expect error types
+- Updated 5 tests in `tests/python/syntaxErrors/variables.test.ts` to expect error types
+
+**Scanner Test Updates**:
+
+- Removed `def` and `return` from unimplemented token tests
+- Commented out function definition test (def is now implemented)
+
+### Test Coverage
+
+**New Test Suite** (`tests/python/functions.test.ts`): 16 comprehensive tests
+
+**Basic Functionality**:
+
+- Simple function definition and call
+- Functions with single and multiple parameters
+- Return value handling (explicit and implicit)
+- Void functions without return statement
+
+**Scope and Closures**:
+
+- Variable access in function scope
+- Closure over parent environment variables
+- Parameter shadowing of outer variables
+
+**Syntax Error Tests**:
+
+- Missing function name after `def`
+- Missing parentheses around parameters
+- Missing colon after function signature
+- Duplicate parameter names
+
+**Runtime Error Tests**:
+
+- Wrong number of arguments (too few, too many)
+- Return statement outside function
+- Undefined function calls
+
+**Complex Scenarios**:
+
+- Nested function calls
+- Conditionals inside functions
+- Multiple return paths in single function
+
+### Translation System
+
+**Added translations** in `src/python/locales/en/translation.json` and `system/translation.json`:
+
+- All function-specific error messages with context placeholders
+- Generic parser error messages for improved error reporting
+- Consistent with shared error format pattern
+
+### Impact and Benefits
+
+**Educational Value**:
+
+- Students can learn function declaration and return statements
+- Frame-by-frame visualization shows parameter binding and return flow
+- Clear error messages guide students through syntax requirements
+
+**Architecture Consistency**:
+
+- Follows shared interpreter architecture patterns exactly
+- Parse errors as returned errors, runtime errors as frames
+- Frame generation compatible with Jiki UI
+
+**Code Quality**:
+
+- Parser error handling now matches canonical JikiScript pattern
+- Improved error specificity (no more generic "ParseError")
+- Better maintainability through consistent error handling
+
+**Test Results**:
+
+- All 1927 tests passing | 49 skipped
+- Python functions: 16/16 tests passing
+- No regressions from parser refactor
+
+### Future Enhancements
+
+Potential additions for future development:
+
+- Default parameter values
+- Keyword arguments
+- Variable-length argument lists (\*args)
+- Keyword argument dictionaries (\*\*kwargs)
+- Lambda expressions
+- Decorators
+
+This implementation establishes Python functions as a core educational feature with complete visualization support and robust error handling.
+
 ## 2025-10-03: Removal of Executor Location Tracking
 
 - **Removed**: `private location: Location` field from Python executor

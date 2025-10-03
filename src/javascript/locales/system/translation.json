@@ -27,7 +27,14 @@
       "UnimplementedToken": "UnimplementedToken: token: {{tokenType}}: lexeme: {{lexeme}}",
       "UnknownCharacter": "Unknown character",
       "UnterminatedComment": "UnterminatedComment",
-      "UnterminatedString": "Did you forget to add end quote?"
+      "UnterminatedString": "Did you forget to add end quote?",
+      "NestedFunctionDeclaration": "NestedFunctionDeclaration",
+      "MissingFunctionName": "MissingFunctionName",
+      "MissingLeftParenthesisAfterFunctionName": "MissingLeftParenthesisAfterFunctionName",
+      "MissingParameterName": "MissingParameterName",
+      "DuplicateParameterName": "DuplicateParameterName: name: {{name}}",
+      "MissingRightParenthesisAfterParameters": "MissingRightParenthesisAfterParameters",
+      "MissingLeftBraceBeforeFunctionBody": "MissingLeftBraceBeforeFunctionBody"
     },
     "runtime": {
       "ArgumentError": "ArgumentError: {{message}}",
@@ -40,7 +47,8 @@
       "TruthinessDisabled": "TruthinessDisabled: value: {{value}}",
       "TypeError": "TypeError: {{message}}",
       "UnsupportedOperation": "UnsupportedOperation",
-      "VariableNotDeclared": "VariableNotDeclared: name: {{name}}"
+      "VariableNotDeclared": "VariableNotDeclared: name: {{name}}",
+      "ReturnOutsideFunction": "ReturnOutsideFunction"
     }
   }
 }

@@ -69,6 +69,27 @@ Modular executor architecture with dedicated modules for each AST node type. Mai
 
 Python-specific scoping with LEGB rule (Local, Enclosing, Global, Built-in) and function-level variable scoping.
 
+**Key Responsibilities:**
+
+- Stores variables as JikiObject instances in a Map
+- Chains to parent environment for lexical scope resolution (enables closures)
+- Provides unique ID for debugging/tracking
+- No shadowing restrictions (shadowing is natural Python behavior)
+
+**Methods:**
+
+- `define(name, value)`: Add variable to current scope (no location needed - no shadowing checks)
+- `get(name)`: Retrieve variable, walk scope chain (LEGB order)
+- `update(name, value)`: Update existing variable in appropriate scope
+- `getAllVariables()`: Collect all variables for frame generation
+
+**Differences from JavaScript:**
+
+- No `LanguageFeatures` parameter (Python has fewer configurable restrictions)
+- No `location` parameter in `define()` (no shadowing enforcement needed)
+- Shadowing is always allowed (matches standard Python semantics)
+- Function parameters can shadow outer variables without error
+
 ### 6. JikiObjects (`src/python/jikiObjects.ts`)
 
 Wrapper objects extending shared `JikiObject` base class. Supports PyNumber, PyString, PyBoolean, PyNone, and PyList with Python-specific features like int/float distinction and truthiness rules.

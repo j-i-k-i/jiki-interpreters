@@ -8,7 +8,7 @@ export interface EvaluationResultTemplateLiteralExpression {
   type: "TemplateLiteralExpression";
   parts: (string | EvaluationResultExpression)[];
   jikiObject: JSString;
-  immutableJikiObject?: JSString;
+  immutableJikiObject: JSString;
 }
 
 export function executeTemplateLiteralExpression(

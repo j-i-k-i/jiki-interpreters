@@ -24,6 +24,9 @@ import {
   IfStatement,
   ForStatement,
   WhileStatement,
+  FunctionDeclaration,
+  FunctionParameter,
+  ReturnStatement,
 } from "./statement";
 import { type Token, type TokenType } from "./token";
 import { translate } from "./translator";
@@ -88,7 +91,7 @@ export class Parser {
 
     while (!this.isAtEnd()) {
       const startPosition = this.current;
-      const statement = this.statement();
+      const statement = this.statement(true); // true = top level
       if (statement) {
         statements.push(statement);
       } else if (this.current === startPosition && !this.isAtEnd()) {
@@ -105,7 +108,7 @@ export class Parser {
     return statements;
   }
 
-  private statement(): Statement | null {
+  private statement(isTopLevel: boolean = false): Statement | null {
     try {
       // Skip comments and EOL tokens (they don't produce statements)
       while (this.check("LINE_COMMENT", "BLOCK_COMMENT", "EOL")) {
@@ -115,6 +118,19 @@ export class Parser {
       // If we've consumed all tokens, return null
       if (this.isAtEnd()) {
         return null;
+      }
+
+      // Handle function declarations (only at top level)
+      if (this.match("FUNCTION")) {
+        if (!isTopLevel) {
+          this.error("NestedFunctionDeclaration", this.previous().location);
+        }
+        return this.functionDeclaration(this.previous());
+      }
+
+      // Handle return statements
+      if (this.match("RETURN")) {
+        return this.returnStatement(this.previous());
       }
 
       // Handle variable declarations
@@ -319,6 +335,52 @@ export class Parser {
       // Make sure we restore the setting even if there's an error
       this.languageFeatures.oneStatementPerLine = savedOneStatementPerLine;
     }
+  }
+
+  private functionDeclaration(functionToken: Token): Statement {
+    // Parse function name
+    const name = this.consume("IDENTIFIER", "MissingFunctionName");
+
+    // Parse parameters
+    this.consume("LEFT_PAREN", "MissingLeftParenthesisAfterFunctionName");
+    const parameters: FunctionParameter[] = [];
+    const parameterNames = new Set<string>();
+
+    if (!this.check("RIGHT_PAREN")) {
+      do {
+        const paramName = this.consume("IDENTIFIER", "MissingParameterName");
+
+        // Check for duplicate parameters
+        if (parameterNames.has(paramName.lexeme)) {
+          this.error("DuplicateParameterName", paramName.location, { name: paramName.lexeme });
+        }
+        parameterNames.add(paramName.lexeme);
+
+        parameters.push(new FunctionParameter(paramName));
+      } while (this.match("COMMA"));
+    }
+
+    this.consume("RIGHT_PAREN", "MissingRightParenthesisAfterParameters");
+
+    // Parse body
+    this.consume("LEFT_BRACE", "MissingLeftBraceBeforeFunctionBody");
+    const body = this.block(true); // true = consume the RIGHT_BRACE
+    const rightBrace = this.previous();
+
+    return new FunctionDeclaration(name, parameters, body, Location.between(functionToken, rightBrace));
+  }
+
+  private returnStatement(returnToken: Token): Statement {
+    // Check if there's an expression to return
+    let expression: Expression | null = null;
+
+    // If not at semicolon or EOL, parse the return expression
+    if (!this.check("SEMICOLON") && !this.check("EOL") && !this.isAtEnd()) {
+      expression = this.expression();
+    }
+
+    const semicolonToken = this.consumeSemicolon();
+    return new ReturnStatement(returnToken, expression, Location.between(returnToken, semicolonToken));
   }
 
   private expression(): Expression {
