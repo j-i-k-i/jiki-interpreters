@@ -197,7 +197,7 @@ export type ErrorCategory = "SyntaxError" | "SemanticError" | "DisabledLanguageF
 export abstract class FrontendError<T extends ErrorType> extends Error {
   constructor(
     public message: string,
-    public location: Location | null,
+    public location: Location,
     public type: T,
     public context?: any
   ) {

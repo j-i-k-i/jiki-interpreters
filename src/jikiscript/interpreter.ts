@@ -324,7 +324,7 @@ export class Interpreter {
     };
   }
 
-  private error(type: RuntimeErrorType, location: Location | null, context: any = {}): never {
+  private error(type: RuntimeErrorType, location: Location, context: any = {}): never {
     // Unwrap context values from jiki objects
     context = Jiki.unwrapJikiObject(context);
     throw new RuntimeError(translate(`error.runtime.${type}`, context), location, type, context);

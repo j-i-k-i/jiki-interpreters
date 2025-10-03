@@ -333,7 +333,7 @@ export class Executor {
     } catch (error) {
       if (isRuntimeError(error)) {
         if (
-          error.location?.line === 1 &&
+          error.location.line === 1 &&
           (error.type === "FunctionNotFoundInScope" || error.type === "FunctionNotFoundWithSimilarNameSuggestion")
         ) {
           const newError = this.buildError(
@@ -344,7 +344,7 @@ export class Executor {
 
           this.addErrorFrame(newError.location, newError);
         } else if (
-          error.location?.line === 1 &&
+          error.location.line === 1 &&
           (error.type === "RangeErrorTooFewArgumentsForFunctionCall" ||
             error.type === "RangeErrorTooManyArgumentsForFunctionCall")
         ) {
@@ -1290,11 +1290,11 @@ export class Executor {
     }
   }
 
-  public error(type: RuntimeErrorType, location: Location | null, context: any = {}): never {
+  public error(type: RuntimeErrorType, location: Location, context: any = {}): never {
     throw this.buildError(type, location, context);
   }
 
-  private buildError(type: RuntimeErrorType, location: Location | null, context: any = {}): RuntimeError {
+  private buildError(type: RuntimeErrorType, location: Location, context: any = {}): RuntimeError {
     // Unwrap context values from jiki objects
     context = Jiki.unwrapJikiObject(context);
 
