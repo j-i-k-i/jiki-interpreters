@@ -615,7 +615,7 @@ describe("errors", () => {
           expect(frames).toBeArrayOfSize(1);
           expect(frames[0].line).toBe(1);
           expect(frames[0].status).toBe("ERROR");
-          expect(frames[0].code).toBe("foo()");
+          expect(frames[0].code).toBe("foo");
           expect(frames[0].error).not.toBeNull();
           expect(frames[0].error!.category).toBe("RuntimeError");
           expect(frames[0].error!.type).toBe("FunctionNotFoundInScope");
@@ -634,7 +634,7 @@ describe("errors", () => {
           expect(frames).toBeArrayOfSize(1);
           expect(frames[0].line).toBe(6);
           expect(frames[0].status).toBe("ERROR");
-          expect(frames[0].code).toBe("foobor()");
+          expect(frames[0].code).toBe("foobor");
           expect(frames[0].error).not.toBeNull();
           expect(frames[0].error!.message).toBe("CouldNotFindFunctionWithSuggestion: name: foobor, suggestion: foobar");
           expect(frames[0].error!.category).toBe("RuntimeError");
@@ -651,7 +651,7 @@ describe("errors", () => {
         expect(frames).toBeArrayOfSize(1);
         expect(frames[0].line).toBe(1);
         expect(frames[0].status).toBe("ERROR");
-        expect(frames[0].code).toBe("set x to y");
+        expect(frames[0].code).toBe("y");
         expect(frames[0].error).not.toBeNull();
         expect(frames[0].error!.category).toBe("RuntimeError");
         expect(frames[0].error!.type).toBe("UnexpectedUncalledFunctionInExpression");
@@ -672,7 +672,7 @@ describe("errors", () => {
         expect(frames[0].error).toBeNil();
         expect(frames[1].line).toBe(3);
         expect(frames[1].status).toBe("ERROR");
-        expect(frames[1].code).toBe("foo()");
+        expect(frames[1].code).toBe("foo");
         expect(frames[1].error).not.toBeNull();
         expect(frames[1].error!.category).toBe("RuntimeError");
         expect(frames[1].error!.type).toBe("FunctionNotFoundInScope");
@@ -688,7 +688,7 @@ describe("errors", () => {
         expect(frames).toBeArrayOfSize(1);
         expect(frames[0].line).toBe(2);
         expect(frames[0].status).toBe("ERROR");
-        expect(frames[0].code).toBe("foo()");
+        expect(frames[0].code).toBe("foo");
         expect(frames[0].error).not.toBeNull();
         expect(frames[0].error!.category).toBe("RuntimeError");
         expect(frames[0].error!.type).toBe("FunctionNotFoundInScope");

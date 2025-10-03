@@ -16,7 +16,7 @@ describe("evaluateFunction", () => {
     expect(frames).toBeArrayOfSize(1);
     expect(frames[0].line).toBe(3);
     expect(frames[0].status).toBe("ERROR");
-    expect(frames[0].code).toBe("foo()");
+    expect(frames[0].code).toBe("foo");
     expect(frames[0].error).not.toBeNull();
     expect(frames[0].error!.category).toBe("RuntimeError");
     expect(frames[0].error!.type).toBe("FunctionNotFoundInScope");
@@ -38,7 +38,7 @@ describe("evaluateFunction", () => {
     expect(frames).toBeArrayOfSize(3);
     expect(frames[2].line).toBe(5);
     expect(frames[2].status).toBe("ERROR");
-    expect(frames[2].code).toBe("foo()");
+    expect(frames[2].code).toBe("foo");
     expect(frames[2].error).not.toBeNull();
     expect(frames[2].error!.category).toBe("RuntimeError");
     expect(frames[2].error!.type).toBe("FunctionNotFoundInScope");

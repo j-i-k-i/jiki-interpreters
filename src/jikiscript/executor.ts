@@ -131,7 +131,6 @@ export interface ExternalFunction {
 export class Executor {
   [key: string]: any; // Allow dynamic method access
   private readonly frames: Frame[] = [];
-  private location: Location | null = null;
   public time: number = 0;
   private readonly timePerFrame: number;
   private totalLoopIterations = 0;
@@ -278,7 +277,7 @@ export class Executor {
         }
       } catch (error) {
         if (isRuntimeError(error)) {
-          this.addErrorFrame(this.location || error.location, error);
+          this.addErrorFrame(error.location, error);
           break;
         }
 
@@ -336,11 +335,9 @@ export class Executor {
           error.location.line === 1 &&
           (error.type === "FunctionNotFoundInScope" || error.type === "FunctionNotFoundWithSimilarNameSuggestion")
         ) {
-          const newError = this.buildError(
-            "StateErrorExpectedFunctionNotFoundInScope",
-            new Location(1, new Span(1, 0), new Span(1, 1)),
-            { name: error.context.name }
-          );
+          const newError = this.buildError("StateErrorExpectedFunctionNotFoundInScope", statement.location, {
+            name: error.context.name,
+          });
 
           this.addErrorFrame(newError.location, newError);
         } else if (
@@ -348,15 +345,13 @@ export class Executor {
           (error.type === "RangeErrorTooFewArgumentsForFunctionCall" ||
             error.type === "RangeErrorTooManyArgumentsForFunctionCall")
         ) {
-          const newError = this.buildError(
-            "StateErrorExpectedFunctionHasWrongArgumentCount",
-            new Location(1, new Span(1, 0), new Span(1, 1)),
-            { name: error.context.name }
-          );
+          const newError = this.buildError("StateErrorExpectedFunctionHasWrongArgumentCount", statement.location, {
+            name: error.context.name,
+          });
 
           this.addErrorFrame(newError.location, newError);
         } else {
-          this.addErrorFrame(this.location || error.location, error);
+          this.addErrorFrame(error.location, error);
         }
         return {
           value: undefined,
@@ -391,10 +386,8 @@ export class Executor {
     }
   }
   public executeFrame<T extends EvaluationResult>(context: Statement | Expression, code: () => T): T {
-    this.location = context.location;
     const result = code();
     this.addSuccessFrame(context.location, result, context);
-    this.location = null;
     return result;
   }
 
@@ -1189,7 +1182,7 @@ export class Executor {
     this.error("NonJikiObjectDetectedInExecution", location);
   }
 
-  public addSuccessFrame(location: Location | null, result: EvaluationResult, context?: Statement | Expression): void {
+  public addSuccessFrame(location: Location, result: EvaluationResult, context?: Statement | Expression): void {
     if (!this.addSuccessFrames) {
       return;
     }
@@ -1197,21 +1190,17 @@ export class Executor {
     this.addFrame(location, "SUCCESS", result, undefined, context);
   }
 
-  public addErrorFrame(location: Location | null, error: RuntimeError, context?: Statement | Expression): void {
+  public addErrorFrame(location: Location, error: RuntimeError, context?: Statement | Expression): void {
     this.addFrame(location, "ERROR", undefined, error, context);
   }
 
   private addFrame(
-    location: Location | null,
+    location: Location,
     status: FrameExecutionStatus,
     result?: EvaluationResult,
     error?: RuntimeError,
     context?: Statement | Expression
   ): void {
-    if (location === null) {
-      location = Location.unknown;
-    }
-
     const frame: Frame = {
       code: location.toCode(this.sourceCode),
       line: location.line,

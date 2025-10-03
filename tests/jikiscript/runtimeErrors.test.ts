@@ -26,14 +26,14 @@ describe("UnexpectedUncalledFunctionInExpression", () => {
     const code = "log get_name + 1";
     const context = { externalFunctions: [getNameFunction] };
     const { frames } = interpret(code, context);
-    expectFrameToBeError(frames[0], code, "UnexpectedUncalledFunctionInExpression");
+    expectFrameToBeError(frames[0], "get_name", "UnexpectedUncalledFunctionInExpression");
     expect(frames[0].error!.message).toBe("UnexpectedUncalledFunction: name: get_name");
   });
   test("in a equation with a -", () => {
     const code = "log get_name - 1";
     const context = { externalFunctions: [getNameFunction] };
     const { frames } = interpret(code, context);
-    expectFrameToBeError(frames[0], code, "UnexpectedUncalledFunctionInExpression");
+    expectFrameToBeError(frames[0], "get_name", "UnexpectedUncalledFunctionInExpression");
     expect(frames[0].error!.message).toBe("UnexpectedUncalledFunction: name: get_name");
   });
   test("in other function", () => {
@@ -45,7 +45,7 @@ describe("UnexpectedUncalledFunctionInExpression", () => {
         log move(move)
       `;
     const { error, frames } = interpret(code);
-    expectFrameToBeError(frames[0], `log move(move)`, "UnexpectedUncalledFunctionInExpression");
+    expectFrameToBeError(frames[0], `move`, "UnexpectedUncalledFunctionInExpression");
     expect(frames[0].error!.message).toBe("UnexpectedUncalledFunction: name: move");
   });
 
@@ -58,7 +58,7 @@ describe("UnexpectedUncalledFunctionInExpression", () => {
         log move
       `;
     const { frames } = interpret(code);
-    expectFrameToBeError(frames[0], `log move`, "UnexpectedUncalledFunctionInExpression");
+    expectFrameToBeError(frames[0], `move`, "UnexpectedUncalledFunctionInExpression");
     expect(frames[0].error!.message).toBe("UnexpectedUncalledFunction: name: move");
   });
 });
@@ -67,7 +67,7 @@ describe("DuplicateFunctionDeclarationInScope", () => {
     const code = "set get_name to 5";
     const context = { externalFunctions: [getNameFunction] };
     const { frames } = interpret(code, context);
-    expectFrameToBeError(frames[0], code, "DuplicateFunctionDeclarationInScope");
+    expectFrameToBeError(frames[0], "get_name", "DuplicateFunctionDeclarationInScope");
     expect(frames[0].error!.message).toBe("FunctionAlreadyDeclared: name: get_name");
   });
   test("external function", () => {
@@ -94,7 +94,7 @@ describe("UnexpectedChangeOfFunctionReference", () => {
     const code = "change get_name to 5";
     const context = { externalFunctions: [getNameFunction] };
     const { frames } = interpret(code, context);
-    expectFrameToBeError(frames[0], code, "UnexpectedChangeOfFunctionReference");
+    expectFrameToBeError(frames[0], "get_name", "UnexpectedChangeOfFunctionReference");
     expect(frames[0].error!.message).toBe("UnexpectedChangeOfFunction: name: get_name");
   });
 });
@@ -157,7 +157,7 @@ describe("VariableAlreadyDeclaredInScope", () => {
     const code = `set x to 5
                   set x to 6`;
     const { frames } = interpret(code);
-    expectFrameToBeError(frames[1], "set x to 6", "VariableAlreadyDeclaredInScope");
+    expectFrameToBeError(frames[1], "x", "VariableAlreadyDeclaredInScope");
     expect(frames[1].error!.message).toBe("VariableAlreadyDeclared: name: x");
   });
   test("foreach", () => {
@@ -174,7 +174,7 @@ describe("VariableNotDeclared", () => {
   test("basic", () => {
     const code = "change x to 6";
     const { frames } = interpret(code);
-    expectFrameToBeError(frames[0], code, "VariableNotDeclared");
+    expectFrameToBeError(frames[0], "x", "VariableNotDeclared");
     expect(frames[0].error!.message).toBe("VariableNotDeclared: name: x");
   });
 });
@@ -187,7 +187,7 @@ describe("VariableNotAccessibleInFunctionScope", () => {
                   end
                   foo()`;
     const { frames, error } = interpret(code);
-    expectFrameToBeError(frames[1], "change x to 7", "VariableNotAccessibleInFunctionScope");
+    expectFrameToBeError(frames[1], "x", "VariableNotAccessibleInFunctionScope");
     expect(frames[1].error!.message).toBe("VariableNotAccessibleInFunction: name: x");
   });
 });
@@ -286,7 +286,7 @@ describe("StateErrorCannotStoreNullValueFromFunction", () => {
       set foo to bar()
     `);
 
-    expectFrameToBeError(frames[0], `set foo to bar()`, "StateErrorCannotStoreNullValueFromFunction");
+    expectFrameToBeError(frames[0], `bar()`, "StateErrorCannotStoreNullValueFromFunction");
     expect(frames[0].error!.message).toBe(`StateErrorCannotStoreNullValueFromFunction`);
   });
   test("changing", () => {
@@ -298,7 +298,7 @@ describe("StateErrorCannotStoreNullValueFromFunction", () => {
       change foo to bar()
     `);
 
-    expectFrameToBeError(frames[1], `change foo to bar()`, "StateErrorCannotStoreNullValueFromFunction");
+    expectFrameToBeError(frames[1], `bar()`, "StateErrorCannotStoreNullValueFromFunction");
     expect(frames[1].error!.message).toBe(`StateErrorCannotStoreNullValueFromFunction`);
   });
 });
@@ -312,7 +312,7 @@ describe("ExpressionEvaluatedToNullValue", () => {
       something(bar() + 1)
     `);
 
-    expectFrameToBeError(frames[0], `something(bar() + 1)`, "ExpressionEvaluatedToNullValue");
+    expectFrameToBeError(frames[0], `bar()`, "ExpressionEvaluatedToNullValue");
     expect(frames[0].error!.message).toBe(`ExpressionEvaluatedToNullValue`);
   });
 
@@ -324,7 +324,7 @@ describe("ExpressionEvaluatedToNullValue", () => {
       something(1 + bar())
     `);
 
-    expectFrameToBeError(frames[0], `something(1 + bar())`, "ExpressionEvaluatedToNullValue");
+    expectFrameToBeError(frames[0], `bar()`, "ExpressionEvaluatedToNullValue");
     expect(frames[0].error!.message).toBe(`ExpressionEvaluatedToNullValue`);
   });
 });
@@ -333,32 +333,32 @@ describe("TypeErrorOperandMustBeNumericValue", () => {
   test('1 - "a"', () => {
     const code = 'log 1 - "a"';
     const { frames } = interpret(code);
-    expectFrameToBeError(frames[0], code, "TypeErrorOperandMustBeNumericValue");
+    expectFrameToBeError(frames[0], '"a"', "TypeErrorOperandMustBeNumericValue");
     expect(frames[0].error!.message).toBe('OperandMustBeNumber: value: "a"');
   });
   test("1 / true", () => {
     const code = "log 1 / true";
     const { frames } = interpret(code);
-    expectFrameToBeError(frames[0], code, "TypeErrorOperandMustBeNumericValue");
+    expectFrameToBeError(frames[0], "true", "TypeErrorOperandMustBeNumericValue");
     expect(frames[0].error!.message).toBe("OperandMustBeNumber: value: true");
   });
   test("false - 1", () => {
     const code = "log false - 1";
     const { frames } = interpret(code);
-    expectFrameToBeError(frames[0], code, "TypeErrorOperandMustBeNumericValue");
+    expectFrameToBeError(frames[0], "false", "TypeErrorOperandMustBeNumericValue");
     expect(frames[0].error!.message).toBe("OperandMustBeNumber: value: false");
   });
   test("1 * false", () => {
     const code = "log 1 * false";
     const { frames } = interpret(code);
-    expectFrameToBeError(frames[0], code, "TypeErrorOperandMustBeNumericValue");
+    expectFrameToBeError(frames[0], "false", "TypeErrorOperandMustBeNumericValue");
     expect(frames[0].error!.message).toBe("OperandMustBeNumber: value: false");
   });
   test("1 * getName()", () => {
     const code = "log 1 * get_name()";
     const context = { externalFunctions: [getNameFunction] };
     const { frames } = interpret(code, context);
-    expectFrameToBeError(frames[0], code, "TypeErrorOperandMustBeNumericValue");
+    expectFrameToBeError(frames[0], "get_name()", "TypeErrorOperandMustBeNumericValue");
     expect(frames[0].error!.message).toBe('OperandMustBeNumber: value: "Jeremy"');
   });
 });
@@ -367,22 +367,22 @@ describe("TypeErrorOperandMustBeBooleanValue", () => {
   test("not number", () => {
     const { frames } = interpret(`log not 1`);
 
-    expectFrameToBeError(frames[0], `log not 1`, "TypeErrorOperandMustBeBooleanValue");
+    expectFrameToBeError(frames[0], `1`, "TypeErrorOperandMustBeBooleanValue");
     expect(frames[0].error!.message).toBe(`OperandMustBeBoolean: value: 1`);
   });
   test("bang string", () => {
     const { frames } = interpret(`log !"foo"`);
 
-    expectFrameToBeError(frames[0], `log !"foo"`, "TypeErrorOperandMustBeBooleanValue");
+    expectFrameToBeError(frames[0], `"foo"`, "TypeErrorOperandMustBeBooleanValue");
     expect(frames[0].error!.message).toBe(`OperandMustBeBoolean: value: "foo"`);
   });
 
   test("strings in conditionals", () => {
-    const code = `if "foo" do 
+    const code = `if "foo" do
                   end`;
     const { error, frames } = interpret(code);
 
-    expectFrameToBeError(frames[0], code, "TypeErrorOperandMustBeBooleanValue");
+    expectFrameToBeError(frames[0], `"foo"`, "TypeErrorOperandMustBeBooleanValue");
     expect(frames[0].error!.message).toBe(`OperandMustBeBoolean: value: "foo"`);
   });
 
@@ -432,13 +432,13 @@ describe("IndexOutOfRangeForArrayAccess", () => {
     test("inline on empty", () => {
       const code = 'log ""[1]';
       const { frames } = interpret(code);
-      expectFrameToBeError(frames[0], code, "IndexOutOfRangeForArrayAccess");
+      expectFrameToBeError(frames[0], "1", "IndexOutOfRangeForArrayAccess");
       expect(frames[0].error!.message).toBe("IndexOutOfBoundsInGet: index: 1, length: 0, dataType: string");
     });
     test("too high", () => {
       const code = 'log "foo"[4]';
       const { frames } = interpret(code);
-      expectFrameToBeError(frames[0], code, "IndexOutOfRangeForArrayAccess");
+      expectFrameToBeError(frames[0], "4", "IndexOutOfRangeForArrayAccess");
       expect(frames[0].error!.message).toBe("IndexOutOfBoundsInGet: index: 4, length: 3, dataType: string");
     });
   });
@@ -446,13 +446,13 @@ describe("IndexOutOfRangeForArrayAccess", () => {
     test("inline on empty", () => {
       const code = "log [][1]";
       const { frames } = interpret(code);
-      expectFrameToBeError(frames[0], code, "IndexOutOfRangeForArrayAccess");
+      expectFrameToBeError(frames[0], "1", "IndexOutOfRangeForArrayAccess");
       expect(frames[0].error!.message).toBe("IndexOutOfBoundsInGet: index: 1, length: 0, dataType: list");
     });
     test("too high", () => {
       const code = "log [1,2,3][4]";
       const { frames } = interpret(code);
-      expectFrameToBeError(frames[0], code, "IndexOutOfRangeForArrayAccess");
+      expectFrameToBeError(frames[0], "4", "IndexOutOfRangeForArrayAccess");
       expect(frames[0].error!.message).toBe("IndexOutOfBoundsInGet: index: 4, length: 3, dataType: list");
     });
   });
@@ -463,7 +463,7 @@ describe("RangeErrorArrayIndexIsZeroBased", () => {
     test("get", () => {
       const code = 'log "foo"[0]';
       const { frames } = interpret(code);
-      expectFrameToBeError(frames[0], code, "RangeErrorArrayIndexIsZeroBased");
+      expectFrameToBeError(frames[0], "0", "RangeErrorArrayIndexIsZeroBased");
       expect(frames[0].error!.message).toBe("RangeErrorArrayIndexIsZeroBased");
     });
   });
@@ -471,7 +471,7 @@ describe("RangeErrorArrayIndexIsZeroBased", () => {
     test("get", () => {
       const code = 'log ["foo"][0]';
       const { frames } = interpret(code);
-      expectFrameToBeError(frames[0], code, "RangeErrorArrayIndexIsZeroBased");
+      expectFrameToBeError(frames[0], "0", "RangeErrorArrayIndexIsZeroBased");
       expect(frames[0].error!.message).toBe("RangeErrorArrayIndexIsZeroBased");
     });
   });
@@ -485,7 +485,7 @@ describe("IndexOutOfRangeForArrayModification", () => {
       change list[1] to 5
       `;
       const { frames } = interpret(code);
-      expectFrameToBeError(frames[1], "change list[1] to 5", "IndexOutOfRangeForArrayModification");
+      expectFrameToBeError(frames[1], "1", "IndexOutOfRangeForArrayModification");
       expect(frames[1].error!.message).toBe("IndexOutOfBoundsInChange: index: 1, length: 0, dataType: list");
     });
     test("too high", () => {
@@ -494,7 +494,7 @@ describe("IndexOutOfRangeForArrayModification", () => {
       change list[4] to 5
       `;
       const { frames } = interpret(code);
-      expectFrameToBeError(frames[1], "change list[4] to 5", "IndexOutOfRangeForArrayModification");
+      expectFrameToBeError(frames[1], "4", "IndexOutOfRangeForArrayModification");
       expect(frames[1].error!.message).toBe("IndexOutOfBoundsInChange: index: 4, length: 3, dataType: list");
     });
   });
@@ -515,14 +515,14 @@ describe("InvalidChangeTargetNotModifiable", () => {
 test("TypeErrorCannotCompareListObjects", () => {
   const code = `log [] == []`;
   const { frames } = interpret(code);
-  expectFrameToBeError(frames[0], `log [] == []`, "TypeErrorCannotCompareListObjects");
+  expectFrameToBeError(frames[0], `[] == []`, "TypeErrorCannotCompareListObjects");
   expect(frames[0].error!.message).toBe("TypeErrorCannotCompareListObjects");
 });
 
 test("VariableCannotBeNamespacedReference", () => {
   const code = `set foo#bar to 5`;
   const { frames } = interpret(code);
-  expectFrameToBeError(frames[0], code, "VariableCannotBeNamespacedReference");
+  expectFrameToBeError(frames[0], "foo#bar", "VariableCannotBeNamespacedReference");
   expect(frames[0].error!.message).toBe("VariableCannotBeNamespaced: name: foo#bar");
 });
 
@@ -556,14 +556,14 @@ test("TypeErrorCannotCompareObjectInstances", () => {
   log thing == 5
   `;
   const { frames } = interpret(code, context);
-  expectFrameToBeError(frames[1], `log thing == 5`, "TypeErrorCannotCompareObjectInstances");
+  expectFrameToBeError(frames[1], `thing == 5`, "TypeErrorCannotCompareObjectInstances");
   expect(frames[1].error!.message).toBe("TypeErrorCannotCompareObjectInstances");
 });
 
 test("MissingDictionaryKeyInAccess", () => {
   const code = `log {}["a"]`;
   const { frames } = interpret(code);
-  expectFrameToBeError(frames[0], code, "MissingDictionaryKeyInAccess");
+  expectFrameToBeError(frames[0], '{}["a"]', "MissingDictionaryKeyInAccess");
   expect(frames[0].error!.message).toBe('MissingKeyInDictionary: key: "a"');
 });
 
@@ -571,7 +571,7 @@ describe("TypeErrorOperandMustBeStringValue", () => {
   test("dictionary get", () => {
     const code = `log {}[1]`;
     const { frames } = interpret(code);
-    expectFrameToBeError(frames[0], code, "TypeErrorOperandMustBeStringValue");
+    expectFrameToBeError(frames[0], "1", "TypeErrorOperandMustBeStringValue");
     expect(frames[0].error!.message).toBe("OperandMustBeString: value: 1");
   });
 
@@ -581,7 +581,7 @@ describe("TypeErrorOperandMustBeStringValue", () => {
       change foo[1] to 1
     `;
     const { frames } = interpret(code);
-    expectFrameToBeError(frames[1], "change foo[1] to 1", "TypeErrorOperandMustBeStringValue");
+    expectFrameToBeError(frames[1], "1", "TypeErrorOperandMustBeStringValue");
     expect(frames[1].error!.message).toBe("OperandMustBeString: value: 1");
   });
 });
@@ -590,7 +590,7 @@ describe("TypeErrorOperandMustBeNumericValue", () => {
   test("list get", () => {
     const code = `log [1]["a"]`;
     const { frames } = interpret(code);
-    expectFrameToBeError(frames[0], code, "TypeErrorOperandMustBeNumericValue");
+    expectFrameToBeError(frames[0], '"a"', "TypeErrorOperandMustBeNumericValue");
     expect(frames[0].error!.message).toBe('OperandMustBeNumber: value: "a"');
   });
   test("list change", () => {
@@ -599,7 +599,7 @@ describe("TypeErrorOperandMustBeNumericValue", () => {
       change foo["a"] to 1
     `;
     const { frames } = interpret(code);
-    expectFrameToBeError(frames[1], 'change foo["a"] to 1', "TypeErrorOperandMustBeNumericValue");
+    expectFrameToBeError(frames[1], '"a"', "TypeErrorOperandMustBeNumericValue");
     expect(frames[1].error!.message).toBe('OperandMustBeNumber: value: "a"');
   });
 });
