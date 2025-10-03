@@ -13,6 +13,7 @@ import {
 import { Location } from "../shared/location";
 import { Scanner } from "./scanner";
 import type { Statement } from "./statement";
+import { translate } from "./translator";
 import {
   ExpressionStatement,
   AssignmentStatement,
@@ -21,6 +22,9 @@ import {
   ForInStatement,
   BreakStatement,
   ContinueStatement,
+  FunctionDeclaration,
+  FunctionParameter,
+  ReturnStatement,
 } from "./statement";
 import { type Token, type TokenType } from "./token";
 import type { LanguageFeatures, NodeType } from "./interfaces";
@@ -73,6 +77,8 @@ export class Parser {
       ForInStatement: "For loops",
       BreakStatement: "Break statements",
       ContinueStatement: "Continue statements",
+      FunctionDeclaration: "Function declarations",
+      ReturnStatement: "Return statements",
     };
     return friendlyNames[nodeType] || nodeType;
   }
@@ -122,6 +128,16 @@ export class Parser {
       // Check for continue statement
       if (this.match("CONTINUE")) {
         return this.continueStatement();
+      }
+
+      // Check for function declaration
+      if (this.match("DEF")) {
+        return this.functionDeclaration(this.previous());
+      }
+
+      // Check for return statement
+      if (this.match("RETURN")) {
+        return this.returnStatement(this.previous());
       }
 
       // For potential expression or assignment statements,
@@ -196,7 +212,7 @@ export class Parser {
     const left = this.postfix();
 
     // Consume the EQUAL token
-    this.consume("EQUAL", "Expected '=' in assignment statement");
+    this.consume("EQUAL", "MissingEqual");
 
     // Parse the right side
     const value = this.expression();
@@ -361,7 +377,7 @@ export class Parser {
         this.checkNodeAllowed("SubscriptExpression", "SubscriptExpressionNotAllowed", this.previous().location);
 
         const index = this.expression();
-        const rightBracket = this.consume("RIGHT_BRACKET", "Expect ']' after subscript index.");
+        const rightBracket = this.consume("RIGHT_BRACKET", "MissingRightBracket");
         expr = new SubscriptExpression(expr, index, Location.between(expr, rightBracket));
       } else if (this.match("LEFT_PAREN")) {
         // Check if CallExpression is allowed
@@ -412,7 +428,7 @@ export class Parser {
       // Check if GroupingExpression is allowed
       this.checkNodeAllowed("GroupingExpression", "GroupingExpressionNotAllowed", lparen.location);
       const expr = this.expression();
-      this.consume("RIGHT_PAREN", "Expect ')' after expression.");
+      this.consume("RIGHT_PAREN", "MissingRightParen");
       return new GroupingExpression(expr, Location.between(expr, expr));
     }
 
@@ -420,7 +436,7 @@ export class Parser {
       return this.listExpression();
     }
 
-    throw this.error(this.peek(), "Expect expression.");
+    this.error("MissingExpression", this.peek().location);
   }
 
   // Helper methods
@@ -467,16 +483,16 @@ export class Parser {
     return this.tokens[this.current - 1];
   }
 
-  private consume(type: TokenType, message: string): Token {
-    if (this.check(type)) {
+  private consume(tokenType: TokenType, errorType: SyntaxErrorType, context?: any): Token {
+    if (this.check(tokenType)) {
       return this.advance();
     }
 
-    throw this.error(this.peek(), message);
+    this.error(errorType, this.peek().location, context);
   }
 
-  private error(token: Token, message: string): SyntaxError {
-    return new SyntaxError(message, token.location, "ParseError" as SyntaxErrorType);
+  private error(type: SyntaxErrorType, location: Location, context?: any): never {
+    throw new SyntaxError(translate(`error.syntax.${type}`, context), location, type, context);
   }
 
   private ifStatement(): Statement {
@@ -486,7 +502,7 @@ export class Parser {
     this.checkNodeAllowed("IfStatement", "IfStatementNotAllowed", ifToken.location);
 
     const condition = this.expression();
-    this.consume("COLON", "Expect ':' after if condition.");
+    this.consume("COLON", "MissingColon");
 
     // Consume the newline after the colon
     if (this.check("NEWLINE")) {
@@ -501,7 +517,7 @@ export class Parser {
       // elif is handled as a nested if statement
       elseBranch = this.ifStatement();
     } else if (this.match("ELSE")) {
-      this.consume("COLON", "Expect ':' after else.");
+      this.consume("COLON", "MissingColon");
 
       // Consume the newline after the colon
       if (this.check("NEWLINE")) {
@@ -522,16 +538,16 @@ export class Parser {
     this.checkNodeAllowed("ForInStatement", "ForInStatementNotAllowed", forToken.location);
 
     // Parse the variable name
-    const variable = this.consume("IDENTIFIER", "Expect variable name after 'for'.");
+    const variable = this.consume("IDENTIFIER", "MissingIdentifier");
 
     // Parse 'in' keyword
-    this.consume("IN", "Expect 'in' after variable name.");
+    this.consume("IN", "MissingIn");
 
     // Parse the iterable expression
     const iterable = this.expression();
 
     // Parse the colon
-    this.consume("COLON", "Expect ':' after for iterable.");
+    this.consume("COLON", "MissingColon");
 
     // Consume the newline after the colon
     if (this.check("NEWLINE")) {
@@ -575,6 +591,76 @@ export class Parser {
     return new ContinueStatement(continueToken, continueToken.location);
   }
 
+  private functionDeclaration(defToken: Token): Statement {
+    // Check if FunctionDeclaration is allowed
+    this.checkNodeAllowed("FunctionDeclaration", "FunctionDeclarationNotAllowed", defToken.location);
+
+    // Parse function name
+    const name = this.consume("IDENTIFIER", "MissingFunctionName");
+
+    // Parse parameter list
+    this.consume("LEFT_PAREN", "MissingLeftParenthesisAfterFunctionName");
+
+    const parameters: FunctionParameter[] = [];
+    const parameterNames = new Set<string>();
+
+    if (!this.check("RIGHT_PAREN")) {
+      do {
+        const paramName = this.consume("IDENTIFIER", "MissingParameterName");
+
+        // Check for duplicate parameter names
+        if (parameterNames.has(paramName.lexeme)) {
+          throw new SyntaxError(
+            `Duplicate parameter name '${paramName.lexeme}'`,
+            paramName.location,
+            "DuplicateParameterName",
+            { name: paramName.lexeme }
+          );
+        }
+
+        parameterNames.add(paramName.lexeme);
+        parameters.push(new FunctionParameter(paramName));
+      } while (this.match("COMMA"));
+    }
+
+    this.consume("RIGHT_PAREN", "MissingRightParenthesisAfterParameters");
+    this.consume("COLON", "MissingColonAfterFunctionSignature");
+
+    // Skip newline after colon
+    if (this.check("NEWLINE")) {
+      this.advance();
+    }
+
+    // Parse function body as a block
+    const bodyBlock = this.block();
+    const body = bodyBlock instanceof BlockStatement ? bodyBlock.statements : [bodyBlock];
+
+    return new FunctionDeclaration(name, parameters, body, Location.between(defToken, this.previous()));
+  }
+
+  private returnStatement(returnToken: Token): Statement {
+    // Check if ReturnStatement is allowed
+    this.checkNodeAllowed("ReturnStatement", "ReturnStatementNotAllowed", returnToken.location);
+
+    let expression: Expression | null = null;
+
+    // Check if there's an expression to return
+    if (!this.check("NEWLINE") && !this.isAtEnd()) {
+      expression = this.expression();
+    }
+
+    // Consume trailing newline if present
+    if (this.check("NEWLINE")) {
+      this.advance();
+    }
+
+    return new ReturnStatement(
+      returnToken,
+      expression,
+      expression ? Location.between(returnToken, this.previous()) : returnToken.location
+    );
+  }
+
   private block(): Statement {
     const startToken = this.peek();
 
@@ -582,7 +668,7 @@ export class Parser {
     this.checkNodeAllowed("BlockStatement", "BlockStatementNotAllowed", startToken.location);
 
     // Expect an INDENT token to start the block
-    this.consume("INDENT", "Expected indented block.");
+    this.consume("INDENT", "MissingIndent");
 
     const statements: Statement[] = [];
 
@@ -604,7 +690,7 @@ export class Parser {
     }
 
     // Consume the DEDENT token
-    this.consume("DEDENT", "Expected dedent after block.");
+    this.consume("DEDENT", "MissingDedent");
 
     const endToken = this.previous();
 
@@ -626,7 +712,7 @@ export class Parser {
       } while (this.match("COMMA"));
     }
 
-    const rightBracket = this.consume("RIGHT_BRACKET", "Expect ']' after list elements.");
+    const rightBracket = this.consume("RIGHT_BRACKET", "MissingRightBracket");
 
     return new ListExpression(elements, Location.between(leftBracket, rightBracket));
   }
@@ -641,7 +727,7 @@ export class Parser {
       } while (this.match("COMMA"));
     }
 
-    const rightParen = this.consume("RIGHT_PAREN", "Expect ')' after arguments.");
+    const rightParen = this.consume("RIGHT_PAREN", "MissingRightParen");
 
     return new CallExpression(callee, args, Location.between(callee, rightParen));
   }

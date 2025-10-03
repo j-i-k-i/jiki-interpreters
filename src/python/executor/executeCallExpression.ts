@@ -5,8 +5,9 @@ import type { EvaluationResult, EvaluationResultCallExpression } from "../evalua
 import { createPyObject } from "../jikiObjects";
 import type { JikiObject } from "../jikiObjects";
 import type { Arity } from "../../shared/interfaces";
-import { isCallable, type PyCallable } from "../functions";
+import { isCallable, type PyCallable, PyUserDefinedFunction, ReturnValue } from "../functions";
 import { LogicError } from "../error";
+import { Environment } from "../environment";
 
 export function executeCallExpression(executor: Executor, expression: CallExpression): EvaluationResultCallExpression {
   // Evaluate the callee
@@ -34,6 +35,48 @@ export function executeCallExpression(executor: Executor, expression: CallExpres
 
   // Check arity
   checkArity(executor, callable.arity, argJikiObjects.length, expression, callable.name);
+
+  // Handle user-defined functions
+  if (callable instanceof PyUserDefinedFunction) {
+    const declaration = callable.getDeclaration();
+    const environment = new Environment(executor.environment);
+    const prevEnvironment = executor.environment;
+    executor.environment = environment;
+
+    // Bind parameters
+    for (let i = 0; i < declaration.parameters.length; i++) {
+      environment.define(declaration.parameters[i].name.lexeme, argJikiObjects[i]);
+    }
+
+    try {
+      // Execute function body
+      for (const statement of declaration.body) {
+        executor.executeStatement(statement);
+      }
+      // No return statement - return None
+      return {
+        type: "CallExpression",
+        functionName: callable.name,
+        args: argResults,
+        jikiObject: createPyObject(null),
+        immutableJikiObject: createPyObject(null).clone(),
+      };
+    } catch (error) {
+      if (error instanceof ReturnValue) {
+        const jikiResult = error.value ?? createPyObject(null);
+        return {
+          type: "CallExpression",
+          functionName: callable.name,
+          args: argResults,
+          jikiObject: jikiResult,
+          immutableJikiObject: jikiResult.clone(),
+        };
+      }
+      throw error;
+    } finally {
+      executor.environment = prevEnvironment;
+    }
+  }
 
   // Call the function
   const executionContext = executor.getExecutionContext();

@@ -39,31 +39,31 @@ describe("variables syntax errors", () => {
     test("missing variable name", () => {
       const { frames, error } = interpret("= 5");
       expect(error).not.toBeNull();
-      expect((error as SyntaxError)?.type).toBe("ParseError");
+      expect((error as SyntaxError)?.type).toBe("MissingExpression");
     });
 
     test("missing value after equals", () => {
       const { frames, error } = interpret("x =");
       expect(error).not.toBeNull();
-      expect((error as SyntaxError)?.type).toBe("ParseError");
+      expect((error as SyntaxError)?.type).toBe("MissingExpression");
     });
 
     test("number as variable name", () => {
       const { frames, error } = interpret("123 = 5");
       expect(error).not.toBeNull();
-      expect((error as SyntaxError)?.type).toBe("ParseError");
+      expect((error as SyntaxError)?.type).toBe("MissingExpression");
     });
 
     test("keyword as variable name", () => {
       const { frames, error } = interpret("True = 5");
       expect(error).not.toBeNull();
-      expect((error as SyntaxError)?.type).toBe("ParseError");
+      expect((error as SyntaxError)?.type).toBe("MissingExpression");
     });
 
     test("string as variable name", () => {
       const { frames, error } = interpret('"hello" = 5');
       expect(error).not.toBeNull();
-      expect((error as SyntaxError)?.type).toBe("ParseError");
+      expect((error as SyntaxError)?.type).toBe("MissingExpression");
     });
   });
 

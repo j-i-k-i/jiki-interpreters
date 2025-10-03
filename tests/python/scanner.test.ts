@@ -14,7 +14,7 @@ describe("Python - Unimplemented Tokens", () => {
       // { token: "break", type: "BREAK" }, - Implemented for for loops
       { token: "class", type: "CLASS" },
       // { token: "continue", type: "CONTINUE" }, - Implemented for for loops
-      { token: "def", type: "DEF" },
+      // { token: "def", type: "DEF" }, - Implemented for user-defined functions
       { token: "del", type: "DEL" },
       { token: "except", type: "EXCEPT" },
       { token: "finally", type: "FINALLY" },
@@ -29,7 +29,7 @@ describe("Python - Unimplemented Tokens", () => {
       // { token: "not", type: "NOT" }, - Already implemented
       { token: "pass", type: "PASS" },
       { token: "raise", type: "RAISE" },
-      { token: "return", type: "RETURN" },
+      // { token: "return", type: "RETURN" }, - Implemented for user-defined functions
       { token: "try", type: "TRY" },
       { token: "while", type: "WHILE" },
       { token: "with", type: "WITH" },
@@ -69,12 +69,13 @@ describe("Python - Unimplemented Tokens", () => {
   });
 
   describe("Compound statements", () => {
-    it("should error on function definition", () => {
-      const result = interpret("def foo():\n    pass");
-      expect(result.error).toBeDefined();
-      expect(result.error?.type).toBe("UnimplementedToken");
-      expect(result.error?.context.tokenType).toBe("DEF");
-    });
+    // Commented out - def is now implemented for user-defined functions
+    // it("should error on function definition", () => {
+    //   const result = interpret("def foo():\n    pass");
+    //   expect(result.error).toBeDefined();
+    //   expect(result.error?.type).toBe("UnimplementedToken");
+    //   expect(result.error?.context.tokenType).toBe("DEF");
+    // });
 
     it("should error on class definition", () => {
       const result = interpret("class Foo:\n    pass");

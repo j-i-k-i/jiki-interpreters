@@ -138,7 +138,7 @@ describe("Python Parser - For Loops", () => {
       const code = `for in items:
     x`;
 
-      expect(() => parser.parse(code)).toThrow("Expect variable name after 'for'");
+      expect(() => parser.parse(code)).toThrow("MissingIdentifier");
     });
 
     it("should throw error for missing 'in' keyword", () => {
@@ -146,7 +146,7 @@ describe("Python Parser - For Loops", () => {
       const code = `for x items:
     x`;
 
-      expect(() => parser.parse(code)).toThrow("Expect 'in' after variable name");
+      expect(() => parser.parse(code)).toThrow("MissingIn");
     });
 
     it("should throw error for missing colon", () => {
@@ -154,7 +154,7 @@ describe("Python Parser - For Loops", () => {
       const code = `for x in items
     x`;
 
-      expect(() => parser.parse(code)).toThrow("Expect ':' after for iterable");
+      expect(() => parser.parse(code)).toThrow("MissingColon");
     });
 
     it("should throw error for missing indented block", () => {
@@ -162,7 +162,7 @@ describe("Python Parser - For Loops", () => {
       const code = `for x in items:
 x`;
 
-      expect(() => parser.parse(code)).toThrow("Expected indented block");
+      expect(() => parser.parse(code)).toThrow("MissingIndent");
     });
   });
 });

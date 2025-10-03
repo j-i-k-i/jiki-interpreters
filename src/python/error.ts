@@ -49,7 +49,25 @@ export type SyntaxErrorType =
   | "IfStatementNotAllowed"
   | "ForInStatementNotAllowed"
   | "BreakStatementNotAllowed"
-  | "ContinueStatementNotAllowed";
+  | "ContinueStatementNotAllowed"
+  | "FunctionDeclarationNotAllowed"
+  | "ReturnStatementNotAllowed"
+  // Function-related errors
+  | "MissingFunctionName"
+  | "MissingLeftParenthesisAfterFunctionName"
+  | "MissingParameterName"
+  | "DuplicateParameterName"
+  | "MissingRightParenthesisAfterParameters"
+  | "MissingColonAfterFunctionSignature"
+  // Generic parser errors
+  | "MissingEqual"
+  | "MissingRightBracket"
+  | "MissingRightParen"
+  | "MissingColon"
+  | "MissingIn"
+  | "MissingIndent"
+  | "MissingDedent"
+  | "MissingIdentifier";
 
 export class SyntaxError extends Error {
   constructor(

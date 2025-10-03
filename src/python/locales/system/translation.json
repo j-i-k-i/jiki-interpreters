@@ -13,7 +13,21 @@
       "UnimplementedToken": "UnimplementedToken: token: {{tokenType}}: lexeme: {{lexeme}}",
       "UnknownCharacter": "UnknownCharacter: lexeme: {{lexeme}}",
       "UnterminatedComment": "UnterminatedComment",
-      "UnterminatedString": "UnterminatedString"
+      "UnterminatedString": "UnterminatedString",
+      "MissingFunctionName": "MissingFunctionName",
+      "MissingLeftParenthesisAfterFunctionName": "MissingLeftParenthesisAfterFunctionName",
+      "MissingParameterName": "MissingParameterName",
+      "DuplicateParameterName": "DuplicateParameterName: name: {{name}}",
+      "MissingRightParenthesisAfterParameters": "MissingRightParenthesisAfterParameters",
+      "MissingColonAfterFunctionSignature": "MissingColonAfterFunctionSignature",
+      "MissingEqual": "MissingEqual",
+      "MissingRightBracket": "MissingRightBracket",
+      "MissingRightParen": "MissingRightParen",
+      "MissingColon": "MissingColon",
+      "MissingIn": "MissingIn",
+      "MissingIndent": "MissingIndent",
+      "MissingDedent": "MissingDedent",
+      "MissingIdentifier": "MissingIdentifier"
     },
     "runtime": {
       "FunctionExecutionError": "FunctionExecutionError: function: {{function}}: message: {{message}}",
@@ -21,7 +35,8 @@
       "InvalidUnaryExpression": "InvalidUnaryExpression",
       "TruthinessDisabled": "TruthinessDisabled: value: {{value}}",
       "UndefinedVariable": "UndefinedVariable: name: {{name}}",
-      "UnsupportedOperation": "UnsupportedOperation"
+      "UnsupportedOperation": "UnsupportedOperation",
+      "ReturnOutsideFunction": "ReturnOutsideFunction"
     }
   }
 }

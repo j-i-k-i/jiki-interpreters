@@ -9,6 +9,7 @@ import { describeBlockStatement } from "./describers/describeBlockStatement";
 import { describeForInStatement } from "./describers/describeForInStatement";
 import { describeBreakStatement } from "./describers/describeBreakStatement";
 import { describeContinueStatement } from "./describers/describeContinueStatement";
+import { describeReturnStatement } from "./describers/describeReturnStatement";
 
 // Python-specific frame extending the shared base
 export interface PythonFrame extends Frame {
@@ -84,6 +85,9 @@ function generateDescription(frame: FrameWithResult, context: DescriptionContext
 
     case "ContinueStatement":
       return describeContinueStatement(frame, context);
+
+    case "ReturnStatement":
+      return describeReturnStatement(frame, context);
   }
 
   return null;

@@ -79,14 +79,14 @@ describe("Python Parser - If Statements", () => {
     const code = `if True
     x = 1`;
 
-    expect(() => parser.parse(code)).toThrow("Expect ':' after if condition.");
+    expect(() => parser.parse(code)).toThrow("MissingColon");
   });
 
   test("throws error for missing indentation", () => {
     const code = `if True:
 x = 1`;
 
-    expect(() => parser.parse(code)).toThrow("Expected indented block.");
+    expect(() => parser.parse(code)).toThrow("MissingIndent");
   });
 
   test("throws error for incorrect indentation level", () => {
@@ -148,7 +148,7 @@ else:
 else
     x = 2`;
 
-    expect(() => parser.parse(code)).toThrow("Expect ':' after else.");
+    expect(() => parser.parse(code)).toThrow("MissingColon");
   });
 
   test("parses if-elif-else chain", () => {

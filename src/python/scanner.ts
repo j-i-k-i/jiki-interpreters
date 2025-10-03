@@ -197,7 +197,7 @@ export class Scanner {
       // "BREAK", - Implemented for for loops
       "CLASS",
       // "CONTINUE", - Implemented for for loops
-      "DEF",
+      // "DEF", - Implemented for user-defined functions
       "DEL",
       "EXCEPT",
       "FINALLY",
@@ -212,7 +212,7 @@ export class Scanner {
       // "NOT", - Already implemented as unary operator
       "PASS",
       "RAISE",
-      "RETURN",
+      // "RETURN", - Implemented for user-defined functions
       "TRY",
       "WHILE",
       "WITH",
