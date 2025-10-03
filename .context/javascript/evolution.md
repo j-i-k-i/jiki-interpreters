@@ -1,5 +1,174 @@
 # JavaScript Interpreter Evolution
 
+## 2025-10-03: User-Defined Functions Implementation
+
+### Overview
+
+Implemented complete support for user-defined functions in JavaScript, including function declaration and return statements. This enables students to learn function concepts with Jiki's frame-by-frame visualization.
+
+### Core Implementation
+
+**AST Nodes** (`src/javascript/statement.ts`):
+
+- `FunctionDeclaration`: Represents `function` statements with name, parameters, and body
+- `ReturnStatement`: Represents `return` statements with optional expression
+- `FunctionParameter`: Represents function parameter declarations
+
+**Callables** (`src/javascript/functions.ts`):
+
+- `JSUserDefinedFunction`: Extends `JSCallable` base class for user-defined functions
+  - Stores function declaration AST
+  - Provides `getDeclaration()` accessor for execution
+  - Returns `<function name>` string representation
+- `ReturnValue`: Exception class for unwinding call stack on return
+  - Contains return value as JikiObject
+  - Includes location for error reporting
+
+**Execution Modules**:
+
+- `executeFunctionDeclaration.ts`: Creates `JSUserDefinedFunction` and binds to environment
+- `executeReturnStatement.ts`: Evaluates return value and throws `ReturnValue` exception
+- `executeCallExpression.ts`: Enhanced to handle user-defined function calls:
+  - Creates new environment chained to function's parent (closure support)
+  - Binds parameters to argument values
+  - Executes function body statements
+  - Catches `ReturnValue` exceptions for return flow
+  - Returns undefined for functions without explicit return
+
+**Parser Enhancements** (`src/javascript/parser.ts`):
+
+- Added `functionDeclaration()` method for parsing `function` statements
+- Handles JavaScript syntax: `function name(params) { body }`
+- Validates duplicate parameter names
+- Added `returnStatement()` method for parsing `return` statements
+
+**Error Types** (`src/javascript/error.ts`):
+
+- Added function-specific errors: `MissingFunctionName`, `MissingLeftParenthesisAfterFunctionName`, `MissingParameterName`, `MissingRightParenthesisAfterParameters`, `MissingLeftBraceAfterFunctionSignature`, `DuplicateParameterName`, `ReturnOutsideFunction`
+
+**Frame Generation**:
+
+- Added `describeReturnStatement.ts` describer for educational frame descriptions
+- Return statements generate frames showing return value or void return
+
+**Evaluation Results** (`src/javascript/evaluation-result.ts`):
+
+- Added `EvaluationResultReturnStatement` type with expression and jikiObject fields
+
+### JavaScript-Specific Implementation Details
+
+**Syntax Handling**:
+
+- JavaScript uses `function name(params) {}` with braces
+- Contrast with Python's `def name(params):` with indentation
+- Parser consumes LEFT_BRACE after function signature
+- Body statements parsed until matching RIGHT_BRACE
+
+**Scope and Closures**:
+
+- Functions create new environment chained to current environment
+- Enables proper closure support and scope chain resolution
+- Parameters bound to new environment before body execution
+- Environment restored after function execution completes
+
+**Return Behavior**:
+
+- Explicit `return value` evaluates expression and returns as JikiObject
+- Explicit `return` (no value) returns undefined
+- Implicit return (reaching end of function) returns undefined
+- All return paths use `ReturnValue` exception for stack unwinding
+
+### Scanner Updates
+
+**Removed from unimplemented tokens** (`src/javascript/scanner.ts`):
+
+- `FUNCTION` token now fully implemented
+- `RETURN` token now fully implemented
+
+### Test Coverage
+
+**New Test Suite** (`tests/javascript/functions.test.ts`): 17 comprehensive tests
+
+**Basic Functionality**:
+
+- Simple function definition and call
+- Functions with single and multiple parameters
+- Return value handling (explicit and implicit)
+- Void functions without return statement
+
+**Scope and Closures**:
+
+- Variable access in function scope
+- Closure over parent environment variables
+- Parameter shadowing of outer variables
+
+**Syntax Error Tests**:
+
+- Missing function name after `function`
+- Missing parentheses around parameters
+- Missing braces around body
+- Duplicate parameter names
+
+**Runtime Error Tests**:
+
+- Wrong number of arguments (too few, too many)
+- Return statement outside function
+- Undefined function calls
+
+**Complex Scenarios**:
+
+- Nested function calls
+- Conditionals inside functions
+- Multiple return paths in single function
+
+### Translation System
+
+**Added translations** in `src/javascript/locales/en/translation.json` and `system/translation.json`:
+
+- All function-specific error messages with context placeholders
+- Consistent with shared error format pattern
+
+### Impact and Benefits
+
+**Educational Value**:
+
+- Students can learn function declaration and return statements
+- Frame-by-frame visualization shows parameter binding and return flow
+- Clear error messages guide students through syntax requirements
+
+**Architecture Consistency**:
+
+- Follows shared interpreter architecture patterns exactly
+- Parse errors as returned errors, runtime errors as frames
+- Frame generation compatible with Jiki UI
+
+**Test Results**:
+
+- All tests passing including 17 new function tests
+- No regressions from implementation
+
+### Parallel Implementation
+
+This JavaScript implementation was developed in parallel with the Python user-defined functions implementation (same PR), sharing:
+
+- Common architectural patterns (ReturnValue exception, environment chaining)
+- Similar test structure and coverage
+- Consistent error handling approach
+- Aligned frame generation
+
+### Future Enhancements
+
+Potential additions for future development:
+
+- Function expressions (`const fn = function() {}`)
+- Arrow functions (`const fn = () => {}`)
+- Default parameter values
+- Rest parameters (`...args`)
+- Destructuring parameters
+- Async functions
+
+This implementation establishes JavaScript functions as a core educational feature with complete visualization support and robust error handling.
+
 ## 2025-10-03: Removal of Executor Location Tracking
 
 - **Removed**: `private location: Location` field from JavaScript executor

@@ -17,12 +17,17 @@ This document outlines the features and functions included in the educational Py
 - Type coercion control (configurable via language feature flag)
 - Comments
 - Lists (creation, logging, index access with negative indexing, and element assignment)
+- **User-defined functions** (def, return statements with closures and parameter binding)
 
 ### TODO
 
 - while loops
 - f-strings
 - Dictionaries (called Dictionary internally)
+- Default parameter values
+- Keyword arguments
+- Variable-length argument lists (\*args, \*\*kwargs)
+- Lambda expressions
 
 ## Built-in Functions
 
