@@ -2,7 +2,7 @@ import { Parser } from "./parser";
 import { Executor } from "./executor";
 import type { SyntaxError } from "./error";
 import type { Frame } from "../shared/frames";
-import type { CompilationError as SharedCompilationError } from "../shared/errors";
+import type { CompilationResult } from "../shared/errors";
 import type { LanguageFeatures } from "./interfaces";
 import type { ExternalFunction } from "../shared/interfaces";
 
@@ -19,32 +19,21 @@ export interface InterpretResult {
   success: boolean;
 }
 
-// CompilationError type for Python interpreter
-export interface CompilationError extends SharedCompilationError {
-  error: SyntaxError;
-}
-
 /**
  * Compiles Python source code without executing it.
- * Returns CompilationError on parse/syntax errors, empty object on success.
+ * Returns { success: true } on successful compilation or { success: false, error } on parse/syntax errors.
  */
 export function compile(
   sourceCode: string,
   context: EvaluationContext = {},
   fileName: string = "python-script"
-): CompilationError | Record<string, never> {
+): CompilationResult {
   try {
-    // Parse the source code (compilation step only)
     const parser = new Parser(fileName, context);
     parser.parse(sourceCode);
-    return {};
+    return { success: true };
   } catch (error) {
-    // Return compilation error
-    return {
-      type: "CompilationError",
-      error: error as SyntaxError,
-      frames: [],
-    };
+    return { success: false, error: error as SyntaxError };
   }
 }
 

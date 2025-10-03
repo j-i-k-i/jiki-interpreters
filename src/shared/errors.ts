@@ -1,11 +1,18 @@
-import type { Frame } from "./frames";
+import type { Location } from "./location";
 
 /**
- * Generic CompilationError interface used by all interpreters.
- * Represents a parse/syntax error that occurs during the compilation phase.
+ * Shared SyntaxError interface that all interpreter-specific SyntaxError classes conform to.
+ * Each interpreter can have additional fields, but all must include these core properties.
  */
-export interface CompilationError {
-  type: "CompilationError";
-  error: any; // Language-specific SyntaxError/StaticError type
-  frames: Frame[];
+export interface SyntaxError {
+  message: string;
+  location: Location | null;
+  type: string;
+  context?: any;
 }
+
+/**
+ * Result type returned by compile() functions in all interpreters.
+ * Uses a discriminated union for type-safe success/error handling.
+ */
+export type CompilationResult = { success: true } | { success: false; error: SyntaxError };

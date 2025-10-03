@@ -2,7 +2,7 @@ import { parse } from "./parser";
 import { Executor } from "./executor";
 import type { SyntaxError } from "./error";
 import type { Frame } from "../shared/frames";
-import type { CompilationError as SharedCompilationError } from "../shared/errors";
+import type { CompilationResult } from "../shared/errors";
 import type { LanguageFeatures } from "./interfaces";
 import type { ExternalFunction } from "../shared/interfaces";
 
@@ -19,27 +19,16 @@ export interface InterpretResult {
   success: boolean;
 }
 
-// CompilationError type for JavaScript interpreter
-export interface CompilationError extends SharedCompilationError {
-  error: SyntaxError;
-}
-
 /**
  * Compiles JavaScript source code without executing it.
- * Returns CompilationError on parse/syntax errors, empty object on success.
+ * Returns { success: true } on successful compilation or { success: false, error } on parse/syntax errors.
  */
-export function compile(sourceCode: string, context: EvaluationContext = {}): CompilationError | Record<string, never> {
+export function compile(sourceCode: string, context: EvaluationContext = {}): CompilationResult {
   try {
-    // Parse the source code (compilation step only)
     parse(sourceCode, context);
-    return {};
+    return { success: true };
   } catch (error) {
-    // Return compilation error
-    return {
-      type: "CompilationError",
-      error: error as SyntaxError,
-      frames: [],
-    };
+    return { success: false, error: error as SyntaxError };
   }
 }
 

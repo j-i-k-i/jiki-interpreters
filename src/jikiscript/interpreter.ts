@@ -8,6 +8,7 @@ import type { TokenType } from "./token";
 import { translate } from "./translator";
 import type { ExecutionContext, ExternalFunction } from "./executor";
 import type { Frame } from "../shared/frames";
+import type { CompilationResult } from "../shared/errors";
 import type { Arity } from "./functions";
 import * as Jiki from "./jikiObjects";
 import { StdlibFunctionsForLibrary } from "./stdlib";
@@ -20,12 +21,6 @@ export interface FrameContext {
 
 export interface SomethingWithLocation {
   location: Location;
-}
-
-export interface CompilationError {
-  type: "CompilationError";
-  error: StaticError;
-  frames: Frame[];
 }
 
 export class CustomFunctionError extends Error {
@@ -99,21 +94,22 @@ export interface Meta {
   sourceCode: string;
 }
 
-export function compile(sourceCode: string, context: EvaluationContext = {}) {
-  const interpreter = new Interpreter(sourceCode, context);
-  try {
-    interpreter.compile();
-  } catch (data: any) {
-    return data;
-  }
-  return {};
+export function compile(sourceCode: string, context: EvaluationContext = {}): CompilationResult {
+  return new Interpreter(sourceCode, context).compile();
 }
 export function interpret(sourceCode: string, context: EvaluationContext = {}): InterpretResult {
   const interpreter = new Interpreter(sourceCode, context);
-  try {
-    interpreter.compile();
-  } catch (data: any) {
-    return data;
+  const compileResult = interpreter.compile();
+  if (!compileResult.success) {
+    return {
+      frames: [],
+      error: compileResult.error as StaticError,
+      meta: {
+        functionCallLog: {},
+        statements: [],
+        sourceCode,
+      },
+    };
   }
   return interpreter.execute();
 }
@@ -125,7 +121,10 @@ export function evaluateFunction(
   ...args: any[]
 ): EvaluateFunctionResult {
   const interpreter = new Interpreter(sourceCode, context);
-  interpreter.compile();
+  const compileResult = interpreter.compile();
+  if (!compileResult.success) {
+    throw compileResult.error;
+  }
   return interpreter.evaluateFunction(functionCall, ...args);
 }
 export function evaluateExpression(
@@ -135,7 +134,10 @@ export function evaluateExpression(
   ...args: any[]
 ): EvaluateFunctionResult {
   const interpreter = new Interpreter(sourceCode, context);
-  interpreter.compile();
+  const compileResult = interpreter.compile();
+  if (!compileResult.success) {
+    throw compileResult.error;
+  }
   return interpreter.evaluateExpression(expression, ...args);
 }
 
@@ -231,11 +233,12 @@ export class Interpreter {
     });
   }
 
-  public compile() {
+  public compile(): CompilationResult {
     try {
       this.statements = this.parser.parse(this.sourceCode);
+      return { success: true };
     } catch (error: unknown) {
-      throw { type: "CompilationError", frames: [], error: error };
+      return { success: false, error: error as StaticError };
     }
   }
 
