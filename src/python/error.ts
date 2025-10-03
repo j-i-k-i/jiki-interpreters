@@ -53,10 +53,9 @@ export type SyntaxErrorType =
 
 export class SyntaxError extends Error {
   constructor(
-    public type: SyntaxErrorType,
     message: string,
     public location: Location,
-    public fileName?: string,
+    public type: SyntaxErrorType,
     public context?: any
   ) {
     super(message);

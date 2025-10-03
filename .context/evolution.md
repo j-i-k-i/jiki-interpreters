@@ -4,6 +4,47 @@ This document tracks the historical development, major changes, and architectura
 
 ## Major Architectural Changes
 
+### October 2025: Removal of Executor Location Tracking
+
+**Date**: 2025-10-03
+
+**Problem**: All executors maintained a `private location: Location` field that was updated during statement execution to provide broad statement context for error frames. This created complexity and didn't provide the precision needed for educational error reporting.
+
+**Solution**: Removed the `this.location` tracking field from all executors. Error frames now use precise error locations (`error.location`) that point to the exact sub-expression where errors occurred.
+
+**Changes Made**:
+
+1. **Executor Simplification**:
+   - Removed `private location: Location` field from all executors (JikiScript, JavaScript, Python)
+   - Removed location setting/resetting logic in `executeFrame()` wrapper
+   - All error creation now relies on `error.location` for precise error reporting
+
+2. **Location Parameter Standardization**:
+   - Changed all location parameters from `Location | null` to non-nullable `Location`
+   - Introduced `Location.unknown` as fallback for cases where location is unavailable
+   - Simplified error handling code by removing null checks
+
+3. **Improved Error Precision**:
+   - Error frames now point to exact sub-expression where error occurred
+   - More helpful for students understanding where in their code the problem exists
+   - Reduced confusion from broad statement-level error locations
+
+**Files Affected**:
+
+- All executor files (`src/*/executor.ts`)
+- Error handling modules across all interpreters
+- Documentation in `.context/shared/interpreter-architecture.md`
+- Documentation in `.context/shared/common-issues.md`
+
+**Benefits**:
+
+- **Simpler Code**: Removed state management complexity from executors
+- **Better Precision**: Error locations now point to exact problem location
+- **Clearer Intent**: Location handling is explicit, not implicit through state
+- **Easier Maintenance**: Fewer moving parts in executor state management
+
+**Migration Notes**: This change required updating approximately 50+ error creation call sites across all three interpreters to ensure proper location handling.
+
 ### January 2025: LogicError Pattern Standardization
 
 **Date**: January 2025

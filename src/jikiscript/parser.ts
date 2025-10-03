@@ -643,7 +643,7 @@ export class Parser {
         statements.push(this.statement());
       } catch (e) {
         if (type === "method" && e instanceof SyntaxError && e.type === "UnexpectedVisibilityModifierOutsideClass") {
-          this.error("UnexpectedVisibilityModifierInsideMethod", e.location!, e.context);
+          this.error("UnexpectedVisibilityModifierInsideMethod", e.location, e.context);
         } else {
           throw e;
         }

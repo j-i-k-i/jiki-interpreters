@@ -85,7 +85,7 @@ export class Scanner {
     "#": this.tokenizeComment,
   };
 
-  constructor(private readonly fileName: string) {}
+  constructor() {}
 
   public scanTokens(source: string): Token[] {
     this.sourceCode = source;
@@ -143,9 +143,9 @@ export class Scanner {
       this.tokenizeIdentifier();
     } else {
       throw new SyntaxError(
-        "GenericSyntaxError",
         translate("Unexpected character."),
-        Location.fromLineOffset(this.start + 1, this.current + 1, this.line, this.lineOffset)
+        Location.fromLineOffset(this.start + 1, this.current + 1, this.line, this.lineOffset),
+        "GenericSyntaxError"
       );
     }
   }
@@ -228,13 +228,12 @@ export class Scanner {
 
     if (unimplementedTokens.includes(type)) {
       throw new SyntaxError(
-        "UnimplementedToken",
         translate("error.syntax.UnimplementedToken", {
           tokenType: type,
           lexeme: text,
         }),
         Location.fromLineOffset(this.start + 1, this.current + 1, this.line, this.lineOffset),
-        this.fileName,
+        "UnimplementedToken",
         {
           tokenType: type,
           lexeme: text,
@@ -364,9 +363,9 @@ export class Scanner {
 
     if (this.isAtEnd()) {
       throw new SyntaxError(
-        "GenericSyntaxError",
         translate("Unterminated string."),
-        Location.fromLineOffset(this.start + 1, this.current + 1, this.line, this.lineOffset)
+        Location.fromLineOffset(this.start + 1, this.current + 1, this.line, this.lineOffset),
+        "GenericSyntaxError"
       );
     }
 
@@ -389,9 +388,9 @@ export class Scanner {
 
     if (this.isAtEnd()) {
       throw new SyntaxError(
-        "GenericSyntaxError",
         translate("Unterminated string."),
-        Location.fromLineOffset(this.start + 1, this.current + 1, this.line, this.lineOffset)
+        Location.fromLineOffset(this.start + 1, this.current + 1, this.line, this.lineOffset),
+        "GenericSyntaxError"
       );
     }
 
@@ -467,18 +466,18 @@ export class Scanner {
     // Check if tabs are used (we don't support tabs for simplicity)
     if (this.peek() === "\t") {
       throw new SyntaxError(
-        "IndentationError",
         translate("Tabs are not allowed for indentation. Use 4 spaces per indent level."),
-        Location.fromLineOffset(this.start + 1, this.current + 1, this.line, this.lineOffset)
+        Location.fromLineOffset(this.start + 1, this.current + 1, this.line, this.lineOffset),
+        "IndentationError"
       );
     }
 
     // Check if indentation is a multiple of 4
     if (spaces % 4 !== 0) {
       throw new SyntaxError(
-        "IndentationError",
         translate("Indentation must be a multiple of 4 spaces."),
-        Location.fromLineOffset(this.start + 1, this.current + 1, this.line, this.lineOffset)
+        Location.fromLineOffset(this.start + 1, this.current + 1, this.line, this.lineOffset),
+        "IndentationError"
       );
     }
 

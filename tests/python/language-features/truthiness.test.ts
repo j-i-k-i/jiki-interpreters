@@ -131,7 +131,7 @@ result = x or y`;
         const code = `if not 42:
     x = 1`;
         const { frames } = interpret(code);
-        expectFrameToBeError(frames[0], code, "TruthinessDisabled");
+        expectFrameToBeError(frames[0], "not 42", "TruthinessDisabled");
         expect(frames[0].error!.message).toBe("TruthinessDisabled: value: number");
       });
 
@@ -139,7 +139,7 @@ result = x or y`;
         const code = `if not "hello":
     x = 1`;
         const { frames } = interpret(code);
-        expectFrameToBeError(frames[0], code, "TruthinessDisabled");
+        expectFrameToBeError(frames[0], 'not "hello"', "TruthinessDisabled");
         expect(frames[0].error!.message).toBe("TruthinessDisabled: value: string");
       });
 
@@ -147,7 +147,7 @@ result = x or y`;
         const code = `if not None:
     x = 1`;
         const { frames } = interpret(code);
-        expectFrameToBeError(frames[0], code, "TruthinessDisabled");
+        expectFrameToBeError(frames[0], "not None", "TruthinessDisabled");
         expect(frames[0].error!.message).toBe("TruthinessDisabled: value: none");
       });
 
@@ -169,28 +169,28 @@ else:
       test("AND with number on left throws error", () => {
         const code = "result = 5 and True";
         const { frames } = interpret(code);
-        expectFrameToBeError(frames[0], code, "TruthinessDisabled");
+        expectFrameToBeError(frames[0], "5", "TruthinessDisabled");
         expect(frames[0].error!.message).toBe("TruthinessDisabled: value: number");
       });
 
       test("AND with string on right throws error", () => {
         const code = 'result = True and "hello"';
         const { frames } = interpret(code);
-        expectFrameToBeError(frames[0], code, "TruthinessDisabled");
+        expectFrameToBeError(frames[0], '"hello"', "TruthinessDisabled");
         expect(frames[0].error!.message).toBe("TruthinessDisabled: value: string");
       });
 
       test("OR with number on left throws error", () => {
         const code = "result = 0 or True";
         const { frames } = interpret(code);
-        expectFrameToBeError(frames[0], code, "TruthinessDisabled");
+        expectFrameToBeError(frames[0], "0", "TruthinessDisabled");
         expect(frames[0].error!.message).toBe("TruthinessDisabled: value: number");
       });
 
       test("OR with None on left throws error", () => {
         const code = "result = None or True";
         const { frames } = interpret(code);
-        expectFrameToBeError(frames[0], code, "TruthinessDisabled");
+        expectFrameToBeError(frames[0], "None", "TruthinessDisabled");
         expect(frames[0].error!.message).toBe("TruthinessDisabled: value: none");
       });
 
@@ -231,7 +231,7 @@ result = (a and not b) or (b and not a)`;
     test("truthiness disabled when explicitly set to false", () => {
       const code = "result = 1 and 2";
       const { frames } = interpret(code, { languageFeatures: { allowTruthiness: false } });
-      expectFrameToBeError(frames[0], code, "TruthinessDisabled");
+      expectFrameToBeError(frames[0], "1", "TruthinessDisabled");
       expect(frames[0].error!.message).toBe("TruthinessDisabled: value: number");
     });
   });

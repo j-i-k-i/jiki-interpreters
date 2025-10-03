@@ -16,35 +16,35 @@ describe("Runtime Errors", () => {
     test("simple undefined variable", () => {
       const code = "x;";
       const { frames } = interpret(code);
-      expectFrameToBeError(frames[0], code, "VariableNotDeclared");
+      expectFrameToBeError(frames[0], "x", "VariableNotDeclared");
       expect(frames[0].error!.message).toBe("VariableNotDeclared: name: x");
     });
 
     test("undefined variable in expression", () => {
       const code = "5 + a;";
       const { frames } = interpret(code);
-      expectFrameToBeError(frames[0], code, "VariableNotDeclared");
+      expectFrameToBeError(frames[0], "a", "VariableNotDeclared");
       expect(frames[0].error!.message).toBe("VariableNotDeclared: name: a");
     });
 
     test("undefined variable on right side of binary expression", () => {
       const code = "10 * b;";
       const { frames } = interpret(code);
-      expectFrameToBeError(frames[0], code, "VariableNotDeclared");
+      expectFrameToBeError(frames[0], "b", "VariableNotDeclared");
       expect(frames[0].error!.message).toBe("VariableNotDeclared: name: b");
     });
 
     test("undefined variable on left side of binary expression", () => {
       const code = "c - 5;";
       const { frames } = interpret(code);
-      expectFrameToBeError(frames[0], code, "VariableNotDeclared");
+      expectFrameToBeError(frames[0], "c", "VariableNotDeclared");
       expect(frames[0].error!.message).toBe("VariableNotDeclared: name: c");
     });
 
     test("multiple undefined variables - should error on first", () => {
       const code = "x + y;";
       const { frames } = interpret(code);
-      expectFrameToBeError(frames[0], code, "VariableNotDeclared");
+      expectFrameToBeError(frames[0], "x", "VariableNotDeclared");
       expect(frames[0].error!.message).toBe("VariableNotDeclared: name: x");
     });
 
@@ -53,7 +53,7 @@ describe("Runtime Errors", () => {
       const { frames } = interpret(code);
       expect(frames).toBeArrayOfSize(2);
       expect(frames[0].status).toBe("SUCCESS");
-      expectFrameToBeError(frames[1], "y;", "VariableNotDeclared");
+      expectFrameToBeError(frames[1], "y", "VariableNotDeclared");
       expect(frames[1].error!.message).toBe("VariableNotDeclared: name: y");
     });
 
@@ -63,14 +63,14 @@ describe("Runtime Errors", () => {
       expect(frames).toBeArrayOfSize(3);
       expect(frames[0].status).toBe("SUCCESS");
       expect(frames[1].status).toBe("SUCCESS");
-      expectFrameToBeError(frames[2], "a + b + c;", "VariableNotDeclared");
+      expectFrameToBeError(frames[2], "c", "VariableNotDeclared");
       expect(frames[2].error!.message).toBe("VariableNotDeclared: name: c");
     });
 
     test("undefined variable in block scope", () => {
       const code = "{ x; }";
       const { frames } = interpret(code);
-      expectFrameToBeError(frames[0], "x;", "VariableNotDeclared");
+      expectFrameToBeError(frames[0], "x", "VariableNotDeclared");
       expect(frames[0].error!.message).toBe("VariableNotDeclared: name: x");
     });
 
@@ -79,28 +79,28 @@ describe("Runtime Errors", () => {
       const { frames } = interpret(code);
       expect(frames).toBeArrayOfSize(2);
       expect(frames[0].status).toBe("SUCCESS"); // Variable declaration inside block
-      expectFrameToBeError(frames[1], "x;", "VariableNotDeclared");
+      expectFrameToBeError(frames[1], "x", "VariableNotDeclared");
       expect(frames[1].error!.message).toBe("VariableNotDeclared: name: x");
     });
 
     test("nested block undefined variable", () => {
       const code = "{ { y; } }";
       const { frames } = interpret(code);
-      expectFrameToBeError(frames[0], "y;", "VariableNotDeclared");
+      expectFrameToBeError(frames[0], "y", "VariableNotDeclared");
       expect(frames[0].error!.message).toBe("VariableNotDeclared: name: y");
     });
 
     test("undefined variable in string concatenation", () => {
       const code = '"Hello " + name;';
       const { frames } = interpret(code);
-      expectFrameToBeError(frames[0], code, "VariableNotDeclared");
+      expectFrameToBeError(frames[0], "name", "VariableNotDeclared");
       expect(frames[0].error!.message).toBe("VariableNotDeclared: name: name");
     });
 
     test("undefined variable in boolean expression", () => {
       const code = "true && flag;";
       const { frames } = interpret(code);
-      expectFrameToBeError(frames[0], code, "VariableNotDeclared");
+      expectFrameToBeError(frames[0], "flag", "VariableNotDeclared");
       expect(frames[0].error!.message).toBe("VariableNotDeclared: name: flag");
     });
 
@@ -115,14 +115,14 @@ describe("Runtime Errors", () => {
     test("undefined variable in negation", () => {
       const code = "-x;";
       const { frames } = interpret(code);
-      expectFrameToBeError(frames[0], code, "VariableNotDeclared");
+      expectFrameToBeError(frames[0], "x", "VariableNotDeclared");
       expect(frames[0].error!.message).toBe("VariableNotDeclared: name: x");
     });
 
     test("undefined variable in grouping", () => {
       const code = "(x + 5);";
       const { frames } = interpret(code);
-      expectFrameToBeError(frames[0], code, "VariableNotDeclared");
+      expectFrameToBeError(frames[0], "x", "VariableNotDeclared");
       expect(frames[0].error!.message).toBe("VariableNotDeclared: name: x");
     });
   });
@@ -131,14 +131,14 @@ describe("Runtime Errors", () => {
     test("simple undefined variable assignment", () => {
       const code = "x = 5;";
       const { frames } = interpret(code);
-      expectFrameToBeError(frames[0], code, "VariableNotDeclared");
+      expectFrameToBeError(frames[0], "x", "VariableNotDeclared");
       expect(frames[0].error!.message).toBe("VariableNotDeclared: name: x");
     });
 
     test("undefined variable assignment with expression", () => {
       const code = "y = 10 + 5;";
       const { frames } = interpret(code);
-      expectFrameToBeError(frames[0], code, "VariableNotDeclared");
+      expectFrameToBeError(frames[0], "y", "VariableNotDeclared");
       expect(frames[0].error!.message).toBe("VariableNotDeclared: name: y");
     });
 
@@ -147,28 +147,28 @@ describe("Runtime Errors", () => {
       const { frames } = interpret(code);
       expect(frames).toBeArrayOfSize(2);
       expect(frames[0].status).toBe("SUCCESS");
-      expectFrameToBeError(frames[1], "y = 10;", "VariableNotDeclared");
+      expectFrameToBeError(frames[1], "y", "VariableNotDeclared");
       expect(frames[1].error!.message).toBe("VariableNotDeclared: name: y");
     });
 
     test("undefined variable assignment in block scope", () => {
       const code = "{ x = 5; }";
       const { frames } = interpret(code);
-      expectFrameToBeError(frames[0], "x = 5;", "VariableNotDeclared");
+      expectFrameToBeError(frames[0], "x", "VariableNotDeclared");
       expect(frames[0].error!.message).toBe("VariableNotDeclared: name: x");
     });
 
     test("undefined variable assignment with string value", () => {
       const code = 'name = "John";';
       const { frames } = interpret(code);
-      expectFrameToBeError(frames[0], code, "VariableNotDeclared");
+      expectFrameToBeError(frames[0], "name", "VariableNotDeclared");
       expect(frames[0].error!.message).toBe("VariableNotDeclared: name: name");
     });
 
     test("undefined variable assignment with boolean value", () => {
       const code = "flag = true;";
       const { frames } = interpret(code);
-      expectFrameToBeError(frames[0], code, "VariableNotDeclared");
+      expectFrameToBeError(frames[0], "flag", "VariableNotDeclared");
       expect(frames[0].error!.message).toBe("VariableNotDeclared: name: flag");
     });
 
@@ -177,7 +177,7 @@ describe("Runtime Errors", () => {
       const { frames } = interpret(code);
       expect(frames).toBeArrayOfSize(2);
       expect(frames[0].status).toBe("SUCCESS"); // Variable declaration inside block
-      expectFrameToBeError(frames[1], "x = 10;", "VariableNotDeclared");
+      expectFrameToBeError(frames[1], "x", "VariableNotDeclared");
       expect(frames[1].error!.message).toBe("VariableNotDeclared: name: x");
     });
   });
@@ -189,7 +189,7 @@ describe("Runtime Errors", () => {
         const { frames } = interpret(code);
         expect(frames).toBeArrayOfSize(2); // Execution stops after error
         expect(frames[0].status).toBe("SUCCESS"); // Outer variable declaration
-        expectFrameToBeError(frames[1], "let x = 10;", "ShadowingDisabled"); // Inner variable declaration should fail
+        expectFrameToBeError(frames[1], "x", "ShadowingDisabled"); // Inner variable declaration should fail
         expect(frames[1].error!.message).toBe("ShadowingDisabled: name: x");
       });
 
@@ -198,7 +198,7 @@ describe("Runtime Errors", () => {
         const { frames } = interpret(code);
         expect(frames).toBeArrayOfSize(2); // Execution stops after error
         expect(frames[0].status).toBe("SUCCESS"); // let x = 1
-        expectFrameToBeError(frames[1], "let x = 2;", "ShadowingDisabled"); // Inner variable should fail
+        expectFrameToBeError(frames[1], "x", "ShadowingDisabled"); // Inner variable should fail
         expect(frames[1].error!.message).toBe("ShadowingDisabled: name: x");
       });
 
@@ -208,7 +208,7 @@ describe("Runtime Errors", () => {
         expect(frames).toBeArrayOfSize(3); // Execution stops after error
         expect(frames[0].status).toBe("SUCCESS"); // let x = 1
         expect(frames[1].status).toBe("SUCCESS"); // let y = 2
-        expectFrameToBeError(frames[2], "let x = 3;", "ShadowingDisabled"); // let x = 3 should fail
+        expectFrameToBeError(frames[2], "x", "ShadowingDisabled"); // let x = 3 should fail
         expect(frames[2].error!.message).toBe("ShadowingDisabled: name: x");
       });
 
@@ -225,7 +225,7 @@ describe("Runtime Errors", () => {
         const { frames } = interpret(code);
         expect(frames).toBeArrayOfSize(2); // Should stop after shadowing error
         expect(frames[0].status).toBe("SUCCESS"); // let x = 5
-        expectFrameToBeError(frames[1], "let x = 10;", "ShadowingDisabled"); // Shadowing error
+        expectFrameToBeError(frames[1], "x", "ShadowingDisabled"); // Shadowing error
         expect(frames[1].error!.message).toBe("ShadowingDisabled: name: x");
 
         // Verify original variable is unchanged
@@ -301,7 +301,7 @@ describe("Runtime Errors", () => {
         const { frames } = interpret(code); // No language features specified
         expect(frames).toBeArrayOfSize(2); // Execution stops after error
         expect(frames[0].status).toBe("SUCCESS"); // let x = 5
-        expectFrameToBeError(frames[1], "let x = 10;", "ShadowingDisabled"); // Should error
+        expectFrameToBeError(frames[1], "x", "ShadowingDisabled"); // Should error
         expect(frames[1].error!.message).toBe("ShadowingDisabled: name: x");
       });
 
@@ -310,7 +310,7 @@ describe("Runtime Errors", () => {
         const { frames } = interpret(code, { languageFeatures: { allowShadowing: false } });
         expect(frames).toBeArrayOfSize(2); // Execution stops after error
         expect(frames[0].status).toBe("SUCCESS"); // let x = 5
-        expectFrameToBeError(frames[1], "let x = 10;", "ShadowingDisabled"); // Should error
+        expectFrameToBeError(frames[1], "x", "ShadowingDisabled"); // Should error
         expect(frames[1].error!.message).toBe("ShadowingDisabled: name: x");
       });
     });
@@ -320,21 +320,21 @@ describe("Runtime Errors", () => {
     test("undefined variable in if condition", () => {
       const code = "if (x) { let y = 5; }";
       const { frames } = interpret(code);
-      expectFrameToBeError(frames[0], code, "VariableNotDeclared");
+      expectFrameToBeError(frames[0], "x", "VariableNotDeclared");
       expect(frames[0].error!.message).toBe("VariableNotDeclared: name: x");
     });
 
     test("undefined variable in complex if condition", () => {
       const code = "if (x && true) { let y = 10; }";
       const { frames } = interpret(code);
-      expectFrameToBeError(frames[0], code, "VariableNotDeclared");
+      expectFrameToBeError(frames[0], "x", "VariableNotDeclared");
       expect(frames[0].error!.message).toBe("VariableNotDeclared: name: x");
     });
 
     test("undefined variable in logical condition", () => {
       const code = "if (true && unknown) { let y = 1; }";
       const { frames } = interpret(code);
-      expectFrameToBeError(frames[0], code, "VariableNotDeclared");
+      expectFrameToBeError(frames[0], "unknown", "VariableNotDeclared");
       expect(frames[0].error!.message).toBe("VariableNotDeclared: name: unknown");
     });
 
@@ -343,7 +343,7 @@ describe("Runtime Errors", () => {
       const { frames } = interpret(code);
       expect(frames).toBeArrayOfSize(2); // If condition frame + assignment error frame
       expect(frames[0].status).toBe("SUCCESS"); // If condition evaluated
-      expectFrameToBeError(frames[1], "x = 5;", "VariableNotDeclared");
+      expectFrameToBeError(frames[1], "x", "VariableNotDeclared");
       expect(frames[1].error!.message).toBe("VariableNotDeclared: name: x");
     });
 
@@ -352,7 +352,7 @@ describe("Runtime Errors", () => {
       const { frames } = interpret(code);
       expect(frames).toBeArrayOfSize(2); // If condition frame + else assignment error
       expect(frames[0].status).toBe("SUCCESS"); // If condition evaluated
-      expectFrameToBeError(frames[1], "x = 5;", "VariableNotDeclared");
+      expectFrameToBeError(frames[1], "x", "VariableNotDeclared");
       expect(frames[1].error!.message).toBe("VariableNotDeclared: name: x");
     });
 
@@ -362,7 +362,7 @@ describe("Runtime Errors", () => {
       expect(frames).toBeArrayOfSize(3);
       expect(frames[0].status).toBe("SUCCESS"); // let x = 5
       expect(frames[1].status).toBe("SUCCESS"); // if condition
-      expectFrameToBeError(frames[2], "let x = 10;", "ShadowingDisabled");
+      expectFrameToBeError(frames[2], "x", "ShadowingDisabled");
       expect(frames[2].error!.message).toBe("ShadowingDisabled: name: x");
     });
 

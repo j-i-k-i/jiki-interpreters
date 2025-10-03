@@ -19,7 +19,7 @@ describe("JavaScript strict equality feature", () => {
       const code = `let result = 5 == "5";`;
       const { frames, error } = interpret(code, { languageFeatures: features });
       expect(error).toBeNull();
-      expectFrameToBeError(frames[0], code, "StrictEqualityRequired");
+      expectFrameToBeError(frames[0], '5 == "5"', "StrictEqualityRequired");
       expect(frames[0].error!.message).toBe("StrictEqualityRequired: operator: ==");
     });
 
@@ -27,7 +27,7 @@ describe("JavaScript strict equality feature", () => {
       const code = `let result = 5 != "5";`;
       const { frames, error } = interpret(code, { languageFeatures: features });
       expect(error).toBeNull();
-      expectFrameToBeError(frames[0], code, "StrictEqualityRequired");
+      expectFrameToBeError(frames[0], '5 != "5"', "StrictEqualityRequired");
       expect(frames[0].error!.message).toBe("StrictEqualityRequired: operator: !=");
     });
 
@@ -235,7 +235,7 @@ describe("JavaScript strict equality feature", () => {
       const code = `let result = 5 == "5";`;
       const { frames, error } = interpret(code); // No features specified, should use default
       expect(error).toBeNull();
-      expectFrameToBeError(frames[0], code, "StrictEqualityRequired");
+      expectFrameToBeError(frames[0], '5 == "5"', "StrictEqualityRequired");
     });
 
     test("strict operators work by default", () => {

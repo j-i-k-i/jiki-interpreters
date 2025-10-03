@@ -6,7 +6,7 @@ describe("Python Parser - If Statements", () => {
   let parser: Parser;
 
   beforeEach(() => {
-    parser = new Parser("test.py", {});
+    parser = new Parser({});
   });
 
   test("parses simple if statement", () => {

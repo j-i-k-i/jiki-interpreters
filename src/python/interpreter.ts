@@ -2,6 +2,7 @@ import { Parser } from "./parser";
 import { Executor } from "./executor";
 import type { SyntaxError } from "./error";
 import type { Frame } from "../shared/frames";
+import type { CompilationResult } from "../shared/errors";
 import type { LanguageFeatures } from "./interfaces";
 import type { ExternalFunction } from "../shared/interfaces";
 
@@ -18,14 +19,24 @@ export interface InterpretResult {
   success: boolean;
 }
 
-export function interpret(
-  sourceCode: string,
-  context: EvaluationContext = {},
-  fileName: string = "python-script"
-): InterpretResult {
+/**
+ * Compiles Python source code without executing it.
+ * Returns { success: true } on successful compilation or { success: false, error } on parse/syntax errors.
+ */
+export function compile(sourceCode: string, context: EvaluationContext = {}): CompilationResult {
+  try {
+    const parser = new Parser(context);
+    parser.parse(sourceCode);
+    return { success: true };
+  } catch (error) {
+    return { success: false, error: error as SyntaxError };
+  }
+}
+
+export function interpret(sourceCode: string, context: EvaluationContext = {}): InterpretResult {
   try {
     // Parse the source code (compilation step)
-    const parser = new Parser(fileName, context);
+    const parser = new Parser(context);
     const statements = parser.parse(sourceCode);
 
     // Execute statements

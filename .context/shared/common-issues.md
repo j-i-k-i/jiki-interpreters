@@ -44,11 +44,17 @@ This document outlines the most common mistakes developers make when working on 
 
 ## Location Tracking Problems
 
-### ❌ Expression Location for Statement Errors
+### ❌ Incomplete Statement Locations
 
-**WRONG**: Using only expression location for statement errors shows incomplete error context.
+**WRONG**: Statement locations that don't include full statement span (missing semicolons, keywords, etc.).
 
-**✅ CORRECT**: Statement locations MUST include full statement span (with semicolons, keywords).
+**✅ CORRECT**: Statement locations MUST span the entire statement (including semicolons, keywords).
+
+### ❌ Nullable Location Parameters
+
+**WRONG**: Using `Location | null` or optional location parameters without proper handling.
+
+**✅ CORRECT**: All location parameters should be non-nullable `Location`. Use `Location.unknown` as fallback when location is unavailable.
 
 ## Language Features Integration
 
