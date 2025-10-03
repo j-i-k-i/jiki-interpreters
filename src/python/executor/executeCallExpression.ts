@@ -6,6 +6,7 @@ import { createPyObject } from "../jikiObjects";
 import type { JikiObject } from "../jikiObjects";
 import type { Arity } from "../../shared/interfaces";
 import { isCallable, type PyCallable } from "../functions";
+import { LogicError } from "../error";
 
 export function executeCallExpression(executor: Executor, expression: CallExpression): EvaluationResultCallExpression {
   // Evaluate the callee
@@ -53,7 +54,11 @@ export function executeCallExpression(executor: Executor, expression: CallExpres
       args: argResults, // Store full evaluation results for describers
     };
   } catch (error) {
-    // Handle any errors from the external function
+    // Handle LogicError from custom functions
+    if (error instanceof LogicError) {
+      executor.error("LogicErrorInExecution", expression.location, { message: error.message });
+    }
+    // Handle any other errors from the external function
     if (error instanceof Error) {
       throw new RuntimeError(
         `FunctionExecutionError: function: ${callable.name}: message: ${error.message}`,

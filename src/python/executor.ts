@@ -1,5 +1,6 @@
 import { Environment } from "./environment";
 // import { SyntaxError } from "./error";
+import { LogicError } from "./error";
 import type { Expression } from "./expression";
 import {
   LiteralExpression,
@@ -68,7 +69,8 @@ export type RuntimeErrorType =
   | "NodeNotAllowed"
   | "FunctionNotFound"
   | "InvalidNumberOfArguments"
-  | "FunctionExecutionError";
+  | "FunctionExecutionError"
+  | "LogicErrorInExecution";
 
 export class RuntimeError extends Error {
   public category: string = "RuntimeError";
@@ -188,22 +190,29 @@ export class Executor {
 
     let result: EvaluationResult | null = null;
 
-    if (statement instanceof ExpressionStatement) {
-      result = this.executeFrame(statement, () => executeExpressionStatement(this, statement));
-    } else if (statement instanceof AssignmentStatement) {
-      result = this.executeFrame(statement, () => executeAssignmentStatement(this, statement));
-    } else if (statement instanceof IfStatement) {
-      result = executeIfStatement(this, statement);
-    } else if (statement instanceof BlockStatement) {
-      result = executeBlockStatement(this, statement);
-    } else if (statement instanceof ForInStatement) {
-      result = executeForInStatement(this, statement);
-    } else if (statement instanceof BreakStatement) {
-      executeBreakStatement(this, statement);
-      result = null;
-    } else if (statement instanceof ContinueStatement) {
-      executeContinueStatement(this, statement);
-      result = null;
+    try {
+      if (statement instanceof ExpressionStatement) {
+        result = this.executeFrame(statement, () => executeExpressionStatement(this, statement));
+      } else if (statement instanceof AssignmentStatement) {
+        result = this.executeFrame(statement, () => executeAssignmentStatement(this, statement));
+      } else if (statement instanceof IfStatement) {
+        result = executeIfStatement(this, statement);
+      } else if (statement instanceof BlockStatement) {
+        result = executeBlockStatement(this, statement);
+      } else if (statement instanceof ForInStatement) {
+        result = executeForInStatement(this, statement);
+      } else if (statement instanceof BreakStatement) {
+        executeBreakStatement(this, statement);
+        result = null;
+      } else if (statement instanceof ContinueStatement) {
+        executeContinueStatement(this, statement);
+        result = null;
+      }
+    } catch (e: unknown) {
+      if (e instanceof LogicError) {
+        this.error("LogicErrorInExecution", statement.location, { message: e.message });
+      }
+      throw e;
     }
 
     return result;
@@ -313,11 +322,24 @@ export class Executor {
   }
 
   public error(type: RuntimeErrorType, location: Location, context?: any): never {
-    throw new RuntimeError(`${type}: ${JSON.stringify(context)}`, location, type, context);
+    let message;
+    if (type === "LogicErrorInExecution") {
+      message = context.message;
+    } else {
+      message = `${type}: ${JSON.stringify(context)}`;
+    }
+    throw new RuntimeError(message, location, type, context);
+  }
+
+  public logicError(message: string): never {
+    throw new LogicError(message);
   }
 
   // Get execution context for stdlib functions
   public getExecutionContext(): ExecutionContext {
-    return createBaseExecutionContext.call(this);
+    return {
+      ...createBaseExecutionContext.call(this),
+      logicError: this.logicError.bind(this),
+    };
   }
 }

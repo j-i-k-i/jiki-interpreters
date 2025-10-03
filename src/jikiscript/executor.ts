@@ -116,7 +116,7 @@ export type ExecutionContext = SharedExecutionContext & {
   evaluate: Function;
   executeBlock: Function;
   updateState: Function;
-  logicError: Function;
+  logicError: (message: string) => never;
   withThis: Function;
   contextualThis: Jiki.Instance | null;
 };
@@ -1274,7 +1274,7 @@ export class Executor {
       executeBlock: this.executeBlock.bind(this),
       evaluate: this.evaluate.bind(this),
       updateState: this.updateState.bind(this),
-      logicError: this.logicError.bind(this),
+      logicError: this.logicError.bind(this) as (message: string) => never,
       withThis: this.withThis.bind(this),
       contextualThis: this.contextualThis,
     };

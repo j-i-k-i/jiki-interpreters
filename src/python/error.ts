@@ -63,3 +63,5 @@ export class SyntaxError extends Error {
     this.name = "SyntaxError";
   }
 }
+
+export class LogicError extends Error {}
