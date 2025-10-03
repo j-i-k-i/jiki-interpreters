@@ -115,3 +115,34 @@ export class WhileStatement extends Statement {
     return children;
   }
 }
+
+export class FunctionParameter {
+  constructor(public name: Token) {}
+}
+
+export class FunctionDeclaration extends Statement {
+  constructor(
+    public name: Token,
+    public parameters: FunctionParameter[],
+    public body: Statement[],
+    public location: Location
+  ) {
+    super("FunctionDeclaration");
+  }
+  public children() {
+    return this.body.flatMap(stmt => stmt.children());
+  }
+}
+
+export class ReturnStatement extends Statement {
+  constructor(
+    public keyword: Token,
+    public expression: Expression | null,
+    public location: Location
+  ) {
+    super("ReturnStatement");
+  }
+  public children() {
+    return this.expression ? [this.expression] : [];
+  }
+}

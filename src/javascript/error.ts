@@ -48,7 +48,15 @@ export type SyntaxErrorType =
   | "IfStatementNotAllowed"
   | "ForStatementNotAllowed"
   | "WhileStatementNotAllowed"
-  | "MissingRightParenthesisAfterArguments";
+  | "MissingRightParenthesisAfterArguments"
+  // Function-related errors
+  | "NestedFunctionDeclaration"
+  | "MissingFunctionName"
+  | "MissingLeftParenthesisAfterFunctionName"
+  | "MissingParameterName"
+  | "DuplicateParameterName"
+  | "MissingRightParenthesisAfterParameters"
+  | "MissingLeftBraceBeforeFunctionBody";
 
 export class SyntaxError extends Error {
   constructor(

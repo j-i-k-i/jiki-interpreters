@@ -27,7 +27,14 @@
       "UnimplementedToken": "The '{{lexeme}}' feature is not yet implemented.",
       "UnknownCharacter": "Unknown character encountered in code.",
       "UnterminatedComment": "Unterminated comment. Multi-line comments must be closed with '*/'.",
-      "UnterminatedString": "Did you forget to add end quote?"
+      "UnterminatedString": "Did you forget to add end quote?",
+      "NestedFunctionDeclaration": "Function declarations are only allowed at the top level, not inside blocks or other functions.",
+      "MissingFunctionName": "Missing function name after 'function' keyword.",
+      "MissingLeftParenthesisAfterFunctionName": "Missing opening parenthesis '(' after function name.",
+      "MissingParameterName": "Missing parameter name in function declaration.",
+      "DuplicateParameterName": "Duplicate parameter name '{{name}}' in function declaration.",
+      "MissingRightParenthesisAfterParameters": "Missing closing parenthesis ')' after function parameters.",
+      "MissingLeftBraceBeforeFunctionBody": "Missing opening brace '{' before function body."
     },
     "runtime": {
       "ArgumentError": "{{message}}",
@@ -40,7 +47,8 @@
       "TruthinessDisabled": "Only boolean values are allowed in conditions, but got '{{value}}'.",
       "TypeError": "{{message}}",
       "UnsupportedOperation": "This operation is not supported.",
-      "VariableNotDeclared": "The variable '{{name}}' has not been declared."
+      "VariableNotDeclared": "The variable '{{name}}' has not been declared.",
+      "ReturnOutsideFunction": "You used the 'return' keyword, but you're not inside a function. Return statements can only be used inside functions."
     }
   }
 }
