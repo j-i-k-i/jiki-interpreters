@@ -39,11 +39,15 @@ export function executeCallExpression(executor: Executor, expression: CallExpres
   if (callable instanceof JSUserDefinedFunction) {
     const declaration = callable.getDeclaration();
     // Create new environment with current environment as parent for closure access
-    const environment = new Environment(executor.environment);
+    const environment = new Environment(executor.languageFeatures, executor.environment);
 
-    // Bind parameters
+    // Bind parameters (shadowing check is now handled inside environment.define())
     for (let i = 0; i < declaration.parameters.length; i++) {
-      environment.define(declaration.parameters[i].name.lexeme, argJikiObjects[i]);
+      environment.define(
+        declaration.parameters[i].name.lexeme,
+        argJikiObjects[i],
+        declaration.parameters[i].name.location
+      );
     }
 
     // Execute function body in new environment

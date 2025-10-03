@@ -16,7 +16,7 @@ import {
   DictionaryExpression,
   CallExpression,
 } from "./expression";
-import type { Location } from "../shared/location";
+import { Location } from "../shared/location";
 import type { Statement } from "./statement";
 import {
   ExpressionStatement,
@@ -119,19 +119,20 @@ export class Executor {
     private readonly sourceCode: string,
     context: EvaluationContext
   ) {
-    this.environment = new Environment();
     this.languageFeatures = {
       allowShadowing: false, // Default to false (shadowing disabled)
       allowTypeCoercion: false, // Default to false (type coercion disabled)
       enforceStrictEquality: true, // Default to true (strict equality required)
       ...context.languageFeatures,
     };
+    this.environment = new Environment(this.languageFeatures);
 
     // Register external functions as JSCallable objects in the environment
     if (context.externalFunctions) {
       for (const func of context.externalFunctions) {
         const callable = new JSCallable(func.name, func.arity, func.func);
-        this.environment.define(func.name, callable);
+        // External functions don't have source location, use Location.unknown
+        this.environment.define(func.name, callable, Location.unknown);
       }
     }
   }
@@ -399,8 +400,8 @@ export class Executor {
     throw new LogicError(message);
   }
 
-  public defineVariable(name: string, value: any): void {
-    this.environment.define(name, value);
+  public defineVariable(name: string, value: any, location: Location): void {
+    this.environment.define(name, value, location);
   }
 
   // Get execution context for stdlib functions

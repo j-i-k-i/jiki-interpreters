@@ -1,14 +1,30 @@
 import type { JikiObject } from "./jikiObjects";
+import type { LanguageFeatures } from "./interfaces";
+import type { Location } from "../shared/location";
+import { RuntimeError } from "./executor";
+import { translate } from "./translator";
 
 export class Environment {
   private readonly values: Map<string, JikiObject> = new Map();
   public readonly id: string;
+  private readonly languageFeatures: LanguageFeatures;
 
-  constructor(private readonly enclosing: Environment | null = null) {
+  constructor(
+    languageFeatures: LanguageFeatures,
+    private readonly enclosing: Environment | null = null
+  ) {
     this.id = Math.random().toString(36).substring(7);
+    this.languageFeatures = languageFeatures;
   }
 
-  public define(name: string, value: JikiObject): void {
+  public define(name: string, value: JikiObject, location: Location): void {
+    // Check for shadowing if disabled
+    if (!this.languageFeatures.allowShadowing) {
+      if (this.isDefinedInEnclosingScope(name)) {
+        const message = translate(`error.runtime.ShadowingDisabled`, { name });
+        throw new RuntimeError(message, location, "ShadowingDisabled", { name });
+      }
+    }
     this.values.set(name, value);
   }
 

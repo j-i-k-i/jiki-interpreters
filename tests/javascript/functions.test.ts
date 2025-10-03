@@ -188,16 +188,16 @@ describe("User-defined functions", () => {
   describe("Complex scenarios", () => {
     test("Function calling another function", () => {
       const code = `
-        function double(x) {
-          return x * 2;
+        function double(n) {
+          return n * 2;
         }
-        function quadruple(x) {
-          let doubled = double(x);
+        function quadruple(m) {
+          let doubled = double(m);
           return double(doubled);
         }
         let result = quadruple(3);
       `;
-      const { frames, error, success } = interpret(code);
+      const { frames, error, success } = interpret(code, { languageFeatures: { allowShadowing: true } });
       expect(error).toBeNull();
       expect(success).toBe(true);
       expect((frames[frames.length - 1] as TestAugmentedFrame).variables?.result?.value).toBe(12);
@@ -238,6 +238,70 @@ describe("User-defined functions", () => {
       expect(error).toBeNull();
       expect(success).toBe(true);
       expect((frames[frames.length - 1] as TestAugmentedFrame).variables?.result?.value).toBe(15);
+    });
+  });
+
+  describe("Parameter shadowing with allowShadowing feature", () => {
+    test("Parameter shadowing outer variable - allowShadowing: false (default)", () => {
+      const code = `
+        let x = 5;
+        function test(x) {
+          return x + 1;
+        }
+        let result = test(10);
+      `;
+      const { frames, error, success } = interpret(code);
+      expect(success).toBe(false);
+      expect(frames[frames.length - 1].status).toBe("ERROR");
+      expect(frames[frames.length - 1].error?.type).toBe("ShadowingDisabled");
+      expect(frames[frames.length - 1].error?.context?.name).toBe("x");
+    });
+
+    test("Parameter shadowing outer variable - allowShadowing: true", () => {
+      const code = `
+        let x = 5;
+        function test(x) {
+          return x + 1;
+        }
+        let result = test(10);
+      `;
+      const { frames, error, success } = interpret(code, { languageFeatures: { allowShadowing: true } });
+      expect(error).toBeNull();
+      expect(success).toBe(true);
+      expect((frames[frames.length - 1] as TestAugmentedFrame).variables?.result?.value).toBe(11);
+      expect((frames[frames.length - 1] as TestAugmentedFrame).variables?.x?.value).toBe(5); // Outer x unchanged
+    });
+
+    test("Multiple parameters, one shadows - allowShadowing: false", () => {
+      const code = `
+        let a = 1;
+        let b = 2;
+        function test(a, b, c) {
+          return a + b + c;
+        }
+        test(10, 20, 30);
+      `;
+      const { frames, error, success } = interpret(code);
+      expect(success).toBe(false);
+      expect(frames[frames.length - 1].status).toBe("ERROR");
+      expect(frames[frames.length - 1].error?.type).toBe("ShadowingDisabled");
+      expect(frames[frames.length - 1].error?.context?.name).toBe("a");
+    });
+
+    test("Parameter with same name in different functions - should work", () => {
+      const code = `
+        function add(x) {
+          return x + 1;
+        }
+        function multiply(x) {
+          return x * 2;
+        }
+        let result = add(5);
+      `;
+      const { frames, error, success } = interpret(code);
+      expect(error).toBeNull();
+      expect(success).toBe(true);
+      expect((frames[frames.length - 1] as TestAugmentedFrame).variables?.result?.value).toBe(6);
     });
   });
 });

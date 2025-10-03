@@ -5,7 +5,7 @@ import { VariableDeclaration } from "../statement";
 
 export function executeForStatement(executor: Executor, statement: ForStatement): void {
   // Create a new environment for the for loop
-  const loopEnvironment = new Environment(executor.environment);
+  const loopEnvironment = new Environment(executor.languageFeatures, executor.environment);
   const previous = executor.environment;
 
   try {
