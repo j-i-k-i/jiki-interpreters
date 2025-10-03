@@ -32,11 +32,8 @@ export class Parser {
   private tokens: Token[] = [];
   private readonly languageFeatures: LanguageFeatures;
 
-  constructor(
-    private readonly fileName: string,
-    context: EvaluationContext = {}
-  ) {
-    this.scanner = new Scanner(fileName);
+  constructor(context: EvaluationContext = {}) {
+    this.scanner = new Scanner();
     this.languageFeatures = context.languageFeatures || {};
   }
 
@@ -52,7 +49,7 @@ export class Parser {
   private checkNodeAllowed(nodeType: NodeType, errorType: SyntaxErrorType, location: Location): void {
     if (!this.isNodeAllowed(nodeType)) {
       const friendlyName = this.getNodeFriendlyName(nodeType);
-      throw new SyntaxError(errorType, `${friendlyName} cannot be used at this level`, location, this.fileName, {
+      throw new SyntaxError(errorType, `${friendlyName} cannot be used at this level`, location, undefined, {
         nodeType,
       });
     }
@@ -216,7 +213,7 @@ export class Parser {
     if (left instanceof SubscriptExpression) {
       return new AssignmentStatement(left, value, Location.between(left, value));
     }
-    throw new SyntaxError("ParseError", "Invalid assignment target", left.location, this.fileName);
+    throw new SyntaxError("ParseError", "Invalid assignment target", left.location);
   }
 
   private expressionStatement(): Statement {

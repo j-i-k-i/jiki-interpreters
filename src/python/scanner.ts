@@ -85,7 +85,7 @@ export class Scanner {
     "#": this.tokenizeComment,
   };
 
-  constructor(private readonly fileName: string) {}
+  constructor() {}
 
   public scanTokens(source: string): Token[] {
     this.sourceCode = source;
@@ -234,7 +234,7 @@ export class Scanner {
           lexeme: text,
         }),
         Location.fromLineOffset(this.start + 1, this.current + 1, this.line, this.lineOffset),
-        this.fileName,
+        undefined,
         {
           tokenType: type,
           lexeme: text,

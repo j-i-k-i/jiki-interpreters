@@ -121,21 +121,6 @@ first = numbers[0]`);
     });
   });
 
-  describe("with custom fileName", () => {
-    test("accepts custom fileName parameter", () => {
-      const result = compile("x = 5", {}, "custom-script.py");
-      expect(result).toEqual({ success: true });
-    });
-
-    test("returns failure with custom fileName", () => {
-      const result = compile("x = ", {}, "custom-script.py");
-      expect(result.success).toBe(false);
-      if (!result.success) {
-        expect(result.error).toBeDefined();
-      }
-    });
-  });
-
   describe("with language features", () => {
     test("compiles successfully with custom language features", () => {
       const result = compile("x = 5", {

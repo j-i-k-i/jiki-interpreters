@@ -6,7 +6,7 @@ import { IdentifierExpression, ListExpression } from "../../../src/python/expres
 describe("Python Parser - For Loops", () => {
   describe("Basic for-in loops", () => {
     it("should parse a simple for loop over a list", () => {
-      const parser = new Parser("test.py", {});
+      const parser = new Parser({});
       const code = `for x in [1, 2, 3]:
     x`;
 
@@ -22,7 +22,7 @@ describe("Python Parser - For Loops", () => {
     });
 
     it("should parse a for loop over an identifier", () => {
-      const parser = new Parser("test.py", {});
+      const parser = new Parser({});
       const code = `for item in items:
     item`;
 
@@ -38,7 +38,7 @@ describe("Python Parser - For Loops", () => {
     });
 
     it("should parse a for loop with multiple statements in body", () => {
-      const parser = new Parser("test.py", {});
+      const parser = new Parser({});
       const code = `for n in numbers:
     n = n + 1
     total = total + n`;
@@ -53,7 +53,7 @@ describe("Python Parser - For Loops", () => {
     });
 
     it("should parse an empty for loop", () => {
-      const parser = new Parser("test.py", {});
+      const parser = new Parser({});
       const code = `for x in []:
     x`; // Use x instead of pass since pass is not implemented
 
@@ -70,7 +70,7 @@ describe("Python Parser - For Loops", () => {
 
   describe("Break and Continue statements", () => {
     it("should parse a break statement", () => {
-      const parser = new Parser("test.py", {});
+      const parser = new Parser({});
       const code = `for x in items:
     break`;
 
@@ -83,7 +83,7 @@ describe("Python Parser - For Loops", () => {
     });
 
     it("should parse a continue statement", () => {
-      const parser = new Parser("test.py", {});
+      const parser = new Parser({});
       const code = `for x in items:
     continue`;
 
@@ -96,7 +96,7 @@ describe("Python Parser - For Loops", () => {
     });
 
     it("should parse a loop with both break and continue", () => {
-      const parser = new Parser("test.py", {});
+      const parser = new Parser({});
       const code = `for x in items:
     if x > 5:
         break
@@ -114,7 +114,7 @@ describe("Python Parser - For Loops", () => {
 
   describe("Nested for loops", () => {
     it("should parse nested for loops", () => {
-      const parser = new Parser("test.py", {});
+      const parser = new Parser({});
       const code = `for x in [1, 2]:
     for y in [3, 4]:
         x + y`;
@@ -134,7 +134,7 @@ describe("Python Parser - For Loops", () => {
 
   describe("Syntax errors", () => {
     it("should throw error for missing variable name", () => {
-      const parser = new Parser("test.py", {});
+      const parser = new Parser({});
       const code = `for in items:
     x`;
 
@@ -142,7 +142,7 @@ describe("Python Parser - For Loops", () => {
     });
 
     it("should throw error for missing 'in' keyword", () => {
-      const parser = new Parser("test.py", {});
+      const parser = new Parser({});
       const code = `for x items:
     x`;
 
@@ -150,7 +150,7 @@ describe("Python Parser - For Loops", () => {
     });
 
     it("should throw error for missing colon", () => {
-      const parser = new Parser("test.py", {});
+      const parser = new Parser({});
       const code = `for x in items
     x`;
 
@@ -158,7 +158,7 @@ describe("Python Parser - For Loops", () => {
     });
 
     it("should throw error for missing indented block", () => {
-      const parser = new Parser("test.py", {});
+      const parser = new Parser({});
       const code = `for x in items:
 x`;
 

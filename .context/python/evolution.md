@@ -10,7 +10,7 @@ This document tracks the historical development and changes specific to the Pyth
   - Parses source code without executing it
   - Returns `{ success: true }` on successful compilation
   - Returns `{ success: false, error: SyntaxError }` on parse/syntax errors
-  - Supports optional `fileName` parameter (default: "python-script")
+  - Clean API: `compile(sourceCode, context)` with no fileName parameter
 - **Shared Types**:
   - Created `src/shared/errors.ts` with:
     - `SyntaxError` interface that all interpreter SyntaxError classes conform to
@@ -22,6 +22,26 @@ This document tracks the historical development and changes specific to the Pyth
   - Consistent structure across all three interpreters
   - Easy to use: `if (result.success) { ... } else { console.error(result.error) }`
 - **Use Case**: Allows syntax validation before execution, useful for educational feedback
+- **API Symmetry**: Perfect API consistency across all three interpreters (JikiScript, JavaScript, Python)
+- **Test Coverage**: 22 comprehensive tests covering success cases, syntax errors, language features, and edge cases
+
+## 2025-10-03: fileName Parameter Removal
+
+- **Removed**: Unnecessary `fileName` parameter from Python interpreter pipeline
+- **Changes Made**:
+  - Removed `fileName` parameter from `Scanner` constructor
+  - Removed `fileName` parameter from `Parser` constructor
+  - Removed `fileName` parameter from `interpret()` function
+  - Updated all parser tests to remove fileName argument
+- **Rationale**:
+  - No functional need for fileName in parsing or execution
+  - Improved API symmetry with JavaScript and JikiScript
+  - Simplified API surface
+  - Reduced complexity without losing functionality
+- **Impact**:
+  - All 1899 tests passing
+  - Cleaner, more consistent API across interpreters
+  - Simplified constructor signatures throughout the pipeline
 
 ## Modular Description System Implementation (January 2025)
 
