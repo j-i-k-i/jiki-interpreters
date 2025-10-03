@@ -56,7 +56,7 @@ export function executeCallExpression(executor: Executor, expression: CallExpres
   } catch (error) {
     // Handle LogicError from custom functions
     if (error instanceof LogicError) {
-      throw new RuntimeError(error.message, expression.location, "LogicErrorInExecution", { message: error.message });
+      executor.error("LogicErrorInExecution", expression.location, { message: error.message });
     }
     // Handle any other errors from the external function
     if (error instanceof Error) {

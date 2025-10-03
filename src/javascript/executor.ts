@@ -219,7 +219,7 @@ export class Executor {
       }
     } catch (e: unknown) {
       if (e instanceof LogicError) {
-        throw new RuntimeError(e.message, statement.location, "LogicErrorInExecution", { message: e.message });
+        this.error("LogicErrorInExecution", statement.location, { message: e.message });
       }
       throw e;
     }
