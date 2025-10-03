@@ -2,6 +2,23 @@
 
 This document tracks the historical development and changes specific to the Python interpreter.
 
+## 2025-10-03: Compile Function Addition
+
+- **Added**: `compile()` function for parse-only validation
+- **Implementation**:
+  - New `compile()` function in `src/python/interpreter.ts`
+  - Parses source code without executing it
+  - Returns `CompilationError` on parse/syntax errors
+  - Returns empty object `{}` on successful compilation
+- **Exports**:
+  - Added `compile` function export to `src/python/index.ts`
+  - Added `CompilationError` type export to `src/python/index.ts`
+- **Shared Types**:
+  - Created `src/shared/errors.ts` with generic `CompilationError` interface
+  - Exported from main `src/index.ts` for cross-interpreter consistency
+- **Pattern**: Matches JikiScript's `compile()` implementation for API consistency
+- **Use Case**: Allows syntax validation before execution, useful for educational feedback
+
 ## Modular Description System Implementation (January 2025)
 
 ### Background
