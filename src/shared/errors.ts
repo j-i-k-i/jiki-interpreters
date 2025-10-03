@@ -3,6 +3,7 @@ import type { Location } from "./location";
 /**
  * Shared SyntaxError interface that all interpreter-specific SyntaxError classes conform to.
  * Each interpreter can have additional fields, but all must include these core properties.
+ * Note: location is nullable to accommodate JikiScript which allows null locations.
  */
 export interface SyntaxError {
   message: string;
