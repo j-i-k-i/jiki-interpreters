@@ -12,7 +12,7 @@ import {
   SubscriptExpression,
   CallExpression,
 } from "./expression";
-import { Location } from "../shared/location";
+import type { Location } from "../shared/location";
 import type { Statement } from "./statement";
 import {
   ExpressionStatement,
@@ -94,7 +94,6 @@ export interface ExecutorResult {
 
 export class Executor {
   private readonly frames: Frame[] = [];
-  private location: Location | null = null;
   public time: number = 0;
   private readonly timePerFrame: number = 1;
   public environment: Environment;
@@ -149,7 +148,7 @@ export class Executor {
         }
       } catch (error) {
         if (error instanceof RuntimeError) {
-          this.addErrorFrame(this.location || error.location, error);
+          this.addErrorFrame(error.location, error);
           break;
         }
         throw error;
@@ -177,10 +176,8 @@ export class Executor {
   }
 
   public executeFrame<T extends EvaluationResult>(context: Statement | Expression, code: () => T): T {
-    this.location = context.location;
     const result = code();
     this.addSuccessFrame(context.location, result, context);
-    this.location = null;
     return result;
   }
 
@@ -257,29 +254,21 @@ export class Executor {
     throw new RuntimeError(`Unknown expression type: ${expression.type}`, expression.location, "UnsupportedOperation");
   }
 
-  public addSuccessFrame(
-    location: Location | null,
-    result: EvaluationResult | null,
-    context?: Statement | Expression
-  ): void {
+  public addSuccessFrame(location: Location, result: EvaluationResult | null, context?: Statement | Expression): void {
     this.addFrame(location, "SUCCESS", result, undefined, context);
   }
 
-  public addErrorFrame(location: Location | null, error: RuntimeError, context?: Statement | Expression): void {
+  public addErrorFrame(location: Location, error: RuntimeError, context?: Statement | Expression): void {
     this.addFrame(location, "ERROR", undefined, error, context);
   }
 
   private addFrame(
-    location: Location | null,
+    location: Location,
     status: FrameExecutionStatus,
     result?: EvaluationResult | null,
     error?: RuntimeError,
     context?: Statement | Expression
   ): void {
-    if (location === null) {
-      location = Location.unknown;
-    }
-
     const frame: PythonFrame = {
       code: location.toCode(this.sourceCode),
       line: location.line,

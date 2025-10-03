@@ -1,5 +1,22 @@
 # JavaScript Interpreter Evolution
 
+## 2025-10-03: Removal of Executor Location Tracking
+
+- **Removed**: `private location: Location` field from JavaScript executor
+- **Change**: Error frames now use precise error locations (`error.location`) instead of broad statement locations
+- **Implementation**:
+  - Removed location tracking state from executor class
+  - Removed location setting/resetting in `executeFrame()` wrapper
+  - All error creation uses `error.location` for precise error reporting
+  - Changed location parameters from `Location | null` to non-nullable `Location`
+  - Introduced `Location.unknown` as fallback for unavailable locations
+- **Benefits**:
+  - Simpler executor state management
+  - More precise error reporting pointing to exact sub-expressions
+  - Clearer intent with explicit location handling
+  - Reduced complexity in error handling code
+- **Impact**: Updated approximately 20+ error creation sites across JavaScript executor modules
+
 ## 2025-10-03: Compile Function with CompilationResult Pattern
 
 - **Added**: `compile()` function for parse-only validation

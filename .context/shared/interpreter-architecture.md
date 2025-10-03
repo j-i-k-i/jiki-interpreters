@@ -80,7 +80,8 @@ This maintains backward compatibility with existing tests while optimizing produ
   - The shared `Location.toCode()` method accounts for this by subtracting 1 when extracting substrings
 - Statement locations MUST span the entire statement (including semicolons, keywords, etc.)
 - Expression locations can be more granular
-- Error frames MUST use statement locations, not sub-expression locations
+- **Error frames use precise error locations** (`error.location`) that point to the exact sub-expression where errors occurred
+- All location parameters are non-nullable `Location` type (use `Location.unknown` as fallback when location is unavailable)
 
 ### 5. Error Message Format (MANDATORY)
 

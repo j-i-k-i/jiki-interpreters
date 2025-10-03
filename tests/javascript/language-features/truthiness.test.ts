@@ -137,28 +137,28 @@ describe("JavaScript truthiness feature", () => {
       test("number in condition throws error", () => {
         const code = "if (42) { let x = 1; }";
         const { frames } = interpret(code);
-        expectFrameToBeError(frames[0], "if (42) { let x = 1; }", "TruthinessDisabled");
+        expectFrameToBeError(frames[0], "42", "TruthinessDisabled");
         expect(frames[0].error!.message).toBe("TruthinessDisabled: value: number");
       });
 
       test("string in condition throws error", () => {
         const code = 'if ("hello") { let x = 1; }';
         const { frames } = interpret(code);
-        expectFrameToBeError(frames[0], 'if ("hello") { let x = 1; }', "TruthinessDisabled");
+        expectFrameToBeError(frames[0], '"hello"', "TruthinessDisabled");
         expect(frames[0].error!.message).toBe("TruthinessDisabled: value: string");
       });
 
       test("null in condition throws error", () => {
         const code = "if (null) { let x = 1; }";
         const { frames } = interpret(code);
-        expectFrameToBeError(frames[0], "if (null) { let x = 1; }", "TruthinessDisabled");
+        expectFrameToBeError(frames[0], "null", "TruthinessDisabled");
         expect(frames[0].error!.message).toBe("TruthinessDisabled: value: null");
       });
 
       test("undefined in condition throws error", () => {
         const code = "if (undefined) { let x = 1; }";
         const { frames } = interpret(code);
-        expectFrameToBeError(frames[0], "if (undefined) { let x = 1; }", "TruthinessDisabled");
+        expectFrameToBeError(frames[0], "undefined", "TruthinessDisabled");
         expect(frames[0].error!.message).toBe("TruthinessDisabled: value: undefined");
       });
 
@@ -196,28 +196,28 @@ describe("JavaScript truthiness feature", () => {
       test("AND with number on left throws error", () => {
         const code = "let result = 5 && true;";
         const { frames } = interpret(code);
-        expectFrameToBeError(frames[0], code, "TruthinessDisabled");
+        expectFrameToBeError(frames[0], "5", "TruthinessDisabled");
         expect(frames[0].error!.message).toBe("TruthinessDisabled: value: number");
       });
 
       test("AND with string on right throws error", () => {
         const code = 'let result = true && "hello";';
         const { frames } = interpret(code);
-        expectFrameToBeError(frames[0], code, "TruthinessDisabled");
+        expectFrameToBeError(frames[0], '"hello"', "TruthinessDisabled");
         expect(frames[0].error!.message).toBe("TruthinessDisabled: value: string");
       });
 
       test("OR with number on left throws error", () => {
         const code = "let result = 0 || true;";
         const { frames } = interpret(code);
-        expectFrameToBeError(frames[0], code, "TruthinessDisabled");
+        expectFrameToBeError(frames[0], "0", "TruthinessDisabled");
         expect(frames[0].error!.message).toBe("TruthinessDisabled: value: number");
       });
 
       test("OR with null on left throws error", () => {
         const code = "let result = null || true;";
         const { frames } = interpret(code);
-        expectFrameToBeError(frames[0], code, "TruthinessDisabled");
+        expectFrameToBeError(frames[0], "null", "TruthinessDisabled");
         expect(frames[0].error!.message).toBe("TruthinessDisabled: value: null");
       });
 
@@ -253,7 +253,7 @@ describe("JavaScript truthiness feature", () => {
     test("truthiness disabled when explicitly set to false", () => {
       const code = "if (1) { let x = 5; }";
       const { frames } = interpret(code, { languageFeatures: { allowTruthiness: false } });
-      expectFrameToBeError(frames[0], code, "TruthinessDisabled");
+      expectFrameToBeError(frames[0], "1", "TruthinessDisabled");
       expect(frames[0].error!.message).toBe("TruthinessDisabled: value: number");
     });
   });
