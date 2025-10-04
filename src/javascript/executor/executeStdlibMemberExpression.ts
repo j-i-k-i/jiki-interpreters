@@ -18,14 +18,7 @@ export function executeStdlibMemberExpression(
 
   // Check if this is computed access (bracket notation)
   // Stdlib members should only be accessed via dot notation
-  if (expression.computed) {
-    throw new RuntimeError(
-      `TypeError: message: Cannot use computed property access for stdlib members`,
-      expression.location,
-      "TypeError",
-      { message: "Cannot use computed property access for stdlib members" }
-    );
-  }
+  guardNotComputedAccess();
 
   // Evaluate the property to get its name
   const propertyResult = executor.evaluate(expression.property);
@@ -125,6 +118,19 @@ export function executeStdlibMemberExpression(
       expression.location,
       "TypeError",
       { message: `Cannot read properties of ${object.type}` }
+    );
+  }
+
+  function guardNotComputedAccess() {
+    if (!expression.computed) {
+      return;
+    }
+
+    throw new RuntimeError(
+      `TypeError: message: Cannot use computed property access for stdlib members`,
+      expression.location,
+      "TypeError",
+      { message: "Cannot use computed property access for stdlib members" }
     );
   }
 
