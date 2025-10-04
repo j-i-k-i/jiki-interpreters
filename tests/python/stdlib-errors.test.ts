@@ -63,7 +63,6 @@ append_fn(4)
         "clear",
         "sort",
         "reverse",
-        "index",
         "count",
         "copy",
       ];

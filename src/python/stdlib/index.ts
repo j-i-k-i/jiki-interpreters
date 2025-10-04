@@ -1,4 +1,5 @@
-import { listProperties, listMethods } from "./lists";
+import { listProperties, listMethods } from "./list";
+import { stringProperties, stringMethods } from "./string";
 import type { JikiObject } from "../jikiObjects";
 import type { ExecutionContext, RuntimeErrorType } from "../executor";
 import type { LanguageFeatures } from "../interfaces";
@@ -29,6 +30,10 @@ export const stdlib: Record<string, StdlibType> = {
     properties: listProperties,
     methods: listMethods,
   },
+  string: {
+    properties: stringProperties,
+    methods: stringMethods,
+  },
 };
 
 // Get the stdlib type for a JikiObject
@@ -37,7 +42,9 @@ export function getStdlibType(obj: JikiObject): string | null {
   if (obj.type === "list") {
     return "list";
   }
-  // Future: if (obj.type === "string") return "str";
+  if (obj.type === "string") {
+    return "string";
+  }
   // Future: if (obj.type === "dictionary") return "dict";
   return null;
 }

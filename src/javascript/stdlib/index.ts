@@ -1,5 +1,5 @@
-import { arrayProperties, arrayMethods } from "./arrays";
-import { stringProperties, stringMethods } from "./strings";
+import { arrayProperties, arrayMethods } from "./array";
+import { stringProperties, stringMethods } from "./string";
 import type { JikiObject } from "../jsObjects";
 import type { ExecutionContext } from "../executor";
 import type { LanguageFeatures } from "../interfaces";
