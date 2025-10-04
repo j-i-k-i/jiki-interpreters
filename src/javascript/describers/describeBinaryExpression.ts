@@ -12,13 +12,13 @@ export function describeBinaryExpression(
   const leftSteps = describeExpression(expression.left, result.left, context);
   const rightSteps = describeExpression(expression.right, result.right, context);
 
-  const leftRes = formatJSObject(result.left.immutableJikiObject);
+  const leftRes = formatJSObject(result.left.immutableJikiObject!);
   const op = expression.operator.lexeme;
-  const rightRes = formatJSObject(result.right.immutableJikiObject);
+  const rightRes = formatJSObject(result.right.immutableJikiObject!);
 
   const finalStep = `<li>JavaScript evaluated ${codeTag(
     `${leftRes} ${op} ${rightRes}`,
     expression.location
-  )} and determined it was ${codeTag(result.immutableJikiObject, expression.location)}.</li>`;
+  )} and determined it was ${codeTag(result.immutableJikiObject!, expression.location)}.</li>`;
   return [...leftSteps, ...rightSteps, finalStep];
 }

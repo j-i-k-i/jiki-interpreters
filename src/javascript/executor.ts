@@ -30,6 +30,7 @@ import {
 } from "./statement";
 import type { EvaluationResult } from "./evaluation-result";
 import type { JikiObject } from "./jikiObjects";
+import { JikiObject as JikiObjectBase } from "../shared/jikiObject";
 import { translate } from "./translator";
 import { TIME_SCALE_FACTOR, type Frame, type FrameExecutionStatus } from "../shared/frames";
 import { type ExecutionContext as SharedExecutionContext } from "../shared/interfaces";
@@ -85,7 +86,10 @@ export type RuntimeErrorType =
   | "InvalidNumberOfArguments"
   | "FunctionExecutionError"
   | "LogicErrorInExecution"
-  | "ReturnOutsideFunction";
+  | "ReturnOutsideFunction"
+  | "MethodNotYetImplemented"
+  | "MethodNotYetAvailable"
+  | "NonJikiObjectDetectedInExecution";
 
 export class RuntimeError extends Error {
   public category: string = "RuntimeError";
@@ -384,6 +388,17 @@ export class Executor {
         value: value.type,
       });
     }
+  }
+
+  public guardNonJikiObject(value: any, location: Location): void {
+    // Import JikiObject from shared to check inheritance
+    if (value instanceof JikiObjectBase) {
+      return;
+    }
+    this.error("NonJikiObjectDetectedInExecution", location, {
+      receivedType: typeof value,
+      receivedValue: value,
+    });
   }
 
   public error(type: RuntimeErrorType, location: Location, context?: any): never {

@@ -2,11 +2,13 @@ import type { Executor } from "../executor";
 import { RuntimeError } from "../executor";
 import type { CallExpression } from "../expression";
 import type { EvaluationResult, EvaluationResultCallExpression } from "../evaluation-result";
-import { createJSObject, type JikiObject } from "../jikiObjects";
+import { JSFunction, JSUndefined } from "../jikiObjects";
+import type { JikiObject } from "../jikiObjects";
 import type { Arity } from "../../shared/interfaces";
 import { isCallable, type JSCallable, JSUserDefinedFunction, ReturnValue } from "../functions";
 import { LogicError } from "../error";
 import { Environment } from "../environment";
+import { StdlibError } from "../stdlib";
 
 export function executeCallExpression(executor: Executor, expression: CallExpression): EvaluationResultCallExpression {
   // Evaluate the callee
@@ -54,7 +56,7 @@ export function executeCallExpression(executor: Executor, expression: CallExpres
     try {
       executor.executeBlock(declaration.body, environment);
       // No return statement - return undefined
-      const jikiResult = createJSObject(undefined);
+      const jikiResult = new JSUndefined();
       return {
         type: "CallExpression",
         jikiObject: jikiResult,
@@ -65,7 +67,7 @@ export function executeCallExpression(executor: Executor, expression: CallExpres
     } catch (error) {
       if (error instanceof ReturnValue) {
         // Function returned a value (error.value is already a JikiObject or undefined)
-        const jikiResult = error.value ?? createJSObject(undefined);
+        const jikiResult = error.value ?? new JSUndefined();
         return {
           type: "CallExpression",
           jikiObject: jikiResult,
@@ -79,21 +81,49 @@ export function executeCallExpression(executor: Executor, expression: CallExpres
     }
   }
 
-  // Handle external functions
+  // Handle JSFunction (stdlib methods)
+  if (callable instanceof JSFunction) {
+    try {
+      // JSFunction expects JikiObjects, not raw values
+      const result = callable.call(executor.getExecutionContext(), null, argJikiObjects);
+
+      return {
+        type: "CallExpression",
+        jikiObject: result,
+        immutableJikiObject: result.clone(),
+        functionName: callable.name,
+        args: argResults,
+      };
+    } catch (error) {
+      // Convert StdlibError to RuntimeError
+      if (error instanceof StdlibError) {
+        throw new RuntimeError(
+          `${error.errorType}: message: ${error.message}`,
+          expression.location,
+          error.errorType as any,
+          error.context
+        );
+      }
+      // Re-throw other errors
+      throw error;
+    }
+  }
+
+  // Handle external functions (JSCallable)
+  // Note: External functions are wrapped in JSCallable, not JSFunction
   const executionContext = executor.getExecutionContext();
 
   try {
-    // Convert JikiObjects to values for the function
-    const argValues = argJikiObjects.map(arg => arg.value);
-    const result = callable.call(executionContext, argValues);
+    // External functions receive and return JikiObjects
+    const result = callable.call(executionContext, argJikiObjects);
 
-    // Convert the result back to a JikiObject
-    const jikiResult = createJSObject(result);
+    // Guard that external functions actually return JikiObjects (runtime safety check)
+    executor.guardNonJikiObject(result, expression.location);
 
     return {
       type: "CallExpression",
-      jikiObject: jikiResult,
-      immutableJikiObject: jikiResult.clone(),
+      jikiObject: result,
+      immutableJikiObject: result.clone(),
       functionName: callable.name,
       args: argResults, // Store full evaluation results for describers
     };

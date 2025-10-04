@@ -2,7 +2,7 @@ import type { JSArray } from "../jsObjects";
 import { JSNumber, JSUndefined, type JikiObject } from "../jsObjects";
 import type { ExecutionContext } from "../executor";
 import type { Property, Method } from "./index";
-import { StdlibError } from "./index";
+import { StdlibError, createNotYetImplementedStub } from "./index";
 
 // Array properties
 export const arrayProperties: Record<string, Property> = {
@@ -15,8 +15,57 @@ export const arrayProperties: Record<string, Property> = {
   },
 };
 
+// List of array methods that are not yet implemented
+const notYetImplementedMethods = [
+  // Mutating methods
+  "push",
+  "pop",
+  "shift",
+  "unshift",
+  "splice",
+  "sort",
+  "reverse",
+  "fill",
+  "copyWithin",
+
+  // Accessor methods
+  "indexOf",
+  "lastIndexOf",
+  "includes",
+  "slice",
+  "concat",
+  "join",
+  "toString",
+  "toLocaleString",
+  "entries",
+  "keys",
+  "values",
+
+  // Iteration methods
+  "forEach",
+  "map",
+  "filter",
+  "reduce",
+  "reduceRight",
+  "find",
+  "findIndex",
+  "findLast",
+  "findLastIndex",
+  "every",
+  "some",
+  "flat",
+  "flatMap",
+
+  // ES2023 methods
+  "toReversed",
+  "toSorted",
+  "toSpliced",
+  "with",
+];
+
 // Array methods
 export const arrayMethods: Record<string, Method> = {
+  // Implemented methods
   at: {
     arity: 1,
     call: (_ctx: ExecutionContext, obj: JikiObject, args: JikiObject[]) => {
@@ -62,4 +111,7 @@ export const arrayMethods: Record<string, Method> = {
     },
     description: "returns the element at the specified index",
   },
+
+  // Generate stub methods for all not-yet-implemented methods
+  ...Object.fromEntries(notYetImplementedMethods.map(name => [name, createNotYetImplementedStub(name)])),
 };

@@ -5,7 +5,7 @@ import type { Location } from "../shared/location";
 
 export interface Callable {
   arity: Arity | undefined;
-  call: (context: ExecutionContext, args: any[]) => any;
+  call: (context: ExecutionContext, args: JikiObject[]) => JikiObject;
 }
 
 export function isCallable(obj: any): obj is Callable {
@@ -34,7 +34,7 @@ export class JSCallable extends JikiObject {
     return this.func;
   }
 
-  call(context: ExecutionContext, args: any[]): any {
+  call(context: ExecutionContext, args: JikiObject[]): JikiObject {
     return this.func(context, ...args);
   }
 

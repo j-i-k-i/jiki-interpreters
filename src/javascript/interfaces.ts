@@ -35,4 +35,18 @@ export interface LanguageFeatures {
   // [] = no nodes allowed
   // ["NodeType", ...] = only specified nodes allowed
   allowedNodes?: NodeType[] | null;
+  // Stdlib member restrictions
+  // null/undefined = all stdlib members allowed (default behavior)
+  // Nested structure for granular control per type
+  allowedStdlib?: {
+    array?: {
+      properties?: string[]; // e.g., ['length']
+      methods?: string[]; // e.g., ['at', 'push', 'pop']
+    };
+    string?: {
+      properties?: string[];
+      methods?: string[];
+    };
+    // Extensible for other types (number, object, etc.)
+  };
 }

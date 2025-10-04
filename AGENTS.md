@@ -160,3 +160,9 @@ All workflows run on pushes to `main` and pull requests targeting `main`. The pa
 - This project uses pnpm as the package manager
 - TypeScript configuration with esbuild for bundling
 - Tests use Vitest with globals enabled for minimal migration effort
+
+---
+
+## Common Mistakes
+
+- Never use `HEADLESS=true CI=true pnpm test:e2e` - just use `pnpm test:e2e`.

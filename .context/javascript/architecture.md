@@ -106,16 +106,26 @@ Wrapper objects extending shared `JikiObject` base class. Each type is now in it
 
 ### 7. Standard Library (`src/javascript/stdlib/`)
 
-Provides built-in properties and methods for JavaScript types:
+Provides built-in properties and methods for JavaScript types with feature flag support:
 
 **Arrays (`src/javascript/stdlib/arrays.ts`)**:
 
 - Properties:
   - `length`: Returns the number of elements in the array
-- Methods (prepared, pending CallExpression implementation):
+- Implemented Methods:
   - `at(index)`: Returns element at index (supports negative indices)
+- Stubbed Methods (throw MethodNotYetImplemented):
+  - All standard JS array methods: `push`, `pop`, `shift`, `unshift`, `indexOf`, `includes`, `slice`, `concat`, `join`, `forEach`, `map`, `filter`, `reduce`, etc.
 
-The stdlib system uses an ExecutionContext pattern for future extensibility and consistency with JikiScript patterns.
+**Feature Flag System**:
+
+- Methods and properties can be restricted via `allowedStdlib` in LanguageFeatures
+- Three error states:
+  - `PropertyNotFound`: Completely unknown property/method
+  - `MethodNotYetImplemented`: Known method but not yet built (stub)
+  - `MethodNotYetAvailable`: Built method disabled by feature flags
+
+The stdlib system uses an ExecutionContext pattern for consistency with JikiScript patterns.
 
 ### 8. Language Features System (`src/javascript/interfaces.ts`)
 

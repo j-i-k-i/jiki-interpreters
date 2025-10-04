@@ -48,7 +48,10 @@
       "TypeError": "TypeError: {{message}}",
       "UnsupportedOperation": "UnsupportedOperation",
       "VariableNotDeclared": "VariableNotDeclared: name: {{name}}",
-      "ReturnOutsideFunction": "ReturnOutsideFunction"
+      "ReturnOutsideFunction": "ReturnOutsideFunction",
+      "MethodNotYetImplemented": "MethodNotYetImplemented: method: {{method}}",
+      "MethodNotYetAvailable": "MethodNotYetAvailable: method: {{method}}",
+      "NonJikiObjectDetectedInExecution": "NonJikiObjectDetectedInExecution: receivedType: {{receivedType}}: receivedValue: {{receivedValue}}"
     }
   }
 }

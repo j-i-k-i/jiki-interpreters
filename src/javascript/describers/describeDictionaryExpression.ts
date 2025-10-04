@@ -8,7 +8,7 @@ export function describeDictionaryExpression(
   _expression: DictionaryExpression,
   _executor: any
 ): string[] {
-  const dictionary = result.immutableJikiObject;
+  const dictionary = result.immutableJikiObject || result.jikiObject;
 
   if (!(dictionary instanceof JSDictionary)) {
     return ["<li>Created an object.</li>"];
