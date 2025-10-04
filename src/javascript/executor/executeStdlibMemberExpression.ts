@@ -31,13 +31,13 @@ export function executeStdlibMemberExpression(
   // Check if it's a property
   const stdlibProperty = stdlib[stdlibType].properties[propertyName] as Property | undefined;
   if (stdlibProperty) {
-    return handleProperty(stdlibProperty, stdlibType, propertyName, objectResult, propertyResult, object);
+    return handleProperty(stdlibProperty);
   }
 
   // Check if it's a method
   const stdlibMethod = stdlib[stdlibType].methods[propertyName] as Method | undefined;
   if (stdlibMethod) {
-    return handleMethod(stdlibMethod, stdlibType, propertyName, objectResult, propertyResult, object);
+    return handleMethod(stdlibMethod);
   }
 
   // Unknown property/method
@@ -46,14 +46,7 @@ export function executeStdlibMemberExpression(
   });
 
   // Helper function to handle property access
-  function handleProperty(
-    stdlibProperty: Property,
-    stdlibType: string,
-    propertyName: string,
-    objectResult: EvaluationResult,
-    propertyResult: EvaluationResult,
-    object: JikiObject
-  ): EvaluationResultMemberExpression {
+  function handleProperty(stdlibProperty: Property): EvaluationResultMemberExpression {
     guardPropertyIsNotStub(stdlibProperty, propertyName);
     guardPropertyIsAllowed(stdlibType, propertyName);
 
@@ -72,14 +65,7 @@ export function executeStdlibMemberExpression(
   }
 
   // Helper function to handle method access
-  function handleMethod(
-    stdlibMethod: Method,
-    stdlibType: string,
-    propertyName: string,
-    objectResult: EvaluationResult,
-    propertyResult: EvaluationResult,
-    object: JikiObject
-  ): EvaluationResultMemberExpression {
+  function handleMethod(stdlibMethod: Method): EvaluationResultMemberExpression {
     // Note: For stub methods, we still return a function, but it will throw when called
     // This maintains the correct semantics where arr.push returns a function
     guardMethodIsAllowed(stdlibType, propertyName);
