@@ -140,9 +140,9 @@ describe("JavaScript stdlib errors", () => {
       const lastFrame = result.frames[result.frames.length - 1] as TestAugmentedFrame;
       expect(lastFrame.status).toBe("SUCCESS");
       // Check that arr exists and is an array with correct values
-      expect(lastFrame.variables.arr).toBeDefined();
-      expect(lastFrame.variables.arr.type).toBe("list");
-      expect(lastFrame.variables.arr.elements).toHaveLength(3);
+      expect(lastFrame.variables?.arr).toBeDefined();
+      expect(lastFrame.variables?.arr.type).toBe("list");
+      expect(lastFrame.variables?.arr.elements).toHaveLength(3);
     });
 
     it("should allow all methods when no restrictions", () => {

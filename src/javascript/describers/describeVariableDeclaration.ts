@@ -7,7 +7,7 @@ import { describeExpression } from "./describeSteps";
 export function describeVariableDeclaration(frame: FrameWithResult, context: DescriptionContext): Description {
   const variableDeclaration = frame.context as VariableDeclaration;
   const frameResult = frame.result as EvaluationResultVariableDeclaration;
-  const value = formatJSObject(frameResult.immutableJikiObject!);
+  const value = formatJSObject(frameResult.immutableJikiObject);
   const name = variableDeclaration.name.lexeme;
 
   let result: string;

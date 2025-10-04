@@ -2,7 +2,7 @@ import type { ArrayExpression } from "../expression";
 import type { EvaluationResultArrayExpression } from "../evaluation-result";
 
 export function describeArrayExpression(expression: ArrayExpression, result: EvaluationResultArrayExpression): string {
-  const jikiObject = result.immutableJikiObject || result.jikiObject;
+  const jikiObject = result.immutableJikiObject;
   const count = expression.elements.length;
 
   if (count === 0) {

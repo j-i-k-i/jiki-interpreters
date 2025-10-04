@@ -47,6 +47,20 @@ describe("Array properties", () => {
       expect(lastFrame.result?.jikiObject?.value).toBe(3);
     });
 
+    test("gives runtime error when using computed access for length", () => {
+      const result = interpret(`
+        let arr = [1, 2, 3];
+        arr["length"];
+      `);
+
+      expect(result.error).toBe(null);
+      const errorFrame = result.frames.find(f => f.status === "ERROR");
+      expect(errorFrame).toBeDefined();
+      expect(errorFrame?.error?.message).toBe(
+        "TypeError: message: Cannot use computed property access for stdlib members"
+      );
+    });
+
     test("gives runtime error for unknown property", () => {
       const result = interpret(`
         let arr = [1, 2, 3];
@@ -79,6 +93,31 @@ describe("Array properties", () => {
 
 // Note: Method tests will be added when CallExpression is implemented
 describe("Array methods (placeholder)", () => {
+  test("gives runtime error when using computed access for methods", () => {
+    const result = interpret(`
+      let arr = [1, 2, 3];
+      arr["push"];
+    `);
+
+    expect(result.error).toBe(null);
+    const errorFrame = result.frames.find(f => f.status === "ERROR");
+    expect(errorFrame).toBeDefined();
+    expect(errorFrame?.error?.message).toBe(
+      "TypeError: message: Cannot use computed property access for stdlib members"
+    );
+  });
+
+  test("gives runtime error when using string computed access", () => {
+    const result = interpret(`
+      let arr = [1, 2, 3];
+      arr["0"];
+    `);
+
+    expect(result.error).toBe(null);
+    const errorFrame = result.frames.find(f => f.status === "ERROR");
+    expect(errorFrame).toBeDefined();
+    expect(errorFrame?.error?.message).toBe("TypeError: message: Array indices must be numbers");
+  });
   test.skip("at() method with positive index", () => {
     const result = interpret(`
       let arr = [1, 2, 3];

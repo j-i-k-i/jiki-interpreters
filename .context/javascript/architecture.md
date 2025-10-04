@@ -93,7 +93,7 @@ Wrapper objects extending shared `JikiObject` base class. Each type is now in it
 - Primitive types return `self` from `clone()` since they're immutable
 - JSList implements deep cloning for proper immutability in frames
 - Evaluation results include `immutableJikiObject` field for consistency with JikiScript
-- Describers use `immutableJikiObject || jikiObject` pattern for accessing values
+- Describers use `immutableJikiObject` for accessing values
 
 **Collections:**
 
