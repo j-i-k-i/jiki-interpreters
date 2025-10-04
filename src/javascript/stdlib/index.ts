@@ -1,4 +1,5 @@
 import { arrayProperties, arrayMethods } from "./arrays";
+import { stringProperties, stringMethods } from "./strings";
 import type { JikiObject } from "../jsObjects";
 import type { ExecutionContext } from "../executor";
 import type { LanguageFeatures } from "../interfaces";
@@ -29,6 +30,10 @@ export const stdlib: Record<string, StdlibType> = {
     properties: arrayProperties,
     methods: arrayMethods,
   },
+  string: {
+    properties: stringProperties,
+    methods: stringMethods,
+  },
 };
 
 // Get the stdlib type for a JikiObject
@@ -37,7 +42,9 @@ export function getStdlibType(obj: JikiObject): string | null {
   if (obj.type === "list") {
     return "array";
   }
-  // Future: if (obj.type === "string") return "string";
+  if (obj.type === "string") {
+    return "string";
+  }
   // Future: if (obj.type === "number") return "number";
   return null;
 }
