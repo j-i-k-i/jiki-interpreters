@@ -2,7 +2,6 @@ import type { Executor } from "../executor";
 import type { UnaryExpression } from "../expression";
 import type { EvaluationResult } from "../evaluation-result";
 import { createPyObject, PyBoolean, type JikiObject } from "../jikiObjects";
-import { RuntimeError } from "../executor";
 
 export function executeUnaryExpression(executor: Executor, expression: UnaryExpression): EvaluationResult {
   const rightResult = executor.evaluate(expression.operand);
@@ -30,21 +29,17 @@ function handleUnaryOperation(
     case "NOT":
       // Check if truthiness is disabled and we have a non-boolean
       if (!executor.languageFeatures.allowTruthiness && rightObject.type !== "boolean") {
-        throw new RuntimeError(
-          `TruthinessDisabled: value: ${rightObject.type}`,
-          expression.location,
-          "TruthinessDisabled"
-        );
+        executor.error("TruthinessDisabled", expression.location, {
+          value: rightObject.type,
+        });
       }
 
       // Apply Python's truthiness rules
       return new PyBoolean(!isTruthy(rightObject));
     default:
-      throw new RuntimeError(
-        `Unsupported unary operator: ${expression.operator.type}`,
-        expression.location,
-        "InvalidUnaryExpression"
-      );
+      executor.error("InvalidUnaryExpression", expression.location, {
+        operator: expression.operator.type,
+      });
   }
 }
 

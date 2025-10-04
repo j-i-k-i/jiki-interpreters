@@ -1,5 +1,4 @@
 import type { Executor } from "../executor";
-import { RuntimeError } from "../executor";
 import type { AssignmentStatement } from "../statement";
 import { SubscriptExpression } from "../expression";
 import type { EvaluationResult } from "../evaluation-result";
@@ -19,12 +18,9 @@ export function executeAssignmentStatement(executor: Executor, statement: Assign
     // Check that it's a list
     if (!(object instanceof PyList)) {
       const typeName = (object as any).pythonTypeName ? (object as any).pythonTypeName() : object.type;
-      throw new RuntimeError(
-        `TypeError: message: '${typeName}' object does not support item assignment`,
-        subscript.location,
-        "TypeError",
-        { message: `'${typeName}' object does not support item assignment` }
-      );
+      executor.error("TypeError", subscript.location, {
+        message: `'${typeName}' object does not support item assignment`,
+      });
     }
 
     // Evaluate the index
@@ -34,22 +30,16 @@ export function executeAssignmentStatement(executor: Executor, statement: Assign
     // Check that the index is a number
     if (!(index instanceof PyNumber)) {
       const typeName = (index as any).pythonTypeName ? (index as any).pythonTypeName() : index.type;
-      throw new RuntimeError(
-        `TypeError: message: list indices must be integers, not ${typeName}`,
-        subscript.location,
-        "TypeError",
-        { message: `list indices must be integers, not ${typeName}` }
-      );
+      executor.error("TypeError", subscript.location, {
+        message: `list indices must be integers, not ${typeName}`,
+      });
     }
 
     // Check for non-integer indices
     if (!index.isInteger()) {
-      throw new RuntimeError(
-        `TypeError: message: list indices must be integers, not float`,
-        subscript.location,
-        "TypeError",
-        { message: `list indices must be integers, not float` }
-      );
+      executor.error("TypeError", subscript.location, {
+        message: `list indices must be integers, not float`,
+      });
     }
 
     let actualIndex = index.value;
@@ -62,7 +52,7 @@ export function executeAssignmentStatement(executor: Executor, statement: Assign
 
     // Check bounds - Python doesn't extend arrays, it raises IndexError
     if (actualIndex < 0 || actualIndex >= listLength) {
-      throw new RuntimeError(`IndexError: index: ${index.value}`, subscript.location, "IndexError", {
+      executor.error("IndexError", subscript.location, {
         index: index.value,
       });
     }

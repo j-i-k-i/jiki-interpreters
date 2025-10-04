@@ -1,5 +1,4 @@
 import type { Executor } from "../executor";
-import { RuntimeError } from "../executor";
 import type { ForInStatement } from "../statement";
 import type { EvaluationResult } from "../evaluation-result";
 import { PyList, PyString, PyNumber, PyBoolean, PyNone, type JikiObject } from "../jikiObjects";
@@ -49,8 +48,8 @@ export function executeForInStatement(executor: Executor, statement: ForInStatem
             ? "NoneType"
             : iterable.type;
 
-    throw new RuntimeError(`'${typeName}' object is not iterable`, statement.iterable.location, "TypeError", {
-      value: iterable.toString(),
+    executor.error("TypeError", statement.iterable.location, {
+      message: `'${typeName}' object is not iterable`,
     });
   }
 

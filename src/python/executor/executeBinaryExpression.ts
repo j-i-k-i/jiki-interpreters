@@ -2,7 +2,6 @@ import type { Executor } from "../executor";
 import type { BinaryExpression } from "../expression";
 import type { EvaluationResult } from "../evaluation-result";
 import { createPyObject, type JikiObject, PyBoolean } from "../jikiObjects";
-import { RuntimeError } from "../executor";
 
 export function executeBinaryExpression(executor: Executor, expression: BinaryExpression): EvaluationResult {
   const leftResult = executor.evaluate(expression.left);
@@ -64,11 +63,9 @@ function handleBinaryOperation(
       return handleNotEqualOperation(leftResult, rightResult);
 
     default:
-      throw new RuntimeError(
-        `Unsupported binary operator: ${expression.operator.type}`,
-        expression.location,
-        "InvalidBinaryExpression"
-      );
+      executor.error("InvalidBinaryExpression", expression.location, {
+        operator: expression.operator.type,
+      });
   }
 }
 
@@ -105,11 +102,9 @@ function handleLogicalOperation(
 
   // Check if truthiness is disabled for non-boolean values
   if (!executor.languageFeatures.allowTruthiness && leftObject.type !== "boolean") {
-    throw new RuntimeError(
-      `TruthinessDisabled: value: ${leftObject.type}`,
-      expression.left.location,
-      "TruthinessDisabled"
-    );
+    executor.error("TruthinessDisabled", expression.left.location, {
+      value: leftObject.type,
+    });
   }
 
   const leftTruthy = isTruthy(leftObject);
@@ -133,11 +128,9 @@ function handleLogicalOperation(
 
     // Check truthiness for the right operand
     if (!executor.languageFeatures.allowTruthiness && rightObject.type !== "boolean") {
-      throw new RuntimeError(
-        `TruthinessDisabled: value: ${rightObject.type}`,
-        expression.right.location,
-        "TruthinessDisabled"
-      );
+      executor.error("TruthinessDisabled", expression.right.location, {
+        value: rightObject.type,
+      });
     }
 
     // Return the right value (Python semantics)
@@ -168,11 +161,9 @@ function handleLogicalOperation(
 
   // Check truthiness for the right operand
   if (!executor.languageFeatures.allowTruthiness && rightObject.type !== "boolean") {
-    throw new RuntimeError(
-      `TruthinessDisabled: value: ${rightObject.type}`,
-      expression.right.location,
-      "TruthinessDisabled"
-    );
+    executor.error("TruthinessDisabled", expression.right.location, {
+      value: rightObject.type,
+    });
   }
 
   // Return the right value (Python semantics)
@@ -208,20 +199,18 @@ function handlePlusOperation(
       return createPyObject(left + right);
     }
     // Everything else is type coercion and should error
-    throw new RuntimeError(
-      `TypeCoercionNotAllowed: operator: ${expression.operator.lexeme}: left: ${leftType}: right: ${rightType}`,
-      expression.location,
-      "TypeCoercionNotAllowed"
-    );
+    executor.error("TypeCoercionNotAllowed", expression.location, {
+      operator: expression.operator.lexeme,
+      details: `left: ${leftType}: right: ${rightType}`,
+    });
   }
 
   // With type coercion enabled, Python still doesn't allow string + number
   if ((leftType === "string" && rightType !== "string") || (leftType !== "string" && rightType === "string")) {
-    throw new RuntimeError(
-      `TypeCoercionNotAllowed: operator: ${expression.operator.lexeme}: left: ${leftType}: right: ${rightType}`,
-      expression.location,
-      "TypeCoercionNotAllowed"
-    );
+    executor.error("TypeCoercionNotAllowed", expression.location, {
+      operator: expression.operator.lexeme,
+      details: `left: ${leftType}: right: ${rightType}`,
+    });
   }
 
   return createPyObject(left + right);
@@ -267,18 +256,16 @@ function handleMultiplyOperation(
     }
     // Everything else is type coercion and should error
     if (leftType !== "number") {
-      throw new RuntimeError(
-        `TypeCoercionNotAllowed: operator: ${expression.operator.lexeme}: left: ${leftType}`,
-        expression.location,
-        "TypeCoercionNotAllowed"
-      );
+      executor.error("TypeCoercionNotAllowed", expression.location, {
+        operator: expression.operator.lexeme,
+        details: `left: ${leftType}`,
+      });
     }
     if (rightType !== "number") {
-      throw new RuntimeError(
-        `TypeCoercionNotAllowed: operator: ${expression.operator.lexeme}: right: ${rightType}`,
-        expression.location,
-        "TypeCoercionNotAllowed"
-      );
+      executor.error("TypeCoercionNotAllowed", expression.location, {
+        operator: expression.operator.lexeme,
+        details: `right: ${rightType}`,
+      });
     }
   }
 
@@ -400,17 +387,15 @@ function verifyNumbersForArithmetic(
   const rightType = rightResult.jikiObject.type;
 
   if (leftType !== "number") {
-    throw new RuntimeError(
-      `TypeCoercionNotAllowed: operator: ${expression.operator.lexeme}: left: ${leftType}`,
-      expression.location,
-      "TypeCoercionNotAllowed"
-    );
+    executor.error("TypeCoercionNotAllowed", expression.location, {
+      operator: expression.operator.lexeme,
+      details: `left: ${leftType}`,
+    });
   }
   if (rightType !== "number") {
-    throw new RuntimeError(
-      `TypeCoercionNotAllowed: operator: ${expression.operator.lexeme}: right: ${rightType}`,
-      expression.location,
-      "TypeCoercionNotAllowed"
-    );
+    executor.error("TypeCoercionNotAllowed", expression.location, {
+      operator: expression.operator.lexeme,
+      details: `right: ${rightType}`,
+    });
   }
 }

@@ -1,6 +1,7 @@
 import { Environment } from "./environment";
 // import { SyntaxError } from "./error";
 import { LogicError } from "./error";
+import { translate } from "./translator";
 import type { Expression } from "./expression";
 import {
   LiteralExpression,
@@ -135,7 +136,7 @@ export class Executor {
 
     // Check if this node type is in the allowed list
     if (!this.languageFeatures.allowedNodes.includes(nodeType)) {
-      throw new RuntimeError(`${nodeType} cannot be executed at this level`, node.location, "NodeNotAllowed", {
+      this.error("NodeNotAllowed", node.location, {
         nodeType,
       });
     }
@@ -275,7 +276,9 @@ export class Executor {
       return executeCallExpression(this, expression);
     }
 
-    throw new RuntimeError(`Unknown expression type: ${expression.type}`, expression.location, "UnsupportedOperation");
+    this.error("UnsupportedOperation", expression.location, {
+      type: expression.type,
+    });
   }
 
   public addSuccessFrame(location: Location, result: EvaluationResult | null, context?: Statement | Expression): void {
@@ -334,12 +337,12 @@ export class Executor {
     }
   }
 
-  public error(type: RuntimeErrorType, location: Location, context?: any): never {
+  public error(type: RuntimeErrorType, location: Location, context: any = {}): never {
     let message;
     if (type === "LogicErrorInExecution") {
       message = context.message;
     } else {
-      message = `${type}: ${JSON.stringify(context)}`;
+      message = translate(`error.runtime.${type}`, context);
     }
     throw new RuntimeError(message, location, type, context);
   }
