@@ -184,7 +184,7 @@ function executeStdLibFunction(
   } catch (error) {
     // Convert StdlibError to RuntimeError
     if (error instanceof StdlibError) {
-      executor.error(error.errorType as any, expression.location, error.context || { message: error.message });
+      executor.error(error.errorType, expression.location, error.context || { message: error.message });
     }
     // Re-throw other errors
     throw error;

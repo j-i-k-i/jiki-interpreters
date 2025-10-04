@@ -143,7 +143,7 @@ export function executeStdlibAttributeExpression(
 
   function handleStdlibError(error: unknown): never {
     if (error instanceof StdlibError) {
-      executor.error(error.errorType as any, expression.location, error.context || { message: error.message });
+      executor.error(error.errorType, expression.location, error.context || { message: error.message });
     }
     throw error;
   }

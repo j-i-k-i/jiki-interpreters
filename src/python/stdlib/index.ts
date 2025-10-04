@@ -1,6 +1,6 @@
 import { listProperties, listMethods } from "./lists";
 import type { JikiObject } from "../jikiObjects";
-import type { ExecutionContext } from "../executor";
+import type { ExecutionContext, RuntimeErrorType } from "../executor";
 import type { LanguageFeatures } from "../interfaces";
 
 // General types for properties and methods
@@ -46,7 +46,7 @@ export function getStdlibType(obj: JikiObject): string | null {
 // This gets caught and converted to a RuntimeError with proper location
 export class StdlibError extends Error {
   constructor(
-    public errorType: string,
+    public errorType: RuntimeErrorType,
     message: string,
     public context?: any
   ) {

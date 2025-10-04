@@ -26,7 +26,11 @@ export class PyStdLibFunction extends JikiObject {
   }
 
   public clone(): PyStdLibFunction {
-    // Functions are immutable, so return self
+    // Functions are guaranteed to be immutable - they have no mutable state.
+    // All properties (name, arity, fn, description) are readonly and cannot change
+    // after construction. The function behavior (fn) is deterministic and doesn't
+    // maintain any internal state. Therefore, returning self is safe and efficient,
+    // following the pattern established in the shared architecture for immutable objects.
     return this;
   }
 
