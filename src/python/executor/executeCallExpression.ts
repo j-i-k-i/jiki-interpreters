@@ -1,7 +1,7 @@
 import type { Executor } from "../executor";
 import type { CallExpression } from "../expression";
 import type { EvaluationResult, EvaluationResultCallExpression } from "../evaluation-result";
-import { createPyObject, PyFunction, PyNone } from "../jikiObjects";
+import { createPyObject, PyStdLibFunction, PyNone } from "../jikiObjects";
 import type { JikiObject } from "../jikiObjects";
 import type { Arity } from "../../shared/interfaces";
 import { isCallable, type PyCallable, PyUserDefinedFunction, ReturnValue } from "../functions";
@@ -28,8 +28,8 @@ export function executeCallExpression(executor: Executor, expression: CallExpres
     });
   }
 
-  // Handle both PyCallable and PyFunction
-  const callable = calleeValue as PyCallable | PyFunction;
+  // Handle both PyCallable and PyStdLibFunction
+  const callable = calleeValue as PyCallable | PyStdLibFunction;
 
   // Evaluate arguments and store both the results and JikiObjects
   const argResults: EvaluationResult[] = [];
@@ -45,67 +45,12 @@ export function executeCallExpression(executor: Executor, expression: CallExpres
 
   // Handle user-defined functions
   if (callable instanceof PyUserDefinedFunction) {
-    const declaration = callable.getDeclaration();
-    const environment = new Environment(executor.environment);
-    const prevEnvironment = executor.environment;
-    executor.environment = environment;
-
-    // Bind parameters
-    for (let i = 0; i < declaration.parameters.length; i++) {
-      environment.define(declaration.parameters[i].name.lexeme, argJikiObjects[i]);
-    }
-
-    try {
-      // Execute function body
-      for (const statement of declaration.body) {
-        executor.executeStatement(statement);
-      }
-      // No return statement - return None
-      return {
-        type: "CallExpression",
-        functionName: callable.name,
-        args: argResults,
-        jikiObject: createPyObject(null),
-        immutableJikiObject: createPyObject(null).clone(),
-      };
-    } catch (error) {
-      if (error instanceof ReturnValue) {
-        const jikiResult = error.value ?? createPyObject(null);
-        return {
-          type: "CallExpression",
-          functionName: callable.name,
-          args: argResults,
-          jikiObject: jikiResult,
-          immutableJikiObject: jikiResult.clone(),
-        };
-      }
-      throw error;
-    } finally {
-      executor.environment = prevEnvironment;
-    }
+    return executeUserDefinedFunction(executor, callable, argJikiObjects, argResults);
   }
 
-  // Handle PyFunction (stdlib methods)
-  if (callable instanceof PyFunction) {
-    try {
-      // PyFunction expects JikiObjects, not raw values
-      const result = callable.call(executor.getExecutionContext(), null, argJikiObjects);
-
-      return {
-        type: "CallExpression",
-        jikiObject: result,
-        immutableJikiObject: result.clone(),
-        functionName: callable.name,
-        args: argResults,
-      };
-    } catch (error) {
-      // Convert StdlibError to RuntimeError
-      if (error instanceof StdlibError) {
-        executor.error(error.errorType as any, expression.location, error.context || { message: error.message });
-      }
-      // Re-throw other errors
-      throw error;
-    }
+  // Handle PyStdLibFunction (stdlib methods)
+  if (callable instanceof PyStdLibFunction) {
+    return executeStdLibFunction(executor, callable, argJikiObjects, argResults, expression);
   }
 
   // Call the function (external functions)
@@ -169,5 +114,79 @@ function checkArity(
       expected: arityMessage,
       got: argCount,
     });
+  }
+}
+
+function executeUserDefinedFunction(
+  executor: Executor,
+  callable: PyUserDefinedFunction,
+  argJikiObjects: JikiObject[],
+  argResults: EvaluationResult[]
+): EvaluationResultCallExpression {
+  const declaration = callable.getDeclaration();
+  const environment = new Environment(executor.environment);
+  const prevEnvironment = executor.environment;
+  executor.environment = environment;
+
+  // Bind parameters
+  for (let i = 0; i < declaration.parameters.length; i++) {
+    environment.define(declaration.parameters[i].name.lexeme, argJikiObjects[i]);
+  }
+
+  try {
+    // Execute function body
+    for (const statement of declaration.body) {
+      executor.executeStatement(statement);
+    }
+    // No return statement - return None
+    return {
+      type: "CallExpression",
+      functionName: callable.name,
+      args: argResults,
+      jikiObject: createPyObject(null),
+      immutableJikiObject: createPyObject(null).clone(),
+    };
+  } catch (error) {
+    if (error instanceof ReturnValue) {
+      const jikiResult = error.value ?? createPyObject(null);
+      return {
+        type: "CallExpression",
+        functionName: callable.name,
+        args: argResults,
+        jikiObject: jikiResult,
+        immutableJikiObject: jikiResult.clone(),
+      };
+    }
+    throw error;
+  } finally {
+    executor.environment = prevEnvironment;
+  }
+}
+
+function executeStdLibFunction(
+  executor: Executor,
+  callable: PyStdLibFunction,
+  argJikiObjects: JikiObject[],
+  argResults: EvaluationResult[],
+  expression: CallExpression
+): EvaluationResultCallExpression {
+  try {
+    // PyStdLibFunction expects JikiObjects, not raw values
+    const result = callable.call(executor.getExecutionContext(), null, argJikiObjects);
+
+    return {
+      type: "CallExpression",
+      jikiObject: result,
+      immutableJikiObject: result.clone(),
+      functionName: callable.name,
+      args: argResults,
+    };
+  } catch (error) {
+    // Convert StdlibError to RuntimeError
+    if (error instanceof StdlibError) {
+      executor.error(error.errorType as any, expression.location, error.context || { message: error.message });
+    }
+    // Re-throw other errors
+    throw error;
   }
 }

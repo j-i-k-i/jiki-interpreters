@@ -9,7 +9,7 @@ export { JSNull } from "./JSNull";
 export { JSUndefined } from "./JSUndefined";
 export { JSArray } from "./JSList";
 export { JSDictionary } from "./JSDictionary";
-export { JSFunction } from "./JSFunction";
+export { JSStdLibFunction } from "./JSStdLibFunction";
 
 // Import for helper functions
 import { JikiObject } from "../../shared/jikiObject";

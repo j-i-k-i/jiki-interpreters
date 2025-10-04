@@ -100,7 +100,7 @@ This centralized approach ensures consistent behavior across:
 
 ### 6. JikiObjects (`src/javascript/jsObjects/`)
 
-Wrapper objects extending shared `JikiObject` base class. Each type is now in its own file under `jsObjects/` directory. Supports JSNumber, JSString, JSBoolean, JSNull, JSUndefined, JSList, JSDictionary, and JSFunction with consistent cross-interpreter compatibility.
+Wrapper objects extending shared `JikiObject` base class. Each type is now in its own file under `jsObjects/` directory. Supports JSNumber, JSString, JSBoolean, JSNull, JSUndefined, JSList, JSDictionary, and JSStdLibFunction with consistent cross-interpreter compatibility.
 
 **Key features:**
 

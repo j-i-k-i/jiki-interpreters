@@ -1,7 +1,7 @@
 import type { EvaluationResult, EvaluationResultAttributeExpression } from "../evaluation-result";
 import type { Executor } from "../executor";
 import type { AttributeExpression } from "../expression";
-import { type JikiObject, PyString, PyFunction } from "../jikiObjects";
+import { type JikiObject, PyString, PyStdLibFunction } from "../jikiObjects";
 import type { Property, Method } from "../stdlib";
 import { getStdlibType, stdlib, isStdlibMemberAllowed, StdlibError } from "../stdlib";
 
@@ -73,8 +73,8 @@ export function executeStdlibAttributeExpression(
     // This maintains the correct semantics where list.append returns a function
     guardMethodIsAllowed(stdlibType, attributeName);
 
-    // Return a PyFunction that can be called
-    const methodFunction = new PyFunction(
+    // Return a PyStdLibFunction that can be called
+    const methodFunction = new PyStdLibFunction(
       attributeName,
       stdlibMethod.arity,
       (ctx, _thisObj, args) => {

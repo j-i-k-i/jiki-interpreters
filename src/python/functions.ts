@@ -1,5 +1,5 @@
 import type { Arity, ExecutionContext } from "../shared/interfaces";
-import { JikiObject, PyFunction } from "./jikiObjects";
+import { JikiObject, PyStdLibFunction } from "./jikiObjects";
 import type { FunctionDeclaration } from "./statement";
 import type { Location } from "../shared/location";
 
@@ -9,7 +9,7 @@ export interface Callable {
 }
 
 export function isCallable(obj: any): obj is Callable {
-  return (obj instanceof Object && "arity" in obj && "call" in obj) || obj instanceof PyFunction;
+  return (obj instanceof Object && "arity" in obj && "call" in obj) || obj instanceof PyStdLibFunction;
 }
 
 export class PyCallable extends JikiObject {
