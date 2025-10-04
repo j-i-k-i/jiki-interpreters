@@ -1,5 +1,4 @@
 import type { Executor } from "../executor";
-import { RuntimeError } from "../executor";
 import type { IfStatement } from "../statement";
 import type { EvaluationResult } from "../evaluation-result";
 import type { JikiObject } from "../jikiObjects";
@@ -35,11 +34,9 @@ export function executeIfStatement(executor: Executor, statement: IfStatement): 
 
     // Check if truthiness is disabled and we have a non-boolean
     if (!executor.languageFeatures.allowTruthiness && result.jikiObject.type !== "boolean") {
-      throw new RuntimeError(
-        `TruthinessDisabled: value: ${result.jikiObject.type}`,
-        statement.condition.location,
-        "TruthinessDisabled"
-      );
+      executor.error("TruthinessDisabled", statement.condition.location, {
+        value: result.jikiObject.type,
+      });
     }
 
     return {

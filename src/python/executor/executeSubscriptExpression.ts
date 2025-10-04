@@ -1,5 +1,4 @@
 import type { Executor } from "../executor";
-import { RuntimeError } from "../executor";
 import type { SubscriptExpression } from "../expression";
 import type { EvaluationResultSubscriptExpression } from "../evaluation-result";
 import { PyList, PyNumber, PyNone } from "../jikiObjects";
@@ -19,33 +18,24 @@ export function executeSubscriptExpression(
   // For now, we only support list subscripting
   if (!(object instanceof PyList)) {
     const typeName = (object as any).pythonTypeName ? (object as any).pythonTypeName() : object.type;
-    throw new RuntimeError(
-      `TypeError: message: 'subscript' not supported for type '${typeName}'`,
-      expression.location,
-      "TypeError",
-      { message: `'subscript' not supported for type '${typeName}'` }
-    );
+    executor.error("TypeError", expression.location, {
+      message: `'subscript' not supported for type '${typeName}'`,
+    });
   }
 
   // Check that the index is a number
   if (!(index instanceof PyNumber)) {
     const typeName = (index as any).pythonTypeName ? (index as any).pythonTypeName() : index.type;
-    throw new RuntimeError(
-      `TypeError: message: list indices must be integers, not ${typeName}`,
-      expression.location,
-      "TypeError",
-      { message: `list indices must be integers, not ${typeName}` }
-    );
+    executor.error("TypeError", expression.location, {
+      message: `list indices must be integers, not ${typeName}`,
+    });
   }
 
   // Check for non-integer indices
   if (!index.isInteger()) {
-    throw new RuntimeError(
-      `TypeError: message: list indices must be integers, not float`,
-      expression.location,
-      "TypeError",
-      { message: `list indices must be integers, not float` }
-    );
+    executor.error("TypeError", expression.location, {
+      message: `list indices must be integers, not float`,
+    });
   }
 
   let actualIndex = index.value;
@@ -58,7 +48,7 @@ export function executeSubscriptExpression(
 
   // Check bounds
   if (actualIndex < 0 || actualIndex >= listLength) {
-    throw new RuntimeError(`IndexError: index: ${index.value}`, expression.location, "IndexError", {
+    executor.error("IndexError", expression.location, {
       index: index.value,
     });
   }

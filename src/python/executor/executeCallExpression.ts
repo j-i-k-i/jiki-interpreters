@@ -1,5 +1,4 @@
 import type { Executor } from "../executor";
-import { RuntimeError } from "../executor";
 import type { CallExpression } from "../expression";
 import type { EvaluationResult, EvaluationResultCallExpression } from "../evaluation-result";
 import { createPyObject } from "../jikiObjects";
@@ -16,8 +15,8 @@ export function executeCallExpression(executor: Executor, expression: CallExpres
 
   // Check if the value is callable
   if (!isCallable(calleeValue)) {
-    throw new RuntimeError(`TypeError: ${expression.callee.type} is not callable`, expression.location, "TypeError", {
-      callee: expression.callee.type,
+    executor.error("TypeError", expression.location, {
+      message: `${expression.callee.type} is not callable`,
     });
   }
 
@@ -103,12 +102,10 @@ export function executeCallExpression(executor: Executor, expression: CallExpres
     }
     // Handle any other errors from the external function
     if (error instanceof Error) {
-      throw new RuntimeError(
-        `FunctionExecutionError: function: ${callable.name}: message: ${error.message}`,
-        expression.location,
-        "FunctionExecutionError",
-        { function: callable.name, message: error.message }
-      );
+      executor.error("FunctionExecutionError", expression.location, {
+        function: callable.name,
+        message: error.message,
+      });
     }
     throw error;
   }
@@ -136,15 +133,10 @@ function checkArity(
           ? `at least ${minArity}`
           : `between ${minArity} and ${maxArity}`;
 
-    throw new RuntimeError(
-      `InvalidNumberOfArguments: function: ${functionName}: expected: ${arityMessage}: got: ${argCount}`,
-      expression.location,
-      "InvalidNumberOfArguments",
-      {
-        function: functionName,
-        expected: arityMessage,
-        got: argCount,
-      }
-    );
+    executor.error("InvalidNumberOfArguments", expression.location, {
+      function: functionName,
+      expected: arityMessage,
+      got: argCount,
+    });
   }
 }

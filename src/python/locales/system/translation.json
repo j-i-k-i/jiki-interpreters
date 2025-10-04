@@ -32,18 +32,18 @@
     "runtime": {
       "FunctionExecutionError": "FunctionExecutionError: function: {{function}}: message: {{message}}",
       "FunctionNotFound": "FunctionNotFound: name: {{name}}",
-      "IndexError": "IndexError: index: {{index}}: length: {{length}}",
-      "InvalidBinaryExpression": "InvalidBinaryExpression",
-      "InvalidNumberOfArguments": "InvalidNumberOfArguments: expected: {{expected}}: received: {{received}}",
-      "InvalidUnaryExpression": "InvalidUnaryExpression",
+      "IndexError": "IndexError: index: {{index}}",
+      "InvalidBinaryExpression": "InvalidBinaryExpression: operator: {{operator}}",
+      "InvalidNumberOfArguments": "InvalidNumberOfArguments: function: {{function}}: expected: {{expected}}: got: {{got}}",
+      "InvalidUnaryExpression": "InvalidUnaryExpression: operator: {{operator}}",
       "LogicErrorInExecution": "LogicErrorInExecution: message: {{message}}",
       "NodeNotAllowed": "NodeNotAllowed: nodeType: {{nodeType}}",
       "ReturnOutsideFunction": "ReturnOutsideFunction",
       "TruthinessDisabled": "TruthinessDisabled: value: {{value}}",
-      "TypeCoercionNotAllowed": "TypeCoercionNotAllowed: operation: {{operation}}: leftType: {{leftType}}: rightType: {{rightType}}",
+      "TypeCoercionNotAllowed": "TypeCoercionNotAllowed: operator: {{operator}}: {{details}}",
       "TypeError": "TypeError: message: {{message}}",
       "UndefinedVariable": "UndefinedVariable: name: {{name}}",
-      "UnsupportedOperation": "UnsupportedOperation"
+      "UnsupportedOperation": "UnsupportedOperation: type: {{type}}"
     }
   }
 }
