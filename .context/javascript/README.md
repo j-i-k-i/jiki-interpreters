@@ -84,7 +84,8 @@ JavaScript-specific extensions are handled through `frameDescribers.ts` which pr
 ### Current Implementation
 
 - Arithmetic operations (+, -, \*, /, %)
-- Unary operations (-, !)
+- Unary operations (-, !, typeof)
+- Update operations (++, -- in prefix and postfix forms)
 - Comparison operators (<, >, <=, >=, ==, !=, ===, !==)
 - Logical operators (&&, ||)
 - Grouping expressions (parentheses)
@@ -98,16 +99,24 @@ JavaScript-specific extensions are handled through `frameDescribers.ts` which pr
 - Runtime errors for undefined variable references
 - If/else statements with conditional execution
 - For loops and while loops
-- Arrays (lists) with creation and index access
-- Objects (dictionaries) with literal syntax { key: value }
-- Member access for arrays (index notation)
+- Arrays (lists) with:
+  - Creation and index access
+  - Property access (`.length`)
+  - Method stubs (`.push`, `.pop`, etc. - return functions but not yet implemented)
+  - Computed access restrictions (stdlib members require dot notation)
+- Objects (dictionaries) with:
+  - Literal syntax { key: value }
+  - Property access (dot and bracket notation)
+  - Property assignment
+- Member access for arrays and objects
 - **User-defined functions** (function declarations, return statements, closures)
+- **External functions** (registered at initialization, receive ExecutionContext)
+- **Standard library (stdlib)** with feature flag support
 
 ### Planned Features
 
 - Additional variable declaration types (const, var)
-- Object property access (dot notation and bracket notation)
-- Object property assignment
+- Full implementation of array methods (currently stubbed)
 - Switch statements
 - Do-while loops
 - Arrow functions and function expressions

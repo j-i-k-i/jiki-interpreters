@@ -33,6 +33,21 @@ Evaluates the AST and generates execution frames.
 
 Modular executor architecture with dedicated modules for each AST node type. Main executor coordinates specialized executor functions with consistent interfaces.
 
+**Member Expression Execution:**
+
+The executor uses a dispatch pattern for member expressions:
+
+- `executeMemberExpression`: Main entry point that dispatches based on object type
+- `executeArrayMemberExpression`: Handles array-specific member access
+  - Dot notation (arr.length) delegates to stdlib
+  - Bracket notation with numbers handles array indexing
+  - Bracket notation with strings for stdlib members throws TypeError
+- `executeDictionaryMemberExpression`: Handles dictionary property access
+- `executeStdlibMemberExpression`: Handles stdlib properties and methods
+  - Uses guard pattern for validation (guardObjectHasStdLibMethods, guardPropertyIsString, etc.)
+  - Enforces dot notation only for stdlib members (no computed access)
+  - Handles feature flags and stub methods
+
 **External Functions**: The executor supports registration and invocation of external functions through:
 
 - Registration at interpreter initialization via `externalFunctions` array
@@ -114,16 +129,24 @@ Provides built-in properties and methods for JavaScript types with feature flag 
   - `length`: Returns the number of elements in the array
 - Implemented Methods:
   - `at(index)`: Returns element at index (supports negative indices)
-- Stubbed Methods (throw MethodNotYetImplemented):
+- Stubbed Methods (throw MethodNotYetImplemented when called):
   - All standard JS array methods: `push`, `pop`, `shift`, `unshift`, `indexOf`, `includes`, `slice`, `concat`, `join`, `forEach`, `map`, `filter`, `reduce`, etc.
+  - Stub methods still return function objects for correct semantics (e.g., `arr.push` returns a function)
+
+**Access Patterns**:
+
+- **Dot notation required**: Stdlib members must be accessed via dot notation (`arr.length`)
+- **Computed access forbidden**: Using brackets for stdlib members (`arr["length"]`) throws TypeError
+- **Array indexing**: Numeric bracket access (`arr[0]`) works for array elements only
 
 **Feature Flag System**:
 
 - Methods and properties can be restricted via `allowedStdlib` in LanguageFeatures
-- Three error states:
+- Four error states:
   - `PropertyNotFound`: Completely unknown property/method
-  - `MethodNotYetImplemented`: Known method but not yet built (stub)
+  - `MethodNotYetImplemented`: Known method but not yet built (stub) - thrown when stub is called
   - `MethodNotYetAvailable`: Built method disabled by feature flags
+  - `TypeError`: Computed property access for stdlib members
 
 The stdlib system uses an ExecutionContext pattern for consistency with JikiScript patterns.
 
