@@ -18,14 +18,7 @@ export function executeStdlibMemberExpression(
 
   // Check if this is computed access (bracket notation)
   // Stdlib members should only be accessed via dot notation
-  if (expression.computed) {
-    throw new RuntimeError(
-      `TypeError: message: Cannot use computed property access for stdlib members`,
-      expression.location,
-      "TypeError",
-      { message: "Cannot use computed property access for stdlib members" }
-    );
-  }
+  guardNotComputedAccess();
 
   // Evaluate the property to get its name
   const propertyResult = executor.evaluate(expression.property);
@@ -38,6 +31,22 @@ export function executeStdlibMemberExpression(
   // Check if it's a property
   const stdlibProperty = stdlib[stdlibType].properties[propertyName] as Property | undefined;
   if (stdlibProperty) {
+    return handleProperty(stdlibProperty);
+  }
+
+  // Check if it's a method
+  const stdlibMethod = stdlib[stdlibType].methods[propertyName] as Method | undefined;
+  if (stdlibMethod) {
+    return handleMethod(stdlibMethod);
+  }
+
+  // Unknown property/method
+  throw new RuntimeError(`PropertyNotFound: property: ${propertyName}`, expression.location, "PropertyNotFound", {
+    property: propertyName,
+  });
+
+  // Helper function to handle property access
+  function handleProperty(stdlibProperty: Property): EvaluationResultMemberExpression {
     guardPropertyIsNotStub(stdlibProperty, propertyName);
     guardPropertyIsAllowed(stdlibType, propertyName);
 
@@ -55,9 +64,8 @@ export function executeStdlibMemberExpression(
     }
   }
 
-  // Check if it's a method
-  const stdlibMethod = stdlib[stdlibType].methods[propertyName] as Method | undefined;
-  if (stdlibMethod) {
+  // Helper function to handle method access
+  function handleMethod(stdlibMethod: Method): EvaluationResultMemberExpression {
     // Note: For stub methods, we still return a function, but it will throw when called
     // This maintains the correct semantics where arr.push returns a function
     guardMethodIsAllowed(stdlibType, propertyName);
@@ -85,11 +93,6 @@ export function executeStdlibMemberExpression(
     };
   }
 
-  // Unknown property/method
-  throw new RuntimeError(`PropertyNotFound: property: ${propertyName}`, expression.location, "PropertyNotFound", {
-    property: propertyName,
-  });
-
   // Guard functions
   function guardObjectHasStdLibMethods(stdlibType: string | null) {
     if (stdlibType !== null) {
@@ -101,6 +104,19 @@ export function executeStdlibMemberExpression(
       expression.location,
       "TypeError",
       { message: `Cannot read properties of ${object.type}` }
+    );
+  }
+
+  function guardNotComputedAccess() {
+    if (!expression.computed) {
+      return;
+    }
+
+    throw new RuntimeError(
+      `TypeError: message: Cannot use computed property access for stdlib members`,
+      expression.location,
+      "TypeError",
+      { message: "Cannot use computed property access for stdlib members" }
     );
   }
 
