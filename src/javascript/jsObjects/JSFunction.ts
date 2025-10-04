@@ -17,6 +17,10 @@ export class JSFunction extends JikiObject {
     return this.fn;
   }
 
+  public call(ctx: ExecutionContext, thisObj: JSArray | null, args: JikiObject[]): JikiObject {
+    return this.fn(ctx, thisObj, args);
+  }
+
   public toString(): string {
     return `[Function: ${this.name}]`;
   }

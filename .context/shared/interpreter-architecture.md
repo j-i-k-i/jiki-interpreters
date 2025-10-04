@@ -117,7 +117,7 @@ The `immutableJikiObject` field in evaluation results provides a point-in-time i
 - Primitive types (numbers, strings, booleans, null/none): `clone()` returns `self`
 - Mutable collections (lists, dictionaries, arrays): `clone()` creates actual copy
 - Evaluation results: Include `immutableJikiObject: result.clone()` field
-- Describers: Access via `result.immutableJikiObject || result.jikiObject`
+- Describers: Access via `result.immutableJikiObject`
 
 ### 2. Frame System (`src/shared/frames.ts`)
 

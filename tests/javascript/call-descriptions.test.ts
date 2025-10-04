@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import { interpret } from "../../src/javascript/interpreter";
 import type { ExternalFunction } from "../../src/shared/interfaces";
 import type { ExecutionContext } from "../../src/javascript/executor";
+import { JSNumber, JSString, JSBoolean, type JikiObject } from "../../src/javascript/jsObjects";
 
 // Helper to extract description text from HTML
 function extractText(html: string): string {
@@ -12,7 +13,7 @@ describe("JavaScript Call Descriptions", () => {
   it("should describe standalone function calls", () => {
     const testFunc: ExternalFunction = {
       name: "testFunc",
-      func: (context: ExecutionContext) => 42,
+      func: (context: ExecutionContext) => new JSNumber(42),
       description: "test function",
       arity: 0,
     };
@@ -47,7 +48,12 @@ describe("JavaScript Call Descriptions", () => {
   it("should describe function calls with arguments", () => {
     const add: ExternalFunction = {
       name: "add",
-      func: (context: ExecutionContext, a: number, b: number) => a + b,
+      func: (context: ExecutionContext, a: JikiObject, b: JikiObject) => {
+        if (!(a instanceof JSNumber) || !(b instanceof JSNumber)) {
+          throw new Error("add expects numbers");
+        }
+        return new JSNumber(a.value + b.value);
+      },
       description: "adds numbers",
       arity: 2,
     };
@@ -70,7 +76,12 @@ describe("JavaScript Call Descriptions", () => {
   it("should describe function calls in compound expressions", () => {
     const double: ExternalFunction = {
       name: "double",
-      func: (context: ExecutionContext, n: number) => n * 2,
+      func: (context: ExecutionContext, n: JikiObject) => {
+        if (!(n instanceof JSNumber)) {
+          throw new Error("double expects a number");
+        }
+        return new JSNumber(n.value * 2);
+      },
       description: "doubles a number",
       arity: 1,
     };
@@ -94,7 +105,12 @@ describe("JavaScript Call Descriptions", () => {
   it("should describe function calls in if conditions", () => {
     const isEven: ExternalFunction = {
       name: "isEven",
-      func: (context: ExecutionContext, n: number) => n % 2 === 0,
+      func: (context: ExecutionContext, n: JikiObject) => {
+        if (!(n instanceof JSNumber)) {
+          throw new Error("isEven expects a number");
+        }
+        return new JSBoolean(n.value % 2 === 0);
+      },
       description: "checks if even",
       arity: 1,
     };
@@ -124,7 +140,12 @@ describe("JavaScript Call Descriptions", () => {
   it("should describe complex argument expressions", () => {
     const foobar: ExternalFunction = {
       name: "foobar",
-      func: (context: ExecutionContext, n: number) => n * 10,
+      func: (context: ExecutionContext, n: JikiObject) => {
+        if (!(n instanceof JSNumber)) {
+          throw new Error("foobar expects a number");
+        }
+        return new JSNumber(n.value * 10);
+      },
       description: "multiplies by 10",
       arity: 1,
     };
