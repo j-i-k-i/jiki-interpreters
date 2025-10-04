@@ -31,12 +31,19 @@
     },
     "runtime": {
       "FunctionExecutionError": "FunctionExecutionError: function: {{function}}: message: {{message}}",
+      "FunctionNotFound": "FunctionNotFound: name: {{name}}",
+      "IndexError": "IndexError: index: {{index}}: length: {{length}}",
       "InvalidBinaryExpression": "InvalidBinaryExpression",
+      "InvalidNumberOfArguments": "InvalidNumberOfArguments: expected: {{expected}}: received: {{received}}",
       "InvalidUnaryExpression": "InvalidUnaryExpression",
+      "LogicErrorInExecution": "LogicErrorInExecution: message: {{message}}",
+      "NodeNotAllowed": "NodeNotAllowed: nodeType: {{nodeType}}",
+      "ReturnOutsideFunction": "ReturnOutsideFunction",
       "TruthinessDisabled": "TruthinessDisabled: value: {{value}}",
+      "TypeCoercionNotAllowed": "TypeCoercionNotAllowed: operation: {{operation}}: leftType: {{leftType}}: rightType: {{rightType}}",
+      "TypeError": "TypeError: message: {{message}}",
       "UndefinedVariable": "UndefinedVariable: name: {{name}}",
-      "UnsupportedOperation": "UnsupportedOperation",
-      "ReturnOutsideFunction": "ReturnOutsideFunction"
+      "UnsupportedOperation": "UnsupportedOperation"
     }
   }
 }
