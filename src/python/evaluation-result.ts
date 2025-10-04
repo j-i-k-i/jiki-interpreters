@@ -75,6 +75,14 @@ export interface EvaluationResultCallExpression {
   immutableJikiObject: JikiObject;
 }
 
+export interface EvaluationResultAttributeExpression {
+  type: "AttributeExpression";
+  object: EvaluationResultExpression;
+  property: EvaluationResultExpression;
+  jikiObject: JikiObject;
+  immutableJikiObject: JikiObject;
+}
+
 export interface EvaluationResultFunctionDeclaration {
   type: "FunctionDeclaration";
   name: string;

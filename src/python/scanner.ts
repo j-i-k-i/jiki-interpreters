@@ -219,7 +219,7 @@ export class Scanner {
       "YIELD",
       // Operators
       // "COMMA", - Already implemented for list literals
-      "DOT",
+      // "DOT", - Implemented for attribute access
       // "PERCENT", - Already implemented as binary operator
       "SEMICOLON",
       // "LEFT_BRACKET", - Already implemented for list literals

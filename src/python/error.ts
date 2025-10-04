@@ -48,6 +48,7 @@ export type SyntaxErrorType =
   | "BlockStatementNotAllowed"
   | "IfStatementNotAllowed"
   | "ForInStatementNotAllowed"
+  | "AttributeExpressionNotAllowed"
   | "BreakStatementNotAllowed"
   | "ContinueStatementNotAllowed"
   | "FunctionDeclarationNotAllowed"
@@ -67,7 +68,8 @@ export type SyntaxErrorType =
   | "MissingIn"
   | "MissingIndent"
   | "MissingDedent"
-  | "MissingIdentifier";
+  | "MissingIdentifier"
+  | "MissingAttributeName";
 
 export class SyntaxError extends Error {
   constructor(

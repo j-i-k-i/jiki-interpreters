@@ -1,12 +1,13 @@
 import type { Executor } from "../executor";
 import type { CallExpression } from "../expression";
 import type { EvaluationResult, EvaluationResultCallExpression } from "../evaluation-result";
-import { createPyObject } from "../jikiObjects";
+import { createPyObject, PyFunction, PyNone } from "../jikiObjects";
 import type { JikiObject } from "../jikiObjects";
 import type { Arity } from "../../shared/interfaces";
 import { isCallable, type PyCallable, PyUserDefinedFunction, ReturnValue } from "../functions";
 import { LogicError } from "../error";
 import { Environment } from "../environment";
+import { StdlibError } from "../stdlib";
 
 export function executeCallExpression(executor: Executor, expression: CallExpression): EvaluationResultCallExpression {
   // Evaluate the callee
@@ -15,13 +16,20 @@ export function executeCallExpression(executor: Executor, expression: CallExpres
 
   // Check if the value is callable
   if (!isCallable(calleeValue)) {
+    // Get proper type name for error message
+    let typeName = calleeValue.type;
+    if (calleeValue instanceof PyNone) {
+      typeName = "NoneType";
+    } else if ("pythonTypeName" in calleeValue && typeof calleeValue.pythonTypeName === "function") {
+      typeName = calleeValue.pythonTypeName();
+    }
     executor.error("TypeError", expression.location, {
-      message: `${expression.callee.type} is not callable`,
+      message: `'${typeName}' object is not callable`,
     });
   }
 
-  // Type assertion since we know it's a PyCallable from our implementation
-  const callable = calleeValue as PyCallable;
+  // Handle both PyCallable and PyFunction
+  const callable = calleeValue as PyCallable | PyFunction;
 
   // Evaluate arguments and store both the results and JikiObjects
   const argResults: EvaluationResult[] = [];
@@ -77,7 +85,30 @@ export function executeCallExpression(executor: Executor, expression: CallExpres
     }
   }
 
-  // Call the function
+  // Handle PyFunction (stdlib methods)
+  if (callable instanceof PyFunction) {
+    try {
+      // PyFunction expects JikiObjects, not raw values
+      const result = callable.call(executor.getExecutionContext(), null, argJikiObjects);
+
+      return {
+        type: "CallExpression",
+        jikiObject: result,
+        immutableJikiObject: result.clone(),
+        functionName: callable.name,
+        args: argResults,
+      };
+    } catch (error) {
+      // Convert StdlibError to RuntimeError
+      if (error instanceof StdlibError) {
+        executor.error(error.errorType as any, expression.location, error.context || { message: error.message });
+      }
+      // Re-throw other errors
+      throw error;
+    }
+  }
+
+  // Call the function (external functions)
   const executionContext = executor.getExecutionContext();
 
   try {

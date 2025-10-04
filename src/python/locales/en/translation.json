@@ -27,7 +27,9 @@
       "MissingIn": "Missing 'in'.",
       "MissingIndent": "Missing indentation.",
       "MissingDedent": "Missing dedent.",
-      "MissingIdentifier": "Missing identifier."
+      "MissingIdentifier": "Missing identifier.",
+      "MissingAttributeName": "Missing attribute name after '.'.",
+      "AttributeExpressionNotAllowed": "Attribute access is not allowed."
     },
     "runtime": {
       "FunctionExecutionError": "Error executing function '{{function}}': {{message}}",
@@ -43,7 +45,10 @@
       "TypeCoercionNotAllowed": "Type coercion is not allowed for operator '{{operator}}': {{details}}.",
       "TypeError": "{{message}}",
       "UndefinedVariable": "Variable '{{name}}' is not defined.",
-      "UnsupportedOperation": "Expression type '{{type}}' is not supported."
+      "UnsupportedOperation": "Expression type '{{type}}' is not supported.",
+      "AttributeError": "'{{type}}' object has no attribute '{{attribute}}'.",
+      "MethodNotYetImplemented": "The method '{{method}}' is not yet implemented.",
+      "MethodNotYetAvailable": "The method '{{method}}' is not yet available."
     }
   }
 }

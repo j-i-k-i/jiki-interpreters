@@ -27,7 +27,9 @@
       "MissingIn": "MissingIn",
       "MissingIndent": "MissingIndent",
       "MissingDedent": "MissingDedent",
-      "MissingIdentifier": "MissingIdentifier"
+      "MissingIdentifier": "MissingIdentifier",
+      "MissingAttributeName": "MissingAttributeName",
+      "AttributeExpressionNotAllowed": "AttributeExpressionNotAllowed"
     },
     "runtime": {
       "FunctionExecutionError": "FunctionExecutionError: function: {{function}}: message: {{message}}",
@@ -43,7 +45,10 @@
       "TypeCoercionNotAllowed": "TypeCoercionNotAllowed: operator: {{operator}}: {{details}}",
       "TypeError": "TypeError: message: {{message}}",
       "UndefinedVariable": "UndefinedVariable: name: {{name}}",
-      "UnsupportedOperation": "UnsupportedOperation: type: {{type}}"
+      "UnsupportedOperation": "UnsupportedOperation: type: {{type}}",
+      "AttributeError": "AttributeError: attribute: {{attribute}}: type: {{type}}",
+      "MethodNotYetImplemented": "MethodNotYetImplemented: method: {{method}}",
+      "MethodNotYetAvailable": "MethodNotYetAvailable: method: {{method}}"
     }
   }
 }

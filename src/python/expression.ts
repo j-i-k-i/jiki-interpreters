@@ -107,3 +107,16 @@ export class CallExpression extends Expression {
     return [this.callee, ...this.args];
   }
 }
+
+export class AttributeExpression extends Expression {
+  constructor(
+    public object: Expression,
+    public attribute: Token,
+    public location: Location
+  ) {
+    super("AttributeExpression");
+  }
+  public children() {
+    return [this.object];
+  }
+}
