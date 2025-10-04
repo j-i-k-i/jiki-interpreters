@@ -31,12 +31,19 @@
     },
     "runtime": {
       "FunctionExecutionError": "Error executing function '{{function}}': {{message}}",
+      "FunctionNotFound": "The function '{{name}}' is not defined.",
+      "IndexError": "Index {{index}} is out of range. The list has {{length}} elements.",
       "InvalidBinaryExpression": "Invalid binary operation between these values.",
+      "InvalidNumberOfArguments": "Function expected {{expected}} argument(s), but received {{received}}.",
       "InvalidUnaryExpression": "Invalid unary operation on this value.",
+      "LogicErrorInExecution": "Internal error: {{message}}",
+      "NodeNotAllowed": "The '{{nodeType}}' feature is not allowed in this exercise.",
+      "ReturnOutsideFunction": "Return statement cannot be used outside of a function.",
       "TruthinessDisabled": "Cannot use {{value}} as a boolean value. Only boolean values are allowed in conditions when truthiness is disabled.",
+      "TypeCoercionNotAllowed": "Cannot perform {{operation}} between {{leftType}} and {{rightType}}. Type coercion is disabled.",
+      "TypeError": "{{message}}",
       "UndefinedVariable": "Undefined variable referenced in code.",
-      "UnsupportedOperation": "This operation is not supported.",
-      "ReturnOutsideFunction": "Return statement cannot be used outside of a function."
+      "UnsupportedOperation": "This operation is not supported."
     }
   }
 }
