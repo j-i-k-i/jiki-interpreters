@@ -1,7 +1,7 @@
 import type { Executor } from "../executor";
 import type { MemberExpression } from "../expression";
 import type { EvaluationResultMemberExpression } from "../evaluation-result";
-import { type JSArray, type JSDictionary } from "../jikiObjects";
+import type { JSArray, JSDictionary } from "../jikiObjects";
 import { executeStdlibMemberExpression } from "./executeStdlibMemberExpression";
 import { executeDictionaryMemberExpression } from "./executeDictionaryMemberExpression";
 import { executeArrayMemberExpression } from "./executeArrayMemberExpression";
