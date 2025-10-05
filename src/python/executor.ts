@@ -80,6 +80,7 @@ export type RuntimeErrorType =
   | "LogicErrorInExecution"
   | "ReturnOutsideFunction"
   | "AttributeError"
+  | "ValueError"
   | "MethodNotYetImplemented"
   | "MethodNotYetAvailable";
 

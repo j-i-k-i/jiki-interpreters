@@ -47,7 +47,7 @@ export const index: Method = {
     }
 
     // Value not found - raise ValueError
-    throw new StdlibError("TypeError", `${searchValue.toString()} is not in list`, {
+    throw new StdlibError("ValueError", `${searchValue.toString()} is not in list`, {
       value: searchValue.toString(),
     });
   },

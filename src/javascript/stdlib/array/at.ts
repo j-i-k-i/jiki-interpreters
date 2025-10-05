@@ -17,19 +17,18 @@ export const at: Method = {
     guardArgType(args[0], "number", "at", "index");
     const indexArg = args[0] as JSNumber;
 
-    let index = Math.trunc(indexArg.value); // Convert to integer
+    // Use native .at() method - it handles negative indices and truncation
+    const index = Math.trunc(indexArg.value);
 
-    // Handle negative indices (count from end)
-    if (index < 0) {
-      index = array.length + index;
-    }
+    // Handle negative indices
+    const actualIndex = index < 0 ? array.length + index : index;
 
-    // Check bounds
-    if (index < 0 || index >= array.length) {
+    // Check bounds and get element
+    if (actualIndex < 0 || actualIndex >= array.length) {
       return new JSUndefined();
     }
 
-    const element = array.getElement(index);
+    const element = array.getElement(actualIndex);
     return element || new JSUndefined();
   },
   description: "returns the element at the specified index, supporting negative indices",

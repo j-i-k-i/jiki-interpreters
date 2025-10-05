@@ -121,7 +121,7 @@ result = lst.index(5, 0, 4)
 
       const lastFrame = result.frames[result.frames.length - 1] as TestAugmentedFrame;
       expect(lastFrame.status).toBe("ERROR");
-      expect(lastFrame.error?.type).toBe("TypeError"); // We use TypeError for value not found
+      expect(lastFrame.error?.type).toBe("ValueError"); // ValueError for value not found in Python
     });
   });
 
@@ -136,7 +136,7 @@ result = lst.index(99)
 
       const lastFrame = result.frames[result.frames.length - 1] as TestAugmentedFrame;
       expect(lastFrame.status).toBe("ERROR");
-      expect(lastFrame.error?.type).toBe("TypeError");
+      expect(lastFrame.error?.type).toBe("ValueError");
       expect(lastFrame.error?.context?.value).toBe("99");
     });
 
@@ -176,7 +176,7 @@ result = lst.index(2, "abc")
 
       const lastFrame = result.frames[result.frames.length - 1] as TestAugmentedFrame;
       expect(lastFrame.status).toBe("ERROR");
-      expect(lastFrame.error?.type).toBe("TypeError");
+      expect(lastFrame.error?.type).toBe("TypeError"); // Type error for wrong argument type
     });
 
     it("should error when end is not a number", () => {
@@ -189,7 +189,7 @@ result = lst.index(2, 0, "xyz")
 
       const lastFrame = result.frames[result.frames.length - 1] as TestAugmentedFrame;
       expect(lastFrame.status).toBe("ERROR");
-      expect(lastFrame.error?.type).toBe("TypeError");
+      expect(lastFrame.error?.type).toBe("TypeError"); // Type error for wrong argument type
     });
   });
 
@@ -204,7 +204,7 @@ result = lst.index(1)
 
       const lastFrame = result.frames[result.frames.length - 1] as TestAugmentedFrame;
       expect(lastFrame.status).toBe("ERROR");
-      expect(lastFrame.error?.type).toBe("TypeError");
+      expect(lastFrame.error?.type).toBe("ValueError");
     });
   });
 
