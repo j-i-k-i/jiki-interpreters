@@ -111,6 +111,63 @@ result = lst.index(3, 3, 6)
       expect(lastFrame.variables?.result?.value ?? lastFrame.variables?.result).toBe(5);
     });
 
+    it("should handle negative start index", () => {
+      const code = `
+lst = [1, 2, 3, 2, 5]
+result = lst.index(2, -3)
+      `.trim();
+      const result = interpret(code);
+      expect(result.success).toBe(true);
+
+      const lastFrame = result.frames[result.frames.length - 1] as TestAugmentedFrame;
+      expect(lastFrame.status).toBe("SUCCESS");
+      // -3 from end is index 2, so should find the 2 at index 3
+      expect(lastFrame.variables?.result?.value ?? lastFrame.variables?.result).toBe(3);
+    });
+
+    it("should handle negative end index", () => {
+      const code = `
+lst = [1, 2, 3, 2, 5]
+result = lst.index(2, 0, -1)
+      `.trim();
+      const result = interpret(code);
+      expect(result.success).toBe(true);
+
+      const lastFrame = result.frames[result.frames.length - 1] as TestAugmentedFrame;
+      expect(lastFrame.status).toBe("SUCCESS");
+      // Should search from 0 to index 4 (exclusive), finding 2 at index 1
+      expect(lastFrame.variables?.result?.value ?? lastFrame.variables?.result).toBe(1);
+    });
+
+    it("should handle both negative indices", () => {
+      const code = `
+lst = [1, 2, 3, 4, 2, 6]
+result = lst.index(2, -4, -1)
+      `.trim();
+      const result = interpret(code);
+      expect(result.success).toBe(true);
+
+      const lastFrame = result.frames[result.frames.length - 1] as TestAugmentedFrame;
+      expect(lastFrame.status).toBe("SUCCESS");
+      // -4 from end is index 2, -1 from end is index 5 (exclusive)
+      // Should find 2 at index 4
+      expect(lastFrame.variables?.result?.value ?? lastFrame.variables?.result).toBe(4);
+    });
+
+    it("should handle extreme negative indices that go past beginning", () => {
+      const code = `
+lst = [1, 2, 3, 4, 5]
+result = lst.index(1, -10)
+      `.trim();
+      const result = interpret(code);
+      expect(result.success).toBe(true);
+
+      const lastFrame = result.frames[result.frames.length - 1] as TestAugmentedFrame;
+      expect(lastFrame.status).toBe("SUCCESS");
+      // -10 from end would be negative, should clamp to 0
+      expect(lastFrame.variables?.result?.value ?? lastFrame.variables?.result).toBe(0);
+    });
+
     it("should not find element outside range", () => {
       const code = `
 lst = [1, 2, 3, 4, 5]

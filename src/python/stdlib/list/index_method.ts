@@ -22,14 +22,18 @@ export const index: Method = {
     if (args.length >= 2) {
       guardArgType(args[1], "number", "index", "start");
       const startArg = args[1] as PyNumber;
-      start = Math.max(0, startArg.value);
+      // Python negative indices count from the end
+      const normalizedStart = startArg.value < 0 ? list.length + startArg.value : startArg.value;
+      start = Math.max(0, normalizedStart);
     }
 
     // Handle optional end parameter
     if (args.length >= 3) {
       guardArgType(args[2], "number", "index", "end");
       const endArg = args[2] as PyNumber;
-      end = Math.min(list.length, endArg.value);
+      // Python negative indices count from the end
+      const normalizedEnd = endArg.value < 0 ? list.length + endArg.value : endArg.value;
+      end = Math.min(list.length, normalizedEnd);
     }
 
     // Search for the value in the specified range
