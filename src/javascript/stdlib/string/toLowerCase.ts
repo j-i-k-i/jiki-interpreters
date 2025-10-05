@@ -2,7 +2,7 @@ import type { JSString } from "../../jsObjects";
 import { JSString as JSStringClass, type JikiObject } from "../../jsObjects";
 import type { ExecutionContext } from "../../executor";
 import type { Method } from "../index";
-import { StdlibError } from "../index";
+import { guardNoArgs } from "../guards";
 
 export const toLowerCase: Method = {
   arity: 0,
@@ -10,12 +10,7 @@ export const toLowerCase: Method = {
     const str = obj as JSString;
 
     // Validate no arguments
-    if (args.length !== 0) {
-      throw new StdlibError("InvalidNumberOfArguments", `toLowerCase() takes no arguments (${args.length} given)`, {
-        expected: 0,
-        received: args.length,
-      });
-    }
+    guardNoArgs(args, "toLowerCase");
 
     return new JSStringClass(str.value.toLowerCase());
   },

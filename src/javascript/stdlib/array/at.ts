@@ -1,8 +1,9 @@
-import type { JSArray } from "../../jsObjects";
-import { JSNumber, JSUndefined, type JikiObject } from "../../jsObjects";
+import type { JSArray, JikiObject } from "../../jsObjects";
+import type { JSNumber } from "../../jsObjects";
+import { JSUndefined } from "../../jsObjects";
 import type { ExecutionContext } from "../../executor";
 import type { Method } from "../index";
-import { StdlibError } from "../index";
+import { guardExactArgs, guardArgType } from "../guards";
 
 export const at: Method = {
   arity: 1,
@@ -10,19 +11,11 @@ export const at: Method = {
     const array = obj as JSArray;
 
     // Validate exactly one argument
-    if (args.length !== 1) {
-      throw new StdlibError("InvalidNumberOfArguments", `at() takes exactly 1 argument (${args.length} given)`, {
-        expected: 1,
-        received: args.length,
-      });
-    }
+    guardExactArgs(args, 1, "at");
 
-    const indexArg = args[0];
-    if (!(indexArg instanceof JSNumber)) {
-      throw new StdlibError("TypeError", "Index must be a number", {
-        type: indexArg.type,
-      });
-    }
+    // Validate argument is a number
+    guardArgType(args[0], "number", "at", "index");
+    const indexArg = args[0] as JSNumber;
 
     let index = Math.trunc(indexArg.value); // Convert to integer
 

@@ -3,6 +3,7 @@ import { PyNumber, type JikiObject } from "../../jikiObjects";
 import type { ExecutionContext } from "../../executor";
 import type { Method } from "../index";
 import { StdlibError } from "../index";
+import { guardArgRange, guardArgType } from "../guards";
 
 // Named 'index_method' to avoid conflict with index.ts aggregator file
 export const index: Method = {
@@ -11,16 +12,7 @@ export const index: Method = {
     const list = obj as PyList;
 
     // Validate argument count (1-3 arguments)
-    if (args.length < 1 || args.length > 3) {
-      throw new StdlibError(
-        "TypeError",
-        `index() takes from 1 to 3 positional arguments but ${args.length} were given`,
-        {
-          expected: "1-3",
-          received: args.length,
-        }
-      );
-    }
+    guardArgRange(args, 1, 3, "index");
 
     const searchValue = args[0];
     let start = 0;
@@ -28,25 +20,15 @@ export const index: Method = {
 
     // Handle optional start parameter
     if (args.length >= 2) {
-      const startArg = args[1];
-      if (!(startArg instanceof PyNumber)) {
-        throw new StdlibError("TypeError", "'int' object cannot be interpreted as an integer", {
-          argument: "start",
-          type: startArg.type,
-        });
-      }
+      guardArgType(args[1], "number", "index", "start");
+      const startArg = args[1] as PyNumber;
       start = Math.max(0, startArg.value);
     }
 
     // Handle optional end parameter
     if (args.length >= 3) {
-      const endArg = args[2];
-      if (!(endArg instanceof PyNumber)) {
-        throw new StdlibError("TypeError", "'int' object cannot be interpreted as an integer", {
-          argument: "end",
-          type: endArg.type,
-        });
-      }
+      guardArgType(args[2], "number", "index", "end");
+      const endArg = args[2] as PyNumber;
       end = Math.min(list.length, endArg.value);
     }
 
