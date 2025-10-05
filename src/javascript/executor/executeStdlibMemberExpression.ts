@@ -1,7 +1,7 @@
 import type { EvaluationResult, EvaluationResultMemberExpression } from "../evaluation-result";
 import { type Executor, RuntimeError } from "../executor";
 import type { MemberExpression } from "../expression";
-import { type JikiObject, JSString, JSFunction } from "../jsObjects";
+import { type JikiObject, JSString, JSStdLibFunction } from "../jsObjects";
 import type { Property, Method } from "../stdlib";
 import { getStdlibType, stdlib, isStdlibMemberAllowed, StdlibError } from "../stdlib";
 
@@ -70,8 +70,8 @@ export function executeStdlibMemberExpression(
     // This maintains the correct semantics where arr.push returns a function
     guardMethodIsAllowed(stdlibType, propertyName);
 
-    // Return a JSFunction that can be called
-    const methodFunction = new JSFunction(
+    // Return a JSStdLibFunction that can be called
+    const methodFunction = new JSStdLibFunction(
       propertyName,
       stdlibMethod.arity,
       (ctx, _thisObj, args) => {

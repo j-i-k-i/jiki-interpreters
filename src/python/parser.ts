@@ -9,6 +9,7 @@ import {
   ListExpression,
   SubscriptExpression,
   CallExpression,
+  AttributeExpression,
 } from "./expression";
 import { Location } from "../shared/location";
 import { Scanner } from "./scanner";
@@ -69,6 +70,7 @@ export class Parser {
       ListExpression: "Lists",
       SubscriptExpression: "Subscript expressions",
       CallExpression: "Function calls",
+      AttributeExpression: "Attribute access",
       ExpressionStatement: "Expression statements",
       PrintStatement: "Print statements",
       AssignmentStatement: "Assignment statements",
@@ -384,6 +386,12 @@ export class Parser {
         this.checkNodeAllowed("CallExpression", "CallExpressionNotAllowed", this.previous().location);
 
         expr = this.finishCallExpression(expr);
+      } else if (this.match("DOT")) {
+        // Check if AttributeExpression is allowed
+        this.checkNodeAllowed("AttributeExpression", "AttributeExpressionNotAllowed", this.previous().location);
+
+        const attribute = this.consume("IDENTIFIER", "MissingAttributeName");
+        expr = new AttributeExpression(expr, attribute, Location.between(expr, attribute));
       } else {
         break;
       }

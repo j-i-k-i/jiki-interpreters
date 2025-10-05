@@ -52,7 +52,7 @@ describe("Python - Unimplemented Tokens", () => {
   describe("Unimplemented Operators", () => {
     const unimplementedOperators = [
       // { code: "1, 2", token: ",", type: "COMMA" }, - Already implemented for lists
-      { code: "obj.prop", token: ".", type: "DOT" },
+      // { code: "obj.prop", token: ".", type: "DOT" }, - Already implemented for attribute access
       // { code: "5 % 2", token: "%", type: "PERCENT" }, - Already implemented
       { code: "5;", token: ";", type: "SEMICOLON" },
       // { code: "[1, 2]", token: "[", type: "LEFT_BRACKET" }, - Already implemented for lists

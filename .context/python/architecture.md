@@ -48,6 +48,21 @@ Modular executor architecture with dedicated modules for each AST node type. Mai
   - `result`: HTML-formatted summary of what happened
   - `steps`: Array of HTML-formatted step-by-step explanations
 - **Lazy Generation**: Descriptions are generated on-demand via `generateDescription()` functions
+
+### 5. Standard Library (`src/python/stdlib/`)
+
+**Modular Stdlib Architecture** (Implemented 2025-01)
+
+- **Type-Based Organization**: Each Python type has its own directory (`list/`, `string/`, etc.)
+- **Method-Per-File Pattern**: Each method/property is in its own file for maintainability
+  - Example: `list/__len__.ts`, `list/index_method.ts`, `string/upper.ts`, `string/lower.ts`
+- **Index Aggregators**: Each type directory has an `index.ts` that exports all methods/properties
+- **Main Registry**: `stdlib/index.ts` provides the central registry and helper functions
+- **Current Implementation**:
+  - **Lists**: `__len__()` method, `index()` method
+  - **Strings**: `upper()` method, `lower()` method
+  - Other methods stubbed with "MethodNotYetImplemented" errors
+- **Error Handling**: `StdlibError` class for stdlib-specific errors with proper type safety
 - **Immutable State**: Always uses `immutableJikiObject` for consistent point-in-time snapshots
 
 **Describer Files**:

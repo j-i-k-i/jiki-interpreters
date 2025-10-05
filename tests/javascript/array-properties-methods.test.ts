@@ -118,7 +118,7 @@ describe("Array methods (placeholder)", () => {
     expect(errorFrame).toBeDefined();
     expect(errorFrame?.error?.message).toBe("TypeError: message: Array indices must be numbers");
   });
-  test.skip("at() method with positive index", () => {
+  test("at() method with positive index", () => {
     const result = interpret(`
       let arr = [1, 2, 3];
       arr.at(0);
@@ -129,7 +129,7 @@ describe("Array methods (placeholder)", () => {
     expect(lastFrame.result?.jikiObject?.value).toBe(1);
   });
 
-  test.skip("at() method with negative index", () => {
+  test("at() method with negative index", () => {
     const result = interpret(`
       let arr = [1, 2, 3];
       arr.at(-1);
@@ -140,7 +140,7 @@ describe("Array methods (placeholder)", () => {
     expect(lastFrame.result?.jikiObject?.value).toBe(3);
   });
 
-  test.skip("at() method with out of bounds index", () => {
+  test("at() method with out of bounds index", () => {
     const result = interpret(`
       let arr = [1, 2, 3];
       arr.at(10);

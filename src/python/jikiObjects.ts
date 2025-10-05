@@ -1,6 +1,7 @@
 // Python objects system extending shared base
 import { JikiObject } from "../shared/jikiObject";
 export { JikiObject } from "../shared/jikiObject";
+export { PyStdLibFunction } from "./jikiObjects/PyStdLibFunction";
 
 export class PyNumber extends JikiObject {
   constructor(public readonly _value: number) {

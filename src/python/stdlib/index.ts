@@ -1,7 +1,7 @@
-import { arrayProperties, arrayMethods } from "./array";
+import { listProperties, listMethods } from "./list";
 import { stringProperties, stringMethods } from "./string";
-import type { JikiObject } from "../jsObjects";
-import type { ExecutionContext } from "../executor";
+import type { JikiObject } from "../jikiObjects";
+import type { ExecutionContext, RuntimeErrorType } from "../executor";
 import type { LanguageFeatures } from "../interfaces";
 
 // General types for properties and methods
@@ -26,9 +26,9 @@ interface StdlibType {
 
 // The main stdlib object
 export const stdlib: Record<string, StdlibType> = {
-  array: {
-    properties: arrayProperties,
-    methods: arrayMethods,
+  list: {
+    properties: listProperties,
+    methods: listMethods,
   },
   string: {
     properties: stringProperties,
@@ -40,12 +40,12 @@ export const stdlib: Record<string, StdlibType> = {
 export function getStdlibType(obj: JikiObject): string | null {
   // Map JikiObject types to stdlib types
   if (obj.type === "list") {
-    return "array";
+    return "list";
   }
   if (obj.type === "string") {
     return "string";
   }
-  // Future: if (obj.type === "number") return "number";
+  // Future: if (obj.type === "dictionary") return "dict";
   return null;
 }
 
@@ -53,7 +53,7 @@ export function getStdlibType(obj: JikiObject): string | null {
 // This gets caught and converted to a RuntimeError with proper location
 export class StdlibError extends Error {
   constructor(
-    public errorType: string,
+    public errorType: RuntimeErrorType,
     message: string,
     public context?: any
   ) {
@@ -88,7 +88,7 @@ export function isStdlibMemberAllowed(
     return true;
   }
 
-  // Get the restrictions for this type (e.g., 'array')
+  // Get the restrictions for this type (e.g., 'list')
   const typeRestrictions = features.allowedStdlib[stdlibType as keyof typeof features.allowedStdlib];
   if (!typeRestrictions) {
     // No restrictions for this type means everything is allowed

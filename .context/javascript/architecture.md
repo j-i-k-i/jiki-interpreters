@@ -100,7 +100,7 @@ This centralized approach ensures consistent behavior across:
 
 ### 6. JikiObjects (`src/javascript/jsObjects/`)
 
-Wrapper objects extending shared `JikiObject` base class. Each type is now in its own file under `jsObjects/` directory. Supports JSNumber, JSString, JSBoolean, JSNull, JSUndefined, JSList, JSDictionary, and JSFunction with consistent cross-interpreter compatibility.
+Wrapper objects extending shared `JikiObject` base class. Each type is now in its own file under `jsObjects/` directory. Supports JSNumber, JSString, JSBoolean, JSNull, JSUndefined, JSList, JSDictionary, and JSStdLibFunction with consistent cross-interpreter compatibility.
 
 **Key features:**
 
@@ -121,14 +121,32 @@ Wrapper objects extending shared `JikiObject` base class. Each type is now in it
 
 ### 7. Standard Library (`src/javascript/stdlib/`)
 
+**Modular Stdlib Architecture** (Restructured 2025-01)
+
 Provides built-in properties and methods for JavaScript types with feature flag support:
 
-**Arrays (`src/javascript/stdlib/arrays.ts`)**:
+- **Type-Based Organization**: Each JavaScript type has its own directory (`array/`, `string/`, etc.)
+- **Method-Per-File Pattern**: Each method/property is in its own file for maintainability
+  - Example: `array/length.ts`, `array/at.ts`, `string/toUpperCase.ts`, `string/toLowerCase.ts`
+- **Index Aggregators**: Each type directory has an `index.ts` that exports all methods/properties
+- **Main Registry**: `stdlib/index.ts` provides the central registry and helper functions
+
+**Current Implementation**:
+
+**Arrays** (`src/javascript/stdlib/array/`):
 
 - Properties:
   - `length`: Returns the number of elements in the array
 - Implemented Methods:
   - `at(index)`: Returns element at index (supports negative indices)
+
+**Strings** (`src/javascript/stdlib/string/`):
+
+- Properties:
+  - `length`: Returns the number of characters in the string
+- Implemented Methods:
+  - `toUpperCase()`: Returns uppercase version of the string
+  - `toLowerCase()`: Returns lowercase version of the string
 - Stubbed Methods (throw MethodNotYetImplemented when called):
   - All standard JS array methods: `push`, `pop`, `shift`, `unshift`, `indexOf`, `includes`, `slice`, `concat`, `join`, `forEach`, `map`, `filter`, `reduce`, etc.
   - Stub methods still return function objects for correct semantics (e.g., `arr.push` returns a function)

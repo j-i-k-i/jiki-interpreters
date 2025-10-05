@@ -12,6 +12,7 @@ import {
   ListExpression,
   SubscriptExpression,
   CallExpression,
+  AttributeExpression,
 } from "./expression";
 import type { Location } from "../shared/location";
 import type { Statement } from "./statement";
@@ -56,6 +57,7 @@ import { executeContinueStatement } from "./executor/executeContinueStatement";
 import { executeCallExpression } from "./executor/executeCallExpression";
 import { executeFunctionDeclaration } from "./executor/executeFunctionDeclaration";
 import { executeReturnStatement } from "./executor/executeReturnStatement";
+import { executeAttributeExpression } from "./executor/executeAttributeExpression";
 
 // Execution context for Python stdlib (future use)
 export type ExecutionContext = SharedExecutionContext & {
@@ -76,7 +78,11 @@ export type RuntimeErrorType =
   | "InvalidNumberOfArguments"
   | "FunctionExecutionError"
   | "LogicErrorInExecution"
-  | "ReturnOutsideFunction";
+  | "ReturnOutsideFunction"
+  | "AttributeError"
+  | "ValueError"
+  | "MethodNotYetImplemented"
+  | "MethodNotYetAvailable";
 
 export class RuntimeError extends Error {
   public category: string = "RuntimeError";
@@ -274,6 +280,10 @@ export class Executor {
 
     if (expression instanceof CallExpression) {
       return executeCallExpression(this, expression);
+    }
+
+    if (expression instanceof AttributeExpression) {
+      return executeAttributeExpression(this, expression);
     }
 
     this.error("UnsupportedOperation", expression.location, {

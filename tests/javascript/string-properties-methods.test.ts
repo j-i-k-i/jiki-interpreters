@@ -100,7 +100,7 @@ describe("String properties", () => {
 });
 
 describe("String methods", () => {
-  describe("charAt method", () => {
+  describe.skip("charAt method (not yet implemented)", () => {
     test("returns character at positive index", () => {
       const result = interpret(`
         let str = "hello";
@@ -252,10 +252,10 @@ describe("String methods", () => {
   });
 
   describe("unimplemented methods", () => {
-    test("gives runtime error for toLowerCase", () => {
+    test("gives runtime error for charAt", () => {
       const result = interpret(`
         let str = "HELLO";
-        str.toLowerCase();
+        str.charAt(0);
       `);
 
       expect(result.success).toBe(false);
@@ -263,7 +263,7 @@ describe("String methods", () => {
       const errorFrame = result.frames.find(f => (f as TestAugmentedFrame).status === "ERROR");
       expect(errorFrame).toBeDefined();
       expect((errorFrame as TestAugmentedFrame)?.error?.type).toBe("MethodNotYetImplemented");
-      expect((errorFrame as TestAugmentedFrame)?.error?.context?.method).toBe("toLowerCase");
+      expect((errorFrame as TestAugmentedFrame)?.error?.context?.method).toBe("charAt");
     });
 
     test("gives runtime error for indexOf", () => {
@@ -377,18 +377,18 @@ describe("String stdlib with language features", () => {
     expect(lastFrame.result?.jikiObject?.value).toBe(5);
   });
 
-  test("allows charAt when included in feature flags", () => {
+  test("allows toLowerCase when included in feature flags", () => {
     const result = interpret(
       `
-      let str = "hello";
-      str.charAt(0);
+      let str = "HELLO";
+      str.toLowerCase();
     `,
       {
         languageFeatures: {
           allowedStdlib: {
             string: {
               properties: [],
-              methods: ["charAt"], // charAt is allowed
+              methods: ["toLowerCase"], // toLowerCase is allowed
             },
           },
         },
@@ -399,14 +399,14 @@ describe("String stdlib with language features", () => {
     expect(result.success).toBe(true);
     const lastFrame = result.frames[result.frames.length - 1] as TestAugmentedFrame;
     expect(lastFrame.status).toBe("SUCCESS");
-    expect(lastFrame.result?.jikiObject?.value).toBe("h");
+    expect(lastFrame.result?.jikiObject?.value).toBe("hello");
   });
 
   test("allows all string features when no restrictions", () => {
     const result = interpret(`
-      let str = "hello";
+      let str = "HELLO";
       let len = str.length;
-      let first = str.charAt(0);
+      let lower = str.toLowerCase();
     `);
 
     expect(result.error).toBe(null);

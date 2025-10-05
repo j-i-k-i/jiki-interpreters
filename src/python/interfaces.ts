@@ -9,6 +9,7 @@ export type NodeType =
   | "ListExpression"
   | "SubscriptExpression"
   | "CallExpression"
+  | "AttributeExpression"
   // Statements
   | "ExpressionStatement"
   | "PrintStatement"
@@ -31,4 +32,12 @@ export interface LanguageFeatures {
   // [] = no nodes allowed
   // ["NodeType", ...] = only specified nodes allowed
   allowedNodes?: NodeType[] | null;
+  // Stdlib member restrictions
+  allowedStdlib?: {
+    list?: {
+      properties?: string[];
+      methods?: string[];
+    };
+    // Future: dict, str, etc.
+  };
 }
