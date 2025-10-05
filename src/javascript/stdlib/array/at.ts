@@ -17,7 +17,8 @@ export const at: Method = {
     guardArgType(args[0], "number", "at", "index");
     const indexArg = args[0] as JSNumber;
 
-    // Use native .at() method - it handles negative indices and truncation
+    // JavaScript's native at() accepts non-integers and truncates them
+    // We match this behavior for compatibility (e.g., arr.at(1.5) returns arr[1])
     const index = Math.trunc(indexArg.value);
 
     // Handle negative indices
